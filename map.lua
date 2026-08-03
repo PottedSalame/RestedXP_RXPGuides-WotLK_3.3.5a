@@ -215,10 +215,9 @@ local function PinOnLeave(self)
         local element = lineData.element
         for line in lineMapFramePool:EnumerateActive() do
             if line.lineData.element == element then
-                self:SetAlpha(line.lineData.lineAlpha or 1)
+                line:SetAlpha(line.lineData.lineAlpha or 1)
             end
         end
-        addon.UpdateMap()
     end
     _G.GameTooltip:Hide()
 end
@@ -961,17 +960,6 @@ local function addWorldMapLines()
     local lineData = generateLines(addon.currentGuide.steps, addon.settings.profile.numMapPins,
                                    RXPCData.currentStep, false)
 
-    if #lineData > 0 then
-        local canvas = _G.WorldMapFrame:GetCanvas()
-        local width = canvas:GetWidth()
-        local height = canvas:GetHeight()
-
-        if width == 0 or height == 0 then
-            WorldMapFrame:Show()
-            WorldMapFrame:Hide()
-        end
-    end
-
     for i = #lineData, 1, -1 do
         local line = lineData[i]
         local element = line.element
@@ -1240,7 +1228,16 @@ hooksecurefunc(_G.WorldMapFrame, "OnMapChanged", DisplayLines);
 if addon.gameVersion and addon.gameVersion < 40000 then
     local lineMapWatcher = CreateFrame("Frame")
     lineMapWatcher:RegisterEvent("WORLD_MAP_UPDATE")
-    lineMapWatcher:SetScript("OnEvent", function() DisplayLines(true) end)
+    lineMapWatcher:SetScript("OnEvent", function()
+        lineMapWatcher.refreshGeneration =
+            (lineMapWatcher.refreshGeneration or 0) + 1
+        local generation = lineMapWatcher.refreshGeneration
+        C_Timer.After(0, function()
+            if generation == lineMapWatcher.refreshGeneration then
+                DisplayLines(true)
+            end
+        end)
+    end)
 end
 
 local scale = 0

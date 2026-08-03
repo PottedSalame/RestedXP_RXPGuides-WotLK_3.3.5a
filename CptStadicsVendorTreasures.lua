@@ -535,7 +535,11 @@ function Frame:DrawWorldMapPins()
     end
 end
 
-function Frame:HideWorldMapPins() HBDPins:RemoveAllWorldMapIcons(PIN_OWNER) end
+function Frame:HideWorldMapPins()
+    HBDPins:RemoveAllWorldMapIcons(PIN_OWNER)
+    self.worldPinsRegistered = false
+    self.worldPinScale = nil
+end
 
 function Frame:ShowWorldMapPins()
     if legacy335 then return self:ShowAllWorldMapPins() end
@@ -552,11 +556,22 @@ function Frame:ShowWorldMapPins()
 end
 
 function Frame:ShowAllWorldMapPins()
+    local pinScale = tonumber(addon.settings.profile.vendorTreasurePinScale) or 1
+    if self.worldPinsRegistered and self.worldPinScale == pinScale then return end
+
+    -- Register the static vendor dataset once. HereBeDragons already moves all
+    -- registered icons on WORLD_MAP_UPDATE, so rebuilding every vendor here on
+    -- every map event only repeats the most expensive part of opening the map.
+    if self.worldPinsRegistered then
+        HBDPins:RemoveAllWorldMapIcons(PIN_OWNER)
+    end
     for _, zoneData in pairs(DATA) do
         for _, npcData in pairs(zoneData) do
             self:ShowWorldMapNPC(npcData)
         end
     end
+    self.worldPinsRegistered = true
+    self.worldPinScale = pinScale
 end
 
 -- Mini Map --
@@ -633,21 +648,6 @@ function addon.VendorTreasures.UpdatePins()
     end
     if not next(DATA) then Frame:InitializeZones() end
     Frame:CheckWorldMap()
-
-    -- WORLD_MAP_UPDATE can arrive while the legacy positioning guide is still
-    -- settling. Re-anchor once on the next frame so pins use the final map size
-    -- and location. A generation token keeps repeated map events idempotent.
-    if legacy335 and WorldMapFrame and WorldMapFrame:IsShown() then
-        Frame.pinRefreshGeneration = (Frame.pinRefreshGeneration or 0) + 1
-        local generation = Frame.pinRefreshGeneration
-        C_Timer.After(0, function()
-            if generation == Frame.pinRefreshGeneration and
-                addon.settings.profile.enableVendorTreasure and
-                IsWorldMapAvailable() then
-                Frame:CheckWorldMap()
-            end
-        end)
-    end
 end
 
 local eventsRegistered
@@ -670,7 +670,10 @@ function addon.VendorTreasures:Setup()
         eventsRegistered = true
         Frame:RegisterEvent("ZONE_CHANGED")
         Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        Frame:RegisterEvent("WORLD_MAP_UPDATE")
+        -- The bundled legacy HereBeDragons bridge owns WORLD_MAP_UPDATE and
+        -- repositions the already-registered pins. Modern clients still need
+        -- this module's map-change redraw path.
+        if not legacy335 then Frame:RegisterEvent("WORLD_MAP_UPDATE") end
         Frame:SetScript("OnEvent", OnVendorEvent)
     end
     Frame:CheckZone()

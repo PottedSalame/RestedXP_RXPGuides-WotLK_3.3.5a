@@ -765,16 +765,48 @@ if Pins then
         end
     end
 
+    local function refreshWorldMapIcons(owner)
+        if owner then
+            local set = worldPins[owner]
+            if not set then return end
+            for icon, data in pairs(set) do
+                placeWorldIcon(icon, data[1], data[2], data[3], data[4])
+            end
+            return
+        end
+
+        for _, set in pairs(worldPins) do
+            for icon, data in pairs(set) do
+                placeWorldIcon(icon, data[1], data[2], data[3], data[4])
+            end
+        end
+    end
+
+    -- Modules may explicitly refresh one owner after changing the legacy map
+    -- layout without unregistering and rebuilding its entire static pin set.
+    function Pins:RefreshWorldMapIcons(owner)
+        refreshWorldMapIcons(owner)
+    end
+
     -- Re-place world map pins whenever the displayed world map changes.
     if not Pins._updateFrame then
         local f = CreateFrame("Frame")
         Pins._updateFrame = f
         f:RegisterEvent("WORLD_MAP_UPDATE")
         f:SetScript("OnEvent", function()
-            for _, set in pairs(worldPins) do
-                for icon, data in pairs(set) do
-                    placeWorldIcon(icon, data[1], data[2], data[3], data[4])
-                end
+            -- The legacy map emits several events while it opens and resizes.
+            -- Collapse a same-frame burst and place each registered pin only
+            -- once against the final map dimensions.
+            f.refreshGeneration = (f.refreshGeneration or 0) + 1
+            local generation = f.refreshGeneration
+            if C_Timer and C_Timer.After then
+                C_Timer.After(0, function()
+                    if generation == f.refreshGeneration then
+                        refreshWorldMapIcons()
+                    end
+                end)
+            else
+                refreshWorldMapIcons()
             end
         end)
     end

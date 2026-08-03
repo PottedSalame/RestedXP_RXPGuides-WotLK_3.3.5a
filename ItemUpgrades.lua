@@ -75,6 +75,7 @@ local session = {
     promptedUpgrades = {},
     upgradeScanSerial = 0,
     upgradePopupOpen = false,
+    pendingUpgradeEquip = nil,
     upgradeQueryRetries = 0,
 
     -- Remember explicit hand replacements so the displaced weapon is not
@@ -735,6 +736,9 @@ function addon.itemUpgrades:Setup()
     -- Toggle functionality off
     if not addon.settings.profile.enableItemUpgrades or not addon.settings.profile.enableTips then
         if session.upgradePopupOpen then
+            -- Setup may hide the prompt because the feature was disabled. Do
+            -- not mistake that programmatic hide for the player's Equip click.
+            session.pendingUpgradeEquip = nil
             _G.StaticPopup_Hide("RXPItemUpgradeFound")
         end
         if self.AH and self.AH.Setup then self.AH:Setup() end
@@ -2416,25 +2420,40 @@ local function GetVisibleBindConfirmation()
     for _, which in ipairs(LEGACY_BIND_CONFIRMATIONS) do
         local index = _G.StaticPopup_Visible(which)
         if index then
-            local popup = type(index) == "number" and _G["StaticPopup" .. index] or nil
+            -- Stock 3.3.5 returns the popup frame's global name. Some backports
+            -- return its numeric index instead, so accept both conventions.
+            local popup
+            if type(index) == "string" then
+                popup = _G[index]
+            elseif type(index) == "number" then
+                popup = _G["StaticPopup" .. index]
+            end
             return which, popup
         end
     end
 end
 
-local function ConfirmPendingUpgradeEquip(inventorySlot)
+local function ConfirmPendingUpgradeEquip(inventorySlot, itemLink)
     if addon.gameVersion ~= 30300 or type(_G.EquipPendingItem) ~= "function" then return false end
 
     local which, popup = GetVisibleBindConfirmation()
     if not which then return false end
 
-    -- This runs synchronously inside the player's click on RXP's own Equip
-    -- button. Confirm only the bind dialog created by that equip attempt and
-    -- use Blizzard's pending slot when it is available.
+    -- Stock 3.3.5 stores the destination slot in popup.data. Prefer that exact
+    -- pending value, with our selected inventory slot as a compatibility
+    -- fallback for cores whose StaticPopup_Visible does not expose the frame.
     local pendingSlot = popup and tonumber(popup.data) or inventorySlot
     if type(pendingSlot) ~= "number" then pendingSlot = inventorySlot end
     local ok = pcall(_G.EquipPendingItem, pendingSlot)
     if not ok then return false end
+
+    -- Do not consume Blizzard's dialog if a non-standard core rejected the
+    -- operation without throwing. Leaving it visible lets the player confirm
+    -- manually instead of silently losing the requested equipment change.
+    if itemLink then
+        local equippedLink = GetInventoryItemLink("player", inventorySlot)
+        if equippedLink ~= itemLink then return false end
+    end
 
     -- EquipPendingItem completes the operation. Dismiss the now-stale stock
     -- dialog; its OnHide cancellation is harmless once no pending item remains.
@@ -2446,35 +2465,42 @@ end
 
 function addon.itemUpgrades:EquipBagUpgrade(data)
     if not data or InCombatLockdown() or UnitIsDeadOrGhost("player") or
-        GetCursorInfo() then return end
-    if GetContainerItemLink(data.bag, data.bagSlot) ~= data.itemLink then return end
+        GetCursorInfo() then return false end
+    if GetContainerItemLink(data.bag, data.bagSlot) ~= data.itemLink then return false end
 
     -- Re-evaluate at click time: the player may have changed gear while the
     -- confirmation was open, especially for rings, trinkets, and weapons.
     local comparison, state = self:GetBestUpgradeComparison(data.itemLink)
     local inventorySlot = comparison and comparison.SlotCompared
-    if state ~= "upgrade" or type(inventorySlot) ~= "number" then return end
+    if state ~= "upgrade" or type(inventorySlot) ~= "number" then return false end
 
     -- Never consume an unrelated bind confirmation which was already open.
-    if GetVisibleBindConfirmation() then return end
+    if GetVisibleBindConfirmation() then return false end
 
     -- The stock helper handles the displaced item's return to the bags. On
     -- 3.3.5, explicitly complete the BoE confirmation produced by this call:
     -- the player has already authorized it by clicking RXP's Equip button.
     if _G.EquipItemByName then
         _G.EquipItemByName(data.itemLink, inventorySlot)
-        ConfirmPendingUpgradeEquip(inventorySlot)
-        return
+        ConfirmPendingUpgradeEquip(inventorySlot, data.itemLink)
+        return GetInventoryItemLink("player", inventorySlot) == data.itemLink
     end
 
     PickupContainerItem(data.bag, data.bagSlot)
-    if not GetCursorInfo() then return end
+    if not GetCursorInfo() then return false end
     PickupInventoryItem(inventorySlot)
-    ConfirmPendingUpgradeEquip(inventorySlot)
+    local bindConfirmation = GetVisibleBindConfirmation()
+    local bindConfirmed = ConfirmPendingUpgradeEquip(inventorySlot,
+                                                       data.itemLink)
+    -- A non-standard client may expose the confirmation before it accepts the
+    -- pending operation. Leave that stock dialog and cursor state intact so its
+    -- own button can finish the swap.
+    if bindConfirmation and not bindConfirmed then return false end
     -- A swap leaves the old equipped item on the cursor. Put it into the bag
     -- slot vacated by the upgrade; an empty equipment slot leaves no cursor item.
     if GetCursorInfo() then PickupContainerItem(data.bag, data.bagSlot) end
     if GetCursorInfo() then ClearCursor() end
+    return GetInventoryItemLink("player", inventorySlot) == data.itemLink
 end
 
 StaticPopupDialogs["RXPItemUpgradeFound"] = {
@@ -2485,13 +2511,28 @@ StaticPopupDialogs["RXPItemUpgradeFound"] = {
     hideOnEscape = 1,
     showAlert = 1,
     OnShow = function()
+        session.pendingUpgradeEquip = nil
         session.upgradePopupOpen = true
     end,
     OnAccept = function(_, data)
-        addon.itemUpgrades:EquipBagUpgrade(data)
+        -- A BoE equip can open Blizzard's own static popup. On 3.3.5 that
+        -- second popup cannot reliably claim a slot until this RXP popup has
+        -- finished hiding. Remember the click and perform the protected equip
+        -- from OnHide, which is still part of the same hardware click.
+        session.pendingUpgradeEquip = data
     end,
     OnHide = function()
+        local pendingEquip = session.pendingUpgradeEquip
+        session.pendingUpgradeEquip = nil
         session.upgradePopupOpen = false
+        if pendingEquip then
+            local equipped = addon.itemUpgrades:EquipBagUpgrade(pendingEquip)
+            if not equipped and pendingEquip.itemLink then
+                -- A combat transition, stale bag slot, or core-specific bind
+                -- failure should not permanently suppress this valid upgrade.
+                session.promptedUpgrades[pendingEquip.itemLink] = nil
+            end
+        end
         QueueUpgradeScan(0.4)
     end
 }
