@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <!--
+    Modern (9.0+) AceGUI-3.0 and LibCandyBar create frames with the hardcoded
+    "BackdropTemplate" template. That template does not exist on 3.3.5a, but 3.3.5a
+    frames already have a native SetBackdrop, so an empty virtual template is all
+    that is needed to make those CreateFrame(..., "BackdropTemplate") calls succeed.
+  -->
+  <Frame name="BackdropTemplate" virtual="true"/>
+</Ui>

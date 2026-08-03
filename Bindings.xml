@@ -1,0 +1,22 @@
+<Bindings>
+    <Binding name="CLICK RXP_TargetBindingButton:LeftButton"
+             header="RXPGUIDES" runOnUp="true">
+        -- Secure RXPGuides targeting dispatcher
+    </Binding>
+    <Binding name="CLICK RXPInventory_DeleteJunk:LeftButton"
+             header="RXPGUIDES" runOnUp="true">
+        -- Delete the cheapest junk item
+    </Binding>
+    <Binding name="CLICK RXPItemFrameButton1:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPItemFrameButton2:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPItemFrameButton3:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPItemFrameButton4:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_FriendlyButton1:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_FriendlyButton2:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_FriendlyButton3:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_FriendlyButton4:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_EnemyButton1:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_EnemyButton2:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_EnemyButton3:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="CLICK RXPTargetFrame_EnemyButton4:LeftButton" header="RXPGUIDES" runOnUp="true" />
+</Bindings>

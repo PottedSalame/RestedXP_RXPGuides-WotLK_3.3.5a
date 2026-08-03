@@ -1,0 +1,110 @@
+name: Build and publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, for example v4.8.25-335"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Package RXPGuides and publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release metadata
+        id: metadata
+        shell: bash
+        env:
+          MANUAL_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            tag="${MANUAL_TAG}"
+          else
+            tag="${GITHUB_REF_NAME}"
+          fi
+
+          if [[ ! "${tag}" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]]; then
+            echo "Invalid release tag: ${tag}" >&2
+            echo "Release tags must start with 'v' and contain only letters, numbers, dots, underscores, or hyphens." >&2
+            exit 1
+          fi
+
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+          echo "archive=RXPGuides-${tag}.zip" >> "${GITHUB_OUTPUT}"
+
+      - name: Create addon ZIP
+        id: package
+        shell: bash
+        env:
+          ARCHIVE: ${{ steps.metadata.outputs.archive }}
+        run: |
+          set -euo pipefail
+
+          # git archive includes every tracked file from the release commit,
+          # excludes Git's internal metadata, and places the complete checkout
+          # beneath the folder players copy into Interface/AddOns.
+          git archive \
+            --format=zip \
+            --prefix=RXPGuides/ \
+            --output="${ARCHIVE}" \
+            "${GITHUB_SHA}"
+
+          unzip -Z1 "${ARCHIVE}" > "${RUNNER_TEMP}/rxpguides-archive-entries.txt"
+
+          if ! grep -Fxq "RXPGuides/RXPGuides.toc" "${RUNNER_TEMP}/rxpguides-archive-entries.txt"; then
+            echo "Package validation failed: RXPGuides/RXPGuides.toc is missing." >&2
+            exit 1
+          fi
+
+          if grep -Evq '^RXPGuides/' "${RUNNER_TEMP}/rxpguides-archive-entries.txt"; then
+            echo "Package validation failed: an entry exists outside the RXPGuides folder." >&2
+            exit 1
+          fi
+
+          echo "Created ${ARCHIVE}:"
+          du -h "${ARCHIVE}"
+
+      - name: Create or update GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.metadata.outputs.tag }}
+          ARCHIVE: ${{ steps.metadata.outputs.archive }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload \
+              "${TAG}" \
+              "${ARCHIVE}" \
+              --clobber \
+              --repo "${GITHUB_REPOSITORY}"
+          else
+            gh release create \
+              "${TAG}" \
+              "${ARCHIVE}" \
+              --target "${GITHUB_SHA}" \
+              --title "RXPGuides ${TAG}" \
+              --generate-notes \
+              --repo "${GITHUB_REPOSITORY}"
+          fi

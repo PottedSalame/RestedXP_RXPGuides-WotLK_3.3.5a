@@ -1,0 +1,70 @@
+## Interface: 30300
+## Title: RestedXP Guides
+## Notes: In-game leveling guides (3.3.5a backport)
+## Author: RestedXP
+## Version: v4.8.25-335
+## SavedVariables: RXPData, RXPDB, RXPSettings, RXP335
+## SavedVariablesPerCharacter: RXPCData, RXPCTrackingData, RXPCComms, RXPCSettings
+## X-Curse-Project-ID: 486246
+## X-Wago-ID: ZKbebq61
+
+# --- 3.3.5a compatibility layer MUST load first (defines C_* namespaces) ---
+Compat335.lua
+
+libs\embeds_335.xml
+locale\locales.xml
+# The 3.3.5 Auction House results panel is built in Lua with the stock
+# FauxScrollFrameTemplate; modern ScrollBox XML remains intentionally unloaded.
+
+Locale.lua
+Themes.lua
+Communications.lua
+RXPGuides.lua
+GuideWindow.lua
+Help.lua
+SettingsPanel.lua
+
+# DB loaded directly with BACKSLASHES (3.3.5a's TOC parser does not reliably
+# accept forward slashes, and it resolves nested-XML <Script> paths relative to
+# the XML's own folder, so DB\wotlk.xml would not work here either).
+DB\shared.lua
+DB\wotlk\flightData.lua
+DB\wotlk\quest.lua
+DB\wotlk\spells.lua
+DB\wotlk\rares.lua
+DB\wotlk\db.lua
+DB\wotlk\dungeonData_335.lua
+DB\wotlk\questPrerequisites_335.lua
+DB\questDB.lua
+# Prefer the existing level-bracketed speedrun weights, then fill missing Wrath
+# classes/specs with the 3.3.5 fallback table.
+DB\tbc\statWeights.lua
+DB\wotlk\statWeights_335.lua
+
+HSBatching.lua
+QuestLog.lua
+ActiveItemFrame.lua
+LevelingTracker.lua
+Timers.lua
+Targeting.lua
+Bindings.xml
+Tips.lua
+# ItemUpgrades scoring, tooltips, and the legacy Auction House upgrade scanner.
+ItemUpgrades.lua
+InventoryManager.lua
+# Standalone world-map vendor treasure pins (Classic/TBC data on WotLK).
+CptStadicsVendorTreasures.lua
+
+map.lua
+functions.lua
+GuideLoader.lua
+
+# Root-level copies of the guide/talent loaders so their "Guides/..." <Script>
+# paths resolve from the addon root on 3.3.5a (see DB note above).
+GuideList_335.xml
+
+Talents.lua
+Talents_wotlk_335.xml
+
+# 3.3.5a backport cosmetics sub-panel (Interface -> AddOns -> RestedXP Guides -> 3.3.5a)
+Compat335_Options.lua

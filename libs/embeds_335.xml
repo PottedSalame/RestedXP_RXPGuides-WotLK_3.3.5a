@@ -1,0 +1,29 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+  <!--
+    3.3.5a (interface 30300) library set.
+
+    The modern shared-library revisions are not safe to publish into a 3.3.5a
+    LibStub environment. Load isolated, proven legacy revisions instead so RXP is
+    standalone without depending on another addon or overriding a newer compatible
+    library that was already loaded.
+  -->
+  <Script file="compatibility.lua"/>
+  <!-- Virtual "BackdropTemplate" so modern-style frame creation works -->
+  <Include file="Compat335_templates.xml"/>
+  <Script file="LibStub\LibStub.lua"/>
+  <Include file="Legacy335\embeds.xml"/>
+
+  <!-- Astrolabe: classic map/coordinate math, backs the HereBeDragons shim -->
+  <Script file="Astrolabe\DongleStub.lua"/>
+  <Script file="Astrolabe\AstrolabeMapMonitor.lua"/>
+  <Script file="Astrolabe\Astrolabe.lua"/>
+
+  <!-- HereBeDragons-2.0 / -Pins-2.0 replacement implemented over Astrolabe -->
+  <Script file="HBD335\HereBeDragons-335.lua"/>
+
+  <!-- Pure-Lua / RXP-unique helpers (no cross-addon LibStub conflicts) -->
+  <Script file="plc\base64.lua"/>
+  <Include file="LibDeflate\lib.xml"/>
+  <Include file="LibCandyBar-3.0\lib.xml"/>
+</Ui>
