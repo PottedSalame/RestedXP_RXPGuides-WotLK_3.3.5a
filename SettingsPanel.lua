@@ -268,6 +268,7 @@ local settingsDBDefaults = {
         enableXpStepSkipping = true,
         enableAutomaticXpRate = true,
         showFlightTimers = true,
+        showJunkIcon = true,
 
         -- Sliders
         arrowScale = 1,

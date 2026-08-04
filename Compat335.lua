@@ -932,8 +932,17 @@ do
     local C_Container = ns("C_Container")
     def(C_Container, "GetContainerNumSlots", _G.GetContainerNumSlots)
     def(C_Container, "GetContainerNumFreeSlots", _G.GetContainerNumFreeSlots)
-    def(C_Container, "GetContainerItemID", _G.GetContainerItemID)
     def(C_Container, "GetContainerItemLink", _G.GetContainerItemLink)
+    def(C_Container, "GetContainerItemID", function(bag, slot)
+        if _G.GetContainerItemID then
+            return _G.GetContainerItemID(bag, slot)
+        end
+        -- Some unmodified 3.3.5 clients expose only the item link. The first
+        -- item-string field is the same numeric ID required by modern callers.
+        local link = _G.GetContainerItemLink and
+                         _G.GetContainerItemLink(bag, slot)
+        return link and tonumber(link:match("item:(%-?%d+)")) or nil
+    end)
     def(C_Container, "GetContainerItemCooldown", _G.GetContainerItemCooldown)
     def(C_Container, "PickupContainerItem", _G.PickupContainerItem)
     def(C_Container, "UseContainerItem", _G.UseContainerItem)
@@ -952,7 +961,7 @@ do
             hyperlink   = itemLink,
             isFiltered  = false,
             hasNoValue  = false,
-            itemID      = _G.GetContainerItemID and _G.GetContainerItemID(bag, slot) or nil,
+            itemID      = C_Container.GetContainerItemID(bag, slot),
             isBound     = nil,
         }
     end)

@@ -66,8 +66,17 @@ function inventoryManager.IsMerchantAutomationEnabled()
 end
 
 function inventoryManager.IsJunkIconEnabled()
+    local enabled = addon.settings and addon.settings.profile and
+                        addon.settings.profile.showJunkIcon
+    if gameVersion == 30300 then
+        -- Stock bags are supported directly below. Do not make their overlay
+        -- depend on ContainerFrame_Update already existing at file-load time.
+        -- AceDB supplies the true default, while this nil fallback also covers
+        -- the short interval before the profile has been attached.
+        return enabled ~= false
+    end
     if not inventoryManager.bagHook then return false end
-    return addon.settings.profile.showJunkIcon
+    return enabled
 end
 
 function inventoryManager.GetModKey()
@@ -643,7 +652,22 @@ BINDING_HEADER_RXPInventory = addon.title
 _G["BINDING_NAME_CLICK RXPInventory_DeleteJunk:LeftButton"] =
     L("Delete Cheapest Junk Item")
 
-local bagEvent = "BAG_UPDATE_DELAYED"
+local function IsEventSupported(event)
+    return not (C_EventUtils and C_EventUtils.IsEventValid) or
+               C_EventUtils.IsEventValid(event)
+end
+
+local function RegisterSupportedEvent(frame, event)
+    if not IsEventSupported(event) then return false end
+    frame:RegisterEvent(event)
+    return true
+end
+
+-- BAG_UPDATE_DELAYED does not exist in the stock 3.3.5 client. Registering an
+-- unknown event aborts the remainder of this file, which also prevents the
+-- stock ContainerFrame hook and junk textures from ever being installed.
+local bagEvent = IsEventSupported("BAG_UPDATE_DELAYED") and
+                     "BAG_UPDATE_DELAYED" or "BAG_UPDATE"
 local WorldFrameHook = function(self,...)
     --local n = self and self:GetName()
     --print(n,...)
@@ -752,6 +776,9 @@ f:SetScript("OnEvent",function(self)
         hooksecurefunc('ToggleBag', inventoryManager.InitializeBags)
     end
     _G.MainMenuBarBackpackButton:HookScript("OnClick",inventoryManager.InitializeBags)
+    if inventoryManager.EnsureStockBagHooks then
+        inventoryManager.EnsureStockBagHooks()
+    end
 
 end)
 
@@ -760,15 +787,38 @@ local junkIcons = {}
 local function ShowJunkIcon(frame)
 
     if not frame.RXPJunkIcon then
-        local texture = frame:CreateTexture(nil, "OVERLAY")
+        -- A stock item button owns a Cooldown child frame which renders above
+        -- textures created directly on the button. Give the junk marker its
+        -- own mouse-transparent child frame at a higher frame level so it stays
+        -- visible regardless of the cooldown/quest-border state.
+        local overlay = CreateFrame("Frame", nil, frame)
+        overlay:SetAllPoints(frame)
+        overlay:SetFrameLevel((frame:GetFrameLevel() or 0) + 8)
+        overlay:EnableMouse(false)
+
+        local texture = overlay:CreateTexture(nil, "OVERLAY")
         table.insert(junkIcons,texture)
-        texture:SetTexture("Interface/Buttons/UI-GroupLoot-Coin-Up")
-        texture:SetSize(16,16)
-        texture:SetPoint(inventoryManager.alignment, 1, -1)
+        texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Coin-Up")
+        texture:SetWidth(16)
+        texture:SetHeight(16)
+        texture:SetTexCoord(0, 1, 0, 1)
+        texture:SetAlpha(1)
+        if inventoryManager.alignment == "TOPRIGHT" then
+            texture:SetPoint("TOPRIGHT", overlay, "TOPRIGHT", -1, -1)
+        else
+            texture:SetPoint("TOPLEFT", overlay, "TOPLEFT", 1, -1)
+        end
+        frame.RXPJunkOverlay = overlay
         frame.RXPJunkIcon = texture
     end
 
-    frame.RXPJunkIcon:SetShown(inventoryManager.IsJunkIconEnabled())
+    if inventoryManager.IsJunkIconEnabled() then
+        frame.RXPJunkOverlay:Show()
+        frame.RXPJunkIcon:Show()
+    else
+        frame.RXPJunkIcon:Hide()
+        frame.RXPJunkOverlay:Hide()
+    end
 
 end
 
@@ -776,6 +826,7 @@ local function HideJunkIcon(frame)
 
     if frame.RXPJunkIcon then
         frame.RXPJunkIcon:Hide()
+        if frame.RXPJunkOverlay then frame.RXPJunkOverlay:Hide() end
     end
 
 end
@@ -872,6 +923,15 @@ local function UpdateAllBags(self,name,i)
     DetectBagMods()
     i = i or inventoryManager.containerIndex
     name = name or inventoryManager.containerName
+    if gameVersion == 30300 and name == "ContainerFrame%d" then
+        -- All thirteen stock frames exist up front and are recycled between
+        -- bags. Only their shown instances have a meaningful current bag ID.
+        for index = 1, (_G.NUM_CONTAINER_FRAMES or 13) do
+            local frame = _G[format(name, index)]
+            if frame and frame:IsShown() then UpdateBag(frame) end
+        end
+        return
+    end
     --print(name,inventoryManager.containerPattern)
     local ref = format(name,i)
     local frame = _G[ref]
@@ -896,19 +956,25 @@ function inventoryManager.RefreshJunkIcons(delay)
 end
 
 local invUpdate = CreateFrame("Frame")
-invUpdate:RegisterEvent("ITEM_LOCKED")
-invUpdate:RegisterEvent("ITEM_UNLOCKED")
-if C_EventUtils and C_EventUtils.IsEventValid("BAG_CONTAINER_UPDATE") then
-    invUpdate:RegisterEvent("BAG_CONTAINER_UPDATE")
+local hasItemLocked = RegisterSupportedEvent(invUpdate, "ITEM_LOCKED")
+local hasItemUnlocked = RegisterSupportedEvent(invUpdate, "ITEM_UNLOCKED")
+-- Stock 3.3.5 combines the two newer lock events into this one.
+if not (hasItemLocked and hasItemUnlocked) then
+    RegisterSupportedEvent(invUpdate, "ITEM_LOCK_CHANGED")
 end
-invUpdate:RegisterEvent("BAG_UPDATE_DELAYED")
-invUpdate:RegisterEvent("BAG_UPDATE")
-if gameVersion == 30300 then invUpdate:RegisterEvent("ITEM_PUSH") end
-invUpdate:RegisterEvent("GET_ITEM_INFO_RECEIVED")
-invUpdate:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-invUpdate:RegisterEvent("LOOT_CLOSED")
-invUpdate:RegisterEvent("MERCHANT_SHOW")
-invUpdate:RegisterEvent("PLAYER_MONEY")
+RegisterSupportedEvent(invUpdate, "BAG_CONTAINER_UPDATE")
+if bagEvent ~= "BAG_UPDATE" then
+    RegisterSupportedEvent(invUpdate, bagEvent)
+end
+RegisterSupportedEvent(invUpdate, "BAG_UPDATE")
+if gameVersion == 30300 then
+    RegisterSupportedEvent(invUpdate, "ITEM_PUSH")
+end
+RegisterSupportedEvent(invUpdate, "GET_ITEM_INFO_RECEIVED")
+RegisterSupportedEvent(invUpdate, "PLAYER_EQUIPMENT_CHANGED")
+RegisterSupportedEvent(invUpdate, "LOOT_CLOSED")
+RegisterSupportedEvent(invUpdate, "MERCHANT_SHOW")
+RegisterSupportedEvent(invUpdate, "PLAYER_MONEY")
 local updateTimer = 0
 local merchantOpened
 local updateBags
@@ -956,7 +1022,7 @@ inventoryManager.BagHandler = function(self,event,bag,slot)
             if frame then
                 HideJunkIcon(frame)
             end
-        elseif event == "ITEM_UNLOCKED" and inventoryManager.containerPattern ~= "%s" then
+        elseif event == "ITEM_UNLOCKED" or event == "ITEM_LOCK_CHANGED" then
             local frame = bagFrame[bag] and bagFrame[bag][slot]
             frame = frame and _G[frame]
             if frame then
@@ -973,20 +1039,40 @@ end
 invUpdate:SetScript("OnEvent",inventoryManager.BagHandler)
 
 
-local initialized
 function inventoryManager.InitializeBags()
-    if initialized and next(junkIcons) then return end
-    initialized = true
+    if inventoryManager.EnsureStockBagHooks then
+        inventoryManager.EnsureStockBagHooks()
+    end
+    -- Stock bag frames are pooled and can be reassigned to a different bag on
+    -- every open. Always schedule a pass so an existing texture follows the
+    -- button's current bag/slot rather than trusting its previous state.
     updateBags = true
     invUpdate:SetScript("OnUpdate",inventoryManager.BagHandler)
-    --UpdateAllBags()
 end
 
-if _G['ContainerFrame_Update'] then
-    hooksecurefunc('ContainerFrame_Update', function(self)
-        UpdateBag(self,nil,"%sItem%d")
+local stockBagHooksInstalled
+local function EnsureStockBagHooks()
+    if stockBagHooksInstalled then return true end
+    if type(_G.ContainerFrame_Update) ~= "function" then return false end
+
+    local ok = pcall(hooksecurefunc, "ContainerFrame_Update", function(self)
+        UpdateBag(self, nil, "%sItem%d")
     end)
+    if not ok then return false end
+
+    -- ContainerFrame_OnShow calls ContainerFrame_Update on stock 3.3.5, but a
+    -- second post-show pass also covers clients whose FrameXML was modified.
+    if type(_G.ContainerFrame_OnShow) == "function" then
+        pcall(hooksecurefunc, "ContainerFrame_OnShow", function(self)
+            UpdateBag(self, nil, "%sItem%d")
+        end)
+    end
+    inventoryManager.bagHook = _G.ContainerFrame_Update
+    stockBagHooksInstalled = true
+    return true
 end
+inventoryManager.EnsureStockBagHooks = EnsureStockBagHooks
+EnsureStockBagHooks()
 
 --[[
 hooksecurefunc('ContainerFrameItemButton_OnEnter',function(self)
