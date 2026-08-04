@@ -559,7 +559,13 @@ function addon.targeting:Setup()
 
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
     self:CreateTargetBindingButton()
-    if not addon.settings.profile.enableTargetMacro then
+    if addon.settings.profile.enableTargetMacro then
+        -- OnEnable can populate the first guide before the stock macro cache is
+        -- ready. Setup also runs on PLAYER_ENTERING_WORLD, so updating here
+        -- creates/retries RXPTargeting once the clean 3.3.5 client is ready and
+        -- gives it useful placeholder content even for an empty guide.
+        self:UpdateMacro()
+    else
         self:SetTargetBindingContent("")
     end
 
@@ -726,6 +732,19 @@ function addon.targeting:UpdateMacro(queuedTargets)
         return
     end
 
+    -- Create the saved macro independently of whether this particular guide
+    -- step has targets. This makes the enabled setting deterministic on login;
+    -- later step changes simply replace its placeholder body.
+    if not GetMacroInfo(self.macroName) then
+        if self:CanCreateMacro() then
+            -- 3.3.5a CreateMacro wants a numeric icon index, not a texture name.
+            pcall(CreateMacro, self.macroName, 1, "")
+        end
+        -- Even when the account macro table is full, continue building the
+        -- secure keybinding dispatcher and Active Target buttons. Only the
+        -- optional saved macro itself is unavailable in that situation.
+    end
+
     if not shouldTargetCheck() then
         local emptyContent = fmt('//%s - %s', addon.title,
                                  L("current step has no configured targets"))
@@ -742,17 +761,6 @@ function addon.targeting:UpdateMacro(queuedTargets)
     local targets = {}
     for _, target in ipairs(queuedTargets or {}) do
         tinsert(targets, target)
-    end
-
-    if not GetMacroInfo(self.macroName) then
-        if self:CanCreateMacro() then
-            -- 3.3.5a CreateMacro wants a numeric icon index, not a texture name;
-            -- pcall so a macro-API quirk can't halt step rendering (this runs from SetStep).
-            pcall(CreateMacro, self.macroName, 1, "")
-        end
-        -- Even when the account macro table is full, continue building the
-        -- secure keybinding dispatcher and Active Target buttons. Only the
-        -- optional saved macro itself is unavailable in that situation.
     end
 
     for _, t in ipairs(unitscanList) do if not lowPrioTargets[t] then tinsert(targets, t) end end

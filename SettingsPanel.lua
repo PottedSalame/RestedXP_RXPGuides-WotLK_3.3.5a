@@ -123,6 +123,39 @@ local function NormalizeCustomThemeTooltip(profile)
     end
 end
 
+-- The standalone 3.3.5 AceConfigRegistry revision accepts only the historical
+-- "half", "normal", "double", and "full" width strings. Upstream's options
+-- use modern numeric relative widths throughout, which happened to work only
+-- when another addon loaded a newer AceConfig first. Normalize the complete
+-- tree at the integration boundary instead of maintaining a separate legacy
+-- copy of every option.
+local function NormalizeLegacyAceConfigOptions(option)
+    if addon.gameVersion ~= 30300 or type(option) ~= "table" then return end
+
+    if type(option.width) == "number" then
+        if option.width <= 0.75 then
+            option.width = "half"
+        elseif option.width >= 2.5 then
+            option.width = "full"
+        elseif option.width >= 1.5 then
+            option.width = "double"
+        else
+            option.width = "normal"
+        end
+    end
+
+    -- Explicit select ordering was added after this AceConfig revision. The
+    -- legacy dialog already sorts the values deterministically, so omit the
+    -- unsupported hint instead of letting validation blank the whole panel.
+    option.sorting = nil
+
+    if type(option.args) == "table" then
+        for _, child in pairs(option.args) do
+            NormalizeLegacyAceConfigOptions(child)
+        end
+    end
+end
+
 if not addon.settings.gui then
     addon.settings.gui = {selectedDeleteGuide = "", importStatusHistory = {}}
 end
@@ -3788,6 +3821,7 @@ function addon.settings:CreateAceOptionsPanel()
         table.insert(addon.settings.routingOptions, entry)
     end
 
+    NormalizeLegacyAceConfigOptions(optionsTable)
     AceConfig:RegisterOptionsTable(addon.title, optionsTable)
 
     optionsTable.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(
@@ -3836,6 +3870,10 @@ function addon.settings:CreateAceOptionsPanel()
             return addon.settings.defaultProfileKey == settingsDB:GetCurrentProfile()
         end
     }
+
+    -- AceDBOptions is attached after the root table is registered. Normalize
+    -- that late subtree as well before AceConfigDialog validates it on open.
+    NormalizeLegacyAceConfigOptions(optionsTable.args.profiles)
 
     addon.RXPOptions = AceConfigDialog:AddToBlizOptions(addon.title)
 

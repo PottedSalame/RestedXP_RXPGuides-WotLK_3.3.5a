@@ -1605,6 +1605,14 @@ function addon.BetaVersionCheck()
 end
 
 function addon.ProcessGuideTable(guide)
+    if type(guide) ~= "table" then
+        if addon.comms and addon.comms.PrettyDebug then
+            addon.comms.PrettyDebug(
+                "Ignored an unavailable guide while rebuilding guide data")
+        end
+        return nil
+    end
+
     local currentGuide = {}
 
     for k, v in pairs(guide) do
