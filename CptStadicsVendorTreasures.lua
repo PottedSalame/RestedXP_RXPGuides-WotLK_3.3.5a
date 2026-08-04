@@ -16,6 +16,8 @@ local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
 local GetItemQualityColor = C_Item and C_Item.GetItemQualityColor or _G.GetItemQualityColor
 
 local GameTooltip, WorldMapFrame = _G.GameTooltip, _G.WorldMapFrame
+local VendorTooltip = legacy335 and (_G.WorldMapTooltip or GameTooltip) or
+                          GameTooltip
 local UnitOnTaxi, GetBestMapForUnit, GetPlayerMapPosition = _G.UnitOnTaxi, C_Map.GetBestMapForUnit,
                                                             C_Map.GetPlayerMapPosition
 local pairs, tinsert = pairs, table.insert
@@ -39,6 +41,12 @@ local CLASS_GEAR = L("Gear Vendor")
 local CLASS_COLORS = {}
 CLASS_COLORS[CLASS_POTION] = {1, 0.82, 0}
 CLASS_COLORS[CLASS_GEAR] = {0.12, 1.0, 0.0}
+
+local FACTION_COLORS = {
+    [HORDE] = {0.9, 0.2, 0.15},
+    [ALLIANCE] = {0.2, 0.55, 1.0},
+    [NEUTRAL] = {0.9, 0.8, 0.2},
+}
 
 -- TODO addon.mapId
 -- Kalimdor
@@ -363,17 +371,29 @@ end
 
 function Frame:GetZoneData(zone) return DATA[zone] end
 
-function Frame:CreateMapPin(_, data)
+function Frame:CreateMapPin(_, data, isInteractiveWorldPin)
     local pinFrame = CreateFrame("Button", nil, UIParent)
     pinFrame:EnableMouse(true)
     pinFrame:SetFrameLevel(2100)
-    pinFrame:SetScript("OnClick", function(pin) Frame:ShowPinItemTooltip(pin) end)
-    pinFrame:SetScript("OnEnter", function(pin) Frame:ShowPinTooltip(pin) end)
-    pinFrame:SetScript("OnLeave", function() Frame:HidePinTooltip() end)
+    pinFrame:SetScript("OnClick", function(pin)
+        pin.__vendorTooltipToken = (pin.__vendorTooltipToken or 0) + 1
+        Frame:ShowPinItemTooltip(pin)
+    end)
+    pinFrame:SetScript("OnEnter", function(pin)
+        pin.__vendorTooltipToken = (pin.__vendorTooltipToken or 0) + 1
+        pin.__vendorTooltipRefreshAttempts = 0
+        Frame:ShowPinTooltip(pin)
+    end)
+    pinFrame:SetScript("OnLeave", function(pin)
+        pin.__vendorTooltipToken = (pin.__vendorTooltipToken or 0) + 1
+        pin.__vendorTooltipRefreshAttempts = nil
+        Frame:HidePinTooltip()
+    end)
     local pinTexture = pinFrame:CreateTexture(nil, "OVERLAY")
     pinTexture:SetAllPoints(pinFrame)
     pinTexture:SetTexture(ICON_PATH)
     pinFrame.__data = data
+    pinFrame.__HBD335InteractiveWorldPin = isInteractiveWorldPin and true or nil
     pinFrame.texture = pinTexture
     pinFrame:SetHighlightTexture(ICON_PATH, "ADD")
     pinFrame:Hide()
@@ -401,7 +421,7 @@ function Frame:ShowPinItemTooltip(pin)
 
     local npcLootID = npcLoot[TOOLTIP_LOOT_INDEX]
 
-    GameTooltip:SetHyperlink("item:" .. npcLootID .. ":0:0:0:0:0:0:0")
+    VendorTooltip:SetHyperlink("item:" .. npcLootID .. ":0:0:0:0:0:0:0")
 
     TOOLTIP_LOOT_INDEX = TOOLTIP_LOOT_INDEX + 1
 
@@ -419,39 +439,99 @@ function Frame:ShowPinTooltip(pin)
     local npcLoot = npcData.loot
 
     local npcColor = CLASS_COLORS[npcClass] or {1, 1, 1}
-
-    GameTooltip:SetOwner(pin, "ANCHOR_BOTTOMRIGHT")
-    GameTooltip:SetText(npcData.name, npcColor[1], npcColor[2], npcColor[3])
-    GameTooltip:AddLine(npcClass, 0.7, 0.7, 0.7)
-
-    if type(npcLoot) == "table" and next(npcLoot) ~= nil then
-        local lowerItemBound = addon.player.level - 10
-        local upperItemBound = addon.player.level + 5
-
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddLine("Notable Items:")
-
-        local itemName, itemRarity, itemRarityR, itemRarityG, itemRarityB, itemMinLevel
-
-        for _, itemID in ipairs(npcLoot) do
-            itemName, _, itemRarity, _, itemMinLevel = GetItemInfo(itemID)
-
-            if itemName ~= nil and (itemMinLevel and itemMinLevel > lowerItemBound and itemMinLevel < upperItemBound) then
-                itemRarityR, itemRarityG, itemRarityB = GetItemQualityColor(itemRarity)
-
-                GameTooltip:AddLine(itemName, itemRarityR, itemRarityG, itemRarityB)
-            end
-        end
-        GameTooltip:AddLine("(Click to view)", 0.7, 0.7, 0.7)
+    local factionColor = FACTION_COLORS[npcData.faction] or {1, 1, 1}
+    local mapInfo = C_Map and C_Map.GetMapInfo and
+                        C_Map.GetMapInfo(npcData.zone)
+    local zoneName = mapInfo and mapInfo.name
+    if not zoneName or zoneName == "" then
+        zoneName = string.format("Map %s", tostring(npcData.zone or "?"))
     end
 
-    GameTooltip:Show()
+    local center = pin.GetCenter and pin:GetCenter()
+    local anchor = center and center > (UIParent:GetWidth() / 2) and
+                       "ANCHOR_LEFT" or "ANCHOR_RIGHT"
+
+    local function AddInformation(label, value, r, g, b)
+        value = value or "-"
+        if VendorTooltip.AddDoubleLine then
+            VendorTooltip:AddDoubleLine(label, value, 0.95, 0.82, 0.25,
+                                        r or 1, g or 1, b or 1)
+        else
+            VendorTooltip:AddLine(label .. " " .. value, r or 1, g or 1,
+                                  b or 1)
+        end
+    end
+
+    VendorTooltip:SetOwner(pin, anchor)
+    VendorTooltip:ClearLines()
+    VendorTooltip:SetText(npcData.name or L("Unknown"), npcColor[1],
+                          npcColor[2], npcColor[3])
+    AddInformation(L("Vendor Type:"), npcClass)
+    AddInformation(L("Faction:"), npcData.faction, factionColor[1],
+                   factionColor[2], factionColor[3])
+    AddInformation(L("Zone:"), zoneName)
+    AddInformation(L("Coordinates:"),
+                   string.format("%.1f, %.1f", npcData.x or 0,
+                                 npcData.y or 0))
+
+    if type(npcLoot) == "table" and next(npcLoot) ~= nil then
+        VendorTooltip:AddLine(" ")
+        VendorTooltip:AddLine(L("Notable Stock:"), 0.95, 0.82, 0.25)
+
+        local missingItemInfo
+        for _, itemID in ipairs(npcLoot) do
+            local itemName, itemLink, itemRarity, _, itemMinLevel, itemType,
+                  itemSubType = GetItemInfo(itemID)
+            if not itemName then missingItemInfo = true end
+            local itemText = itemLink or itemName or
+                                 string.format("Item #%d", itemID)
+            local detail = itemSubType or itemType or ""
+            if itemMinLevel and itemMinLevel > 0 then
+                local levelText = string.format(L("Requires level %d"),
+                                                itemMinLevel)
+                detail = detail ~= "" and (detail .. " - " .. levelText) or
+                             levelText
+            end
+            local r, g, b = 0.7, 0.7, 0.7
+            if itemRarity ~= nil then
+                r, g, b = GetItemQualityColor(itemRarity)
+            end
+            if VendorTooltip.AddDoubleLine then
+                VendorTooltip:AddDoubleLine(itemText, detail, r, g, b, 0.75,
+                                            0.75, 0.75)
+            else
+                VendorTooltip:AddLine(itemText ..
+                                          (detail ~= "" and " - " .. detail or
+                                              ""), r, g, b)
+            end
+        end
+        VendorTooltip:AddLine(L("Click to inspect each item"), 0.7, 0.7,
+                              0.7)
+
+        -- A fresh client often has none of these item records cached yet.
+        -- GetItemInfo starts the server query; retry the open card a few times
+        -- so IDs are replaced by names/details without requiring another hover.
+        local attempts = pin.__vendorTooltipRefreshAttempts or 0
+        if missingItemInfo and attempts < 3 then
+            attempts = attempts + 1
+            pin.__vendorTooltipRefreshAttempts = attempts
+            local token = pin.__vendorTooltipToken
+            C_Timer.After(0.35 * attempts, function()
+                if pin.__vendorTooltipToken == token and
+                    VendorTooltip:GetOwner() == pin then
+                    Frame:ShowPinTooltip(pin)
+                end
+            end)
+        end
+    end
+
+    VendorTooltip:Show()
 
 end
 
 function Frame:HidePinTooltip()
     TOOLTIP_LOOT_INDEX = 1
-    GameTooltip:Hide()
+    VendorTooltip:Hide()
 end
 
 local function GetMapID()
@@ -635,8 +715,8 @@ function Frame:LoadNPCData(data)
 
     data.loaded = true
     data.rarity = rarity
-    data.worldpin = Frame:CreateMapPin(nil, data)
-    data.minipin = Frame:CreateMapPin(nil, data)
+    data.worldpin = Frame:CreateMapPin(nil, data, true)
+    data.minipin = Frame:CreateMapPin(nil, data, false)
 
 end
 

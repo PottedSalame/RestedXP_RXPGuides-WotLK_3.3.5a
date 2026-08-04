@@ -734,9 +734,18 @@ if Pins then
         -- reparent it. Parent it to the world-map frame so it is hidden together
         -- with the map (otherwise the pin renders on-screen permanently) and draws
         -- above the map art.
-        icon:SetParent(worldMapAnchor)
-        icon:SetFrameStrata(worldMapAnchor:GetFrameStrata())
-        icon:SetFrameLevel((worldMapAnchor:GetFrameLevel() or 0) + 5)
+        -- WorldMapButton is a transparent full-map input layer and is declared
+        -- after WorldMapDetailFrame in stock 3.3.5 FrameXML. Interactive icons
+        -- parented to the detail frame remain visible but cannot receive hover
+        -- or click events. Reparent only explicitly marked interactive pins to
+        -- that input layer; ordinary guide pins keep their existing behavior.
+        local iconParent = worldMapAnchor
+        if icon.__HBD335InteractiveWorldPin and _G.WorldMapButton then
+            iconParent = _G.WorldMapButton
+        end
+        icon:SetParent(iconParent)
+        icon:SetFrameStrata(iconParent:GetFrameStrata())
+        icon:SetFrameLevel((iconParent:GetFrameLevel() or 0) + 5)
         local ok = Astrolabe:PlaceIconOnWorldMap(worldMapAnchor, icon, c, z, x, y)
         -- Astrolabe returns nil-ish and hides the icon when it is not on the
         -- currently displayed map.
