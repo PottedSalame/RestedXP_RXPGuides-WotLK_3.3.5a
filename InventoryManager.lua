@@ -405,6 +405,8 @@ local function IsJunk(id, bag, slot)
     if not itemName or not itemLink then return false end
 
     if IsConsumable(id, itemLink, itemType) then return false end
+    if addon.supplies and addon.supplies.IsProtectedItem and
+        addon.supplies:IsProtectedItem(id) then return false end
 
     -- `manualJunkOverrides` records all choices made by current versions. Keep a
     -- legacy "useful" choice as a safety override, but defer legacy junk=true

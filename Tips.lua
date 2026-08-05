@@ -37,6 +37,14 @@ local session = {
     dangerousMobs = {}
 }
 
+local function SetTipsFont(region, size)
+    local font = addon.font or _G.STANDARD_TEXT_FONT
+    if region and font then region:SetFont(font, size, "") end
+    if region and not select(1, region:GetFont()) then
+        region:SetFont("Fonts\\FRIZQT__.TTF", size, "")
+    end
+end
+
 function addon.tips:Setup()
     if not addon.settings.profile.enableTips then
         self:HideTipsFrame()
@@ -121,9 +129,14 @@ function addon.tips:CreateTipsFrame()
     frame.title:EnableMouse(true)
     frame.title:SetScript("OnMouseDown", frame.onMouseDown)
     frame.title:SetScript("OnMouseUp", frame.onMouseUp)
-    frame.title.text = frame.title:CreateFontString(nil, "OVERLAY")
+    -- A bare FontString has no inherited font on stock 3.3.5a. SetText() on
+    -- such a region throws "Font not set" before UpdateVisuals can assign the
+    -- active theme font, which can abort standalone addon initialization.
+    frame.title.text = frame.title:CreateFontString(nil, "OVERLAY",
+                                                     "GameFontNormalSmall")
     frame.title.text:SetPoint("CENTER", frame.title, 0, 1)
     frame.title.text:SetJustifyH("CENTER")
+    SetTipsFont(frame.title.text, 9)
     frame.title.text:SetText(L("Emergency actions"))
 
     frame.UpdateVisuals = function(this)
@@ -134,11 +147,11 @@ function addon.tips:CreateTipsFrame()
         this.title:ClearBackdrop()
         this.title:SetBackdrop(addon.RXPFrame.backdrop.edge)
         this.title:SetBackdropColor(unpack(addon.colors.background))
-        this.title.text:SetFont(addon.font, 9, "")
+        SetTipsFont(this.title.text, 9)
         this.title.text:SetTextColor(unpack(addon.activeTheme.textColor))
         this.title:SetSize(this.title.text:GetStringWidth() + 14, 19)
         for _, entry in ipairs(this.entries) do
-            entry.text:SetFont(addon.font, 10, "")
+            SetTipsFont(entry.text, 10)
             entry.text:SetTextColor(unpack(addon.activeTheme.textColor))
         end
     end
@@ -198,11 +211,12 @@ function addon.tips:UpdateTipsFrame()
             entry.icon = entry:CreateTexture(nil, "ARTWORK")
             entry.icon:SetSize(24, 24)
             entry.icon:SetPoint("LEFT", entry, "LEFT", 3, 0)
-            entry.text = entry:CreateFontString(nil, "OVERLAY")
+            entry.text = entry:CreateFontString(nil, "OVERLAY",
+                                                "GameFontHighlightSmall")
             entry.text:SetPoint("LEFT", entry.icon, "RIGHT", 7, 0)
             entry.text:SetPoint("RIGHT", entry, "RIGHT", -4, 0)
             entry.text:SetJustifyH("LEFT")
-            entry.text:SetFont(addon.font, 10, "")
+            SetTipsFont(entry.text, 10)
             entry.text:SetTextColor(unpack(addon.activeTheme.textColor))
             entry:SetScript("OnEnter", function(this)
                 if not this.action then return end

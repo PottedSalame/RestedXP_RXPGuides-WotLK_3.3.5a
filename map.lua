@@ -1557,6 +1557,10 @@ function addon.GetMapId(zone)
 end
 
 function addon.GetMapInfo(zone,x,y)
+    if addon.compatibilityPacks and
+        addon.compatibilityPacks.ResolveMapAlias then
+        zone = addon.compatibilityPacks:ResolveMapAlias(zone)
+    end
     x = tonumber(x)
     y = tonumber(y)
     if not (x and y and zone) then

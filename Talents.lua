@@ -1109,6 +1109,10 @@ function addon.talents:RefreshSelectedGuideForSpec()
         if changed then self:Audit() end
         self:DrawTalents()
     end
+    if changed and addon.itemUpgrades and addon.itemUpgrades.Setup then
+        addon.itemUpgrades:Setup()
+        if addon.gearAdvisor then addon.gearAdvisor:Refresh() end
+    end
     return changed
 end
 
@@ -1141,6 +1145,10 @@ function addon.talents:UpdateSelectedGuide(key)
     -- e.g. Hunter guide loaded but load in a Shaman
     RXPCData.activeTalentGuide = key
     self.guides[key].audit = nil
+    if addon.itemUpgrades and addon.itemUpgrades.Setup then
+        addon.itemUpgrades:Setup()
+        if addon.gearAdvisor then addon.gearAdvisor:Refresh() end
+    end
     -- print("RXPCData.activeTalentGuide", RXPCData.activeTalentGuide)
     return true
 end

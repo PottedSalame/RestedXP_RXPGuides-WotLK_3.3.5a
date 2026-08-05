@@ -104,7 +104,7 @@ end
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 addon.release = GetAddOnMetadata(addonName, "Version")
 addon.title = GetAddOnMetadata(addonName, "Title")
-local cacheVersion = 31
+local cacheVersion = 32
 local L = addon.locale.Get
 
 if string.match(addon.release, 'project') then
@@ -367,6 +367,14 @@ end
 
 function addon.NormalizeQuestAcceptedId(arg1, arg2)
     if arg2 then return arg2 end
+    local quirks = addon.compatibilityPacks and
+                       addon.compatibilityPacks:GetEventQuirks() or nil
+    -- Most 3.3.5 cores emit QUEST_ACCEPTED(logIndex). A verified data pack may
+    -- explicitly report a direct quest-ID first argument instead.
+    if addon.gameVersion == 30300 and quirks and
+        quirks.questAcceptedLogIndex == false then
+        return tonumber(arg1)
+    end
     if addon.gameVersion == 30300 and arg1 and C_QuestLog and
         C_QuestLog.GetQuestIDForLogIndex then
         return C_QuestLog.GetQuestIDForLogIndex(arg1)
@@ -1178,6 +1186,11 @@ local pendingQuestAccept
 local questAutomationRetrySerial = 0
 local confirmedQuestAccepts = {}
 
+local function QuestEventQuirks()
+    return addon.compatibilityPacks and
+               addon.compatibilityPacks:GetEventQuirks() or {}
+end
+
 local function CompleteConfirmedQuestElement(element, event, questId)
     if type(element) ~= "table" or element.completed or
         type(element.step) ~= "table" or not element.step.active or
@@ -1208,8 +1221,9 @@ end
 local function ScheduleQuestAutomationRetries()
     questAutomationRetrySerial = questAutomationRetrySerial + 1
     local serial = questAutomationRetrySerial
+    local packDelay = tonumber(QuestEventQuirks().questTurnedInDelayed) or 0
     for _, delay in ipairs({0.10, 0.30, 0.60}) do
-        C_Timer.After(delay, function()
+        C_Timer.After(delay + packDelay, function()
             if serial == questAutomationRetrySerial and
                 not pendingQuestAccept then
                 addon:QuestAutomation()
@@ -1219,7 +1233,9 @@ local function ScheduleQuestAutomationRetries()
 end
 
 local function ClearExpiredPendingAccept()
-    if pendingQuestAccept and GetTime() - pendingQuestAccept.started > 5 then
+    local packDelay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
+    local lifetime = math.max(5, packDelay + 1)
+    if pendingQuestAccept and GetTime() - pendingQuestAccept.started > lifetime then
         pendingQuestAccept = nil
     end
 end
@@ -1305,11 +1321,18 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             questId = pendingQuestAccept.questId
         end
         CommitQuestAccept(questId)
+        if addon.lore then addon.lore:MarkSeen(questId) end
         return
     elseif event == "QUEST_LOG_UPDATE" then
-        ReconcilePendingAccept()
+        local delay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
+        if delay > 0 then
+            C_Timer.After(delay, ReconcilePendingAccept)
+        else
+            ReconcilePendingAccept()
+        end
         return
     elseif event == "QUEST_TURNED_IN" then
+        if addon.lore then addon.lore:MarkSeen(arg1) end
         local guideTurnIn = GetQuestAutomationElement(addon.questTurnIn, arg1)
         if guideTurnIn then
             turnInTimer = GetTime()
@@ -1398,6 +1421,10 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         }
         ConfirmAcceptQuest()
     elseif event == "QUEST_COMPLETE" then
+        local loreQuestId = GetQuestID and GetQuestID()
+        if addon.lore and addon.lore:ShouldPause(loreQuestId, "turnin") then
+            return
+        end
         handleQuestComplete()
     elseif event == "QUEST_PROGRESS" then
         local id = GetQuestID()
@@ -1424,6 +1451,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         local guideAccept = GetQuestAcceptAutomationElement(lookup)
         local questId = guideAccept and tonumber(guideAccept.questId)
         if questId and addon.disabledQuests and addon.disabledQuests[questId] then
+            return
+        elseif addon.lore and addon.lore:ShouldPause(questId, "accept",
+                                                     guideAccept) then
             return
         elseif addon.QuestAutoAccept(lookup) or
             (recentTurnIn and guideAccept and
@@ -1599,6 +1629,10 @@ function addon:OnInitialize()
     if characterIdentity then RXPCData.characterIdentity = characterIdentity end
     if characterGUID then RXPCData.characterGUID = characterGUID end
 
+    if addon.roadmap and addon.roadmap.InitializeSavedData then
+        addon.roadmap:InitializeSavedData()
+    end
+
     local realm = _G.GetRealmName()
     RXPData.realmData = RXPData.realmData or {}
     local realmData = RXPData.realmData[realm] or {}
@@ -1657,20 +1691,28 @@ function addon:OnInitialize()
     -- Auxiliary modules are wrapped so an error in a Phase-2 feature (targeting,
     -- tracker, tips...) can't halt OnInitialize before LoadCachedGuides() below,
     -- which is what actually loads the active guide's content.
-    local commsOK, commsError = pcall(function() addon.comms:Setup() end)
-    if not commsOK then _G.geterrorhandler()(commsError) end
-    pcall(function() addon.targeting:Setup() end)
+    addon.roadmap:RunOptional("communications",
+        function() addon.comms:Setup() end)
+    addon.roadmap:RunOptional("targeting",
+        function() addon.targeting:Setup() end)
     if addon.talents then
-        local talentsOK, talentsError = pcall(function() addon.talents:Setup() end)
-        if not talentsOK then _G.geterrorhandler()(talentsError) end
+        addon.roadmap:RunOptional("talents",
+            function() addon.talents:Setup() end)
     end
     if addon.settings.profile.enableTracker then
-        pcall(function() addon.tracker:SetupTracker() end)
+        addon.roadmap:RunOptional("leveling tracker",
+            function() addon.tracker:SetupTracker() end)
     end
-    if addon.tips then pcall(function() addon.tips:Setup() end) end
-    if addon.VendorTreasures then pcall(function() addon.VendorTreasures:Setup() end) end
+    if addon.tips then
+        addon.roadmap:RunOptional("tips", function() addon.tips:Setup() end)
+    end
+    if addon.VendorTreasures then
+        addon.roadmap:RunOptional("vendor treasures",
+            function() addon.VendorTreasures:Setup() end)
+    end
     if addon.itemUpgrades then
-        pcall(function() addon.itemUpgrades:Setup() end)
+        addon.roadmap:RunOptional("item upgrades",
+            function() addon.itemUpgrades:Setup() end)
     end
 
     if addon.player.season == 2 then
@@ -1678,6 +1720,9 @@ function addon:OnInitialize()
     end
 
     addon.LoadCachedGuides()
+    if addon.roadmap and addon.roadmap.Setup then
+        addon.roadmap:Setup()
+    end
     addon.UpdateGuideFontSize()
     addon.isHidden = not addon.settings.profile.showEnabled or addon.settings.profile.hideGuideWindow
     addon.RXPFrame:SetShown(not addon.isHidden)
@@ -1734,6 +1779,14 @@ function addon:OnEnable()
         addon.LoadAllGuides()
     end
     addon.addonLoaded = true
+    if addon.guideHub and addon.guideHub.setup and
+        addon.guideHub.OnGuidesReady then
+        addon.guideHub:OnGuidesReady()
+    end
+    if addon.activityPlanner and addon.activityPlanner.setup and
+        addon.activityPlanner.OnGuidesReady then
+        addon.activityPlanner:OnGuidesReady()
+    end
     ProcessSpells()
     addon.GetProfessionLevel()
     addon:RestoreCharacterGuideProgress()
@@ -1919,6 +1972,9 @@ function addon:SaveCharacterGuideProgress()
     RXPCData.currentGuideName = guide.name
     RXPCData.currentStep = step
     RXPCData.currentStepId = guide.steps[step].stepId
+    if addon.guideState and addon.guideState.SaveCurrent then
+        addon.guideState:SaveCurrent()
+    end
 end
 
 function addon:PLAYER_LOGOUT()
@@ -2150,16 +2206,21 @@ function addon.LegacyUpdateLoop()
         addon.updateBottomFrame = true
         addon.nextStep = false
     elseif addon.loadNextStep then
-        addon.loadNextStep = false
-        -- Browse mode (/rxp browse) freezes progression so the user can navigate
-        -- back through the guide (to review or test) without it auto-advancing to
-        -- their real position. Clearing loadNextStep above stops it re-triggering.
-        if not addon.browseMode then
-            event = event .. "/loadNext"
-            addon.SetStep(RXPCData.currentStep + 1)
-            addon.questAutoAccept = true
+        local holdForParty = addon.partySync and
+                                 addon.partySync:ShouldHoldAdvance()
+        if holdForParty then
             skip = 1
-            addon.updateBottomFrame = true
+        else
+            addon.loadNextStep = false
+            -- Browse mode (/rxp browse) freezes progression so the user can
+            -- navigate back without it auto-advancing to the real position.
+            if not addon.browseMode then
+                event = event .. "/loadNext"
+                addon.SetStep(RXPCData.currentStep + 1)
+                addon.questAutoAccept = true
+                skip = 1
+                addon.updateBottomFrame = true
+            end
         end
     elseif activeQuestUpdate == 0 then
         if addon.updateSteps then

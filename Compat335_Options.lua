@@ -256,6 +256,116 @@ local function BuildOptions()
                     if v and MerchantIsOpen() then TryAutomaticRepair() end
                 end,
             },
+            roadmapHeader = {
+                type = "header",
+                order = 7,
+                name = "Guide tools and accessibility",
+            },
+            loreMode = {
+                type = "select",
+                order = 7.1,
+                width = "full",
+                name = "Quest lore pause",
+                desc = "Pauses quest accept/turn-in automation so quest text can be read.",
+                values = {off = "Off", first = "First time", always = "Always"},
+                get = function()
+                    return addon.settings and addon.settings.profile.loreMode or "off"
+                end,
+                set = function(_, value)
+                    if addon.lore then addon.lore:SetMode(value) end
+                end,
+            },
+            colorBlindMode = {
+                type = "select",
+                order = 7.2,
+                width = "full",
+                name = "Accessible color and symbol preset",
+                values = {
+                    off = "Off", deuteranopia = "Deuteranopia",
+                    protanopia = "Protanopia", tritanopia = "Tritanopia",
+                    contrast = "High contrast"
+                },
+                get = function()
+                    return addon.settings and addon.settings.profile.colorBlindMode or "off"
+                end,
+                set = function(_, value)
+                    if addon.accessibility then addon.accessibility:SetMode(value) end
+                end,
+            },
+            partyGuideSync = {
+                type = "toggle",
+                order = 7.3,
+                width = "full",
+                name = "Enable party guide synchronization",
+                desc = "Opt in to sharing the active guide and step with RXP party members.",
+                get = function()
+                    return addon.settings and addon.settings.profile.partyGuideSync
+                end,
+                set = function(_, value)
+                    if addon.partySync then
+                        addon.partySync:HandleCommand(value and "party on" or "party off")
+                    else
+                        addon.settings.profile.partyGuideSync = value
+                    end
+                end,
+            },
+            partyGuideWait = {
+                type = "toggle",
+                order = 7.4,
+                width = "full",
+                name = "Wait for synchronized party members",
+                get = function()
+                    return addon.settings and addon.settings.profile.partyGuideWait
+                end,
+                set = function(_, value)
+                    addon.settings.profile.partyGuideWait = value
+                end,
+                disabled = function()
+                    return not (addon.settings and addon.settings.profile.partyGuideSync)
+                end,
+            },
+            guideHub = {
+                type = "execute",
+                order = 8,
+                name = "Open Guide Hub",
+                func = function() if addon.guideHub then addon.guideHub:Toggle() end end,
+            },
+            backup = {
+                type = "execute",
+                order = 8.05,
+                name = "Backup / Restore",
+                func = function() if addon.roadmap then addon.roadmap:OpenBackupWindow() end end,
+            },
+            diagnose = {
+                type = "execute",
+                order = 8.06,
+                name = "Diagnose Current Step",
+                func = function() if addon.diagnostics then addon.diagnostics:Open() end end,
+            },
+            supplies = {
+                type = "execute",
+                order = 8.1,
+                name = "Open Class Supplies",
+                func = function() if addon.supplies then addon.supplies:Toggle() end end,
+            },
+            gearAdvisor = {
+                type = "execute",
+                order = 8.2,
+                name = "Open Gear Advisor",
+                func = function() if addon.gearAdvisor then addon.gearAdvisor:Toggle() end end,
+            },
+            dailies = {
+                type = "execute",
+                order = 8.3,
+                name = "Open Daily Planner",
+                func = function() if addon.activityPlanner then addon.activityPlanner:Toggle() end end,
+            },
+            recorder = {
+                type = "execute",
+                order = 8.4,
+                name = "Guide Author Recorder",
+                func = function() if addon.guideRecorder then addon.guideRecorder:Toggle() end end,
+            },
             reloadNote = {
                 type = "description",
                 order = 10,

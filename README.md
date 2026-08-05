@@ -118,7 +118,19 @@ Targeting actions use secure buttons and still require a physical key or mouse p
 - `/rxp bug` or `/rxp feedback` — open the feedback form.
 - `/rxp help` — show command help.
 
-The aliases `/rxpg` and `/rxpguides` are also registered.
+Roadmap tools are also available directly:
+
+- `/rxp guides` opens the searchable Guide Hub.
+- `/rxp backup` opens sanitized backup export/import.
+- `/rxp diagnose` opens Step Doctor for the current step.
+- `/rxp supplies` opens the class-supplies merchant checklist.
+- `/rxp gear` opens the complete-layout Gear Advisor.
+- `/rxp dailies` opens the WotLK daily and weekly planner.
+- `/rxp record` opens the opt-in Guide Author recorder.
+
+The aliases `/rxpg` and `/rxpguides` are also registered. See
+[FEATURES_335.md](FEATURES_335.md) for the roadmap services, privacy boundaries,
+and safe-mode behavior.
 
 ## Quick Install
 

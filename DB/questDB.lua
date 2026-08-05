@@ -112,6 +112,14 @@ function addon.GetQuestPreReqState(id, group, state)
     id = tonumber(id)
     if not id then return end
 
+    if addon.compatibilityPacks and
+        addon.compatibilityPacks.GetQuestPrerequisite then
+        local override = addon.compatibilityPacks:GetQuestPrerequisite(id)
+        if override then
+            return EvaluateStandalonePrerequisite(override, state)
+        end
+    end
+
     -- The complete AzerothCore table is authoritative on 3.3.5.  Per-guide
     -- metadata is deliberately retained as a fallback for custom/modern
     -- guides, but it cannot represent signed or alternative predecessors.
@@ -169,6 +177,11 @@ end
 local function IsQuestAvailable(quest,id,skipRepCheck)
     if not quest then return end
     id = id or quest.Id
+    if addon.compatibilityPacks and
+        addon.compatibilityPacks.GetQuestAvailability and
+        addon.compatibilityPacks:GetQuestAvailability(id) == false then
+        return false
+    end
 
     local function ProcessRep(rep,faction)
         local _, _, standing,_,_,value = addon.GetFactionInfoByID(faction)

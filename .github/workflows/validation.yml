@@ -1,0 +1,40 @@
+name: Validate 3.3.5 addon data
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Guides, quest flow, talents, and privacy
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate loaded guides and compatibility packs
+        shell: pwsh
+        run: ./tools/Validate-Guides335.ps1
+
+      - name: Validate quest flow
+        shell: pwsh
+        run: ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation
+
+      - name: Validate talent guides
+        shell: pwsh
+        run: ./tools/Validate-Talents335.ps1
+
+      - name: Validate roadmap module wiring and safety guards
+        shell: pwsh
+        run: ./tools/Validate-Roadmap335.ps1
+
+      - name: Reject personal paths and private runtime data
+        shell: pwsh
+        run: ./tools/Validate-Privacy335.ps1

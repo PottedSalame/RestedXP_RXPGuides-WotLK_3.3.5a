@@ -29,6 +29,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate 3.3.5 guides and compatibility packs
+        shell: pwsh
+        run: ./tools/Validate-Guides335.ps1
+
+      - name: Validate quest flow and talent plans
+        shell: pwsh
+        run: |
+          ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation
+          ./tools/Validate-Talents335.ps1
+          ./tools/Validate-Roadmap335.ps1
+
+      - name: Reject personal paths from the release archive
+        shell: pwsh
+        run: ./tools/Validate-Privacy335.ps1
+
       - name: Resolve release metadata
         id: metadata
         shell: bash

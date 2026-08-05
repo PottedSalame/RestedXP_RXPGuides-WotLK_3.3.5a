@@ -35,6 +35,7 @@ DB\wotlk\rares.lua
 DB\wotlk\db.lua
 DB\wotlk\dungeonData_335.lua
 DB\wotlk\questPrerequisites_335.lua
+DB\wotlk\compatibilityPacks_335.lua
 DB\questDB.lua
 # Prefer the existing level-bracketed speedrun weights, then fill missing Wrath
 # classes/specs with the 3.3.5 fallback table.
@@ -58,6 +59,19 @@ CptStadicsVendorTreasures.lua
 map.lua
 functions.lua
 GuideLoader.lua
+
+# Staged 3.3.5 feature-roadmap foundation and stock legacy interfaces.
+RoadmapCore.lua
+GuideHub.lua
+Diagnostics.lua
+Recovery.lua
+CompatibilityPacks.lua
+PartySync.lua
+Supplies.lua
+GearAdvisor.lua
+ActivityPlanner.lua
+Accessibility.lua
+GuideRecorder.lua
 
 # Root-level copies of the guide/talent loaders so their "Guides/..." <Script>
 # paths resolve from the addon root on 3.3.5a (see DB note above).

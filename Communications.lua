@@ -266,6 +266,10 @@ function addon.comms:OnCommReceived(prefix, data, _, sender)
 
     if not status or not obj.command then return end
 
+    if addon.partySync and addon.partySync:HandleMessage(obj, sender) then
+        return
+    end
+
     self.state.rxpGroupDetected = true
 
     if obj.command == 'ANNOUNCE' then
@@ -463,6 +467,9 @@ function addon.comms.PrettyDebug(msg, ...)
 end
 
 function addon.comms.OpenBugReport(stepNumber)
+    if addon.diagnostics and addon.diagnostics.OpenIssueReport then
+        return addon.diagnostics:OpenIssueReport(stepNumber)
+    end
     -- Came from dropdown menu
     if type(stepNumber) == "table" and stepNumber.arg1 then stepNumber = stepNumber.arg1 end
 

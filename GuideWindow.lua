@@ -584,7 +584,8 @@ local function GetStepVisualState(step)
     local skipped = RXPCData and RXPCData.stepSkip and index and
                         RXPCData.stepSkip[index]
 
-    if step.completed or skipped then return "completed" end
+    if skipped then return "skipped" end
+    if step.completed then return "completed" end
     if step.sticky and step.active then return "sticky" end
     if index and currentStep and index < currentStep and not step.sticky then
         return "completed"
@@ -596,7 +597,9 @@ end
 local function ApplyStepVisualState(frame, step, bottom)
     if not frame then return end
     local state = GetStepVisualState(step)
-    local visual = stepVisuals[state]
+    local visuals = addon.accessibility and
+                        addon.accessibility:GetStepVisuals() or stepVisuals
+    local visual = visuals[state]
     local background = visual and visual.background or
                            (bottom and addon.colors.bottomFrameBG or
                                addon.colors.background)
@@ -610,6 +613,9 @@ local function ApplyStepVisualState(frame, step, bottom)
     end
     if frame.number and frame.number.text then
         frame.number.text:SetTextColor(unpack(textColor))
+        if addon.accessibility then
+            addon.accessibility:ApplyStepNumber(frame.number, step, state)
+        end
     end
     if bottom and frame.text then
         frame.text:SetTextColor(unpack(textColor))
@@ -621,13 +627,25 @@ local function ApplyElementVisualState(elementFrame, element, step)
     local color = addon.activeTheme.textColor
     if element and not element.textOnly then
         if element.completed then
-            color = stepVisuals.completed.text
+            local visuals = addon.accessibility and
+                                addon.accessibility:GetStepVisuals() or
+                                stepVisuals
+            color = visuals.completed.text
         elseif element.skip then
-            color = stepVisuals.skipped.text
+            local visuals = addon.accessibility and
+                                addon.accessibility:GetStepVisuals() or
+                                stepVisuals
+            color = visuals.skipped.text
         elseif GetStepVisualState(step) == "current" then
-            color = stepVisuals.current.text
+            local visuals = addon.accessibility and
+                                addon.accessibility:GetStepVisuals() or
+                                stepVisuals
+            color = visuals.current.text
         elseif GetStepVisualState(step) == "sticky" then
-            color = stepVisuals.sticky.text
+            local visuals = addon.accessibility and
+                                addon.accessibility:GetStepVisuals() or
+                                stepVisuals
+            color = visuals.sticky.text
         end
     end
     elementFrame.text:SetTextColor(unpack(color))
@@ -739,6 +757,9 @@ function addon.SetStep(n, n2, loopback)
     end
     RXPCData.currentStep = n
     RXPCData.currentStepId = guide.steps[n].stepId
+    if addon.guideState and addon.guideState.SaveCurrent then
+        addon.guideState:SaveCurrent()
+    end
     -- isUpdating = true
 
     if not guide.steps[n].active then
@@ -1751,8 +1772,11 @@ function addon:FetchGuide(guide,arg2)
 end
 
 function addon:LoadGuideTable(guideGroup,guideName)
-    return addon:LoadGuide(addon.GetGuideTable(guideGroup, guideName), nil,
-                           "manual")
+    local guide = addon.GetGuideTable(guideGroup, guideName)
+    if addon.guideState and addon.guideState.Load then
+        return addon.guideState:Load(guide, false, "manual")
+    end
+    return addon:LoadGuide(guide, nil, "manual")
 end
 
 -- A later chapter often begins by turning in a quest picked up by the previous
@@ -2002,6 +2026,9 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
 
     addon.currentGuide = addon.ProcessGuideTable(guide)
     guide = addon.currentGuide
+    if addon.compatibilityPacks and addon.compatibilityPacks.ApplyGuide then
+        addon.compatibilityPacks:ApplyGuide(guide)
+    end
 
     local disabledQuests = {}
     if guide.disabledQuests then
@@ -2242,6 +2269,9 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     BottomFrame.UpdateFrame()
     addon.tickTimer = 0
     addon:QueueMessage("RXP_GUIDE_LOADED",guide)
+    if addon.guideState and addon.guideState.RecordLoaded then
+        addon.guideState:RecordLoaded(guide)
+    end
     addon:ScheduleTask(RXPFrame.GenerateMenuTable)
 end
 

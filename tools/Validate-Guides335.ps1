@@ -82,6 +82,35 @@ foreach ($match in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/>'))
     $files.Add($path)
 }
 
+# Compatibility packs are resolver-time data, but they can still make an
+# otherwise valid guide unusable. Validate the bundled data-only baseline next
+# to the guide manifest so CI cannot ship an executable or malformed pack.
+$packPath = Join-Path $root 'DB\wotlk\compatibilityPacks_335.lua'
+if (-not [IO.File]::Exists($packPath)) {
+    Add-Error 'Bundled compatibility-pack baseline is missing.'
+} else {
+    $packInfo = Get-Item -LiteralPath $packPath
+    $packText = [IO.File]::ReadAllText($packPath)
+    if ($packInfo.Length -gt 262144) { Add-Error 'Bundled compatibility pack exceeds 256 KB.' }
+    if ($packText -match '(?m)\b(?:load|string\.dump|loadstring|dofile|require|setfenv|getfenv)\s*\(') {
+        Add-Error 'Compatibility packs must be data-only and cannot execute or load Lua.'
+    }
+    if ($packText -notmatch '(?m)^\s*schema\s*=\s*1\s*,?\s*$') { Add-Error 'Compatibility pack schema must be 1.' }
+    if ($packText -notmatch '(?m)^\s*id\s*=\s*"[a-z0-9][a-z0-9._-]{0,79}"\s*,?\s*$') { Add-Error 'Compatibility pack ID is missing or malformed.' }
+    if ($packText -notmatch '(?m)^\s*version\s*=\s*[1-9]\d*\s*,?\s*$') { Add-Error 'Compatibility pack version is missing or malformed.' }
+    $allowedPackFields = @{
+        schema=$true; id=$true; name=$true; version=$true; core=$true; minAddon=$true
+        questPrerequisites=$true; questAvailability=$true; targetAliases=$true; flightAliases=$true
+        mapAliases=$true; guideOverrides=$true; eventQuirks=$true; resetPolicy=$true
+    }
+    foreach ($match in [regex]::Matches($packText, '(?m)^\s{4}([A-Za-z][A-Za-z0-9]*)\s*=')) {
+        $field = $match.Groups[1].Value
+        if (-not $allowedPackFields.ContainsKey($field)) {
+            Add-Error "Unknown compatibility-pack root field: $field"
+        }
+    }
+}
+
 $mapNames = @{}
 $mapIds = @{}
 foreach ($line in [IO.File]::ReadLines((Join-Path $root 'DB\wotlk\db.lua'))) {

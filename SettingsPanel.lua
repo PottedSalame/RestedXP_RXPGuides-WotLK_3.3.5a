@@ -238,12 +238,50 @@ function addon.settings.ChatCommand(input)
         addon.settings.ToggleActive()
     elseif input == "bug" or input == "feedback" then
         addon.comms.OpenBugReport()
+    elseif input == "guides" or input == "hub" then
+        if addon.guideHub then addon.guideHub:Toggle() end
+    elseif input == "backup" then
+        if addon.roadmap then addon.roadmap:OpenBackupWindow() end
+    elseif input == "diagnose" or input == "doctor" then
+        if addon.diagnostics then addon.diagnostics:Open() end
+    elseif input == "catchup" then
+        if addon.catchUp then addon.catchUp:Preview() end
+    elseif input == "route" then
+        if addon.travel then addon.travel:OpenCurrentRoute() end
+    elseif input:match("^lore%s") then
+        local mode = input:match("^lore%s+(%S+)")
+        if addon.lore and addon.lore:SetMode(mode) then
+            addon.comms.PrettyPrint("Lore mode: %s", mode)
+        else
+            addon.comms.PrettyPrint("Use /rxp lore off, /rxp lore first, or /rxp lore always")
+        end
+    elseif input == "pack" or input:match("^pack%s") then
+        if addon.compatibilityPacks then
+            addon.compatibilityPacks:HandleCommand(input)
+        end
+    elseif input == "party" or input:match("^party%s") then
+        if addon.partySync then addon.partySync:HandleCommand(input) end
+    elseif input == "supplies" then
+        if addon.supplies then addon.supplies:Toggle() end
+    elseif input == "gear" then
+        if addon.gearAdvisor then addon.gearAdvisor:Toggle() end
+    elseif input == "dailies" or input == "daily" then
+        if addon.activityPlanner then addon.activityPlanner:Toggle() end
+    elseif input == "colorblind" or input:match("^colorblind%s") then
+        local mode = input:match("^colorblind%s+(%S+)") or "off"
+        if not addon.accessibility or not addon.accessibility:SetMode(mode) then
+            addon.comms.PrettyPrint(
+                "Use /rxp colorblind off|deuteranopia|protanopia|tritanopia|contrast")
+        end
+    elseif input == "record" or input:match("^record%s") then
+        if addon.guideRecorder then addon.guideRecorder:HandleCommand(input) end
     elseif input == "preview" then
         addon.settings:EnableFramePreviews()
     elseif input == "next" then
         -- Manual step navigation (handy on 3.3.5a where right-click "Go to step"
         -- may be flaky): /rxp next | /rxp prev | /rxp step <n>. GoToStep clears the
         -- target's completion so going back lands on it instead of bouncing forward.
+        if addon.partySync then addon.partySync:OverrideWaitOnce() end
         if addon.GoToStep then addon.GoToStep((RXPCData.currentStep or 1) + 1) end
     elseif input == "prev" or input == "previous" or input == "back" then
         if addon.GoToStep then addon.GoToStep((RXPCData.currentStep or 1) - 1) end
@@ -381,6 +419,11 @@ local settingsDBDefaults = {
 
         -- Grouping
         shareQuests = false,
+
+        loreMode = "off",
+        partyGuideSync = false,
+        partyGuideWait = false,
+        colorBlindMode = "off",
     }
 }
 
@@ -2821,6 +2864,7 @@ function addon.settings:CreateAceOptionsPanel()
                         end,
                         set = function(info, value)
                             SetProfileOption(info, value)
+                            self.profile.itemUpgradeSpecManual = true
                             addon.itemUpgrades:Setup()
                         end,
                         values = function()
@@ -4341,8 +4385,11 @@ function addon.settings.ReplaceColors(element)
     local function replace(textLine)
         if type(textLine) ~= "string" then return textLine end
         for RXP_ in string.gmatch(textLine, "RXP_[A-Z]+_") do
-            textLine = textLine:gsub(RXP_, addon.guideTextColors[RXP_] or
-                                         addon.guideTextColors.default["error"])
+            local prefix = addon.accessibility and
+                               addon.accessibility:GetTokenPrefix(RXP_) or ""
+            textLine = textLine:gsub(RXP_,
+                (addon.guideTextColors[RXP_] or
+                    addon.guideTextColors.default["error"]) .. prefix)
         end
 
         -- Replace raw hex values

@@ -935,7 +935,20 @@ end
 
 local function getSpec()
     -- Classes with className as spec only have one (Rogue, Warrior), use that
-    if session.specWeights[addon.player.class] then return addon.player.class end
+    if session.specWeights[addon.player.class] then
+        return addon.player.class, "class"
+    end
+
+    if addon.settings.profile.enableTalentGuides and addon.talents and
+        addon.talents.GetCurrentGuide then
+        local talentGuide = addon.talents:GetCurrentGuide()
+        local plannedSpec = talentGuide and talentGuide.primaryTab and
+                                SPEC_MAP[addon.player.class] and
+                                SPEC_MAP[addon.player.class][talentGuide.primaryTab]
+        if plannedSpec and session.specWeights[plannedSpec] then
+            return plannedSpec, "talent guide"
+        end
+    end
 
     -- if addon.settings.profile.enableTalentGuides then
     --     -- Difficult/impossible to map talent guide
@@ -966,35 +979,35 @@ local function getSpec()
 
     -- If calculated spec has no weights, then class is unsupported
     -- Likely exited earlier with Rogue/Warrior in this scenario then
-    if session.specWeights[specName] then return specName end
+    if session.specWeights[specName] then return specName, "active talents" end
 
     -- No talents yet: select a deterministic leveling-oriented set.
     specName = DEFAULT_LEVELING_SPEC[addon.player.class]
     if not session.specWeights[specName] then specName, _ = next(session.specWeights) end
 
     -- Returns first specName, or nil
-    return specName
+    return specName, "leveling default"
 end
 
 -- Always run after LoadStatWeights
 function addon.itemUpgrades:ActivateSpecWeights()
     if not session.specWeights then return end
 
-    local spec = getSpec()
-
-    -- Uninitialized spec, so set to calculated value
-    if not addon.settings.profile.itemUpgradeSpec then
+    local spec, source = getSpec()
+    local selected = addon.settings.profile.itemUpgradeSpec
+    local manual = addon.settings.profile.itemUpgradeSpecManual
+    -- Existing profiles predate the explicit marker. Preserve a value which
+    -- differs from the automatic choice as a manual user selection.
+    if manual == nil and selected and selected ~= spec and
+        session.specWeights[selected] then
+        manual = true
+        addon.settings.profile.itemUpgradeSpecManual = true
+    end
+    if manual and selected and session.specWeights[selected] then
+        spec, source = selected, "manual setting"
+    else
+        addon.settings.profile.itemUpgradeSpecManual = false
         addon.settings.profile.itemUpgradeSpec = spec
-    elseif addon.settings.profile.itemUpgradeSpec ~= spec then
-        -- Handle spec name changes
-        if not session.specWeights[addon.settings.profile.itemUpgradeSpec] then
-            addon.settings.profile.itemUpgradeSpec = spec
-        end
-
-        -- Chosen talents don't match itemUpgradeSpec
-        -- Leave alone as is, don't spam user if there's a mismatch
-        addon.comms.PrettyDebug("ItemUpgrades selected spec (%s) differs from calculated spec (%s)",
-                                addon.settings.profile.itemUpgradeSpec, spec)
     end
 
     if not addon.settings.profile.itemUpgradeSpec then return end
@@ -1002,6 +1015,7 @@ function addon.itemUpgrades:ActivateSpecWeights()
     addon.comms.PrettyDebug("Activating spec weights for %s", addon.settings.profile.itemUpgradeSpec)
 
     session.activeStatWeights = session.specWeights[addon.settings.profile.itemUpgradeSpec]
+    session.activeWeightSource = source
 
     if not session.activeStatWeights then return end
 
@@ -1333,6 +1347,10 @@ local function NormalizeSubclassName(name)
     name = name:gsub("^%s+", ""):gsub("%s+$", ""):gsub("%s+", " ")
     if name == "" then return nil end
     return strlower(name)
+end
+
+function addon.itemUpgrades:GetActiveSpecSource()
+    return addon.settings.profile.itemUpgradeSpec, session.activeWeightSource
 end
 
 local function AddSubclassName(map, name, id)
@@ -2433,6 +2451,11 @@ local function GetVisibleBindConfirmation()
     end
 end
 
+
+function addon.itemUpgrades:GetComparisonIncrease(comparison)
+    return GetComparisonIncrease(comparison)
+end
+
 local function ConfirmPendingUpgradeEquip(inventorySlot, itemLink)
     if addon.gameVersion ~= 30300 or type(_G.EquipPendingItem) ~= "function" then return false end
 
@@ -2723,7 +2746,12 @@ local ahSession = {
     scanResults = 0,
     scanType = AuctionFilterButtons["Armor"],
 
-    selectedRow = nil
+    selectedRow = nil,
+    queryRetries = 0,
+    itemRetries = 0,
+    scanSerial = 0,
+    cancelled = false,
+    maxPages = 50
 }
 
 addon.itemUpgrades.AH = addon:NewModule("ItemUpgradesAH", "AceEvent-3.0")
@@ -2768,10 +2796,33 @@ function addon.itemUpgrades.AH:AUCTION_HOUSE_CLOSED()
     ahSession.scanPage = 0
     ahSession.scanResults = 0
     ahSession.scanType = AuctionFilterButtons["Armor"]
+    ahSession.cancelled = true
+    ahSession.scanSerial = ahSession.scanSerial + 1
+    ahSession.queryRetries = 0
+    ahSession.itemRetries = 0
     if ahSession.displayFrame and ahSession.displayFrame.scanButton then
         ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
         ahSession.displayFrame.scanButton:Enable()
     end
+    if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
+        ahSession.displayFrame.cancelButton:Disable()
+    end
+end
+
+function addon.itemUpgrades.AH:CancelScan(message)
+    ahSession.cancelled = true
+    ahSession.sentQuery = false
+    ahSession.scanSerial = ahSession.scanSerial + 1
+    ahSession.queryRetries = 0
+    ahSession.itemRetries = 0
+    if ahSession.displayFrame and ahSession.displayFrame.scanButton then
+        ahSession.displayFrame.scanButton:SetText(_G.SEARCH or "Search")
+        ahSession.displayFrame.scanButton:Enable()
+    end
+    if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
+        ahSession.displayFrame.cancelButton:Disable()
+    end
+    if message then addon.comms.PrettyPrint(message) end
 end
 
 -- Fired when GetItemInfo queries the server for an uncached item and the reponse has arrived.
@@ -2893,6 +2944,9 @@ function addon.itemUpgrades.AH:AUCTION_ITEM_LIST_UPDATE()
             self:Analyze()
             ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
             ahSession.displayFrame.scanButton:Enable()
+            if ahSession.displayFrame.cancelButton then
+                ahSession.displayFrame.cancelButton:Disable()
+            end
             self:DisplayEmbeddedResults()
         end
 
@@ -2937,7 +2991,7 @@ end
 
 function addon.itemUpgrades.AH:Scan()
     -- Prevent double calls
-    if ahSession.sentQuery then return end
+    if ahSession.sentQuery or ahSession.cancelled then return end
     if not _G.AuctionFrame or not _G.AuctionFrame:IsShown() then return end
     if addon.gameVersion ~= 30300 and not AuctionCategories then return end -- AH frame isn't loaded yet
 
@@ -2946,7 +3000,36 @@ function addon.itemUpgrades.AH:Scan()
     if not CanSendAuctionQuery() then
         -- print("addon.itemUpgrades.AH:Scan() - queued", ahSession.scanPage, ahSession.scanType)
 
-        C_Timer.After(0.35, function() self:Scan() end)
+        ahSession.queryRetries = (ahSession.queryRetries or 0) + 1
+        if ahSession.queryRetries > 12 then
+            self:CancelScan("Auction upgrade scan stopped after repeated server query delays.")
+            return
+        end
+        local serial = ahSession.scanSerial
+        C_Timer.After(0.35, function()
+            if serial == ahSession.scanSerial then self:Scan() end
+        end)
+        return
+    end
+    ahSession.queryRetries = 0
+    if ahSession.scanPage >= ahSession.maxPages then
+        ahSession.sentQuery = false
+        if ahSession.scanType == AuctionFilterButtons["Armor"] then
+            ahSession.scanType = AuctionFilterButtons["Weapons"]
+            ahSession.scanPage = 0
+            self:Scan()
+        else
+            ahSession.scanType = AuctionFilterButtons["Armor"]
+            self:Analyze()
+            if ahSession.displayFrame and ahSession.displayFrame.scanButton then
+                ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
+                ahSession.displayFrame.scanButton:Enable()
+            end
+            if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
+                ahSession.displayFrame.cancelButton:Disable()
+            end
+            self:DisplayEmbeddedResults()
+        end
         return
     end
     -- print("addon.itemUpgrades.AH:Scan()", ahSession.scanType, ahSession.scanPage)
@@ -2974,51 +3057,34 @@ function addon.itemUpgrades.AH:Scan()
 end
 
 local function calculate(itemLink, scanData)
-    if scanData.lowestPrice <= 0 then return end
+    if scanData.lowestPrice <= 0 then return true end
     local itemData = addon.itemUpgrades:GetItemData("item:" .. scanData.itemID)
 
     -- Should only have queried usable items, so not intentionally nil
     if not itemData then
-        -- print("itemData nil", itemLink)
-        return
+        GetItemInfo("item:" .. scanData.itemID)
+        return false
     end
 
     scanData.totalWeight = itemData.totalWeight
     scanData.weightPerCopper = itemData.totalWeight / scanData.lowestPrice
     scanData.itemEquipLoc = itemData.itemEquipLoc
-    scanData.ratio = 10.0 -- Empty slot value
-    scanData.comparisons = addon.itemUpgrades:CompareItemWeight(itemLink) or {}
-
-    local rwpc
-    local highestRWPC, highestRatio, hightestWeightIncrease = -1, 0, 0
-    -- TODO account for multi-slot comparisons, show both
-    for _, compareData in ipairs(scanData.comparisons) do
-        -- To avoid complicated comparison, use ratio as a multiplier
-        if compareData.Ratio then
-            rwpc = (scanData.totalWeight * compareData.Ratio) / scanData.lowestPrice
-        else -- Treat an empty slot as 1:1 upgrade weight
-            rwpc = scanData.totalWeight / scanData.lowestPrice
-            compareData.Ratio = scanData.totalWeight
-        end
-
-        if rwpc > highestRWPC then highestRWPC = rwpc end
-
-        if compareData.Ratio > highestRatio then
-            highestRatio = compareData.Ratio
-
-            -- Include flat EP for AH Scanning UI
-            if compareData.WeightIncrease then -- Item upgrade
-                hightestWeightIncrease = compareData.WeightIncrease
-            else -- Empty slot upgrade
-                hightestWeightIncrease = scanData.totalWeight
-            end
-            -- print(itemLink, scanData.totalWeight, hightestWeightIncrease)
-        end
+    local comparison, state = addon.itemUpgrades:GetBestUpgradeComparison(itemLink)
+    scanData.comparison = comparison
+    scanData.state = state or "unknown"
+    if state ~= "upgrade" or not comparison then
+        scanData.ratio = 0
+        scanData.relativeWeightPerCopper = nil
+        scanData.weightIncrease = 0
+        return true
     end
-
-    scanData.ratio = highestRatio
-    scanData.relativeWeightPerCopper = highestRWPC
-    scanData.weightIncrease = hightestWeightIncrease
+    -- The shared comparison is the complete-layout solver used by bags and
+    -- quest rewards, including two-hand/off-hand and duplicate-slot layouts.
+    local increase = GetComparisonIncrease(comparison)
+    scanData.ratio = tonumber(comparison.Ratio) or increase
+    scanData.relativeWeightPerCopper = increase / scanData.lowestPrice
+    scanData.weightIncrease = increase
+    return true
 end
 
 local function analyzeSlotUpgrade(scanData, itemLink, bAS)
@@ -3084,8 +3150,9 @@ function addon.itemUpgrades.AH:Analyze()
 
     local bAS
 
+    local pending = 0
     for itemLink, scanData in pairs(ahSession.scanData) do
-        calculate(itemLink, scanData)
+        if not calculate(itemLink, scanData) then pending = pending + 1 end
 
         bAS = ahSession.bestAnalysis[scanData.itemEquipLoc]
         -- print("Analyze", itemLink, "weightPerCopper",
@@ -3093,6 +3160,43 @@ function addon.itemUpgrades.AH:Analyze()
         --      scanData.relativeWeightPerCopper, "ratio", scanData.ratio)
         analyzeSlotUpgrade(scanData, itemLink, bAS)
     end
+    if pending > 0 and not ahSession.cancelled and ahSession.itemRetries < 8 then
+        ahSession.itemRetries = ahSession.itemRetries + 1
+        local serial = ahSession.scanSerial
+        C_Timer.After(0.25, function()
+            if serial == ahSession.scanSerial and not ahSession.cancelled then
+                addon.itemUpgrades.AH:Analyze()
+                addon.itemUpgrades.AH:DisplayEmbeddedResults()
+            end
+        end)
+    end
+end
+
+function addon.itemUpgrades.AH:GetAdvisorResults()
+    local output = {}
+    for itemLink, data in pairs(ahSession.scanData or {}) do
+        if data.state == "upgrade" and (data.weightIncrease or 0) > 0 then
+            output[#output + 1] = {
+                link = itemLink, name = data.name, state = data.state,
+                increase = data.weightIncrease,
+                epPerCopper = data.relativeWeightPerCopper or 0,
+                comparison = data.comparison,
+                reason = "AH: " .. tostring(data.lowestPrice or 0) .. " copper",
+                auctionData = {
+                    Name = data.name, ItemLink = itemLink,
+                    ItemID = data.itemID, BuyoutMoney = data.lowestPrice,
+                    ItemLevel = data.level
+                }
+            }
+        end
+    end
+    table.sort(output, function(a, b)
+        if a.epPerCopper ~= b.epPerCopper then
+            return a.epPerCopper > b.epPerCopper
+        end
+        return a.increase > b.increase
+    end)
+    return output
 end
 
 -- TODO get parent frame names instead
@@ -3461,10 +3565,26 @@ function addon.itemUpgrades.AH:CreateLegacyEmbeddedGui()
         ahSession.scanPage = 0
         ahSession.scanResults = 0
         ahSession.scanType = AuctionFilterButtons["Armor"]
+        ahSession.cancelled = false
+        ahSession.queryRetries = 0
+        ahSession.itemRetries = 0
+        ahSession.scanSerial = ahSession.scanSerial + 1
+        if frame.cancelButton then frame.cancelButton:Enable() end
         addon.itemUpgrades.AH:RefreshLegacyResults()
         addon.itemUpgrades.AH:Scan()
     end)
     frame.scanButton = search
+
+    local cancel = CreateFrame("Button", "RXP_IU_AH_CancelButton", frame,
+                               "UIPanelButtonTemplate")
+    cancel:SetSize(72, 22)
+    cancel:SetPoint("RIGHT", search, "LEFT", -3, 0)
+    cancel:SetText(_G.CANCEL or "Cancel")
+    cancel:SetScript("OnClick", function()
+        addon.itemUpgrades.AH:CancelScan("Auction upgrade scan cancelled.")
+    end)
+    cancel:Disable()
+    frame.cancelButton = cancel
 
     local index = (attachment.numTabs or 3) + 1
     local tabButton = CreateFrame("Button", "AuctionFrameTab" .. index,
@@ -3683,6 +3803,9 @@ function addon.itemUpgrades.AH:DisplayEmbeddedResults()
             return tostring(a.Name or "") < tostring(b.Name or "")
         end)
         self:RefreshLegacyResults()
+    end
+    if addon.gearAdvisor and addon.gearAdvisor.Refresh then
+        addon.gearAdvisor:Refresh()
     end
     if n == 0 then _G.StaticPopup_Show("RXPNoUpgradesFound") end
 end

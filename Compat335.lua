@@ -1342,6 +1342,10 @@ do
     -- lookup is always restricted to the player's faction and refuses every
     -- ambiguous full, base, or partial name.
     addon.ResolveLegacyFlightPath = function(name, nodeType)
+        if addon.compatibilityPacks and
+            addon.compatibilityPacks.ResolveFlightAlias then
+            name = addon.compatibilityPacks:ResolveFlightAlias(name)
+        end
         local exact, short, records, faction = buildTaxiLookup()
         return resolveTaxiID(name, nodeType, exact, short, records, faction)
     end
