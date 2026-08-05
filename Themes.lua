@@ -5,6 +5,61 @@ local fmt = string.format
 local themes = {}
 addon.themes = themes
 
+-- FontString:SetFont silently fails for missing custom font files on several
+-- 3.3.5 clients. A later SetText then raises "Font not set", obscuring the
+-- original problem and preventing guide restoration. Keep a stock-font escape
+-- hatch that can also be used when initialization is recovering from an
+-- unrelated module error.
+function addon.SetFontSafely(fontString, fontPath, size, flags)
+    if not fontString then return false end
+
+    size = tonumber(size) or 10
+    flags = type(flags) == "string" and flags or ""
+    local candidates, seen = {}, {}
+    local function AddCandidate(path)
+        if type(path) == "string" and path ~= "" and not seen[path] then
+            seen[path] = true
+            candidates[#candidates + 1] = path
+        end
+    end
+
+    AddCandidate(fontPath)
+    AddCandidate(addon.font)
+    AddCandidate(_G.STANDARD_TEXT_FONT)
+    if _G.GameFontNormal and _G.GameFontNormal.GetFont then
+        AddCandidate(_G.GameFontNormal:GetFont())
+    end
+    AddCandidate("Fonts\\FRIZQT__.TTF")
+
+    for _, candidate in ipairs(candidates) do
+        local ok = pcall(fontString.SetFont, fontString, candidate, size, flags)
+        local fontOK, applied = pcall(fontString.GetFont, fontString)
+        local expected = candidate:gsub("/", "\\"):lower()
+        local actual = type(applied) == "string" and
+                           applied:gsub("/", "\\"):lower()
+        -- An invalid SetFont can leave the previously-applied font in place.
+        -- Verify the resulting path rather than mistaking that stale value for
+        -- a successful custom-font load.
+        if ok and fontOK and actual == expected then
+            addon.font = candidate
+            return true
+        end
+    end
+
+    if fontString.SetFontObject and _G.GameFontNormal then
+        local ok = pcall(fontString.SetFontObject, fontString,
+                         _G.GameFontNormal)
+        if ok then
+            local fontOK, applied = pcall(fontString.GetFont, fontString)
+            if fontOK and type(applied) == "string" and applied ~= "" then
+                addon.font = applied
+                return true
+            end
+        end
+    end
+    return false
+end
+
 themes['RXP Blue'] = {
     background = {12 / 255, 12 / 255, 27 / 255, 1},
     bottomFrameBG = {18 / 255, 18 / 255, 40 / 255, 1},
@@ -187,6 +242,20 @@ function addon:LoadActiveTheme()
     addon.colors = addon.activeTheme
 
     addon.font = addon.activeTheme.font
+
+    -- Validate custom/imported font paths at theme activation time. This keeps
+    -- every subsequently-created step, tracker, targeting, and talent string
+    -- on the same known-good fallback instead of protecting only the title.
+    local guideText = RXPFrame and RXPFrame.GuideName and
+                          RXPFrame.GuideName.text
+    if guideText then
+        local _, currentSize, currentFlags = guideText:GetFont()
+        addon.SetFontSafely(guideText, addon.font, currentSize or 11,
+                            currentFlags or "")
+    elseif type(addon.font) ~= "string" or addon.font == "" then
+        addon.font = themes.Default.font or _G.STANDARD_TEXT_FONT or
+                         "Fonts\\FRIZQT__.TTF"
+    end
 
     return addon.activeTheme
 end

@@ -181,12 +181,12 @@ function addon.SetupGuideWindow()
     GuideName:SetBackdrop(RXPFrame.backdrop.guideName)
     GuideName:SetBackdropColor(unpack(addon.colors.background))
 
-    GuideName.text:SetFont(addon.font, 11, "")
+    addon.SetFontSafely(GuideName.text, addon.font, 11, "")
     GuideName.text:SetText(L(
                                "Welcome to RestedXP Guides\nRight click to pick a guide"))
     GuideName.text:SetTextColor(unpack(addon.activeTheme.textColor))
 
-    Footer.text:SetFont(addon.font, 9, "")
+    addon.SetFontSafely(Footer.text, addon.font, 9, "")
     if addon.player.beta then
         Footer.text:SetText(fmt("%s %s", addon.title, addon.release))
     else
@@ -2021,6 +2021,15 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     RXPCData.currentGuideName = guide.name
     RXPCData.currentGuideGroup = guide.group
     local guidename = guide.title or addon.GetGuideName(guide)
+    -- OnEnable may still be called by some AceAddon revisions after an earlier
+    -- initialization error. Ensure this lazily-created FontString is usable so
+    -- restoring a guide cannot produce a second, misleading cascade error.
+    if not select(1, GuideName.text:GetFont()) then
+        local guideFontSize = addon.settings.profile and
+                                  addon.settings.profile.guideFontSize or 9
+        addon.SetFontSafely(GuideName.text, addon.font,
+                            guideFontSize + 2, "")
+    end
     if guide.subgroup and not guide.title then
         GuideName.text:SetText(guidename .. "\n" .. guide.subgroup)
     else
@@ -2974,8 +2983,8 @@ function addon.UpdateGuideFontSize()
     local size =
         (addon.settings.profile and addon.settings.profile.guideFontSize) or 9
 
-    GuideName.text:SetFont(addon.font, size + 2, "")
-    Footer.text:SetFont(addon.font, size, "")
+    addon.SetFontSafely(GuideName.text, addon.font, size + 2, "")
+    addon.SetFontSafely(Footer.text, addon.font, size, "")
 
     for _, stepFrame in ipairs(CurrentStepFrame.framePool or {}) do
         if stepFrame.number and stepFrame.number.text then

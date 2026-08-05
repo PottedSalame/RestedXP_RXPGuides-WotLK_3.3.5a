@@ -55,6 +55,27 @@ local updateFrequencyTimer
 -- Alias addon.locale.Get
 local L = addon.locale.Get
 
+-- Some 3.3.5 private-server UI packs (or addons loaded before RXP) install an
+-- incomplete retail-style Settings global. Newer AceConfigDialog revisions
+-- then select their retail registration branch, even though the stub returns
+-- no category, and fail while indexing category.ID. Force AceConfig's proven
+-- InterfaceOptions fallback for this synchronous registration call. This also
+-- makes load order irrelevant when another addon publishes a newer AceConfig.
+local function AddToBlizzardOptions(appName, name, parent, ...)
+    if addon.gameVersion ~= 30300 then
+        return AceConfigDialog:AddToBlizOptions(appName, name, parent, ...)
+    end
+
+    local clientSettings = rawget(_G, "Settings")
+    _G.Settings = nil
+    local ok, panel, categoryID = pcall(AceConfigDialog.AddToBlizOptions,
+                                        AceConfigDialog, appName, name, parent,
+                                        ...)
+    _G.Settings = clientSettings
+    if not ok then error(panel, 2) end
+    return panel, categoryID
+end
+
 addon.settings = addon:NewModule("Settings", "AceConsole-3.0")
 addon.settings.enabledBetaFeatures = {}
 
@@ -161,11 +182,17 @@ if not addon.settings.gui then
 end
 
 function addon.settings.OpenSettings(panelName)
-    if not (_G.Settings and _G.Settings.GetCategory) then
+    -- Interface 30300 always uses the stock Interface Options frame. Partial
+    -- Settings backports supplied by private-server UI packs must not route us
+    -- into AceConfig's retail category API after legacy registration.
+    if addon.gameVersion == 30300 or
+        not (_G.Settings and _G.Settings.GetCategory) then
         local panel = panelName == "Import" and addon.settings.gui.import or
                           addon.RXPOptions
-        _G.InterfaceOptionsFrame_OpenToCategory(panel)
-        _G.InterfaceOptionsFrame_OpenToCategory(panel)
+        if panel and _G.InterfaceOptionsFrame_OpenToCategory then
+            _G.InterfaceOptionsFrame_OpenToCategory(panel)
+            _G.InterfaceOptionsFrame_OpenToCategory(panel)
+        end
         return
     end
 
@@ -909,7 +936,7 @@ function addon.settings:CreateImportOptionsPanel()
     AceConfig:RegisterOptionsTable(addon.RXPOptions.name .. "/Import",
                                    importOptionsTable)
 
-    self.gui.import = AceConfigDialog:AddToBlizOptions(
+    self.gui.import = AddToBlizzardOptions(
                           addon.RXPOptions.name .. "/Import", L("Import"),
                           addon.RXPOptions.name)
 
@@ -3876,7 +3903,7 @@ function addon.settings:CreateAceOptionsPanel()
     -- that late subtree as well before AceConfigDialog validates it on open.
     NormalizeLegacyAceConfigOptions(optionsTable.args.profiles)
 
-    addon.RXPOptions = AceConfigDialog:AddToBlizOptions(addon.title)
+    addon.RXPOptions = AddToBlizzardOptions(addon.title)
 
     -- Ace3 ConfigDialog doesn't support embedding icons in header
     -- Directly references Ace3 built frame object

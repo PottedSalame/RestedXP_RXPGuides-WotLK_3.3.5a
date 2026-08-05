@@ -126,34 +126,44 @@ end
 -- UIMapType values the map shim reports.
 do
     local Enum = ns("Enum")
-    if type(Enum.UIMapType) ~= "table" then
-        Enum.UIMapType = {
-            Cosmic = 0, World = 1, Continent = 2, Zone = 3,
-            Dungeon = 4, Micro = 5, Orphan = 6,
-        }
+    -- Several private-server UI packs publish partial modern Enum tables. A
+    -- table-level fallback is not sufficient in that case: a missing member
+    -- becomes a nil table key as soon as ItemUpgrades builds its class maps.
+    -- Merge only absent values so complete client/addon-provided enums remain
+    -- authoritative while the standalone 3.3.5 surface is always usable.
+    local function FillEnum(name, defaults)
+        local values = Enum[name]
+        if type(values) ~= "table" then
+            values = {}
+            Enum[name] = values
+        end
+        for key, value in pairs(defaults) do
+            if values[key] == nil then values[key] = value end
+        end
+        return values
     end
-    if type(Enum.ItemQuality) ~= "table" then
-        Enum.ItemQuality = {
-            Poor = 0, Common = 1, Uncommon = 2, Rare = 3, Epic = 4,
-            Legendary = 5, Artifact = 6, Heirloom = 7, WoWToken = 8,
-        }
-    end
-    -- Item class/subclass enums (used by ItemUpgrades as table keys at load).
-    if type(Enum.ItemArmorSubclass) ~= "table" then
-        Enum.ItemArmorSubclass = {
-            Generic = 0, Cloth = 1, Leather = 2, Mail = 3, Plate = 4,
-            Cosmetic = 5, Shield = 6, Libram = 7, Idol = 8, Totem = 9,
-            Sigil = 10, Relic = 11,
-        }
-    end
-    if type(Enum.ItemWeaponSubclass) ~= "table" then
-        Enum.ItemWeaponSubclass = {
-            Axe1H = 0, Axe2H = 1, Bows = 2, Guns = 3, Mace1H = 4, Mace2H = 5,
-            Polearm = 6, Sword1H = 7, Sword2H = 8, Warglaive = 9, Staff = 10,
-            Bearclaw = 11, Catclaw = 12, Unarmed = 13, Generic = 14, Dagger = 15,
-            Thrown = 16, Crossbow = 18, Wand = 19, Fishingpole = 20,
-        }
-    end
+
+    FillEnum("UIMapType", {
+        Cosmic = 0, World = 1, Continent = 2, Zone = 3,
+        Dungeon = 4, Micro = 5, Orphan = 6,
+    })
+    FillEnum("ItemQuality", {
+        Poor = 0, Common = 1, Uncommon = 2, Rare = 3, Epic = 4,
+        Legendary = 5, Artifact = 6, Heirloom = 7, WoWToken = 8,
+    })
+    -- Item class/subclass enums are used by ItemUpgrades as table keys while
+    -- that file is loading, so every referenced legacy value must exist.
+    FillEnum("ItemArmorSubclass", {
+        Generic = 0, Cloth = 1, Leather = 2, Mail = 3, Plate = 4,
+        Cosmetic = 5, Shield = 6, Libram = 7, Idol = 8, Totem = 9,
+        Sigil = 10, Relic = 11,
+    })
+    FillEnum("ItemWeaponSubclass", {
+        Axe1H = 0, Axe2H = 1, Bows = 2, Guns = 3, Mace1H = 4, Mace2H = 5,
+        Polearm = 6, Sword1H = 7, Sword2H = 8, Warglaive = 9, Staff = 10,
+        Bearclaw = 11, Catclaw = 12, Unarmed = 13, Generic = 14, Dagger = 15,
+        Thrown = 16, Crossbow = 18, Wand = 19, Fishingpole = 20,
+    })
     Enum.ItemClass = type(Enum.ItemClass) == "table" and Enum.ItemClass or {}
     local itemClasses = {
         Consumable = 0, Container = 1, Weapon = 2, Gem = 3, Armor = 4,

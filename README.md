@@ -14,7 +14,7 @@ This project adapts the RestedXP guide engine, interface, automation, navigation
 
 ## Version
 
-- Addon version: **v4.8.26**
+- Addon version: **v4.8.27**
 - Intended client: **WotLK 3.3.5a / build 12340**
 - Primary server target: **AzerothCore**
 - Interface number: **30300**
