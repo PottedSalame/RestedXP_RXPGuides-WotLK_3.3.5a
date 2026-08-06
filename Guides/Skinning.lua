@@ -43,7 +43,7 @@ step
     #requires Shank
     .openmap Durotar
     .skill skinning,75 >> Level your Skinning from 1-75 in Durotar by killing beasts, looting them, and then skinning them. Press "M" to open your map to see the route.
-    .loop 45,Durotar,54.5,68.2,54.2,60.1,54.7,58.9,54.5,54.3,51.2,51.8,51.1,46.6,47.4,42.7,45.7,37.7,45.0,34.3,43.0,34.9,42.6,37.0,40.8,37.0,38.5,34.3,36.5,31.3,36.9,25.0,38.5,21.7,40.8,21.1,43.0,21.4,44.4,19.2,43.5,15.7,
+    .loop 45,Durotar,54.5,68.2,54.2,60.1,54.7,58.9,54.5,54.3,51.2,51.8,51.1,46.6,47.4,42.7,45.7,37.7,45.0,34.3,43.0,34.9,42.6,37.0,40.8,37.0,38.5,34.3,36.5,31.3,36.9,25.0,38.5,21.7,40.8,21.1,43.0,21.4,44.4,19.2,43.5,15.7
 step << !Mage
     .goto Orgrimmar,48.8,91.0
     .zone Orgrimmar >> Ride back to Orgrimmar
@@ -77,7 +77,7 @@ step
 step
     >>Aim to reach at least skill level 125 before you get to Camp Taurajo
     .skill skinning,125 >> Level your Skinning from 75-125 in The Barrens
-    .loop 45,The Barrens,51.0,31.7,51.0,35.0,50.2,36.3,49.3,38.0,49.6,39.9,49.0,42.5,50.2,45.4,49.5,47.8,46.0,51.7,45.9,53.7,46.3,56.2,
+    .loop 45,The Barrens,51.0,31.7,51.0,35.0,50.2,36.3,49.3,38.0,49.6,39.9,49.0,42.5,50.2,45.4,49.5,47.8,46.0,51.7,45.9,53.7,46.3,56.2
 step
     .goto The Barrens,45.1,59.1
     .train 8618 >> Train Expert Skinning (150-225) from Dranh in Camp Taurajo
@@ -112,7 +112,7 @@ step
     .skill skinning,230,1
 step
     .skill skinning,230 >> Level your Skinning from 205-230 in Feralas
-    .loop 45,Feralas,72.3,44.4,71.1,41.5,74.4,40.7,76.7,39.4,76.7,39.4,79.2,38.3,79.7,39.9,79.2,44.1,78.9,46.2,78.3,47.8,76.5,48.7,75.4,51.9,73.1,54.6,
+    .loop 45,Feralas,72.3,44.4,71.1,41.5,74.4,40.7,76.7,39.4,76.7,39.4,79.2,38.3,79.7,39.9,79.2,44.1,78.9,46.2,78.3,47.8,76.5,48.7,75.4,51.9,73.1,54.6
 step
     >>Kill the Yetis in the cave or the Hippogryphs outside, then skin them
     .skill skinning,260 >> Level your Skinning from 230-260 in Feralas
@@ -269,7 +269,7 @@ step
     .skill skinning 450,1
 step
     .skill skinning,400 >> Level your skinning from 400-450 in The Storm Peaks
-    .loop 20,The Storm Peaks,60.6,61.7,59.9,57.5,57.9,58.7,56.4,63.4,53.5,65.5,56.0,68.2,60.6,61.7,
+    .loop 20,The Storm Peaks,60.6,61.7,59.9,57.5,57.9,58.7,56.4,63.4,53.5,65.5,56.0,68.2,60.6,61.7
 step
     +Congratulations on reaching skill level 450 in Skinning!
 ]])
@@ -355,7 +355,7 @@ step
     .zoneskip Loch Modan
 step
     .skill skinning,115 >> Level your Skinning from 75-115 in Loch Modan
-    .loop 45,Loch Modan,34.4,53.8,37.7,52.3,41.7,54.4,44.4,64.1,49.9,69.3,55.6,66.9,63.9,63.4,59.4,62.0,63.0,57.0,64.3,48.7,62.2,38.9,59.9,36.9,59.5,29.8,58.9
+    .loop 45,Loch Modan,34.4,53.8,37.7,52.3,41.7,54.4,44.4,64.1,49.9,69.3,55.6,66.9,63.9,63.4,59.4,62.0,63.0,57.0,64.3,48.7,62.2,38.9,59.9,36.9,59.5,29.8
 step
     .skill skinning,125 >> Level your Skinning from 115-125 in Loch Modan
     .loop 45,Loch Modan,61.5,40.9,72.4,41.8,76.8,47.9,77.4,41.4,59.9,28.0,61.5,40.9
@@ -460,7 +460,7 @@ step
     .zoneskip Feralas
 step
     .skill skinning,230 >> Level your Skinning from 205-230 in Feralas
-    .loop 45,Feralas,72.3,44.4,71.1,41.5,74.4,40.7,76.7,39.4,76.7,39.4,79.2,38.3,79.7,39.9,79.2,44.1,78.9,46.2,78.3,47.8,76.5,48.7,75.4,51.9,73.1,54.6,
+    .loop 45,Feralas,72.3,44.4,71.1,41.5,74.4,40.7,76.7,39.4,76.7,39.4,79.2,38.3,79.7,39.9,79.2,44.1,78.9,46.2,78.3,47.8,76.5,48.7,75.4,51.9,73.1,54.6
 step
     >>Kill the Yetis in the cave or the Hippogryphs outside, then skin them
     .skill skinning,260 >> Level your Skinning from 230-260 in Feralas
@@ -610,7 +610,7 @@ step
     .skill skinning 450,1
 step
     .skill skinning,400 >> Level your skinning from 400-450 in The Storm Peaks
-    .loop 20,The Storm Peaks,60.6,61.7,59.9,57.5,57.9,58.7,56.4,63.4,53.5,65.5,56.0,68.2,60.6,61.7,
+    .loop 20,The Storm Peaks,60.6,61.7,59.9,57.5,57.9,58.7,56.4,63.4,53.5,65.5,56.0,68.2,60.6,61.7
 step
     +Congratulations on reaching skill level 450 in Skinning!
 ]])

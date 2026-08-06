@@ -594,6 +594,11 @@ function roadmap:Setup()
         local ok, errorText = pcall(addon.guideHub.Setup, addon.guideHub)
         if not ok and _G.geterrorhandler then _G.geterrorhandler()(errorText) end
     end
+    if addon.goldAssistant and addon.goldAssistant.Setup then
+        self:RunOptional("gold assistant",
+            function() addon.goldAssistant:Setup() end,
+            function() RXPCData.goldAssistant = nil end)
+    end
     if addon.diagnostics and addon.diagnostics.Setup then
         self:RunOptional("step doctor",
             function() addon.diagnostics:Setup() end)

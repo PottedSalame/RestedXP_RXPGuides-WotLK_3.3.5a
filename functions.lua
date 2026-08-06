@@ -2443,8 +2443,27 @@ end
 function addon.functions.loop(self, text, range, zone, ...)
     if type(self) == "string" then
         local element = {}
-        local segments = {...}
-        for i, v in ipairs(segments) do segments[i] = tonumber(v) end
+        local segmentCount = select("#", ...)
+        local segments = {}
+        for i = 1, segmentCount do
+            local raw = select(i, ...)
+            if raw ~= nil and tostring(raw):match("%S") then
+                local value = tonumber(raw)
+                if not value or value < 0 or value > 100 then
+                    return addon.error(
+                               L("Error parsing guide") .. " " ..
+                                   (addon.currentGuideName or _G.NONE) ..
+                                   ": Invalid loop coordinate\n" .. self)
+                end
+                segments[#segments + 1] = value
+            end
+        end
+        if #segments < 4 or #segments % 2 ~= 0 then
+            return addon.error(
+                       L("Error parsing guide") .. " " ..
+                           (addon.currentGuideName or _G.NONE) ..
+                           ": Invalid loop coordinate pairs\n" .. self)
+        end
         element.segments = segments
         local prefix
         if range then

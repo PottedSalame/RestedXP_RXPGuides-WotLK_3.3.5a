@@ -63,6 +63,7 @@ GuideLoader.lua
 # Staged 3.3.5 feature-roadmap foundation and stock legacy interfaces.
 RoadmapCore.lua
 GuideHub.lua
+GoldAssistant.lua
 Diagnostics.lua
 Recovery.lua
 CompatibilityPacks.lua

@@ -295,6 +295,29 @@ foreach ($file in $files) {
                         Add-Error "$relative`:$lineNumber unknown .line map $zone"
                     }
                 }
+                if (-not $isOriginalSnapshot -and $directive -eq 'loop') {
+                    if ($line -match '^\.loop\s+[+*@]?\d+(?:\.\d+)?,\s*([^,]+),(.*?)(?:\s*<<|\s*>>|$)') {
+                        $loopZone = $Matches[1].Trim()
+                        $loopValues = @($Matches[2].Split(',') | ForEach-Object { $_.Trim() })
+                        if ($loopValues.Count -lt 4 -or ($loopValues.Count % 2) -ne 0) {
+                            Add-Error "$relative`:$lineNumber malformed .loop coordinate pairs"
+                        } else {
+                            foreach ($value in $loopValues) {
+                                $number = 0.0
+                                if (-not [double]::TryParse($value, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$number) -or $number -lt 0 -or $number -gt 100) {
+                                    Add-Error "$relative`:$lineNumber malformed .loop value '$value'"
+                                }
+                            }
+                        }
+                        if ($loopZone -match '^\d+$') {
+                            if (-not $mapIds.ContainsKey([int]$loopZone)) { Add-Error "$relative`:$lineNumber unknown numeric .loop map $loopZone" }
+                        } elseif (-not $mapNames.ContainsKey($loopZone.ToLowerInvariant())) {
+                            Add-Error "$relative`:$lineNumber unknown .loop map $loopZone"
+                        }
+                    } else {
+                        Add-Error "$relative`:$lineNumber malformed .loop route"
+                    }
+                }
                 if (-not $isOriginalSnapshot -and $questIds.Count -gt 0 -and $line -match '^\.(accept|turnin|complete|abandon|isOnQuest|isNotOnQuest|isQuestAvailable|isQuestComplete|isQuestNotComplete|isQuestTurnedIn|skipOnQuest|acceptmultiple)\s+([^>]+)') {
                     $questDirective = $Matches[1]
                     $questArgs = ($Matches[2] -replace '\s*--.*$', '')

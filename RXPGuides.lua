@@ -2528,8 +2528,12 @@ end
 
 function addon.GAToggle()
     if RXPCData and addon.farmGuides > 0 then
-        RXPCData.GA = not RXPCData.GA
-        addon.RenderFrame()
+        if addon.goldAssistant and addon.goldAssistant.ToggleMode then
+            addon.goldAssistant:ToggleMode()
+        else
+            RXPCData.GA = not RXPCData.GA
+            addon.RenderFrame()
+        end
     end
 end
 

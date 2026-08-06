@@ -265,6 +265,8 @@ function addon.settings.ChatCommand(input)
         if addon.supplies then addon.supplies:Toggle() end
     elseif input == "gear" then
         if addon.gearAdvisor then addon.gearAdvisor:Toggle() end
+    elseif input == "gold" or input == "farming" then
+        if addon.goldAssistant then addon.goldAssistant:ToggleReport() end
     elseif input == "dailies" or input == "daily" then
         if addon.activityPlanner then addon.activityPlanner:Toggle() end
     elseif input == "colorblind" or input:match("^colorblind%s") then
@@ -313,7 +315,8 @@ local settingsDBDefaults = {
         enableFlyStepAnnouncements = true,
         alwaysSendBranded = true,
         checkVersions = true,
-        enableLevelingReportInspections = true,
+        enableLevelingReportInspections = false,
+        levelingInspectionConsent = false,
         levelSplitsHistory = 10,
         levelSplitsFontSize = 11,
         levelSplitsOpacity = 0.9,
@@ -2311,10 +2314,16 @@ function addon.settings:CreateAceOptionsPanel()
                         type = "toggle",
                         width = "full",
                         order = 1,
-                        confirm = requiresReload,
                         set = function(info, value)
                             SetProfileOption(info, value)
-                            _G.ReloadUI()
+                            if value then
+                                addon.roadmap:RunOptional("leveling tracker",
+                                    function()
+                                        addon.tracker:SetupTracker()
+                                    end)
+                            else
+                                addon.tracker:ShutdownTracker()
+                            end
                         end
                     },
                     openTrackerReportOnCharOpen = {
@@ -2325,10 +2334,11 @@ function addon.settings:CreateAceOptionsPanel()
                         type = "toggle",
                         width = "full",
                         order = 1.1,
-                        confirm = requiresReload,
                         set = function(info, value)
                             SetProfileOption(info, value)
-                            _G.ReloadUI()
+                            local ui = addon.tracker.ui and
+                                           addon.tracker.ui.CharacterFrame
+                            if not value and ui then ui:Hide() end
                         end
                     },
                     enableLevelingReportInspections = {
@@ -2341,6 +2351,7 @@ function addon.settings:CreateAceOptionsPanel()
                         order = 1.2,
                         set = function(info, value)
                             SetProfileOption(info, value)
+                            self.profile.levelingInspectionConsent = true
                             addon.tracker:SetupInspections()
                         end,
                         disabled = function()

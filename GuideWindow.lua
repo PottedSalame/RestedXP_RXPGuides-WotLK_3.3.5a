@@ -1930,8 +1930,18 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
 
     if type(guide) ~= "table" then
         return LoadEmptyGuide()
-    elseif guide.internal or guide.disabled or not guide.empty and not addon.IsGuideActive(guide) and
-        (guide.farm and not RXPCData.GA or not guide.farm and RXPCData.GA) then
+    end
+    local farmCompatible = true
+    if guide.farm and addon.goldAssistant and
+        addon.goldAssistant.IsGuideCompatible then
+        farmCompatible = addon.goldAssistant:IsGuideCompatible(guide)
+    end
+    if guide.internal or guide.disabled or
+        (not guide.empty and not addon.IsGuideActive(guide)) or
+        (not guide.empty and not farmCompatible) or
+        (not guide.empty and
+            ((guide.farm and not RXPCData.GA) or
+                (not guide.farm and RXPCData.GA))) then
         return LoadEmptyGuide()
     end
 
@@ -2688,6 +2698,12 @@ function RXPFrame:GenerateMenuTable(menu)
         local nActive = 0
         for j, guideName in ipairs(t.names_) do
             local guide = addon.GetGuideTable(groupName, guideName)
+            local goldCompatible, goldReason = true
+            if guide and guide.farm and addon.goldAssistant and
+                addon.goldAssistant.IsGuideCompatible then
+                goldCompatible, goldReason =
+                    addon.goldAssistant:IsGuideCompatible(guide)
+            end
             --if not guide then print(guide,group,guideName) end
             if IsGuideActive(guide) and not guide.chapter then
                 nActive = nActive + 1
@@ -2709,8 +2725,10 @@ function RXPFrame:GenerateMenuTable(menu)
                     end
                     local subitem = {}
                     subitem.text = addon.GetGuideName(guide)
-                    if guide.disabled then
+                    if guide.disabled or not goldCompatible then
                         subitem.isTitle = 1
+                        subitem.disabled = 1
+                        subitem.tooltipTitle = goldReason
                     else
                         subitem.func = addon.LoadGuideTable
                         subitem.arg1 = guide.group
@@ -2732,8 +2750,10 @@ function RXPFrame:GenerateMenuTable(menu)
                     guide.submenuIndex = submenuIndex
                     local subitem = {}
                     subitem.text = addon.GetGuideName(guide)
-                    if guide.disabled then
+                    if guide.disabled or not goldCompatible then
                         subitem.isTitle = 1
+                        subitem.disabled = 1
+                        subitem.tooltipTitle = goldReason
                     else
                         subitem.func = addon.LoadGuideTable
                         subitem.arg1 = guide.group
@@ -2953,6 +2973,13 @@ function RXPFrame:GenerateMenuTable(menu)
     end
 
     if RXPCData and RXPCData.GA then
+        if addon.goldAssistant then
+            tinsert(menuList, {
+                text = "Gold Assistant report",
+                notCheckable = 1,
+                func = function() addon.goldAssistant:ToggleReport() end
+            })
+        end
         local text = L("Activate the Quest Guide mode")
         tinsert(menuList,
                      {text = text, notCheckable = 1, func = addon.GAToggle})

@@ -54,6 +54,11 @@ local function Availability(guide)
     if not guide or guide.empty then return false, "Guide data unavailable" end
     if guide.disabled then return false, "Disabled by this guide version" end
     if guide.internal then return false, "Internal chapter" end
+    if guide.farm and addon.goldAssistant and
+        addon.goldAssistant.IsGuideCompatible then
+        local compatible, reason = addon.goldAssistant:IsGuideCompatible(guide)
+        if not compatible then return false, reason end
+    end
     if addon.IsGuideActive and not addon.IsGuideActive(guide) then
         local condition = type(guide.enabledFor) == "string" and
                               guide.enabledFor or ""
@@ -80,7 +85,10 @@ local function BuildGuideList()
             local guide = addon.GetGuideTable(realGroup, name) or
                               addon.GetGuideTable(group, name)
             local key = GuideKey(guide)
-            if key and not seen[key] then
+            local modeMatches = guide and
+                ((RXPCData and RXPCData.GA and guide.farm) or
+                    (not (RXPCData and RXPCData.GA) and not guide.farm))
+            if key and modeMatches and not seen[key] then
                 seen[key] = true
                 local active, reason = Availability(guide)
                 table.insert(output, {
