@@ -131,7 +131,7 @@ foreach ($match in [regex]::Matches($areaBlock.Groups[1].Value, '\[(\d+)\]\s*=\s
 }
 
 $functionNames = @{}
-foreach ($line in [IO.File]::ReadLines((Join-Path $root 'Functions.lua'))) {
+foreach ($line in [IO.File]::ReadLines((Join-Path $root 'functions.lua'))) {
     if ($line -match 'addon\.functions(?:\.|\[["''])([A-Za-z0-9_]+)') { $functionNames[$Matches[1]] = $true }
 }
 foreach ($name in @('goto','subzone','turn','talent','scenario')) { $functionNames[$name] = $true }

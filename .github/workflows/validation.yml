@@ -13,7 +13,9 @@ permissions:
 jobs:
   validate:
     name: Guides, quest flow, talents, and privacy
-    runs-on: windows-latest
+    # Match the release runner so case-sensitive path mistakes are caught on
+    # ordinary pushes and pull requests instead of only after tagging.
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
