@@ -294,11 +294,7 @@ function addon.settings.ChatCommand(input)
         -- Freeze/unfreeze automatic step progression, so the guide can be walked
         -- back through (e.g. to review or test) without it jumping to the real
         -- current step. Turning it off lets completed steps auto-advance again.
-        addon.browseMode = not addon.browseMode
-        addon.comms.PrettyPrint(addon.browseMode and
-            "Browse mode ON - progression frozen. Use /rxp browse again to resume." or
-            "Browse mode OFF - progression resumed.")
-        if not addon.browseMode then addon.updateSteps = true end
+        addon.ToggleBrowseMode()
     elseif input == "help" then
         addon.comms.PrettyPrint(_G.HELP .. "\n" ..
                                     addon.help["What are command the line options?"])
@@ -352,6 +348,7 @@ local settingsDBDefaults = {
         phase = 6,
         xprate = 1,
         guideFontSize = 9,
+        guideScrollSteps = 1,
         activeItemsScale = 1,
         maxSoulShards = 100,
 
@@ -445,6 +442,8 @@ function addon.settings:InitializeDatabase()
     self.profile = settingsDB.profile
     self.profile.soundOnFind = self:NormalizeTargetingSound(
                                    self.profile.soundOnFind)
+    self.profile.guideScrollSteps = math.max(1, math.min(10,
+        math.floor(tonumber(self.profile.guideScrollSteps) or 1)))
     NormalizeCustomThemeTooltip(self.profile)
     loadedProfileKey = settingsDB.keys.profile
 end
@@ -3401,6 +3400,20 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.UpdateGuideFontSize()
                         end
                     },
+                    guideScrollSteps = {
+                        name = "Steps Per Mouse-Wheel Scroll",
+                        desc = "How many visible guide steps one mouse-wheel tick moves through.",
+                        type = "range",
+                        width = optionsWidth,
+                        order = 3.3,
+                        min = 1,
+                        max = 10,
+                        step = 1,
+                        set = function(info, value)
+                            SetProfileOption(info,
+                                math.floor(tonumber(value) or 1))
+                        end
+                    },
                     anchorOrientation = {
                         name = L("Current step frame anchor"),
                         desc = L(
@@ -3409,7 +3422,7 @@ function addon.settings:CreateAceOptionsPanel()
                         values = {top = "Top", bottom = "Bottom"},
                         sorting = {"top", "bottom"},
                         width = optionsWidth,
-                        order = 3.3,
+                        order = 3.4,
                         set = function(info, value)
                             SetProfileOption(info, value)
                             addon.RXPFrame.SetStepFrameAnchor()
@@ -3421,7 +3434,7 @@ function addon.settings:CreateAceOptionsPanel()
                             "Show/Hide the bottom frame listing all the steps of the current guide"),
                         type = "toggle",
                         width = optionsWidth,
-                        order = 3.4,
+                        order = 3.5,
                         get = function()
                             return addon.RXPFrame.BottomFrame:GetHeight() >= 35
                         end,
@@ -3435,7 +3448,7 @@ function addon.settings:CreateAceOptionsPanel()
                             "Only shows current and future steps on the step list window"),
                         type = "toggle",
                         width = optionsWidth,
-                        order = 3.5,
+                        order = 3.6,
                         set = function(info, value)
                             SetProfileOption(info, value)
                             addon.RXPFrame.ScrollFrame.ScrollBar:SetValue(0)
@@ -3447,7 +3460,7 @@ function addon.settings:CreateAceOptionsPanel()
                             "Displays guides that are not applicable for your class/race such as starting zones for other races"),
                         type = "toggle",
                         width = optionsWidth,
-                        order = 3.6,
+                        order = 3.7,
                         set = function(info, value)
                             SetProfileOption(info, value)
                             addon.RXPFrame.GenerateMenuTable()

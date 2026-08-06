@@ -308,8 +308,17 @@ RXPFrame:EnableMouse(1)
 local stepPos = {}
 
 local lastScrollValue
+local function GetStepScrollValue(n)
+    if n == 1 or not stepPos[n] then return 0 end
+    local total = tonumber(stepPos[0]) or 0
+    local height = ScrollChild.f1 and ScrollChild.f1:GetHeight() or 0
+    if total <= 0 or height <= 0 then return 0 end
+    local value = stepPos[n] / total * height - 2
+    local maximum = math.max(0, height - BottomFrame:GetHeight() + 10)
+    return math.max(0, math.min(value, maximum))
+end
+
 function BottomFrame:StepScroll(n)
-    local value
     local step = addon.currentGuide.steps[n]
     if not step or not IsFrameShown(nil,step) then
          return
@@ -320,13 +329,7 @@ function BottomFrame:StepScroll(n)
             break
         end
     end]]
-    if n == 1 or not stepPos[n] then
-        value = 0
-    else
-        value = stepPos[n] / stepPos[0] * ScrollChild.f1:GetHeight() - 2
-        local smax = ScrollChild.f1:GetHeight() - BottomFrame:GetHeight() + 10
-        if value > smax then value = smax end
-    end
+    local value = GetStepScrollValue(n)
     ScrollFrame.ScrollBar:SetValue(value)
 
     value = math.floor(value+0.5)
@@ -1432,7 +1435,7 @@ Footer:SetHeight(20)
 Footer.text = GuideName:CreateFontString(nil, "OVERLAY")
 -- GuideName.text:SetFontObject(GameFontNormalSmall)
 Footer.text:ClearAllPoints()
-Footer.text:SetPoint("LEFT", Footer, 40, 1)
+Footer.text:SetPoint("LEFT", Footer, 92, 1)
 Footer.text:SetPoint("RIGHT", Footer, -16, 1)
 Footer.text:SetJustifyH("LEFT")
 Footer.text:SetJustifyV("MIDDLE")
@@ -1478,6 +1481,58 @@ Footer.cog:SetHighlightTexture(
     "Interface/MINIMAP/UI-Minimap-ZoomButton-Highlight", "ADD")
 Footer.cog:Show()
 Footer.cog:SetScript("OnClick", function(self) RXPFrame.DropDownMenu() end)
+
+Footer.browse = CreateFrame("Button", nil, Footer,
+                            "UIPanelButtonTemplate")
+Footer.browse:SetFrameLevel(Footer:GetFrameLevel() + 1)
+Footer.browse:SetSize(66, 18)
+Footer.browse:SetPoint("LEFT", Footer.cog, "RIGHT", 1, 0)
+
+function addon.UpdateBrowseModeButton()
+    local button = Footer.browse
+    if not button then return end
+    local available = addon.currentGuide and not addon.currentGuide.empty
+    if available then button:Enable() else button:Disable() end
+    button:SetText(addon.browseMode and "Resume" or "Browse")
+    local fontString = button:GetFontString()
+    if fontString then
+        if addon.browseMode then
+            fontString:SetTextColor(0.35, 1, 0.35)
+        else
+            fontString:SetTextColor(1, 0.82, 0)
+        end
+    end
+end
+
+function addon.SetBrowseMode(enabled, silent)
+    enabled = enabled == true
+    local changed = addon.browseMode ~= enabled
+    addon.browseMode = enabled
+    if not enabled then addon.updateSteps = true end
+    addon.UpdateBrowseModeButton()
+    if changed and not silent and addon.comms then
+        addon.comms.PrettyPrint(enabled and
+            "Browse mode ON - progression frozen." or
+            "Browse mode OFF - progression resumed.")
+    end
+end
+
+function addon.ToggleBrowseMode()
+    addon.SetBrowseMode(not addon.browseMode)
+end
+
+Footer.browse:SetScript("OnClick", addon.ToggleBrowseMode)
+Footer.browse:SetScript("OnEnter", function(self)
+    _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    _G.GameTooltip:AddLine("Browse mode")
+    _G.GameTooltip:AddLine(addon.browseMode and
+        "Progression is frozen. Click to resume automatic step advancement." or
+        "Click to freeze automatic advancement while reviewing guide steps.",
+        1, 1, 1, true)
+    _G.GameTooltip:Show()
+end)
+Footer.browse:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+addon.UpdateBrowseModeButton()
 -- local buttonToggle = 0
 -- Footer.cog:HookScript("OnEnter", function(self) buttonToggle = GetTime() end)
 -- Footer.cog:HookScript("OnLeave", function(self) self:Hide() end)
@@ -1547,6 +1602,45 @@ ScrollChild.framePool = {}
 ScrollChild:SetWidth(RXPFrame:GetWidth() - 35)
 
 ScrollFrame:SetScrollChild(ScrollChild)
+ScrollFrame:EnableMouseWheel(true)
+
+function BottomFrame:ScrollBySteps(delta)
+    if not addon.currentGuide or not addon.currentGuide.steps or
+        not ScrollFrame.ScrollBar or delta == 0 then return end
+    local candidates = {}
+    local minimum, maximum = ScrollFrame.ScrollBar:GetMinMaxValues()
+    for n, step in ipairs(addon.currentGuide.steps) do
+        local frame = ScrollChild.framePool[n]
+        if frame and frame:IsShown() and frame:GetHeight() > 1 and
+            frame:GetAlpha() > 0 and IsFrameShown(frame, step) then
+            local value = GetStepScrollValue(n)
+            if value >= minimum - 1 and value <= maximum + 1 then
+                candidates[#candidates + 1] = {index = n, value = value}
+            end
+        end
+    end
+    if #candidates == 0 then return end
+
+    local current = ScrollFrame.ScrollBar:GetValue()
+    local nearest, distance = 1, math.huge
+    for index, candidate in ipairs(candidates) do
+        local candidateDistance = math.abs(candidate.value - current)
+        if candidateDistance < distance then
+            nearest, distance = index, candidateDistance
+        end
+    end
+
+    local amount = math.floor(tonumber(
+        addon.settings.profile.guideScrollSteps) or 1)
+    amount = math.max(1, math.min(amount, 10))
+    local target = delta > 0 and nearest - amount or nearest + amount
+    target = math.max(1, math.min(target, #candidates))
+    self:StepScroll(candidates[target].index)
+end
+
+ScrollFrame:SetScript("OnMouseWheel", function(_, delta)
+    BottomFrame:ScrollBySteps(delta)
+end)
 
 function addon.GetGuideName(guide)
     if not guide then guide = addon.currentGuide end
@@ -1577,15 +1671,7 @@ RXPFrame.bottomMenu = {
         isNotRadio = true,
         keepShownOnClick = true,
         checked = function() return addon.browseMode end,
-        func = function()
-            addon.browseMode = not addon.browseMode
-            if not addon.browseMode then addon.updateSteps = true end
-            if addon.comms then
-                addon.comms.PrettyPrint(addon.browseMode and
-                    "Browse mode ON - progression frozen." or
-                    "Browse mode OFF - progression resumed.")
-            end
-        end
+        func = addon.ToggleBrowseMode
     }, {
         notCheckable = 1,
         text = L("Select another guide"),
@@ -2057,6 +2143,7 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     addon.currentGuideName = guide.name
     RXPCData.currentGuideName = guide.name
     RXPCData.currentGuideGroup = guide.group
+    addon.UpdateBrowseModeButton()
     local guidename = guide.title or addon.GetGuideName(guide)
     -- OnEnable may still be called by some AceAddon revisions after an earlier
     -- initialization error. Ensure this lazily-created FontString is usable so

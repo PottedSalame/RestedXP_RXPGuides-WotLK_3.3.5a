@@ -33,6 +33,7 @@ H["What are command the line options?"] = [[
 |cff909090/rxp supplies|r - Open the class supplies checklist
 |cff909090/rxp gear|r - Open the Gear Advisor
 |cff909090/rxp gold|r - Open the current Gold Assistant farming report
+|cff909090/rxp browse|r - Freeze or resume automatic guide progression
 |cff909090/rxp dailies|r - Open the WotLK activity planner
 |cff909090/rxp record|r - Open the opt-in Guide Author Recorder
 |cff909090/rxp party on||off||wait||suggest|r - Control opt-in party guide sync
