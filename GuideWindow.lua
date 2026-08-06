@@ -318,7 +318,7 @@ local function GetStepScrollValue(n)
     return math.max(0, math.min(value, maximum))
 end
 
-function BottomFrame:StepScroll(n)
+function BottomFrame:StepScroll(n, suppressRetry)
     local step = addon.currentGuide.steps[n]
     if not step or not IsFrameShown(nil,step) then
          return
@@ -333,7 +333,7 @@ function BottomFrame:StepScroll(n)
     ScrollFrame.ScrollBar:SetValue(value)
 
     value = math.floor(value+0.5)
-    if value ~= lastScrollValue then
+    if not suppressRetry and value ~= lastScrollValue then
         addon.ScheduleTask(0,BottomFrame.StepScroll,n)
     end
     lastScrollValue = value
@@ -1595,7 +1595,11 @@ hooksecurefunc(ScrollFrame.ScrollBar, "SetValue", function(self, value)
                      index + RXPCData.currentStep or 0
     if scroll < zero then scroll = zero end
     if scroll <= value then ScrollFrame.ScrollBar.ScrollDownButton:Disable() end
-    ScrollFrame.ScrollBar:SetMinMaxValues(zero, scroll)
+    local oldMinimum, oldMaximum = self:GetMinMaxValues()
+    if math.abs(oldMinimum - zero) > 0.01 or
+        math.abs(oldMaximum - scroll) > 0.01 then
+        self:SetMinMaxValues(zero, scroll)
+    end
 end)
 
 ScrollChild.framePool = {}
@@ -1635,7 +1639,12 @@ function BottomFrame:ScrollBySteps(delta)
     amount = math.max(1, math.min(amount, 10))
     local target = delta > 0 and nearest - amount or nearest + amount
     target = math.max(1, math.min(target, #candidates))
-    self:StepScroll(candidates[target].index)
+    -- StepScroll normally performs a delayed second pass because guide text can
+    -- still be reflowing after an active-step change. A mouse-wheel gesture is
+    -- already operating on the final visible rows, so that retry causes a
+    -- noticeable snap-back (and rapid ticks could retain an older destination).
+    addon.scheduledTasks[BottomFrame.StepScroll] = nil
+    self:StepScroll(candidates[target].index, true)
 end
 
 ScrollFrame:SetScript("OnMouseWheel", function(_, delta)
