@@ -170,7 +170,7 @@ addon.guideTextColors.default = {
 }
 
 -- Seed the top-level lookup with the default colours so text/title colour
--- replacement (map.lua, SettingsPanel.ReplaceColors) works even before/without
+-- replacement (UI/Map.lua, UI/Settings.lua) works even before/without
 -- profile customisation. Profile colours may override these later.
 for token, hex in pairs(addon.guideTextColors.default) do
     if addon.guideTextColors[token] == nil then

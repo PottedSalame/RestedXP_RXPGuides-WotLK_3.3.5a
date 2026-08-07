@@ -131,7 +131,7 @@ foreach ($match in [regex]::Matches($areaBlock.Groups[1].Value, '\[(\d+)\]\s*=\s
 }
 
 $functionNames = @{}
-foreach ($line in [IO.File]::ReadLines((Join-Path $root 'functions.lua'))) {
+foreach ($line in [IO.File]::ReadLines((Join-Path $root 'Guide/Directives/Handlers.lua'))) {
     if ($line -match 'addon\.functions(?:\.|\[["''])([A-Za-z0-9_]+)') { $functionNames[$Matches[1]] = $true }
 }
 foreach ($name in @('goto','subzone','turn','talent','scenario')) { $functionNames[$name] = $true }
@@ -350,6 +350,22 @@ foreach ($file in $files) {
             }
         }
     }
+}
+
+# Guide group/name/condition signatures are part of the saved-progress
+# compatibility surface. Structural counts alone would not catch a renamed key
+# that silently orphaned an existing character checkpoint.
+$surfacePath = Join-Path $root 'tests\runtime-surface.json'
+$surface = [IO.File]::ReadAllText($surfacePath) | ConvertFrom-Json
+$serializedKeys = (@($keys.Keys) | Sort-Object) -join "`n"
+$sha256 = [Security.Cryptography.SHA256]::Create()
+$guideKeyHash = ($sha256.ComputeHash(
+    [Text.Encoding]::UTF8.GetBytes($serializedKeys)) |
+    ForEach-Object { $_.ToString('x2') }) -join ''
+if ($guideKeyHash -cne [string]$surface.guideKeyHash) {
+    Add-Error (
+        "Guide-key compatibility surface changed: $guideKeyHash. " +
+        'Update tests/runtime-surface.json only for an intentional key migration.')
 }
 
 $guideIndex = @{}

@@ -13,34 +13,57 @@ libs\embeds.xml
 locale\locales.xml
 UI\includes.xml
 
-Locale.lua
-Themes.lua
-Communications.lua
-RXPGuides.lua
-GuideWindow.lua
-Help.lua
-SettingsPanel.lua
+Core\Locale.lua
+Core\Services.lua
+Core\Scheduler.lua
+Core\Storage.lua
+Core\Runtime.lua
+Core\Facade.lua
+Guide\QuestAcceptState.lua
+UI\Themes.lua
+Features\Communications.lua
+Core\Addon.lua
+UI\GuideWindow.lua
+UI\Help.lua
+UI\Settings.lua
 
 DB/cata.xml
 
-HSBatching.lua
-QuestLog.lua
-ActiveItemFrame.lua
-LevelingTracker.lua
-Timers.lua
-Targeting.lua
-Tips.lua
-InventoryManager.lua
+Features\HearthstoneBatching.lua
+Guide\QuestLog.lua
+UI\ActiveItemFrame.lua
+Features\LevelingTracker.lua
+Features\FlightTimers.lua
+Features\Targeting.lua
+Features\Tips.lua
+Features\InventoryManager.lua
 
 
-map.lua
-functions.lua
-GuideLoader.lua
-HardcoreIntroUI.lua
+UI\Map.lua
+Guide\ElementState.lua
+Guide\Prerequisites.lua
+Guide\Directives\Handlers.lua
+Guide\Directives\Registry.lua
+Guide\Directives\Quest.lua
+Guide\Directives\Navigation.lua
+Guide\Directives\Travel.lua
+Guide\Directives\Inventory.lua
+Guide\Directives\Character.lua
+Guide\Directives\Conditions.lua
+Guide\Directives\Collection.lua
+Guide\Directives\SpecialActions.lua
+Guide\QuestCache.lua
+Guide\QuestAutomation.lua
+Guide\Loader.lua
+Guide\Registry.lua
+Guide\Parser.lua
+Guide\Conditions.lua
+Guide\State.lua
+UI\HardcoreIntro.lua
 
 Guides/GuideList-cata.xml
 
-Talents.lua
+Features\Talents.lua
 Guides/Talents/cata.xml
 
-ItemUpgrades.lua
+Features\ItemUpgrades.lua

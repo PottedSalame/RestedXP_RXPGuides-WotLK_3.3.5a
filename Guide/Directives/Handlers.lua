@@ -1,5 +1,9 @@
 local addonName, addon = ...
 
+-- Compatibility handler implementation. Directive discovery, ownership, and
+-- event metadata are managed by Guide/Directives/Registry.lua and the domain
+-- catalogs loaded after this file.
+
 local localizedClass, class = UnitClass("player")
 local gameVersion = select(4, GetBuildInfo())
 local fmt, tinsert = string.format,tinsert
@@ -264,7 +268,7 @@ local GetNumQuests = C_QuestLog.GetNumQuestLogEntries or
                          _G.GetNumQuestLogEntries
 -- 3.3.5a (AzerothCore) GetQuestLogTitle returns an extra questTag field, shifting
 -- isComplete/questID positions. The compat wrapper reshapes it to the order the
--- reads below expect (isComplete #6, questID #8). See Compat335.lua.
+-- reads below expect (isComplete #6, questID #8). See Compat/Bootstrap.lua.
 local GetQuestLogTitle = _G.RXPCompatGetQuestLogTitle or _G.GetQuestLogTitle
 local GetNumDayEvents = _G.C_Calendar and _G.C_Calendar.GetNumDayEvents
 local GetDayEvent = _G.C_Calendar and _G.C_Calendar.GetDayEvent
@@ -948,6 +952,7 @@ function addon.SetElementComplete(self, disable, skipIfInactive)
     end
     element.completed = true
     element.skip = true
+    if addon.elementState then addon.elementState:Sync(element) end
     addon.updateSteps = true
     addon.UpdateMap()
     if not wasCompleted and active and
@@ -970,6 +975,7 @@ end
 function addon.SetElementIncomplete(self)
     if self.element.completed and not self.element.textOnly then
         self.element.completed = false
+        if addon.elementState then addon.elementState:Sync(self.element) end
         addon.UpdateMap()
     end
     if self.button then
@@ -1026,6 +1032,9 @@ local HBD = LibStub("HereBeDragons-2.0")
 -- gossip API does not expose quest IDs.  Search those aliases defensively when
 -- deciding whether a prerequisite is completed by a later guide step.
 local function IsQuestTurnedInLater(id)
+    if addon.prerequisites and addon.prerequisites.IsTurnedInLater then
+        return addon.prerequisites:IsTurnedInLater(id)
+    end
     id = tonumber(id)
     if not id or type(addon.questTurnIn) ~= "table" then return false end
     if type(addon.questTurnIn[id]) == "table" then return true end

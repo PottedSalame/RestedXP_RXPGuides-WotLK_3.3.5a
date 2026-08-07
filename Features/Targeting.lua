@@ -1470,7 +1470,7 @@ end
 
 function addon.targeting:CreateTargetFrame()
     -- Still create frame even if targeting disabled, for frame location preservation
-    if self.activeTargetFrame then return end
+    if self.activeTargetFrame then return self.activeTargetFrame end
 
     self.activeTargetFrame = CreateFrame("Frame", "RXPTargetFrame", UIParent,
                                          BackdropTemplateMixin and "BackdropTemplate" or nil)
@@ -1558,6 +1558,21 @@ function addon.targeting:CreateTargetFrame()
             end
         end)
     end
+    return f
+end
+
+-- Guide restoration can publish target lists before the optional targeting
+-- subsystem has completed Setup (or after another required subsystem failed).
+-- Lazily create the unprotected container, but never attempt secure frame work
+-- during combat. This keeps a startup failure from cascading into a nil-frame
+-- error while preserving the normal Setup path and its event ownership.
+function addon.targeting:EnsureTargetFrame()
+    if self.activeTargetFrame then return self.activeTargetFrame end
+    if InCombatLockdown() then
+        legacyScanner.frameDirty = true
+        return
+    end
+    return self:CreateTargetFrame()
 end
 
 function addon.targeting:RenderTargetFrameBackground()
@@ -1787,6 +1802,9 @@ end
 function addon.targeting:UpdateTargetFrame(selector)
     if not addon.settings.profile.enableTargetAutomation then return end
 
+    local targetFrame = self:EnsureTargetFrame()
+    if not targetFrame then return end
+
     local selectorName = selector and UnitName(selector)
     if addon.gameVersion == 30300 and selectorName then
         if legacyScanner.wantedDirty then self:RebuildLegacyWanted() end
@@ -1796,8 +1814,6 @@ function addon.targeting:UpdateTargetFrame(selector)
     -- Portrait textures are not protected. Capture the real target/mouseover
     -- image even if combat requires the secure target buttons to render later.
     if selectorName then CacheUnitPortrait(selectorName, selector) end
-
-    local targetFrame = self.activeTargetFrame
 
     if InCombatLockdown() then
         legacyScanner.frameDirty = true

@@ -2402,23 +2402,9 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     ScrollChild.f1:Hide()
     ScrollChild:SetHeight(200)
     if OnLoad then
-        local restoreStep
-        if savedStepId ~= nil then
-            for index, step in ipairs(guide.steps) do
-                if step.stepId ~= nil and
-                    (step.stepId == savedStepId or
-                        tostring(step.stepId) == tostring(savedStepId)) then
-                    restoreStep = index
-                    break
-                end
-            end
-        end
-        if not restoreStep and type(savedStep) == "number" and
-            savedStep >= 1 and savedStep <= #guide.steps and
-            savedStep == math.floor(savedStep) then
-            restoreStep = savedStep
-        end
-        if not restoreStep then
+        local restoreStep, restored = addon.guideState:ResolvePosition(
+                                          guide, savedStepId, savedStep)
+        if not restored then
             RXPCData.stepSkip = {}
             RXPCData.completedWaypoints = {}
         end

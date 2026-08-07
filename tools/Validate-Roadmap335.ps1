@@ -6,28 +6,31 @@ function Add-Error([string]$Message) { $errors.Add($Message) }
 $tocPath = Join-Path $root 'RXPGuides.toc'
 $toc = [IO.File]::ReadAllText($tocPath)
 $modules = @(
-    'RoadmapCore.lua','GuideHub.lua','Diagnostics.lua','Recovery.lua',
-    'CompatibilityPacks.lua','PartySync.lua','Supplies.lua','GearAdvisor.lua',
-    'ActivityPlanner.lua','Accessibility.lua','GuideRecorder.lua',
-    'PerformanceInspector.lua','GuideAnalysis.lua','RunArchive.lua',
-    'PetAssistant.lua'
+    'Features/Roadmap.lua','UI/GuideHub.lua','Features/Diagnostics.lua',
+    'Core/Recovery.lua','Features/CompatibilityPacks.lua',
+    'Features/PartySync.lua','Features/Supplies.lua','Features/GearAdvisor.lua',
+    'Features/ActivityPlanner.lua','Features/Accessibility.lua',
+    'Features/GuideRecorder.lua','Features/PerformanceInspector.lua',
+    'Features/GuideAnalysis.lua','Features/RunArchive.lua',
+    'Features/PetAssistant.lua'
 )
 $lastOffset = -1
 foreach ($module in $modules) {
     $path = Join-Path $root $module
     if (-not [IO.File]::Exists($path)) { Add-Error "Missing roadmap module: $module"; continue }
-    $offset = $toc.IndexOf($module, [StringComparison]::OrdinalIgnoreCase)
+    $tocModule = $module -replace '/', '\'
+    $offset = $toc.IndexOf($tocModule, [StringComparison]::OrdinalIgnoreCase)
     if ($offset -lt 0) { Add-Error "3.3.5 manifest does not load $module" }
     elseif ($offset -le $lastOffset) { Add-Error "Roadmap module load order is invalid at $module" }
     $lastOffset = $offset
 }
 
-$coreText = [IO.File]::ReadAllText((Join-Path $root 'RXPGuides.lua'))
+$coreText = [IO.File]::ReadAllText((Join-Path $root 'Core/Addon.lua'))
 if ($coreText -notmatch 'local cacheVersion\s*=\s*32\b') {
     Add-Error 'Guide metadata cache version must be 32 for the roadmap migration.'
 }
 
-$settingsText = [IO.File]::ReadAllText((Join-Path $root 'SettingsPanel.lua'))
+$settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI/Settings.lua'))
 foreach ($command in @('guides','diagnose','backup','supplies','gear','dailies','record',
         'preflight','watch','archives','pet','perf')) {
     if ($settingsText -notmatch ('input\s*==\s*"' + [regex]::Escape($command) + '"')) {

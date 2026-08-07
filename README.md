@@ -340,6 +340,13 @@ No. The legacy API does not expose arbitrary rendered creatures as addressable u
 
 The addon avoids guessing when the legacy client returns ambiguous or incomplete data. Manual interaction remains available, and a reproducible report with the guide step and server details can be used to improve the backport.
 
+## Development
+
+The first-party runtime is organized by compatibility, core, guide, UI, and
+feature domains. See [`ARCHITECTURE.md`](ARCHITECTURE.md) for load-order rules,
+internal service contracts, extension guidance, upstream mapping, and the
+required validation suite.
+
 ## Credits
 
 - **RestedXP** and its contributors for the original addon, guide engine, interface, and guide content on which this backport is based.

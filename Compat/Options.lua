@@ -1,5 +1,5 @@
 --[[ ------------------------------------------------------------------------
-    Compat335_Options.lua
+    Compat/Options.lua
 
     Adds a "3.3.5a" sub-panel under RestedXP Guides in Interface -> AddOns,
     holding adjustments specific to the 3.3.5a backport:
@@ -109,7 +109,7 @@ local function ApplyArrow()
     end
 end
 
--- Exposed so map.lua can query the pin-background preference at pin creation.
+-- Exposed so UI/Map.lua can query the pin-background preference at pin creation.
 function addon.Compat335_PinBackground()
     return RXP335 and RXP335.pinBackground
 end

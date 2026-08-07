@@ -121,4 +121,3 @@ function accessibility:Setup()
     local mode = addon.settings.profile.colorBlindMode or "off"
     if mode ~= "off" then self:SetMode(mode) end
 end
-

@@ -29,6 +29,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Lua 5.1 test runtime
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1
+
+      - name: Validate runtime architecture and compatibility surface
+        shell: pwsh
+        run: ./tools/Validate-Runtime335.ps1 -RequireLua
+
       - name: Validate 3.3.5 guides and compatibility packs
         shell: pwsh
         run: ./tools/Validate-Guides335.ps1

@@ -11,6 +11,12 @@
 .fleet/
 .aider*
 
+# Local architecture and refactor notes
+ARCHITECTURE.md
+ARCHITECTURE_*.md
+REFACTOR_NOTES.md
+REFACTOR_*.md
+
 # Local configuration, credentials, and machine-specific overrides
 .env
 .env.*

@@ -1,5 +1,5 @@
 --[[ ------------------------------------------------------------------------
-    Compat335.lua  -  WoW 3.3.5a (interface 30300) compatibility layer for RXPGuides
+    Compat/Bootstrap.lua - WoW 3.3.5a compatibility prelude for RXPGuides
 
     RXPGuides is written for modern WoW clients (Retail + all "Classic" flavors),
     which expose the C_* API namespaces and the uiMapID map system. The original
@@ -446,7 +446,7 @@ do
     end
 end
 
--- WorldMapFrame:OnMapChanged does not exist on 3.3.5a; map.lua hooksecurefunc's
+-- WorldMapFrame:OnMapChanged does not exist on 3.3.5a; UI/Map.lua hooks
 -- it unconditionally. Provide a no-op so the hook installs without error.
 if _G.WorldMapFrame and _G.WorldMapFrame.OnMapChanged == nil then
     _G.WorldMapFrame.OnMapChanged = function() end
@@ -461,7 +461,7 @@ if _G.WorldMapFrame and _G.WorldMapFrame.GetCanvas == nil then
 end
 
 --=========================================================================
--- Object/Frame/Texture pools (Blizzard Pools.lua, added in Legion). map.lua
+-- Object/Frame/Texture pools (Blizzard Pools.lua, added in Legion). UI/Map.lua
 -- uses these for world/minimap pin management via :Acquire / :ReleaseAll /
 -- :EnumerateActive and by setting pool.creationFunc / pool.resetterFunc.
 --=========================================================================
@@ -540,7 +540,7 @@ if not _G.CreateObjectPool then
         return pool
     end
 
-    -- Distinct from CreateFramePool so map.lua's `CreateSecureFramePool ==
+    -- Distinct from CreateFramePool so UI/Map.lua's `CreateSecureFramePool ==
     -- CreateFramePool` test is false and it uses the clean creationFunc path.
     _G.CreateSecureFramePool = function(frameType, parent, template, resetterFunc, forbidden)
         return _G.CreateFramePool(frameType, parent, template, resetterFunc, true)
@@ -591,7 +591,7 @@ end
 def(_G, "GetSpecialization", function() return nil end)
 def(_G, "GetSpecializationInfo", function() return nil end)
 
--- GetCurrentRegion (added in 6.0). RXPGuides.lua and AceDB use it; 1 = US-like.
+-- GetCurrentRegion (added in 6.0). Core/Addon.lua and AceDB use it; 1 = US-like.
 def(_G, "GetCurrentRegion", function() return 1 end)
 
 -- GetMaxPlayerLevel (added in 5.0). WotLK cap is 80.
@@ -618,7 +618,7 @@ def(_G, "GetNumSubgroupMembers", function() return _G.GetNumPartyMembers() or 0 
 -- questTag at #3 and returns questID at #9,
 -- so every position-dependent read in RXP is off by one. This wrapper reshapes
 -- the return into the order RXP expects; RXPGuides files point their local
--- GetQuestLogTitle at it (see functions.lua / QuestLog.lua).
+-- GetQuestLogTitle at it (see Guide/Directives.lua and Guide/QuestLog.lua).
 _G.RXPCompatGetQuestLogTitle = function(index)
     local title, level, questTag, suggestedGroup, isHeader, isCollapsed,
           isComplete, isDaily, questID = _G.GetQuestLogTitle(index)
@@ -1140,7 +1140,7 @@ do
     end
     C_PlayerInteractionManager.ClearInteraction = function() end
 
-    -- Nameplates (Targeting.lua)
+    -- Nameplates (Features/Targeting.lua)
     local C_NamePlate = ns("C_NamePlate")
     def(C_NamePlate, "GetNamePlates", function() return {} end)
     def(C_NamePlate, "GetNamePlateForUnit", function() return nil end)

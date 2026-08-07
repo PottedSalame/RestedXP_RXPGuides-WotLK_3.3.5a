@@ -27,7 +27,7 @@ local GetSpellSubtext = C_Spell and C_Spell.GetSpellSubtext or _G.GetSpellSubtex
 local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
 local IsSpellKnown = C_Spell and C_Spell.IsSpellKnown or _G.IsSpellKnown
 local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
-local NewTicker = C_Timer.NewTicker
+local CORE_TICKER_OWNER = "core-update-loops"
 local messageList = {}
 
 local function MessageHandler(message,...)
@@ -154,7 +154,7 @@ end
 
 local RXPGuides = {}
 addon.RXPGuides = RXPGuides
-_G.RXPGuides = RXPGuides
+addon.facade:ExposeGlobal("RXPGuides", RXPGuides)
 
 addon.guideCache = {}
 addon.questQueryList = {}
@@ -1181,10 +1181,8 @@ function addon.DisplayQuestLogRewards(questLogIndex)
     end
 end
 
-local turnInTimer = 0
-local pendingQuestAccept
-local questAutomationRetrySerial = 0
-local confirmedQuestAccepts = {}
+local questAcceptState = addon.questAcceptState
+local QUEST_AUTOMATION_OWNER = "quest-engine"
 
 local function QuestEventQuirks()
     return addon.compatibilityPacks and
@@ -1219,13 +1217,14 @@ local function CompleteConfirmedQuestElement(element, event, questId)
 end
 
 local function ScheduleQuestAutomationRetries()
-    questAutomationRetrySerial = questAutomationRetrySerial + 1
-    local serial = questAutomationRetrySerial
+    local serial = questAcceptState:NextRetrySerial()
     local packDelay = tonumber(QuestEventQuirks().questTurnedInDelayed) or 0
-    for _, delay in ipairs({0.10, 0.30, 0.60}) do
-        C_Timer.After(delay + packDelay, function()
-            if serial == questAutomationRetrySerial and
-                not pendingQuestAccept then
+    for index, delay in ipairs({0.10, 0.30, 0.60}) do
+        addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                              "automation-retry-" .. index,
+                              delay + packDelay, function()
+            if questAcceptState:IsRetryCurrent(serial) and
+                not questAcceptState:GetPending(GetTime(), 5) then
                 addon:QuestAutomation()
             end
         end)
@@ -1235,9 +1234,7 @@ end
 local function ClearExpiredPendingAccept()
     local packDelay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
     local lifetime = math.max(5, packDelay + 1)
-    if pendingQuestAccept and GetTime() - pendingQuestAccept.started > lifetime then
-        pendingQuestAccept = nil
-    end
+    return questAcceptState:GetPending(GetTime(), lifetime)
 end
 
 local function CommitQuestAccept(questId)
@@ -1250,18 +1247,13 @@ local function CommitQuestAccept(questId)
     -- callback.  It therefore cannot be used to deduplicate this automation
     -- commit: frame dispatch order would sometimes make the first confirmation
     -- look like a duplicate and suppress the same-NPC follow-up retry.
-    local alreadyCommitted = confirmedQuestAccepts[questId] and
-                                 now - confirmedQuestAccepts[questId] < 5
-    confirmedQuestAccepts[questId] = now
+    local committed = questAcceptState:Commit(questId, now, 5)
+    if not committed then return end
+    local alreadyCommitted = committed.alreadyCommitted
     addon.recentAccept[questId] = now
 
     local guideAccept = GetQuestAutomationElement(addon.questAccept, questId)
-    if pendingQuestAccept and pendingQuestAccept.questId == questId then
-        guideAccept = guideAccept or
-                          (type(pendingQuestAccept.element) == "table" and
-                              pendingQuestAccept.element or nil)
-        pendingQuestAccept = nil
-    end
+    guideAccept = guideAccept or committed.element
 
     CompleteConfirmedQuestElement(guideAccept, "QUEST_ACCEPTED", questId)
 
@@ -1280,9 +1272,9 @@ local function CommitQuestAccept(questId)
 end
 
 local function ReconcilePendingAccept()
-    ClearExpiredPendingAccept()
-    if not pendingQuestAccept then return end
-    local questId = pendingQuestAccept.questId
+    local pending = ClearExpiredPendingAccept()
+    if not pending then return end
+    local questId = pending.questId
     if questId and addon.IsOnQuest(questId) then
         CommitQuestAccept(questId)
     end
@@ -1317,8 +1309,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
     -- disabled, Ctrl is held, or the guide window is hidden.
     if event == "QUEST_ACCEPTED" then
         local questId = addon.NormalizeQuestAcceptedId(arg1, arg2)
-        if not questId and pendingQuestAccept then
-            questId = pendingQuestAccept.questId
+        local pending = questAcceptState:GetPending(GetTime(), 5)
+        if not questId and pending then
+            questId = pending.questId
         end
         CommitQuestAccept(questId)
         if addon.lore then addon.lore:MarkSeen(questId) end
@@ -1326,7 +1319,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
     elseif event == "QUEST_LOG_UPDATE" then
         local delay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
         if delay > 0 then
-            C_Timer.After(delay, ReconcilePendingAccept)
+            addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                                  "reconcile-pending-accept", delay,
+                                  ReconcilePendingAccept)
         else
             ReconcilePendingAccept()
         end
@@ -1335,7 +1330,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         if addon.lore then addon.lore:MarkSeen(arg1) end
         local guideTurnIn = GetQuestAutomationElement(addon.questTurnIn, arg1)
         if guideTurnIn then
-            turnInTimer = GetTime()
+            questAcceptState:MarkTurnIn(GetTime())
             CompleteConfirmedQuestElement(guideTurnIn, "QUEST_TURNED_IN",
                                            arg1)
             if not disabled then
@@ -1413,12 +1408,10 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         return
     elseif event == "QUEST_ACCEPT_CONFIRM" and addon.QuestAutoAccept(arg2) then
         local guideAccept = GetQuestAcceptAutomationElement(arg2)
-        pendingQuestAccept = {
-            questId = guideAccept and guideAccept.questId or
-                          (type(arg2) == "number" and arg2 or nil),
-            element = guideAccept,
-            started = GetTime()
-        }
+        questAcceptState:Begin(
+            guideAccept and guideAccept.questId or
+                (type(arg2) == "number" and arg2 or nil), nil, guideAccept,
+            GetTime())
         ConfirmAcceptQuest()
     elseif event == "QUEST_COMPLETE" then
         local loreQuestId = GetQuestID and GetQuestID()
@@ -1434,9 +1427,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             CompleteQuest()
         elseif addon.QuestAutoAccept(id) then
             HideUIPanel(_G.QuestFrame)
-        elseif GetTime()-turnInTimer < 0.5 then
+        elseif questAcceptState:WasRecentTurnIn(GetTime(), 0.5) then
             HideUIPanel(_G.QuestFrame)
-            turnInTimer = 0
+            questAcceptState:ClearTurnIn()
         end
         -- questProgressTimer = GetTime()
     elseif event == "QUEST_DETAIL" then
@@ -1447,7 +1440,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         local title = GetTitleText and GetTitleText()
         local lookup = addon.gameVersion == 30300 and title or
                            (GetQuestID() or title)
-        local recentTurnIn = GetTime() - turnInTimer < 0.5
+        local recentTurnIn = questAcceptState:WasRecentTurnIn(GetTime(), 0.5)
         local guideAccept = GetQuestAcceptAutomationElement(lookup)
         local questId = guideAccept and tonumber(guideAccept.questId)
         if questId and addon.disabledQuests and addon.disabledQuests[questId] then
@@ -1458,12 +1451,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         elseif addon.QuestAutoAccept(lookup) or
             (recentTurnIn and guideAccept and
                 (not questId or not addon.IsOnQuest(questId))) then
-            pendingQuestAccept = {
-                questId = questId,
-                title = title,
-                element = guideAccept,
-                started = GetTime()
-            }
+            questAcceptState:Begin(questId, title, guideAccept, GetTime())
             if _G.QuestDetailAcceptButton_OnClick then
                 -- 3.3.5a: a real Accept-button click accepts the quest AND lets the
                 -- quest frame close itself (which ZygorGuidesViewerRM relies on).
@@ -1473,7 +1461,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
                 AcceptQuest()
                 HideUIPanel(_G.QuestFrame)
             end
-            turnInTimer = 0
+            questAcceptState:ClearTurnIn()
         elseif recentTurnIn then
             -- Do not close an unrecognised follow-up. SetStep queues another
             -- QuestAutomation pass after the guide advances, including across a
@@ -1600,6 +1588,111 @@ function addon:CreateMetaDataTable(wipe)
 
 end
 
+local runtimeSubsystemsRegistered
+local function RegisterRuntimeSubsystems()
+    if runtimeSubsystemsRegistered then return end
+    runtimeSubsystemsRegistered = true
+
+    addon.runtime:Register({
+        id = "settings",
+        initialize = function()
+            addon.services:Register("settings", addon.settings, "settings")
+        end
+    })
+    addon.runtime:Register({
+        id = "guide-ui",
+        depends = {"settings"},
+        initialize = function()
+            addon.services:Register("guide-window", addon.RXPFrame)
+        end
+    })
+    addon.runtime:Register({
+        id = "guide-engine",
+        depends = {"settings"},
+        initialize = function()
+            addon.services:Require("directives")
+            addon.services:Require("guide-registry")
+            addon.services:Require("guide-parser")
+            addon.services:Require("guide-conditions")
+            addon.services:Require("guide-state")
+            local valid, errorText = addon.directives:ValidateLegacySurface()
+            if not valid then error(errorText, 2) end
+        end
+    })
+    addon.runtime:Register({
+        id = "quest-engine",
+        depends = {"guide-engine"},
+        initialize = function()
+            addon.services:Require("quest-accept-state")
+            addon.services:Require("quest-cache")
+            addon.services:Require("quest-automation")
+            addon.services:Require("prerequisites")
+        end,
+        disable = function() addon.questAutomation:ResetTransient() end
+    })
+
+    local function RegisterOptional(id, label, instance, setup, dependencies)
+        if not instance or type(setup) ~= "function" then return end
+        addon.runtime:Register({
+            id = id,
+            label = label,
+            depends = dependencies or {"settings"},
+            optional = true,
+            initialize = setup
+        })
+    end
+
+    RegisterOptional("communications", "communications", addon.comms,
+        function()
+            addon.services:Register("communications", addon.comms, "comms")
+            addon.comms:Setup()
+        end)
+    RegisterOptional("targeting", "targeting", addon.targeting,
+        function()
+            addon.services:Register("targeting", addon.targeting, "targeting")
+            addon.targeting:Setup()
+        end)
+    RegisterOptional("talents", "talents", addon.talents,
+        function()
+            addon.services:Register("talents", addon.talents, "talents")
+            addon.talents:Setup()
+        end)
+    if addon.settings.profile.enableTracker then
+        RegisterOptional("leveling-tracker", "leveling tracker", addon.tracker,
+            function()
+                addon.services:Register("leveling-tracker", addon.tracker,
+                                        "tracker")
+                addon.tracker:SetupTracker()
+            end)
+    end
+    RegisterOptional("tips", "tips", addon.tips,
+        function()
+            addon.services:Register("tips", addon.tips, "tips")
+            addon.tips:Setup()
+        end)
+    RegisterOptional("vendor-treasures", "vendor treasures",
+        addon.VendorTreasures, function()
+            addon.services:Register("vendor-treasures", addon.VendorTreasures,
+                                    "VendorTreasures")
+            addon.VendorTreasures:Setup()
+        end)
+    RegisterOptional("item-upgrades", "item upgrades", addon.itemUpgrades,
+        function()
+            addon.services:Register("item-upgrades", addon.itemUpgrades,
+                                    "itemUpgrades")
+            addon.itemUpgrades:Setup()
+        end)
+
+    if addon.roadmap and addon.roadmap.Setup then
+        addon.runtime:Register({
+            id = "roadmap-features",
+            phase = "post-guides",
+            depends = {"settings", "guide-engine"},
+            initialize = function() addon.roadmap:Setup() end
+        })
+    end
+end
+
 function addon:OnInitialize()
     local importGuidesDefault = {
         profile = {guides = {}, reports = {splits = {}}}
@@ -1662,6 +1755,9 @@ function addon:OnInitialize()
         RXPData.gameVersion = gameVersion
     end
     addon.settings:InitializeDatabase()
+    addon.storage:Bind(RXPData, RXPCData, addon.settings.profile)
+    local storageReady, storageError = addon.storage:Migrate()
+    if not storageReady then error(storageError, 2) end
     addon.CreateMetaDataTable()
     addon.settings:InitializeSettings()
 
@@ -1688,41 +1784,17 @@ function addon:OnInitialize()
     addon.RenderFrame()
     addon.SetupArrow()
     addon:CreateActiveItemFrame()
-    -- Auxiliary modules are wrapped so an error in a Phase-2 feature (targeting,
-    -- tracker, tips...) can't halt OnInitialize before LoadCachedGuides() below,
-    -- which is what actually loads the active guide's content.
-    addon.roadmap:RunOptional("communications",
-        function() addon.comms:Setup() end)
-    addon.roadmap:RunOptional("targeting",
-        function() addon.targeting:Setup() end)
-    if addon.talents then
-        addon.roadmap:RunOptional("talents",
-            function() addon.talents:Setup() end)
-    end
-    if addon.settings.profile.enableTracker then
-        addon.roadmap:RunOptional("leveling tracker",
-            function() addon.tracker:SetupTracker() end)
-    end
-    if addon.tips then
-        addon.roadmap:RunOptional("tips", function() addon.tips:Setup() end)
-    end
-    if addon.VendorTreasures then
-        addon.roadmap:RunOptional("vendor treasures",
-            function() addon.VendorTreasures:Setup() end)
-    end
-    if addon.itemUpgrades then
-        addon.roadmap:RunOptional("item upgrades",
-            function() addon.itemUpgrades:Setup() end)
-    end
+    -- Existing setup methods now run through a deterministic lifecycle graph.
+    -- The safe-mode supervisor remains the failure boundary for optional code.
+    RegisterRuntimeSubsystems()
+    addon.runtime:InitializePhase("initialize")
 
     if addon.player.season == 2 then
         addon.settings.profile.phase = 6
     end
 
     addon.LoadCachedGuides()
-    if addon.roadmap and addon.roadmap.Setup then
-        addon.roadmap:Setup()
-    end
+    addon.runtime:InitializePhase("post-guides")
     addon.UpdateGuideFontSize()
     addon.isHidden = not addon.settings.profile.showEnabled or addon.settings.profile.hideGuideWindow
     addon.RXPFrame:SetShown(not addon.isHidden)
@@ -1886,9 +1958,15 @@ function addon:OnEnable()
 
     -- Only start update loop after everything initializes and enables
     addon.tickers:SetupTickerLoops()
+    addon.runtime:EnableAll()
 
     RXPData.release = addon.release
     RXPData.cacheVersion = cacheVersion
+end
+
+function addon:OnDisable()
+    addon.scheduler:CancelOwner(CORE_TICKER_OWNER)
+    addon.runtime:DisableAll()
 end
 
 -- Tracks if a player is on a loading screen and pauses the main update loop
@@ -2350,32 +2428,42 @@ function addon.tickers:SetupTickerLoops()
     }
 
     if not self.legacy then
-        self.legacy = NewTicker(updateFrequency, addon.LegacyUpdateLoop)
+        self.legacy = addon.scheduler:Ticker(CORE_TICKER_OWNER, "legacy",
+                                             updateFrequency,
+                                             addon.LegacyUpdateLoop)
     end
 
     if not self.cycleZero then
         -- skip % 4 == 0
-        self.cycleZero = NewTicker(jitter[0], self.CycleZero)
+        self.cycleZero = addon.scheduler:Ticker(CORE_TICKER_OWNER, "cycleZero",
+                                                jitter[0], self.CycleZero)
     end
 
     if not self.cycleThree then
         -- skip % 4 == 2
-        self.cycleThree = NewTicker(jitter[3], self.CycleThree)
+        self.cycleThree = addon.scheduler:Ticker(CORE_TICKER_OWNER,
+                                                 "cycleThree", jitter[3],
+                                                 self.CycleThree)
     end
 
     if not self.cycleFour then
         -- skip % 4 == 3
-        self.cycleFour = NewTicker(jitter[4], self.CycleFour)
+        self.cycleFour = addon.scheduler:Ticker(CORE_TICKER_OWNER, "cycleFour",
+                                                jitter[4], self.CycleFour)
     end
 
     if not self.cycleSixteen then
         -- skip % 16 == 1
-        self.cycleSixteen = NewTicker(jitter[16], self.CycleSixteen)
+        self.cycleSixteen = addon.scheduler:Ticker(CORE_TICKER_OWNER,
+                                                   "cycleSixteen", jitter[16],
+                                                   self.CycleSixteen)
     end
 
     if not self.cycleThirty then
         -- skip % 32 == 29
-        self.cycleThirty = NewTicker(jitter[30], self.CycleThirty)
+        self.cycleThirty = addon.scheduler:Ticker(CORE_TICKER_OWNER,
+                                                  "cycleThirty", jitter[30],
+                                                  self.CycleThirty)
     end
 
 end
@@ -2415,11 +2503,8 @@ function addon.tickers:RestartTickerLoops()
         "legacy", "cycleZero", "cycleThree", "cycleFour",
         "cycleSixteen", "cycleThirty"
     }
-    for _, name in ipairs(tickerNames) do
-        local ticker = self[name]
-        if ticker and ticker.Cancel then ticker:Cancel() end
-        self[name] = nil
-    end
+    addon.scheduler:CancelOwner(CORE_TICKER_OWNER)
+    for _, name in ipairs(tickerNames) do self[name] = nil end
     self:SetupTickerLoops()
 end
 
@@ -2789,4 +2874,4 @@ function addon.stepLogic.ProfessionCheck(step)
     end
 end
 
-RXP = addon -- debug purposes
+addon.facade:ExposeGlobal("RXP", addon) -- legacy debug/macro compatibility

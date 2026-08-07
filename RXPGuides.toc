@@ -8,21 +8,28 @@
 ## X-Curse-Project-ID: 486246
 ## X-Wago-ID: ZKbebq61
 
-# --- 3.3.5a compatibility layer MUST load first (defines C_* namespaces) ---
-Compat335.lua
+# --- Compatibility prelude: MUST load before libraries and runtime files. ---
+Compat\Bootstrap.lua
 
 libs\embeds_335.xml
 locale\locales.xml
 # The 3.3.5 Auction House results panel is built in Lua with the stock
 # FauxScrollFrameTemplate; modern ScrollBox XML remains intentionally unloaded.
 
-Locale.lua
-Themes.lua
-Communications.lua
-RXPGuides.lua
-GuideWindow.lua
-Help.lua
-SettingsPanel.lua
+# --- Core runtime and stable compatibility facade. ---
+Core\Locale.lua
+Core\Services.lua
+Core\Scheduler.lua
+Core\Storage.lua
+Core\Runtime.lua
+Core\Facade.lua
+Guide\QuestAcceptState.lua
+UI\Themes.lua
+Features\Communications.lua
+Core\Addon.lua
+UI\GuideWindow.lua
+UI\Help.lua
+UI\Settings.lua
 
 # DB loaded directly with BACKSLASHES (3.3.5a's TOC parser does not reliably
 # accept forward slashes, and it resolves nested-XML <Script> paths relative to
@@ -42,48 +49,66 @@ DB\questDB.lua
 DB\tbc\statWeights.lua
 DB\wotlk\statWeights_335.lua
 
-HSBatching.lua
-QuestLog.lua
-ActiveItemFrame.lua
-LevelingTracker.lua
-Timers.lua
-Targeting.lua
+# --- Guide-facing services and player features. ---
+Features\HearthstoneBatching.lua
+Guide\QuestLog.lua
+UI\ActiveItemFrame.lua
+Features\LevelingTracker.lua
+Features\FlightTimers.lua
+Features\Targeting.lua
 Bindings.xml
-Tips.lua
+Features\Tips.lua
 # ItemUpgrades scoring, tooltips, and the legacy Auction House upgrade scanner.
-ItemUpgrades.lua
-InventoryManager.lua
+Features\ItemUpgrades.lua
+Features\InventoryManager.lua
 # Standalone world-map vendor treasure pins (Classic/TBC data on WotLK).
-CptStadicsVendorTreasures.lua
+Features\VendorTreasures.lua
 
-map.lua
-functions.lua
-GuideLoader.lua
+UI\Map.lua
+Guide\ElementState.lua
+Guide\Prerequisites.lua
+Guide\Directives\Handlers.lua
+Guide\Directives\Registry.lua
+Guide\Directives\Quest.lua
+Guide\Directives\Navigation.lua
+Guide\Directives\Travel.lua
+Guide\Directives\Inventory.lua
+Guide\Directives\Character.lua
+Guide\Directives\Conditions.lua
+Guide\Directives\Collection.lua
+Guide\Directives\SpecialActions.lua
+Guide\QuestCache.lua
+Guide\QuestAutomation.lua
+Guide\Loader.lua
+Guide\Registry.lua
+Guide\Parser.lua
+Guide\Conditions.lua
+Guide\State.lua
 
 # Staged 3.3.5 feature-roadmap foundation and stock legacy interfaces.
-RoadmapCore.lua
-GuideHub.lua
-GoldAssistant.lua
-Diagnostics.lua
-Recovery.lua
-CompatibilityPacks.lua
-PartySync.lua
-Supplies.lua
-GearAdvisor.lua
-ActivityPlanner.lua
-Accessibility.lua
-GuideRecorder.lua
-PerformanceInspector.lua
-GuideAnalysis.lua
-RunArchive.lua
-PetAssistant.lua
+Features\Roadmap.lua
+UI\GuideHub.lua
+Features\GoldAssistant.lua
+Features\Diagnostics.lua
+Core\Recovery.lua
+Features\CompatibilityPacks.lua
+Features\PartySync.lua
+Features\Supplies.lua
+Features\GearAdvisor.lua
+Features\ActivityPlanner.lua
+Features\Accessibility.lua
+Features\GuideRecorder.lua
+Features\PerformanceInspector.lua
+Features\GuideAnalysis.lua
+Features\RunArchive.lua
+Features\PetAssistant.lua
 
 # Root-level copies of the guide/talent loaders so their "Guides/..." <Script>
 # paths resolve from the addon root on 3.3.5a (see DB note above).
 GuideList_335.xml
 
-Talents.lua
+Features\Talents.lua
 Talents_wotlk_335.xml
 
 # 3.3.5a backport cosmetics sub-panel (Interface -> AddOns -> RestedXP Guides -> 3.3.5a)
-Compat335_Options.lua
+Compat\Options.lua
