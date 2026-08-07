@@ -3,6 +3,7 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local floor, max, abs = math.floor, math.max, math.abs
+local L = addon.locale.Get
 local GetContainerNumSlots = C_Container and
                                  C_Container.GetContainerNumSlots or
                                  _G.GetContainerNumSlots
@@ -168,7 +169,7 @@ local function FormatMoney(value, signed)
                        (value < 0 and "-" or "")
     local coin = _G.GetCoinTextureString and
                      _G.GetCoinTextureString(abs(value)) or
-                     format("%d copper", abs(value))
+                     format(L("%d copper"), abs(value))
     return prefix .. coin
 end
 
@@ -213,7 +214,7 @@ function gold:IsGuideCompatible(guide)
     local minimum = zoneMinimumLevels[zone]
     local level = UnitLevel("player") or 1
     if minimum and level < minimum then
-        return false, format("Recommended level %d or higher for %s",
+        return false, format(L("Recommended level %d or higher for %s"),
                              minimum, guide.subgroup)
     end
 
@@ -398,7 +399,7 @@ function gold:CreateFrame()
     })
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Gold Assistant")
+    title:SetText(L("Gold Assistant"))
     frame.route = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.route:SetPoint("TOPLEFT", 28, -50)
     frame.route:SetPoint("TOPRIGHT", -28, -50)
@@ -410,8 +411,8 @@ function gold:CreateFrame()
 
     frame.values = {}
     local labels = {
-        "Active time", "Wallet change", "Unsold loot value",
-        "Estimated total", "Estimated gold/hour"
+        L("Active time"), L("Wallet change"), L("Unsold loot value"),
+        L("Estimated total"), L("Estimated gold/hour")
     }
     for index, label in ipairs(labels) do
         local left = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -443,10 +444,10 @@ function gold:CreateFrame()
     frame.reset = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.reset:SetSize(105, 24)
     frame.reset:SetPoint("LEFT", frame.pause, "RIGHT", 8, 0)
-    frame.reset:SetText("Reset Run")
+    frame.reset:SetText(L("Reset Run"))
     frame.reset:SetScript("OnClick", function()
         addon.comms:ConfirmChoice("RXP_GOLD_RESET",
-            "Reset the current farming run?", function()
+            L("Reset the current farming run?"), function()
                 gold:ResetCurrent()
             end)
     end)
@@ -472,12 +473,12 @@ function gold:Refresh(force)
     local guide = addon.currentGuide
     local run = guide and guide.farm and self:GetRun(guide, false)
     frame.route:SetText(guide and guide.farm and
-        (addon.GetGuideName(guide) or guide.name or "Farming route") or
-        "No farming route selected")
+        (addon.GetGuideName(guide) or guide.name or L("Farming route")) or
+        L("No farming route selected"))
     local compatible, reason = self:IsGuideCompatible(guide)
     frame.compatibility:SetText(guide and guide.farm and
-        (compatible and "Route is compatible with this character." or reason) or
-        "Choose a route from Gold Assistant mode.")
+        (compatible and L("Route is compatible with this character.") or reason) or
+        L("Choose a route from Gold Assistant mode."))
     local elapsed, moneyChange, lootValue, total, unknown =
         self:GetLiveValues(run)
     local perHour = elapsed > 0 and total * 3600 / elapsed or 0
@@ -487,10 +488,10 @@ function gold:Refresh(force)
     frame.values[4]:SetText(FormatMoney(total, true))
     frame.values[5]:SetText(FormatMoney(perHour, true))
     frame.note:SetText(unknown > 0 and
-        format("Waiting for %d item price%s from the server cache.", unknown,
+        format(L("Waiting for %d item price%s from the server cache."), unknown,
                unknown == 1 and "" or "s") or
-        "Vendor values are guaranteed estimates; Auction House prices are not used.")
-    frame.pause:SetText(run and run.running and "Pause Run" or "Resume Run")
+        L("Vendor values are guaranteed estimates; Auction House prices are not used."))
+    frame.pause:SetText(run and run.running and L("Pause Run") or L("Resume Run"))
     if guide and guide.farm and compatible then
         frame.pause:Enable()
         frame.reset:Enable()

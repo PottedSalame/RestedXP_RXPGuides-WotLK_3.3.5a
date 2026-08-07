@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 local _G = _G
 local format = string.format
@@ -115,7 +116,7 @@ end
 
 function recorder:PromptNote()
     StaticPopupDialogs.RXP_RECORDER_NOTE = {
-        text = "Enter a guide note",
+        text = L("Enter a guide note"),
         button1 = _G.ACCEPT,
         button2 = _G.CANCEL,
         hasEditBox = 1,
@@ -144,7 +145,7 @@ end
 
 function recorder:Clear()
     addon.comms:ConfirmChoice("RXP_RECORDER_CLEAR",
-        "Clear the current recorder draft?", function()
+        L("Clear the current recorder draft?"), function()
             RXPCData.recorderDraft = {steps = {}, events = {},
                                       name = "Recorded Draft", recording = false}
             recorder:Refresh()
@@ -233,8 +234,8 @@ function recorder:SnapshotBags()
 end
 
 function recorder:Preview()
-    addon.comms.OpenBrandedExport("Recorded Guide Preview",
-        "This is a draft. Validate it offline before publishing.",
+    addon.comms.OpenBrandedExport(L("Recorded Guide Preview"),
+        L("This is a draft. Validate it offline before publishing."),
         self:BuildGuide(), 720, 560)
 end
 
@@ -246,8 +247,8 @@ function recorder:ValidateDraft()
                       not parseError
     addon.comms:PopupNotification("RXP_RECORDER_VALIDATE",
         valid and
-            "The runtime parser accepted this draft. The offline guide and quest-flow validators are still required before publishing." or
-            ("Draft parser check failed: " .. tostring(parseError or guide)))
+            L("The runtime parser accepted this draft. The offline guide and quest-flow validators are still required before publishing.") or
+            (L("Draft parser check failed: ") .. tostring(parseError or guide)))
     return valid
 end
 
@@ -323,13 +324,14 @@ function recorder:Refresh()
     if not self.frame or not self.frame:IsShown() then return end
     local draft = self:GetDraft()
     self.frame.state:SetText(self:IsRecording() and
-        "|cff40ff40Recording|r" or "|cffaaaaaaStopped|r")
-    self.frame.count:SetText(format("%d steps / %d captured events",
+        "|cff40ff40" .. L("Recording") .. "|r" or
+        "|cffaaaaaa" .. L("Stopped") .. "|r")
+    self.frame.count:SetText(format(L("%d steps / %d captured events"),
                                     #draft.steps, #draft.events))
     local preview = self:BuildGuide()
     if #preview > 3200 then preview = preview:sub(#preview - 3200) end
     self.frame.preview:SetText(preview)
-    self.frame.start:SetText(self:IsRecording() and "Stop" or "Start")
+    self.frame.start:SetText(self:IsRecording() and L("Stop") or L("Start"))
 end
 
 local function Button(frame, text, width, callback)
@@ -357,7 +359,7 @@ function recorder:CreateFrame()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Guide Author Recorder")
+    title:SetText(L("Guide Author Recorder"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     frame.state = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -365,25 +367,25 @@ function recorder:CreateFrame()
     frame.count = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     frame.count:SetPoint("TOPRIGHT", -24, -48)
 
-    frame.start = Button(frame, "Start", 70, function()
+    frame.start = Button(frame, L("Start"), 70, function()
         if recorder:IsRecording() then recorder:Stop() else recorder:Start() end
     end)
     frame.start:SetPoint("TOPLEFT", 24, -70)
-    local newStep = Button(frame, "New Step", 82, function() recorder:NewStep() end)
+    local newStep = Button(frame, L("New Step"), 82, function() recorder:NewStep() end)
     newStep:SetPoint("LEFT", frame.start, "RIGHT", 5, 0)
-    local note = Button(frame, "Add Note", 82, function() recorder:PromptNote() end)
+    local note = Button(frame, L("Add Note"), 82, function() recorder:PromptNote() end)
     note:SetPoint("LEFT", newStep, "RIGHT", 5, 0)
-    local target = Button(frame, "Add Target", 88, function() recorder:AddTarget() end)
+    local target = Button(frame, L("Add Target"), 88, function() recorder:AddTarget() end)
     target:SetPoint("LEFT", note, "RIGHT", 5, 0)
-    local waypoint = Button(frame, "Waypoint", 82, function() recorder:AddWaypoint() end)
+    local waypoint = Button(frame, L("Waypoint"), 82, function() recorder:AddWaypoint() end)
     waypoint:SetPoint("LEFT", target, "RIGHT", 5, 0)
-    local undo = Button(frame, "Undo", 60, function() recorder:Undo() end)
+    local undo = Button(frame, L("Undo"), 60, function() recorder:Undo() end)
     undo:SetPoint("LEFT", waypoint, "RIGHT", 5, 0)
-    local validate = Button(frame, "Validate", 72, function() recorder:ValidateDraft() end)
+    local validate = Button(frame, L("Validate"), 72, function() recorder:ValidateDraft() end)
     validate:SetPoint("LEFT", undo, "RIGHT", 5, 0)
-    local export = Button(frame, "Export", 68, function() recorder:Preview() end)
+    local export = Button(frame, L("Export"), 68, function() recorder:Preview() end)
     export:SetPoint("LEFT", validate, "RIGHT", 5, 0)
-    local clear = Button(frame, "Clear", 58, function() recorder:Clear() end)
+    local clear = Button(frame, L("Clear"), 58, function() recorder:Clear() end)
     clear:SetPoint("LEFT", export, "RIGHT", 5, 0)
 
     local previewBox = CreateFrame("Frame", nil, frame)

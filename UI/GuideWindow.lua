@@ -1305,7 +1305,8 @@ function CurrentStepFrame.UpdateText()
 
                          -- Prevent text from overwritten with " ", could be stale text
                         if element.text ~= ' ' then
-                            elementFrame.text:SetText(addon.ReplaceNpcIds(L(element.text)))
+                            elementFrame.text:SetText(addon.ReplaceNpcIds(
+                                addon.locale.GuideText(element.text)))
                         else
                             element.requestFromServer = true
                         end
@@ -1785,7 +1786,7 @@ RXPFrame.bottomMenu = {
         func = addon.LoadGuide,
         arg1 = addon.currentGuide
     }, {
-        text = "Options...",
+        text = L("Options..."),
         notCheckable = 1,
         func = function()
             addon.settings.OpenSettings()
@@ -2520,7 +2521,8 @@ function BottomFrame.UpdateFrame(self, stepn)
             end
 
             if rawtext and not element.hideTooltip then
-                rawtext = addon.ReplaceNpcIds(rawtext,element)
+                rawtext = addon.ReplaceNpcIds(
+                    addon.locale.GuideText(rawtext), element)
                 if not text then
                     text = "   " .. rawtext
                 else
@@ -2604,7 +2606,8 @@ function BottomFrame.UpdateFrame(self, stepn)
                 end
 
                 if rawtext and not element.hideTooltip and rawtext ~= "" then
-                    rawtext = addon.ReplaceNpcIds(rawtext,element)
+                    rawtext = addon.ReplaceNpcIds(
+                        addon.locale.GuideText(rawtext), element)
                     if not text then
                         text = "   " .. rawtext
                     else
@@ -3021,7 +3024,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #validatedMenu > 0 then
                 tinsert(menuList, {
-                    text = "Validated & Fixed Guides",
+                    text = L("Validated & Fixed Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = validatedMenu,
@@ -3033,7 +3036,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #originalMenu > 0 then
                 tinsert(menuList, {
-                    text = "Original Upstream Guides",
+                    text = L("Original Upstream Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = originalMenu,
@@ -3057,7 +3060,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #validatedFarmMenu > 0 then
                 tinsert(menuList, {
-                    text = "Validated & Fixed Guides",
+                    text = L("Validated & Fixed Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = validatedFarmMenu,
@@ -3069,7 +3072,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #originalFarmMenu > 0 then
                 tinsert(menuList, {
-                    text = "Original Upstream Guides",
+                    text = L("Original Upstream Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = originalFarmMenu,
@@ -3091,7 +3094,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #validatedUnusedMenu > 0 then
                 tinsert(menuList, {
-                    text = "Validated & Fixed Guides",
+                    text = L("Validated & Fixed Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = validatedUnusedMenu,
@@ -3103,7 +3106,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
             if #originalUnusedMenu > 0 then
                 tinsert(menuList, {
-                    text = "Original Upstream Guides",
+                    text = L("Original Upstream Guides"),
                     notCheckable = 1,
                     hasArrow = true,
                     menuList = originalUnusedMenu,
@@ -3119,7 +3122,7 @@ function RXPFrame:GenerateMenuTable(menu)
     local tips = addon.currentGuide and addon.currentGuide.tips
     if tips and #tips > 0 then
         tinsert(menuList, {
-            text = "Display Tips",
+            text = L("Display Tips"),
             func = addon.ShowTips,
             arg1 = "toggle",
             checked = function()
@@ -3151,7 +3154,7 @@ function RXPFrame:GenerateMenuTable(menu)
     if RXPCData and RXPCData.GA then
         if addon.goldAssistant then
             tinsert(menuList, {
-                text = "Gold Assistant report",
+                text = L("Gold Assistant report"),
                 notCheckable = 1,
                 func = function() addon.goldAssistant:ToggleReport() end
             })
@@ -3171,7 +3174,7 @@ function RXPFrame:GenerateMenuTable(menu)
     -- is deliberately a separate manual action.
     local featureTools = {
         {
-            text = "Route Preflight, XP & Reservations",
+            text = L("Route Preflight, XP & Reservations"),
             notCheckable = 1,
             disabled = not addon.routePreflight,
             func = function()
@@ -3179,7 +3182,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         },
         {
-            text = "Toggle Current-Step Watchdog",
+            text = L("Toggle Current-Step Watchdog"),
             notCheckable = 1,
             disabled = not addon.routePreflight or not addon.currentGuide or
                            addon.currentGuide.empty,
@@ -3190,7 +3193,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         },
         {
-            text = "Personal-Best Archives",
+            text = L("Personal-Best Archives"),
             notCheckable = 1,
             disabled = not addon.runArchive,
             func = function()
@@ -3198,7 +3201,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         },
         {
-            text = "Hunter Pet Assistant",
+            text = L("Hunter Pet Assistant"),
             notCheckable = 1,
             disabled = not addon.petAssistant or
                            select(2, UnitClass("player")) ~= "HUNTER",
@@ -3207,7 +3210,7 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         },
         {
-            text = "Performance Inspector",
+            text = L("Performance Inspector"),
             notCheckable = 1,
             disabled = not addon.performanceInspector,
             func = function()
@@ -3218,7 +3221,7 @@ function RXPFrame:GenerateMenuTable(menu)
         }
     }
     tinsert(menuList, {
-        text = "Feature Tools",
+        text = L("Feature Tools"),
         notCheckable = 1,
         hasArrow = true,
         menuList = featureTools

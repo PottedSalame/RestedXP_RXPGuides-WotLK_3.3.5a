@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 local _G = _G
 local GetTime = _G.GetTime
@@ -149,13 +150,13 @@ function sync:RefreshPanel()
             local state = not data and "|cff999999[?] Unknown|r" or
                 (data.complete and "|cff40ff40[+] Ready|r" or
                     "|cffffd100[~] Working|r")
-            row:SetText(format("%s  %s  step %s", member.sender, state,
+        row:SetText(format(L("%s  %s  step %s"), member.sender, state,
                                tostring(data and data.step or "?")))
         else
             row:Hide()
         end
     end
-    self.frame.title:SetText(format("Party Guide Sync (%d)", #members))
+    self.frame.title:SetText(format(L("Party Guide Sync (%d)"), #members))
 end
 
 function sync:HandleMessage(obj, sender)
@@ -212,7 +213,7 @@ function sync:ShowSuggestion(sender, suggestion)
         expires = GetTime() + 30
     }
     StaticPopupDialogs.RXP_PARTY_SUGGESTION = {
-        text = format("%s suggests guide %s%s at step %d. Apply it?", sender,
+        text = format(L("%s suggests guide %s%s at step %d. Apply it?"), sender,
                       suggestion.guideKey,
                       suggestion.guideVersion and
                           (" (v" .. suggestion.guideVersion .. ")") or "",
@@ -350,12 +351,12 @@ function sync:CreatePanel()
     local suggest = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     suggest:SetSize(110, 22)
     suggest:SetPoint("BOTTOMLEFT", 12, 10)
-    suggest:SetText("Suggest Step")
+    suggest:SetText(L("Suggest Step"))
     suggest:SetScript("OnClick", function() sync:SuggestCurrent() end)
     local wait = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     wait:SetSize(110, 22)
     wait:SetPoint("BOTTOMRIGHT", -12, 10)
-    wait:SetText("Toggle Wait")
+    wait:SetText(L("Toggle Wait"))
     wait:SetScript("OnClick", function()
         addon.settings.profile.partyGuideWait =
             not addon.settings.profile.partyGuideWait
@@ -363,7 +364,7 @@ function sync:CreatePanel()
     local advance = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     advance:SetSize(84, 22)
     advance:SetPoint("BOTTOM", 0, 10)
-    advance:SetText("Advance Once")
+    advance:SetText(L("Advance Once"))
     advance:SetScript("OnClick", function()
         sync:OverrideWaitOnce()
         addon.loadNextStep = true

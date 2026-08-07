@@ -1957,15 +1957,15 @@ function addon.settings:CreateAceOptionsPanel()
                         end,
                     },
                     preflightHeader = {
-                        name = "Route Planning",
+                        name = L("Route Planning"),
                         type = "header",
                         width = "full",
                         order = 3.0,
                         hidden = addon.gameVersion ~= 30300
                     },
                     enableRoutePreflight = {
-                        name = "Enable Route Preflight",
-                        desc = "Checks upcoming processed guide steps for proven prerequisite, quest-log, flight, map, item, and XP risks.",
+                        name = L("Enable Route Preflight"),
+                        desc = L("Checks upcoming processed guide steps for proven prerequisite, quest-log, flight, map, item, and XP risks."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 3.1,
@@ -1976,8 +1976,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     preflightLookahead = {
-                        name = "Preflight steps ahead",
-                        desc = "Number of current and upcoming steps checked by Route Preflight and the XP predictor.",
+                        name = L("Preflight steps ahead"),
+                        desc = L("Number of current and upcoming steps checked by Route Preflight and the XP predictor."),
                         type = "range",
                         width = optionsWidth,
                         order = 3.2,
@@ -1992,8 +1992,8 @@ function addon.settings:CreateAceOptionsPanel()
                         disabled = function() return not self.profile.enableRoutePreflight end
                     },
                     enableXPShortfallPredictor = {
-                        name = "XP Shortfall Predictor",
-                        desc = "Uses explicit XP gates, current XP, live rewards, and anonymous observed quest rewards. Unknown rewards remain clearly marked as unknown.",
+                        name = L("XP Shortfall Predictor"),
+                        desc = L("Uses explicit XP gates, current XP, live rewards, and anonymous observed quest rewards. Unknown rewards remain clearly marked as unknown."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 3.3,
@@ -2004,8 +2004,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     enableItemReservations = {
-                        name = "Enable Item Reservations",
-                        desc = "Protects items required by upcoming guide steps from automatic junk handling and marks them in bags.",
+                        name = L("Enable Item Reservations"),
+                        desc = L("Protects items required by upcoming guide steps from automatic junk handling and marks them in bags."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 3.4,
@@ -2017,8 +2017,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     reservationLookahead = {
-                        name = "Reservation steps ahead",
-                        desc = "Number of current and upcoming steps searched for item requirements.",
+                        name = L("Reservation steps ahead"),
+                        desc = L("Number of current and upcoming steps searched for item requirements."),
                         type = "range",
                         width = optionsWidth,
                         order = 3.5,
@@ -2033,8 +2033,8 @@ function addon.settings:CreateAceOptionsPanel()
                         disabled = function() return not self.profile.enableItemReservations end
                     },
                     stuckWatchdogTimeout = {
-                        name = "Manual watchdog timeout",
-                        desc = "Seconds without measurable progress before an explicitly armed step watchdog warns. The watchdog never starts automatically.",
+                        name = L("Manual watchdog timeout"),
+                        desc = L("Seconds without measurable progress before an explicitly armed step watchdog warns. The watchdog never starts automatically."),
                         type = "range",
                         width = optionsWidth,
                         order = 3.6,
@@ -2044,7 +2044,7 @@ function addon.settings:CreateAceOptionsPanel()
                         hidden = addon.gameVersion ~= 30300
                     },
                     openRoutePreflight = {
-                        name = "Open Route Preflight",
+                        name = L("Open Route Preflight"),
                         type = "execute",
                         width = optionsWidth,
                         order = 3.7,
@@ -2054,8 +2054,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     enablePetAssistant = {
-                        name = "Enable Hunter Pet Assistant",
-                        desc = "Tracks pet happiness, compatible food, talents, known skills, supplies, and guide-linked stable/tame preparation.",
+                        name = L("Enable Hunter Pet Assistant"),
+                        desc = L("Tracks pet happiness, compatible food, talents, known skills, supplies, and guide-linked stable/tame preparation."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 3.8,
@@ -2079,7 +2079,7 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     openPetAssistant = {
-                        name = "Open Hunter Pet Assistant",
+                        name = L("Open Hunter Pet Assistant"),
                         type = "execute",
                         width = optionsWidth,
                         order = 3.9,
@@ -2654,8 +2654,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     personalBestArchives = {
-                        name = "Personal-Best Archives",
-                        desc = "Open anonymous account-wide leveling runs and select a split comparison.",
+                        name = L("Personal-Best Archives"),
+                        desc = L("Open anonymous account-wide leveling runs and select a split comparison."),
                         type = "execute",
                         width = optionsWidth,
                         order = 2.8,
@@ -3580,8 +3580,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     guideScrollSteps = {
-                        name = "Steps Per Mouse-Wheel Scroll",
-                        desc = "How many visible guide steps one mouse-wheel tick moves through.",
+                        name = L("Steps Per Mouse-Wheel Scroll"),
+                        desc = L("How many visible guide steps one mouse-wheel tick moves through."),
                         type = "range",
                         width = optionsWidth,
                         order = 3.3,
@@ -3598,7 +3598,7 @@ function addon.settings:CreateAceOptionsPanel()
                         desc = L(
                             "Sets the current step frame to grow from bottom to top or top to bottom"),
                         type = "select",
-                        values = {top = "Top", bottom = "Bottom"},
+                        values = {top = L("Top"), bottom = L("Bottom")},
                         sorting = {"top", "bottom"},
                         width = optionsWidth,
                         order = 3.4,
@@ -3934,8 +3934,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     performanceInspector = {
-                        name = "Open Performance Inspector",
-                        desc = "Measures bounded RXPGuides work and exports a sanitized report.",
+                        name = L("Open Performance Inspector"),
+                        desc = L("Measures bounded RXPGuides work and exports a sanitized report."),
                         type = "execute",
                         width = optionsWidth,
                         order = 1.61,
@@ -3947,8 +3947,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     enableAdaptivePerformance = {
-                        name = "Adaptive performance throttling",
-                        desc = "Opt in to temporary RXP-only scan/update slowing after sustained low FPS. Saved preferences are not changed and normal rates return automatically.",
+                        name = L("Adaptive performance throttling"),
+                        desc = L("Opt in to temporary RXP-only scan/update slowing after sustained low FPS. Saved preferences are not changed and normal rates return automatically."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 1.62,
@@ -3962,8 +3962,8 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     adaptivePerformanceFPSThreshold = {
-                        name = "Adaptive FPS threshold",
-                        desc = "Temporary adaptation begins only after FPS remains below this value for five samples.",
+                        name = L("Adaptive FPS threshold"),
+                        desc = L("Temporary adaptation begins only after FPS remains below this value for five samples."),
                         type = "range",
                         width = optionsWidth,
                         order = 1.63,

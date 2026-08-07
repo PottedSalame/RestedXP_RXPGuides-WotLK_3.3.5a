@@ -46,8 +46,62 @@ local locale = GetLocale()
 
 -- TODO check if L returned language, remove explicit list
 -- Explicitly check supported languages, default to enUS
-if locale == 'zhCN' or locale == 'zhTW' or locale == 'frFR' or locale == 'koKR' or locale == 'esES' or locale == 'ruRU' then
+if locale == 'zhCN' or locale == 'zhTW' or locale == 'frFR' or
+    locale == 'koKR' or locale == 'esES' or locale == 'ruRU' or
+    locale == 'deDE' then
     addon.locale.Get = getForeign
 else
     addon.locale.Get = noop
+end
+
+addon.locale.IsEnglish = locale == "enUS" or locale == "enGB"
+
+-- Guide prose is authored in English, but creature names are already bundled
+-- for every supported locale. Translate exact phrases first, then replace the
+-- names inside the guide's semantic colour spans without changing directives
+-- or the maintained route data.
+function addon.locale.GuideText(text)
+    text = addon.locale.Get(text)
+    if type(text) ~= "string" or addon.locale.IsEnglish or
+        type(addon.GetCreatureName) ~= "function" then
+        return text
+    end
+
+    local function ReplaceName(prefix, name, suffix)
+        return prefix .. (addon.GetCreatureName(name) or name) .. suffix
+    end
+    text = text:gsub("(|cRXP_FRIENDLY_)(.-)(|r)", ReplaceName)
+    text = text:gsub("(|cRXP_ENEMY_)(.-)(|r)", ReplaceName)
+    return text
+end
+
+function addon.locale.QuestAction(action, questName, sourceText, sourceQuestName)
+    if addon.locale.IsEnglish or type(questName) ~= "string" or
+        questName == "" then return end
+    local text = type(sourceText) == "string" and sourceText or "*quest*"
+    local changed
+    if text:find("*quest*", 1, true) then
+        text = text:gsub("%*quest%*", questName)
+        changed = true
+    elseif type(sourceQuestName) == "string" and sourceQuestName ~= "" then
+        local escaped = sourceQuestName:gsub("(%W)", "%%%1")
+        local count
+        text, count = text:gsub(escaped, questName, 1)
+        changed = count > 0
+    end
+    if not changed then return sourceText end
+
+    if sourceQuestName then
+        local labels = {"Accept", "Turn in", _G.ACCEPT, _G.TURN_IN_QUEST}
+        for _, label in ipairs(labels) do
+            if type(label) == "string" and label ~= "" then
+                local escaped = label:gsub("(%W)", "%%%1")
+                local count
+                text, count = text:gsub("^" .. escaped .. "(%s+)",
+                    (action or "") .. "%1", 1)
+                if count > 0 then break end
+            end
+        end
+    end
+    return text
 end

@@ -8,6 +8,7 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local floor, max, min = math.floor, math.max, math.min
+local L = addon.locale.Get
 local tinsert = table.insert
 local GetTime = _G.GetTime
 local GetItemCount = _G.GetItemCount
@@ -526,7 +527,7 @@ function preflight:WatchTick()
     if watched.elapsed >= timeout and not watched.warned then
         watched.warned = true
         addon.comms:PopupNotification("RXP_STEP_WATCHDOG",
-            format("Step %d has shown no measurable progress for %d seconds. Use /rxp diagnose to inspect it, or /rxp watch to stop watching.",
+            format(L("Step %d has shown no measurable progress for %d seconds. Use /rxp diagnose to inspect it, or /rxp watch to stop watching."),
                    index, timeout))
         if addon.diagnostics and addon.diagnostics.Record then
             addon.diagnostics:Record("WATCHDOG", {step = index, timeout = timeout})
@@ -544,51 +545,51 @@ end
 
 function preflight:BuildText()
     local report = self.report or self:Scan()
-    if report.empty then return "No guide is currently selected." end
+    if report.empty then return L("No guide is currently selected.") end
     local lines = {
-        format("Guide steps %d-%d", report.currentStep, report.lastStep), ""
+        format(L("Guide steps %d-%d"), report.currentStep, report.lastStep), ""
     }
     if addon.settings.profile.enableRoutePreflight == false then
-        tinsert(lines, "Route Preflight: disabled (reservations and XP may remain active).")
+        tinsert(lines, L("Route Preflight: disabled (reservations and XP may remain active)."))
     else
-        tinsert(lines, format("Route Preflight: %d blocker(s), %d warning(s), %d note(s)",
+        tinsert(lines, format(L("Route Preflight: %d blocker(s), %d warning(s), %d note(s)"),
             report.counts.error or 0, report.counts.warning or 0,
             report.counts.info or 0))
         if #report.issues == 0 then
-            tinsert(lines, "  [OK] No proven route blockers found.")
+            tinsert(lines, "  [OK] " .. L("No proven route blockers found."))
         end
     end
     for _, issue in ipairs(report.issues) do
         local symbol = issue.severity == "error" and "[X]" or
                            issue.severity == "warning" and "[!]" or "[?]"
-        tinsert(lines, format("  %s Step %d: %s", symbol, issue.step, issue.text))
+        tinsert(lines, format(L("  %s Step %d: %s"), symbol, issue.step, issue.text))
     end
 
     tinsert(lines, "")
-    tinsert(lines, "Reserved Items:")
+    tinsert(lines, L("Reserved Items:"))
     local ids = {}
     for id in pairs(report.reservations) do tinsert(ids, id) end
     table.sort(ids)
-    if #ids == 0 then tinsert(lines, "  None in the selected look-ahead.") end
+    if #ids == 0 then tinsert(lines, "  " .. L("None in the selected look-ahead.")) end
     for _, id in ipairs(ids) do
         local entry = report.reservations[id]
         local carried = GetItemCount(id) or 0
-        tinsert(lines, format("  %s x%d (have %d), steps %d-%d - %s",
+        tinsert(lines, format(L("  %s x%d (have %d), steps %d-%d - %s"),
             ItemName(id), entry.quantity, carried, entry.firstStep,
             entry.lastStep, ReasonsText(entry.reasons)) ..
-            (entry.cached and "" or " [item data loading]"))
+            (entry.cached and "" or " [" .. L("item data loading") .. "]"))
     end
 
     tinsert(lines, "")
-    tinsert(lines, "XP Shortfall Predictor:")
+    tinsert(lines, L("XP Shortfall Predictor:"))
     if report.xp then
-        tinsert(lines, "  " .. tostring(report.xp.message or "Waiting for XP data."))
+        tinsert(lines, "  " .. tostring(report.xp.message or L("Waiting for XP data.")))
     else
-        tinsert(lines, "  No XP gate appears in the selected look-ahead.")
+        tinsert(lines, "  " .. L("No XP gate appears in the selected look-ahead."))
     end
     if self.watch then
         tinsert(lines, "")
-        tinsert(lines, format("Watchdog: armed for step %d (%d seconds without progress).",
+        tinsert(lines, format(L("Watchdog: armed for step %d (%d seconds without progress)."),
                               self.watch.step, self.watch.elapsed or 0))
     end
     return table.concat(lines, "\n")
@@ -611,7 +612,7 @@ function preflight:CreateWindow()
         insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -17)
-    title:SetText("Route Preflight")
+    title:SetText(L("Route Preflight"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
 
@@ -634,7 +635,7 @@ function preflight:CreateWindow()
     local rescan = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     rescan:SetSize(100, 24)
     rescan:SetPoint("BOTTOMLEFT", 20, 18)
-    rescan:SetText("Rescan")
+    rescan:SetText(L("Rescan"))
     rescan:SetScript("OnClick", function() preflight:Scan(true) end)
     local watch = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     watch:SetSize(145, 24)
@@ -657,7 +658,7 @@ function preflight:RefreshWindow()
     frame.scrollChild.text:SetText(text)
     local height = max(360, frame.scrollChild.text:GetStringHeight() + 12)
     frame.scrollChild:SetHeight(height)
-    frame.watchButton:SetText(self.watch and "Stop Watching" or "Watch Current Step")
+    frame.watchButton:SetText(self.watch and L("Stop Watching") or L("Watch Current Step"))
 end
 
 function preflight:Toggle()

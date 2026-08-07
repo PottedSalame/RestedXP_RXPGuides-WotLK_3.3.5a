@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 local _G = _G
 local format = string.format
@@ -403,7 +404,7 @@ function supplies:BuyMissing()
     if #plan == 0 then return end
     if total > (GetMoney() or 0) then
         addon.comms:PopupNotification("RXP_SUPPLIES_MONEY",
-            "You do not have enough money for the missing supplies.")
+            L("You do not have enough money for the missing supplies."))
         return
     end
     local freeSlots = 0
@@ -434,14 +435,14 @@ function supplies:BuyMissing()
         end
         if not stackRoom then
             addon.comms:PopupNotification("RXP_SUPPLIES_BAGS",
-                "No safe bag space is available for these supplies.")
+                L("No safe bag space is available for these supplies."))
             return
         end
     end
     local threshold = math.min(10000, math.floor((GetMoney() or 0) * 0.25))
     if total > threshold then
         addon.comms:ConfirmChoice("RXP_SUPPLIES_COST",
-            format("Buy the missing class supplies for %s?",
+            format(L("Buy the missing class supplies for %s?"),
                    GetCoinTextureString(total)), function(data)
                 supplies:ExecutePurchase(data)
             end, plan)
@@ -466,7 +467,7 @@ function supplies:CreateFrame()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Class Supplies")
+    title:SetText(L("Class Supplies"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     frame.rows = {}
@@ -502,11 +503,11 @@ function supplies:CreateFrame()
     frame.buy = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.buy:SetSize(140, 24)
     frame.buy:SetPoint("BOTTOMLEFT", 24, 22)
-    frame.buy:SetText("Buy Missing")
+    frame.buy:SetText(L("Buy Missing"))
     frame.buy:SetScript("OnClick", function() supplies:BuyMissing() end)
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     hint:SetPoint("BOTTOMRIGHT", -24, 28)
-    hint:SetText("Edit a target count; 0 disables that supply.")
+    hint:SetText(L("Edit a target count; 0 disables that supply."))
     frame:SetScript("OnShow", function() supplies:Refresh() end)
     frame:Hide()
     self.frame = frame

@@ -2,6 +2,7 @@ local _, addon = ...
 
 local _G = _G
 local format = string.format
+local L = addon.locale.Get
 
 addon.gearAdvisor = addon.gearAdvisor or {}
 local advisor = addon.gearAdvisor
@@ -25,7 +26,7 @@ local function Increase(comparison)
 end
 
 local function ItemName(link)
-    return (link and GetItemInfo(link)) or link or "Unknown item"
+    return (link and GetItemInfo(link)) or link or L("Unknown item")
 end
 
 function advisor:ScanBags()
@@ -106,38 +107,38 @@ end
 
 local function StateText(entry)
     if entry.state == "upgrade" then
-        return format("|cff40ff40Upgrade +%.2f EP|r", entry.increase)
+        return format("|cff40ff40" .. L("Upgrade +%.2f EP") .. "|r", entry.increase)
     elseif entry.state == "downgrade" then
-        return "|cffff5050Downgrade|r"
+        return "|cffff5050" .. L("Downgrade") .. "|r"
     elseif entry.state == "equal" then
-        return "|cffffd100Equivalent|r"
+        return "|cffffd100" .. L("Equivalent") .. "|r"
     end
-    return "|cffb0b0b0Unknown/cache pending|r"
+    return "|cffb0b0b0" .. L("Unknown/cache pending") .. "|r"
 end
 
 local function LayoutText(entry)
     local comparison = entry.comparison
-    if not comparison then return entry.reason or "No complete comparison yet" end
+    if not comparison then return entry.reason or L("No complete comparison yet") end
     local equipLoc = select(9, GetItemInfo(entry.link))
     local slot = comparison.SlotCompared
     local slotName = slot and slotLabels[slot] or
                          (slot and ("#" .. tostring(slot)))
     local replaced = comparison.ItemLink and ItemName(comparison.ItemLink)
     if equipLoc == "INVTYPE_2HWEAPON" then
-        return format("Replaces main-hand + off-hand layout%s",
-            replaced and (" (including " .. replaced .. ")") or "")
+        return format(L("Replaces main-hand + off-hand layout%s"),
+            replaced and (" (" .. format(L("including %s"), replaced) .. ")") or "")
     end
     return format("%s%s%s", entry.reason or "",
         slotName and ((entry.reason and entry.reason ~= "" and "  " or "") ..
-            "slot " .. tostring(slotName)) or "",
-        replaced and (" replacing " .. replaced) or "")
+            L("slot") .. " " .. tostring(slotName)) or "",
+        replaced and (" " .. format(L("replacing %s"), replaced)) or "")
 end
 
 function advisor:Refresh()
     if not self.frame or not self.frame:IsShown() then return end
     local spec, source = addon.itemUpgrades:GetActiveSpecSource()
-    self.frame.source:SetText(format("Weights: %s (%s)",
-        tostring(spec or "unavailable"), tostring(source or "unknown")))
+    self.frame.source:SetText(format(L("Weights: %s (%s)"),
+        tostring(spec or L("unavailable")), tostring(source or L("unknown"))))
     local entries = self:BuildRows()
     self.entries = entries
     local offset = FauxScrollFrame_GetOffset(self.frame.scroll)
@@ -151,13 +152,13 @@ function advisor:Refresh()
             row.state:SetText(StateText(entry))
             row.detail:SetText(LayoutText(entry))
             if entry.state == "upgrade" and entry.bag ~= nil then
-                row.action:SetText("Equip")
+                row.action:SetText(L("Equip"))
                 row.action:Enable()
             elseif entry.choice then
-                row.action:SetText("Select")
+                row.action:SetText(L("Select"))
                 row.action:Enable()
             elseif entry.auctionData then
-                row.action:SetText("Find")
+                row.action:SetText(L("Find"))
                 row.action:Enable()
             else
                 row.action:SetText("--")
@@ -221,14 +222,14 @@ function advisor:CreateFrame()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Gear Advisor")
+    title:SetText(L("Gear Advisor"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     frame.source = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     frame.source:SetPoint("TOPLEFT", 24, -48)
-    Tab(frame, "Bags", 24, "bags")
-    Tab(frame, "Quest Rewards", 137, "rewards")
-    Tab(frame, "Auction House", 250, "auction")
+    Tab(frame, L("Bags"), 24, "bags")
+    Tab(frame, L("Quest Rewards"), 137, "rewards")
+    Tab(frame, L("Auction House"), 250, "auction")
     frame.rows = {}
     for index = 1, MAX_ROWS do
         local row = CreateFrame("Frame", nil, frame)
@@ -249,7 +250,7 @@ function advisor:CreateFrame()
         row.action = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
         row.action:SetSize(66, 22)
         row.action:SetPoint("RIGHT", -1, 0)
-        row.action:SetText("Equip")
+        row.action:SetText(L("Equip"))
         row.action:SetScript("OnClick", function()
             advisor:Equip(row.entry)
         end)
@@ -275,17 +276,17 @@ function advisor:CreateFrame()
     frame.auctionHint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.auctionHint:SetPoint("CENTER", 0, 10)
     frame.auctionHint:SetText(
-        "Open an Auction House, then use RXPGuides' bounded upgrade scan.\nResults use the same complete-layout EP solver as bags and rewards.")
+        L("Open an Auction House, then use RXPGuides' bounded upgrade scan.\nResults use the same complete-layout EP solver as bags and rewards."))
     frame.openAuction = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.openAuction:SetSize(180, 24)
     frame.openAuction:SetPoint("CENTER", 0, -40)
-    frame.openAuction:SetText("Open RXP Auction Tab")
+    frame.openAuction:SetText(L("Open RXP Auction Tab"))
     frame.openAuction:SetScript("OnClick", function()
         if _G.AuctionFrame and _G.AuctionFrame:IsShown() and
             addon.itemUpgrades.AH then
             addon.itemUpgrades.AH:CreateEmbeddedGui()
         else
-            addon.comms.PrettyPrint("Open an Auction House first.")
+            addon.comms.PrettyPrint(L("Open an Auction House first."))
         end
     end)
     frame:SetScript("OnShow", function() advisor:Refresh() end)

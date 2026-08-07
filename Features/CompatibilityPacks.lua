@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 local MAX_PACK_SIZE = 256 * 1024
 local PACK_PREFIX = "RXPPACK1"
@@ -423,23 +424,23 @@ function packs:HandleCommand(input)
     if argument and argument ~= "import" and argument ~= "export" then
         local ok, errorText = self:Select(argument)
         addon.comms.PrettyPrint(ok and
-            ("Compatibility pack: " .. argument) or errorText)
+            (L("Compatibility pack: ") .. argument) or errorText)
     elseif argument == "import" then
-        addon.comms.OpenBrandedExport("Compatibility Pack Import",
-            "Paste a validated data-only RXPPACK and press Enter.", "", 640,
+        addon.comms.OpenBrandedExport(L("Compatibility Pack Import"),
+            L("Paste a validated data-only RXPPACK and press Enter."), "", 640,
             420, function(text)
                 local ok, result = packs:Import(text)
                 addon.comms:PopupNotification("RXP_PACK_RESULT", ok and
-                    ("Imported " .. result.name .. ". Select it with /rxp pack " ..
-                        result.id) or result)
+                    (L("Imported ") .. result.name ..
+                        L(". Select it with /rxp pack ") .. result.id) or result)
             end)
     elseif argument == "export" then
-        addon.comms.OpenBrandedExport("Compatibility Pack Export",
-            "This export contains no realm identity.", self:Export(), 640, 420)
+        addon.comms.OpenBrandedExport(L("Compatibility Pack Export"),
+            L("This export contains no realm identity."), self:Export(), 640, 420)
     else
         local active = self:GetActive()
         addon.comms.PrettyPrint(
-            "Active compatibility pack: %s (%s). Use /rxp pack import or /rxp pack export.",
-            active and active.name or "None", active and active.id or "none")
+            L("Active compatibility pack: %s (%s). Use /rxp pack import or /rxp pack export."),
+            active and active.name or L("None"), active and active.id or L("none"))
     end
 end

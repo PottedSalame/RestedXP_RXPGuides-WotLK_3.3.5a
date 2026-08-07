@@ -261,7 +261,7 @@ local function buildTalentGuidesMenu()
     })
 
     if addon.settings.profile.debug then
-        tinsert(menu, {text = "Audit", notCheckable = 1, func = function() addon.talents:Audit() end})
+    tinsert(menu, {text = L("Audit"), notCheckable = 1, func = function() addon.talents:Audit() end})
     end
 
     tinsert(menu, {text = _G.GAMEOPTIONS_MENU, notCheckable = 1, func = function() addon.settings.OpenSettings() end})

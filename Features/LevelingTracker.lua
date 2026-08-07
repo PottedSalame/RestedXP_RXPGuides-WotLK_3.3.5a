@@ -1020,7 +1020,7 @@ function addon.tracker:UpdateReport(selectedLevel, target, attachment)
             trackerUi.reachedContainer.data:SetText(
                 sourceReports[selectedLevel - 1].timestamp.dateFinished or "Missing data")
         else
-            trackerUi.reachedContainer.data:SetText("Missing data")
+            trackerUi.reachedContainer.data:SetText(L("Missing data"))
         end
     else
         trackerUi.levelButton:SetText(fmt(L("%d to %d"), selectedLevel, selectedLevel + 1))
@@ -1032,7 +1032,7 @@ function addon.tracker:UpdateReport(selectedLevel, target, attachment)
         if s then
             trackerUi.speedContainer.data:SetText(addon.comms:PrettyPrintTime(s))
         else
-            trackerUi.speedContainer.data:SetText("Missing data")
+            trackerUi.speedContainer.data:SetText(L("Missing data"))
         end
 
     end
@@ -1168,8 +1168,8 @@ function addon.tracker:UpdateSplitsMenu(menuFrame, button)
         text = L("Export"),
         notCheckable = 1,
         func = function()
-            addon.comms.OpenBrandedExport("Export Level Splits",
-                                          "Export string for Importing into another character's comparison data",
+            addon.comms.OpenBrandedExport(L("Export Level Splits"),
+                                          L("Export string for Importing into another character's comparison data"),
                                           addon.tracker:BuildSplitsExport(), 20, 200)
             _G.CloseDropDownMenus()
         end
@@ -1179,7 +1179,7 @@ function addon.tracker:UpdateSplitsMenu(menuFrame, button)
         text = L("Import"),
         notCheckable = 1,
         func = function()
-            addon.comms.OpenBrandedExport("Import Level Splits", "Import string from another character", "", 20, 200,
+            addon.comms.OpenBrandedExport(L("Import Level Splits"), L("Import string from another character"), "", 20, 200,
                                           addon.tracker.ImportSplits)
             -- Regenerate menu on next load
             addon.tracker.state.splitsMenu = nil
@@ -1331,7 +1331,7 @@ function addon.tracker:CreateLevelSplits()
     f.title.text:SetJustifyV("MIDDLE")
     f.title.text:SetTextColor(unpack(addon.activeTheme.textColor))
     f.title.text:SetFont(addon.font, 9, "")
-    f.title.text:SetText("Level splits")
+    f.title.text:SetText(L("Level splits"))
     f.title.text:SetPoint("CENTER", f.title, 0, 1)
 
     f.history = AceGUI:Create("Label")

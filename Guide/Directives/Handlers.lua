@@ -1255,7 +1255,10 @@ function addon.functions.accept(self, ...)
                     addon.questAccept[id] = element
                     addon.questAccept[quest] = addon.questAccept[id]
                 end
-                element.text = element.text:gsub("%*quest%*", quest)
+                element.text = addon.locale.QuestAction(_G.ACCEPT, quest,
+                                   element.text,
+                                   addon.GetGuideAcceptTitle(element)) or
+                                   element.text:gsub("%*quest%*", quest)
                 if element.requestFromServer then
                     element.requestFromServer = nil
                     addon.UpdateStepText(self)
@@ -1463,7 +1466,10 @@ function addon.functions.turnin(self, ...)
                 element.title = quest
                 addon.questTurnIn[quest] = autoTurnIn
                 -- addon.questAccept[quest] = addon.questAccept[quest] or element
-                element.text = element.text:gsub("%*quest%*", quest)
+                element.text = addon.locale.QuestAction(
+                                   _G.TURN_IN_QUEST, quest, element.text,
+                                   addon.GetGuideTurnInTitle(element)) or
+                                   element.text:gsub("%*quest%*", quest)
                 if element.requestFromServer then
                     element.requestFromServer = nil
                     addon.UpdateStepText(self)
@@ -1497,11 +1503,13 @@ function addon.functions.turnin(self, ...)
                     if i < #requiredQuests then
                         tooltip = format("%s\n%s%s (%d)", tooltip,
                                          addon.icons.turnin,
-                                         db:GetQuest(qid).name, qid)
+                                         addon.GetQuestName(qid) or
+                                             db:GetQuest(qid).name, qid)
                     else
                         tooltip = format("%s\n%s%s (%d)", tooltip,
                                          addon.icons.accept,
-                                         db:GetQuest(qid).name, qid)
+                                         addon.GetQuestName(qid) or
+                                             db:GetQuest(qid).name, qid)
                     end
                 end
                 element.tooltip = tooltip
@@ -3286,7 +3294,7 @@ function addon.functions.xp(self, ...)
                     element.rawtext = element.text
                 end
             else
-                element.text = "Grind to level " .. tostring(level)
+                element.text = L("Grind to level ") .. tostring(level)
             end
         end
         element.skipstep = skipstep
@@ -3512,9 +3520,9 @@ function addon.functions.mountcount(self, ...)
             addon.updateSteps = true
             step.completed = true
             if operator < 0 then
-                element.tooltipText = "Step skipped: You already have the required item for this step"
+                element.tooltipText = L("Step skipped: You already have the required item for this step")
             else
-                element.tooltipText = "Step skipped: You don't have the required item for this step"
+                element.tooltipText = L("Step skipped: You don't have the required item for this step")
             end
         end
     elseif step.active then
@@ -3629,7 +3637,7 @@ function addon.functions.reputation(self, ...)
         elseif step.active and not addon.isHidden then
             addon.updateSteps = true
             step.completed = true
-             self.element.tooltipText = "Step skipped: Reputation condition not met"
+            self.element.tooltipText = L("Step skipped: Reputation condition not met")
         end
     end
 end
@@ -3929,9 +3937,13 @@ function addon.functions.train(self, ...)
             addon.updateSteps = true
             if not element.text then
                 if element.reverse then
-                    element.tooltipText = fmt("Step skipped: You don't have the required spell or ability (%s)",element.title or "")
+                    element.tooltipText = fmt(
+                        L("Step skipped: You don't have the required spell or ability (%s)"),
+                        element.title or "")
                 else
-                    element.tooltipText = fmt("Step skipped: You already have the required spell or ability (%s)",element.title or "")
+                    element.tooltipText = fmt(
+                        L("Step skipped: You already have the required spell or ability (%s)"),
+                        element.title or "")
                 end
             end
         else
@@ -4109,7 +4121,7 @@ function addon.functions.petfamily(self, text, ...)
     if self.element.step.active and not pass then
         self.element.step.completed = true
         addon.updateSteps = true
-        self.element.tooltipText = "Step skipped: Your pet family can't learn this spell"
+        self.element.tooltipText = L("Step skipped: Your pet family can't learn this spell")
     end
 end
 
@@ -4143,7 +4155,7 @@ function addon.functions.areapoiexists(self, text, zone, ...)
     local event = text
     local step = element.step
     if event ~= "WindowUpdate" and step.active and not addon.settings.profile.debug and (not exists) == not element.reverse and not addon.isHidden then
-        element.tooltipText = "Step skipped: Quest unavailable today"
+        element.tooltipText = L("Step skipped: Quest unavailable today")
         step.completed = true
         addon.updateSteps = true
     elseif step.active and not step.completed then
@@ -4242,7 +4254,7 @@ function addon.functions.isQuestComplete(self, ...)
     if event ~= "WindowUpdate" and isCompleted and not addon.settings.profile.debug and not addon.isHidden then
         step.completed = true
         addon.updateSteps = true
-        element.tooltipText = "Step skipped: Missing pre-requisites"
+        element.tooltipText = L("Step skipped: Missing pre-requisites")
     elseif not step.completed then
         element.tooltipText = nil
     end
@@ -4290,7 +4302,7 @@ function addon.functions.isOnQuest(self, text, ...)
 
 
     if event ~= "WindowUpdate" and not addon.settings.profile.debug and (not onQuest) == not element.reverse and not addon.isHidden then
-        element.tooltipText = "Step skipped: Missing pre-requisites"
+        element.tooltipText = L("Step skipped: Missing pre-requisites")
         step.completed = true
         addon.updateSteps = true
     elseif not step.completed then
@@ -4358,7 +4370,7 @@ function addon.functions.isQuestTurnedIn(self, text, ...)
     if event ~= "WindowUpdate" and not questTurnedIn and not addon.settings.profile.debug and not addon.isHidden then
         step.completed = true
         addon.updateSteps = true
-        element.tooltipText = "Step skipped: Missing pre-requisites"
+        element.tooltipText = L("Step skipped: Missing pre-requisites")
     elseif not step.completed then
         element.tooltipText = nil
     end
@@ -4461,7 +4473,7 @@ function addon.functions.subzone(self, text, subZone, flags)
         if text and text ~= "" then
             element.text = text
         else
-            element.text = "Go to " .. mapID
+            element.text = L("Go to") .. " " .. mapID
         end
 
         return element
@@ -4542,7 +4554,7 @@ function addon.functions.zone(self, ...)
         if text and text ~= "" then
             element.text = text
         else
-            element.text = "Go to " .. zone
+            element.text = L("Go to") .. " " .. zone
         end
         element.tooltipText = element.icon .. element.text
         return element
@@ -4647,7 +4659,7 @@ function addon.functions.link(self, ...)
 end
 
 _G.StaticPopupDialogs["RXP_Link"] = {
-    text = "Press Ctrl+C to copy the URL to your clipboard",
+    text = L("Press Ctrl+C to copy the URL to your clipboard"),
     hasEditBox = 1,
     button1 = _G.OKAY,
     OnShow = function(self)
@@ -5912,9 +5924,9 @@ function addon.functions.itemcount(self, ...)
             addon.updateSteps = true
             step.completed = true
             if operator < 0 then
-                element.tooltipText = "Step skipped: You already have the required item for this step"
+                element.tooltipText = L("Step skipped: You already have the required item for this step")
             else
-                element.tooltipText = "Step skipped: You don't have the required item for this step"
+                element.tooltipText = L("Step skipped: You don't have the required item for this step")
             end
         end
     elseif step.active then
@@ -7590,7 +7602,7 @@ function addon.functions.isInScenario(self, ...)
     if event ~= "WindowUpdate" then
         local scenarioInfo = C_ScenarioInfo.GetScenarioInfo()
         if step.active and not addon.settings.profile.debug and not addon.isHidden and (not scenarioInfo or scenarioInfo.scenarioID ~= element.scenario) then
-            element.tooltipText = "Step skipped: Wrong scenario"
+            element.tooltipText = L("Step skipped: Wrong scenario")
             step.completed = true
             addon.updateSteps = true
         elseif step.active and not step.completed then
@@ -7616,7 +7628,7 @@ function addon.functions.enterScenario(self, ...)
     if event ~= "WindowUpdate" then
         local scenarioInfo = C_ScenarioInfo.GetScenarioInfo()
         if step.active and not addon.settings.profile.debug and not addon.isHidden and scenarioInfo and scenarioInfo.scenarioID == element.scenario then
-            element.tooltipText = "Step skipped: Wrong scenario"
+            element.tooltipText = L("Step skipped: Wrong scenario")
             step.completed = true
             addon.updateSteps = true
         elseif step.active and not step.completed then

@@ -3,6 +3,7 @@ local _, addon = ...
 local _G = _G
 local lower = string.lower
 local format = string.format
+local L = addon.locale.Get
 
 addon.guideHub = addon.guideHub or {}
 local hub = addon.guideHub
@@ -47,13 +48,13 @@ end
 
 local function DisplayName(guide)
     return addon.GetGuideName(guide) or guide.displayname or guide.name or
-               "Unnamed guide"
+               L("Unnamed guide")
 end
 
 local function Availability(guide)
-    if not guide or guide.empty then return false, "Guide data unavailable" end
-    if guide.disabled then return false, "Disabled by this guide version" end
-    if guide.internal then return false, "Internal chapter" end
+    if not guide or guide.empty then return false, L("Guide data unavailable") end
+    if guide.disabled then return false, L("Disabled by this guide version") end
+    if guide.internal then return false, L("Internal chapter") end
     if guide.farm and addon.goldAssistant and
         addon.goldAssistant.IsGuideCompatible then
         local compatible, reason = addon.goldAssistant:IsGuideCompatible(guide)
@@ -65,14 +66,14 @@ local function Availability(guide)
         local factionAllowed, factionMentioned = ConditionAllows(condition,
             addon.player.faction, factions)
         if factionMentioned and not factionAllowed then
-            return false, "Unavailable to the current faction"
+            return false, L("Unavailable to the current faction")
         end
         local classAllowed, classMentioned = ConditionAllows(condition,
             addon.player.class, classes)
         if classMentioned and not classAllowed then
-            return false, "Unavailable to the current class"
+            return false, L("Unavailable to the current class")
         end
-        return false, "Current level, XP rate, mode, race, or guide condition is not met"
+        return false, L("Current level, XP rate, mode, race, or guide condition is not met")
     end
     return true
 end
@@ -187,7 +188,7 @@ end
 function hub:ChooseStep()
     if not self.selected or not self.selected.active then return end
     StaticPopupDialogs.RXP_GUIDE_HUB_STEP = {
-        text = "Enter a step number for %s",
+        text = L("Enter a step number for %s"),
         button1 = _G.ACCEPT,
         button2 = _G.CANCEL,
         hasEditBox = 1,
@@ -256,7 +257,7 @@ function hub:Refresh()
     self.guides = BuildGuideList()
     self.filtered = self:GetFilteredGuides()
     if self.frame then
-        self.frame.count:SetText(format("%d guides", #self.filtered))
+        self.frame.count:SetText(format(L("%d guides"), #self.filtered))
         self:RefreshRows()
     end
 end
@@ -287,7 +288,7 @@ function hub:CreateFrame()
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -17)
-    title:SetText("RXPGuides Guide Hub")
+    title:SetText(L("RXPGuides Guide Hub"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
 
@@ -301,21 +302,21 @@ function hub:CreateFrame()
         hub.filtered = hub:GetFilteredGuides()
         FauxScrollFrame_SetOffset(frame.scroll, 0)
         hub:RefreshRows()
-        frame.count:SetText(format("%d guides", #hub.filtered))
+        frame.count:SetText(format(L("%d guides"), #hub.filtered))
     end)
 
-    local favorites = CreateButton(frame, "Favorites", 105)
+    local favorites = CreateButton(frame, L("Favorites"), 105)
     favorites:SetPoint("LEFT", search, "RIGHT", 12, 0)
     favorites:SetScript("OnClick", function()
         hub.favoritesOnly = not hub.favoritesOnly
-        favorites:SetText(hub.favoritesOnly and "All guides" or "Favorites")
+        favorites:SetText(hub.favoritesOnly and L("All guides") or L("Favorites"))
         hub:Refresh()
     end)
-    local recent = CreateButton(frame, "Recent", 90)
+    local recent = CreateButton(frame, L("Recent"), 90)
     recent:SetPoint("LEFT", favorites, "RIGHT", 8, 0)
     recent:SetScript("OnClick", function()
         hub.recentOnly = not hub.recentOnly
-        recent:SetText(hub.recentOnly and "All" or "Recent")
+        recent:SetText(hub.recentOnly and L("All") or L("Recent"))
         hub:Refresh()
     end)
 
@@ -334,40 +335,40 @@ function hub:CreateFrame()
         return button
     end
     local factionFilter = FilterButton(hub.factionFilter == "all" and
-        "Faction: All" or "Faction: Current", 130, search,
+        L("Faction: All") or L("Faction: Current"), 130, search,
         function(button)
             hub.factionFilter = hub.factionFilter == "all" and "current" or "all"
-            button:SetText(hub.factionFilter == "all" and "Faction: All" or "Faction: Current")
+            button:SetText(hub.factionFilter == "all" and L("Faction: All") or L("Faction: Current"))
         end)
     local classFilter = FilterButton(hub.classFilter == "all" and
-        "Class: All" or "Class: Current", 120, factionFilter,
+        L("Class: All") or L("Class: Current"), 120, factionFilter,
         function(button)
             hub.classFilter = hub.classFilter == "all" and "current" or "all"
-            button:SetText(hub.classFilter == "all" and "Class: All" or "Class: Current")
+            button:SetText(hub.classFilter == "all" and L("Class: All") or L("Class: Current"))
         end)
     classFilter:ClearAllPoints()
     classFilter:SetPoint("LEFT", factionFilter, "RIGHT", 7, 0)
     local levelFilter = FilterButton(hub.levelFilter == "all" and
-        "Level: All" or "Level: Current", 120, classFilter,
+        L("Level: All") or L("Level: Current"), 120, classFilter,
         function(button)
             hub.levelFilter = hub.levelFilter == "all" and "current" or "all"
-            button:SetText(hub.levelFilter == "all" and "Level: All" or "Level: Current")
+            button:SetText(hub.levelFilter == "all" and L("Level: All") or L("Level: Current"))
         end)
     levelFilter:ClearAllPoints()
     levelFilter:SetPoint("LEFT", classFilter, "RIGHT", 7, 0)
     local availabilityLabel = hub.availabilityFilter == "available" and
-                                  "Available" or
+                                  L("Available") or
                                   (hub.availabilityFilter == "unavailable" and
-                                      "Unavailable" or "All")
-    local availabilityFilter = FilterButton("Availability: " ..
+                                      L("Unavailable") or L("All"))
+    local availabilityFilter = FilterButton(L("Availability: ") ..
         availabilityLabel, 145, levelFilter,
         function(button)
             local current = hub.availabilityFilter
             hub.availabilityFilter = current == "all" and "available" or
                                          (current == "available" and "unavailable" or "all")
-            local label = hub.availabilityFilter == "all" and "All" or
-                              (hub.availabilityFilter == "available" and "Available" or "Unavailable")
-            button:SetText("Availability: " .. label)
+            local label = hub.availabilityFilter == "all" and L("All") or
+                              (hub.availabilityFilter == "available" and L("Available") or L("Unavailable"))
+            button:SetText(L("Availability: ") .. label)
         end)
     availabilityFilter:ClearAllPoints()
     availabilityFilter:SetPoint("LEFT", levelFilter, "RIGHT", 7, 0)
@@ -376,7 +377,7 @@ function hub:CreateFrame()
     frame.count:SetPoint("TOPRIGHT", -26, -113)
     local header = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     header:SetPoint("TOPLEFT", 28, -114)
-    header:SetText("Guide")
+    header:SetText(L("Guide"))
 
     local scroll = CreateFrame("ScrollFrame", "RXPGuideHubScroll", frame,
                                "FauxScrollFrameTemplate")
@@ -422,7 +423,7 @@ function hub:CreateFrame()
     frame.status:SetPoint("BOTTOMLEFT", 25, 68)
     frame.status:SetPoint("BOTTOMRIGHT", -25, 68)
     frame.status:SetJustifyH("LEFT")
-    frame.status:SetText("Select a guide")
+    frame.status:SetText(L("Select a guide"))
     frame.continue = CreateButton(frame, "Continue", 110)
     frame.continue:SetPoint("BOTTOMLEFT", 24, 26)
     frame.continue:SetScript("OnClick", function() hub:LoadSelected(false) end)

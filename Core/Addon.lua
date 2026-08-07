@@ -239,16 +239,17 @@ end
 -- but nearly every RXP .accept directive already contains its title.  Keep a
 -- conservative parser for that authored title so all loaded guides get the
 -- same fallback without maintaining per-guide quest-name patches.
-function addon.GetGuideAcceptTitle(element)
+local function GetGuideQuestActionTitle(element, englishLabel, localizedLabel,
+                                         allowBareTitle)
     if type(element) ~= "table" then return end
     local text = TrimQuestAutomationText(element.text)
     if not text or text:find("\n", 1, true) then return end
 
     local lowerText = string.lower(text)
-    local labels = {"Accept"}
-    if type(_G.ACCEPT) == "string" and _G.ACCEPT ~= "" and
-        _G.ACCEPT ~= "Accept" then
-        table.insert(labels, 1, _G.ACCEPT)
+    local labels = {englishLabel}
+    if type(localizedLabel) == "string" and localizedLabel ~= "" and
+        localizedLabel ~= englishLabel then
+        table.insert(labels, 1, localizedLabel)
     end
     for _, label in ipairs(labels) do
         label = TrimQuestAutomationText(label)
@@ -262,7 +263,15 @@ function addon.GetGuideAcceptTitle(element)
 
     -- A small number of older guides use ".accept ID >> Quest Title".  That
     -- text is still an exact, useful title and is safe to register as an alias.
-    if text ~= "*quest*" then return text end
+    if allowBareTitle and text ~= "*quest*" then return text end
+end
+
+function addon.GetGuideAcceptTitle(element)
+    return GetGuideQuestActionTitle(element, "Accept", _G.ACCEPT, true)
+end
+
+function addon.GetGuideTurnInTitle(element)
+    return GetGuideQuestActionTitle(element, "Turn in", _G.TURN_IN_QUEST)
 end
 
 local function CacheQuestAcceptTitle(title, element, isClientTitle)

@@ -15,6 +15,7 @@
 
 local addonName, addon = ...
 local _G = _G
+local L = addon.locale and addon.locale.Get or function(text) return text end
 
 -- Only meaningful on the 3.3.5a build.
 if _G.C_Timer and _G.C_Map and _G.C_QuestLog and (select(4, GetBuildInfo()) or 0) > 30300 then
@@ -192,20 +193,20 @@ end)
 local function BuildOptions()
     return {
         type = "group",
-        name = "3.3.5a",
+        name = L("3.3.5a"),
         args = {
             header = {
                 type = "description",
                 order = 0,
                 fontSize = "medium",
-                name = "Compatibility and quality-of-life options for the 3.3.5a (Wrath) backport.\n",
+                name = L("Compatibility and quality-of-life options for the 3.3.5a (Wrath) backport.") .. "\n",
             },
             hideTargetingFrame = {
                 type = "toggle",
                 order = 1,
                 width = "full",
-                name = "Hide the Active Targets frame",
-                desc = "Hides the working Active Targets window if you prefer to use only the targeting macro and nameplate markers.",
+                name = L("Hide the Active Targets frame"),
+                desc = L("Hides the working Active Targets window if you prefer to use only the targeting macro and nameplate markers."),
                 get = function() return RXP335.hideTargetingFrame end,
                 set = function(_, v) RXP335.hideTargetingFrame = v; ApplyTargetingFrame() end,
             },
@@ -213,8 +214,8 @@ local function BuildOptions()
                 type = "toggle",
                 order = 2,
                 width = "full",
-                name = "Readable waypoint pins",
-                desc = "Draws a solid dark background behind waypoint pin numbers so they are readable. Takes effect after a /reload.",
+                name = L("Readable waypoint pins"),
+                desc = L("Draws a solid dark background behind waypoint pin numbers so they are readable. Takes effect after a /reload."),
                 get = function() return RXP335.pinBackground end,
                 set = function(_, v) RXP335.pinBackground = v end,
             },
@@ -222,22 +223,22 @@ local function BuildOptions()
                 type = "toggle",
                 order = 3,
                 width = "full",
-                name = "Use a plain navigation arrow",
-                desc = "Replaces the RXP navigation arrow texture (which can render with white edge artifacts on 3.3.5a) with a plain Blizzard arrow.",
+                name = L("Use a plain navigation arrow"),
+                desc = L("Replaces the RXP navigation arrow texture (which can render with white edge artifacts on 3.3.5a) with a plain Blizzard arrow."),
                 get = function() return RXP335.plainArrow end,
                 set = function(_, v) RXP335.plainArrow = v; ApplyArrow() end,
             },
             repairHeader = {
                 type = "header",
                 order = 4,
-                name = "Automatic repairs",
+                name = L("Automatic repairs"),
             },
             autoRepairPersonal = {
                 type = "toggle",
                 order = 5,
                 width = "full",
-                name = "Automatically repair using my money",
-                desc = "Repairs all damaged equipment when you open a repair merchant. If guild repair is also enabled, your money is used only for costs the guild repair did not cover.",
+                name = L("Automatically repair using my money"),
+                desc = L("Repairs all damaged equipment when you open a repair merchant. If guild repair is also enabled, your money is used only for costs the guild repair did not cover."),
                 get = function() return RXP335.autoRepairPersonal end,
                 set = function(_, v)
                     RXP335.autoRepairPersonal = v
@@ -248,8 +249,8 @@ local function BuildOptions()
                 type = "toggle",
                 order = 6,
                 width = "full",
-                name = "Automatically repair using guild money",
-                desc = "Attempts to repair from the guild bank when you have permission. This option never spends your own money unless the personal-money option is also enabled.",
+                name = L("Automatically repair using guild money"),
+                desc = L("Attempts to repair from the guild bank when you have permission. This option never spends your own money unless the personal-money option is also enabled."),
                 get = function() return RXP335.autoRepairGuild end,
                 set = function(_, v)
                     RXP335.autoRepairGuild = v
@@ -259,15 +260,15 @@ local function BuildOptions()
             roadmapHeader = {
                 type = "header",
                 order = 7,
-                name = "Guide tools and accessibility",
+                name = L("Guide tools and accessibility"),
             },
             loreMode = {
                 type = "select",
                 order = 7.1,
                 width = "full",
-                name = "Quest lore pause",
-                desc = "Pauses quest accept/turn-in automation so quest text can be read.",
-                values = {off = "Off", first = "First time", always = "Always"},
+                name = L("Quest lore pause"),
+                desc = L("Pauses quest accept/turn-in automation so quest text can be read."),
+                values = {off = L("Off"), first = L("First time"), always = L("Always")},
                 get = function()
                     return addon.settings and addon.settings.profile.loreMode or "off"
                 end,
@@ -279,11 +280,11 @@ local function BuildOptions()
                 type = "select",
                 order = 7.2,
                 width = "full",
-                name = "Accessible color and symbol preset",
+                name = L("Accessible color and symbol preset"),
                 values = {
-                    off = "Off", deuteranopia = "Deuteranopia",
-                    protanopia = "Protanopia", tritanopia = "Tritanopia",
-                    contrast = "High contrast"
+                    off = L("Off"), deuteranopia = L("Deuteranopia"),
+                    protanopia = L("Protanopia"), tritanopia = L("Tritanopia"),
+                    contrast = L("High contrast")
                 },
                 get = function()
                     return addon.settings and addon.settings.profile.colorBlindMode or "off"
@@ -296,8 +297,8 @@ local function BuildOptions()
                 type = "toggle",
                 order = 7.3,
                 width = "full",
-                name = "Enable party guide synchronization",
-                desc = "Opt in to sharing the active guide and step with RXP party members.",
+                name = L("Enable party guide synchronization"),
+                desc = L("Opt in to sharing the active guide and step with RXP party members."),
                 get = function()
                     return addon.settings and addon.settings.profile.partyGuideSync
                 end,
@@ -313,7 +314,7 @@ local function BuildOptions()
                 type = "toggle",
                 order = 7.4,
                 width = "full",
-                name = "Wait for synchronized party members",
+                name = L("Wait for synchronized party members"),
                 get = function()
                     return addon.settings and addon.settings.profile.partyGuideWait
                 end,
@@ -327,31 +328,31 @@ local function BuildOptions()
             guideHub = {
                 type = "execute",
                 order = 8,
-                name = "Open Guide Hub",
+                name = L("Open Guide Hub"),
                 func = function() if addon.guideHub then addon.guideHub:Toggle() end end,
             },
             backup = {
                 type = "execute",
                 order = 8.05,
-                name = "Backup / Restore",
+                name = L("Backup / Restore"),
                 func = function() if addon.roadmap then addon.roadmap:OpenBackupWindow() end end,
             },
             diagnose = {
                 type = "execute",
                 order = 8.06,
-                name = "Diagnose Current Step",
+                name = L("Diagnose Current Step"),
                 func = function() if addon.diagnostics then addon.diagnostics:Open() end end,
             },
             supplies = {
                 type = "execute",
                 order = 8.1,
-                name = "Open Class Supplies",
+                name = L("Open Class Supplies"),
                 func = function() if addon.supplies then addon.supplies:Toggle() end end,
             },
             preflight = {
                 type = "execute",
                 order = 8.11,
-                name = "Open Route Preflight",
+                name = L("Open Route Preflight"),
                 func = function()
                     if addon.routePreflight then addon.routePreflight:Toggle() end
                 end,
@@ -359,7 +360,7 @@ local function BuildOptions()
             archives = {
                 type = "execute",
                 order = 8.12,
-                name = "Open Personal-Best Archives",
+                name = L("Open Personal-Best Archives"),
                 func = function()
                     if addon.runArchive then addon.runArchive:Toggle() end
                 end,
@@ -367,7 +368,7 @@ local function BuildOptions()
             petAssistant = {
                 type = "execute",
                 order = 8.13,
-                name = "Open Hunter Pet Assistant",
+                name = L("Open Hunter Pet Assistant"),
                 hidden = function()
                     return not (addon.player and addon.player.class == "HUNTER")
                 end,
@@ -378,7 +379,7 @@ local function BuildOptions()
             performance = {
                 type = "execute",
                 order = 8.14,
-                name = "Open Performance Inspector",
+                name = L("Open Performance Inspector"),
                 func = function()
                     if addon.performanceInspector then addon.performanceInspector:Toggle() end
                 end,
@@ -386,25 +387,25 @@ local function BuildOptions()
             gearAdvisor = {
                 type = "execute",
                 order = 8.2,
-                name = "Open Gear Advisor",
+                name = L("Open Gear Advisor"),
                 func = function() if addon.gearAdvisor then addon.gearAdvisor:Toggle() end end,
             },
             dailies = {
                 type = "execute",
                 order = 8.3,
-                name = "Open Daily Planner",
+                name = L("Open Daily Planner"),
                 func = function() if addon.activityPlanner then addon.activityPlanner:Toggle() end end,
             },
             recorder = {
                 type = "execute",
                 order = 8.4,
-                name = "Guide Author Recorder",
+                name = L("Guide Author Recorder"),
                 func = function() if addon.guideRecorder then addon.guideRecorder:Toggle() end end,
             },
             reloadNote = {
                 type = "description",
                 order = 10,
-                name = "\n|cff909090Tip: after toggling 'Readable waypoint pins', use /reload for it to take effect.|r",
+                name = "\n|cff909090" .. L("Tip: after toggling 'Readable waypoint pins', use /reload for it to take effect.") .. "|r",
             },
         },
     }

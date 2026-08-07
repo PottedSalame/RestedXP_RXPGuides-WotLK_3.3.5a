@@ -265,24 +265,62 @@ foreach ($name in $surface.globals) {
 }
 
 # Lua 5.1 string.format does not support positional arguments. Localized
-# announcements therefore have to retain the source placeholder order or a
-# level-up event can abort the communications callback.
-$levelFormatKey = 'I just leveled from %d to %d in %s'
+# strings used by hot guide and communications paths therefore have to retain
+# the source placeholder order or an otherwise valid translation can abort an
+# event callback. Keep this list focused on strings that are actually passed
+# to string.format; literal percentages in option descriptions are harmless.
+$localizedFormatKeys = @{
+    'I just leveled from %d to %d in %s' = 'd,d,s'
+    'Grind until you are %d xp away from level %s' = 'd,s'
+    'Grind until you are %s xp into level %s' = 's,s'
+    'Grind until you are %.0f%% into level %s' = 'f,s'
+    'Grind until you are %d away from %s with %s' = 'd,s,s'
+    'Grind until you are %s into %s with %s' = 's,s,s'
+    'Grind until you are %.0f%% into %s with %s' = 'f,s,s'
+    'Flying to %s ETA %s' = 's,s'
+}
 foreach ($localeFile in Get-ChildItem (Join-Path $root 'locale') -File -Filter '*.lua') {
     $localeText = [IO.File]::ReadAllText($localeFile.FullName)
-    $translationMatch = [regex]::Match(
-        $localeText,
-        'L\["' + [regex]::Escape($levelFormatKey) + '"\]\s*=\s*"([^"]*)"')
-    if (-not $translationMatch.Success) { continue }
-    $signature = @([regex]::Matches(
-        $translationMatch.Groups[1].Value,
-        '%[-+0 #]*\d*(?:\.\d+)?([dfs])') | ForEach-Object {
-            $_.Groups[1].Value
-        }) -join ','
-    if ($signature -cne 'd,d,s') {
-        Add-ValidationError (
-            "$($localeFile.Name) reorders the level announcement placeholders: " +
-            "$signature (expected d,d,s).")
+    foreach ($formatKey in $localizedFormatKeys.Keys) {
+        $translationMatch = [regex]::Match(
+            $localeText,
+            'L\["' + [regex]::Escape($formatKey) + '"\]\s*=\s*"([^"]*)"')
+        if (-not $translationMatch.Success) { continue }
+        $signature = @([regex]::Matches(
+            $translationMatch.Groups[1].Value,
+            '(?<!%)%(?!%)[-+0 #]*\d*(?:\.\d+)?([dfs])') |
+                ForEach-Object { $_.Groups[1].Value }) -join ','
+        $expected = $localizedFormatKeys[$formatKey]
+        if ($signature -cne $expected) {
+            Add-ValidationError (
+                "$($localeFile.Name) reorders placeholders for '$formatKey': " +
+                "$signature (expected $expected).")
+        }
+    }
+}
+
+# Backport.lua stores several locales in one data table instead of ordinary
+# L[...] assignments. Validate every translated entry there, including future
+# additions, so Lua 5.1-incompatible placeholder reordering cannot slip in.
+$backportLocalePath = Join-Path $root 'locale\Backport.lua'
+if (Test-Path -LiteralPath $backportLocalePath) {
+    $backportLocaleText = [IO.File]::ReadAllText($backportLocalePath)
+    foreach ($entry in [regex]::Matches(
+        $backportLocaleText,
+        '\["(?<key>(?:\\.|[^"])*)"\]\s*=\s*"(?<value>(?:\\.|[^"])*)"')) {
+        $keySignature = @([regex]::Matches(
+            $entry.Groups['key'].Value,
+            '(?<!%)%(?!%)[-+0 #]*\d*(?:\.\d+)?([dfs])') |
+                ForEach-Object { $_.Groups[1].Value }) -join ','
+        $valueSignature = @([regex]::Matches(
+            $entry.Groups['value'].Value,
+            '(?<!%)%(?!%)[-+0 #]*\d*(?:\.\d+)?([dfs])') |
+                ForEach-Object { $_.Groups[1].Value }) -join ','
+        if ($keySignature -cne $valueSignature) {
+            Add-ValidationError (
+                "Backport.lua reorders placeholders for '$($entry.Groups['key'].Value)': " +
+                "$valueSignature (expected $keySignature).")
+        }
     }
 }
 

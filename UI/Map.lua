@@ -117,15 +117,17 @@ function addon.DrawArrow(self)
     if dist ~= self.distance then
         self.distance = dist
         local step = element.step
-        local title = step and (step.arrowtext or step.title or step.index and ("Step "..step.index))
+        local title = step and (step.arrowtext or step.title or step.index and
+            string.format(addon.locale.Get("Step %d"), step.index))
         if element.title then
-            for RXP_ in string.gmatch(element.title, "RXP_[A-Z]+_") do
-                element.title = element.title:gsub(RXP_, addon.guideTextColors[RXP_] or
-                                                addon.guideTextColors.default["error"])
+            local elementTitle = addon.locale.GuideText(element.title)
+            for RXP_ in string.gmatch(elementTitle, "RXP_[A-Z]+_") do
+                elementTitle = elementTitle:gsub(RXP_, addon.guideTextColors[RXP_] or
+                                                  addon.guideTextColors.default["error"])
             end
-            --self.text:SetText(string.format("%s\n(%dyd)",element.title, dist))
-            self.text:SetText(string.format("%s\n(%dyd)",element.title, dist))
+            self.text:SetText(string.format("%s\n(%dyd)", elementTitle, dist))
         elseif title then
+            title = addon.locale.GuideText(title)
             for RXP_ in string.gmatch(title, "RXP_[A-Z]+_") do
                 title = title:gsub(RXP_, addon.guideTextColors[RXP_] or addon.guideTextColors.default["error"])
             end
@@ -182,10 +184,13 @@ local function PinOnEnter(self)
             text = parent.mapTooltip or parent.tooltipText or hiddentext or parent.text or ""
             local title = step.mapTooltip or step.title or step.index and ("Step " .. step.index) or step.tip and "Tip"
             if title and title ~= lastStep then
-                _G.GameTooltip:AddLine(addon.ReplaceNpcIds(icon..title),unpack(addon.colors.mapPins))
+                _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
+                    icon .. addon.locale.GuideText(title)),
+                    unpack(addon.colors.mapPins))
                 lastStep = title
             end
-            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug..text))
+            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
+                debug .. addon.locale.GuideText(text)))
             lines = lines + 1
         elseif not parent and not element.hideTooltip then
             local hiddentext = step.hiddentext
@@ -195,10 +200,13 @@ local function PinOnEnter(self)
             text = element.mapTooltip or element.tooltipText or hiddentext or step.text or ""
             local title = step.mapTooltip or step.title or step.index and ("Step " .. step.index) or step.tip and "Tip"
             if title and step ~= lastStep then
-                _G.GameTooltip:AddLine(addon.ReplaceNpcIds(icon..title),unpack(addon.colors.mapPins))
+                _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
+                    icon .. addon.locale.GuideText(title)),
+                    unpack(addon.colors.mapPins))
                 lastStep = title
             end
-            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug..text))
+            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
+                debug .. addon.locale.GuideText(text)))
             lines = lines + 1
         end
     end

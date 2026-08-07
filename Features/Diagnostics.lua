@@ -4,6 +4,7 @@ local _G = _G
 local format = string.format
 local GetTime = _G.GetTime
 local time = _G.time
+local L = addon.locale.Get
 
 addon.diagnostics = addon.diagnostics or {}
 local diagnostics = addon.diagnostics
@@ -49,16 +50,16 @@ end
 
 local function QuestState(id)
     id = tonumber(id)
-    if not id then return "invalid quest ID" end
+    if not id then return L("invalid quest ID") end
     if addon.IsQuestTurnedIn and addon.IsQuestTurnedIn(id) then
-        return "turned in"
+        return L("turned in")
     elseif addon.IsOnQuest and addon.IsOnQuest(id) then
         if addon.IsQuestComplete and addon.IsQuestComplete(id) then
-            return "complete in quest log"
+            return L("complete in quest log")
         end
-        return "active in quest log"
+        return L("active in quest log")
     end
-    return "not accepted"
+    return L("not accepted")
 end
 
 local function TargetList(targets)
@@ -197,15 +198,16 @@ function diagnostics:BuildReport(stepNumber, includeRecent)
 end
 
 function diagnostics:Open(stepNumber)
-    addon.comms.OpenBrandedExport("Step Doctor",
-        "The report explains the current step. Use /rxp diagnose after retrying the action.",
+    addon.comms.OpenBrandedExport(L("Step Doctor"),
+        L("The report explains the current step. Use /rxp diagnose after retrying the action."),
         self:BuildReport(stepNumber, false), 720, 520)
 end
 
 function diagnostics:OpenIssueReport(stepNumber)
-    addon.comms.OpenBrandedExport("Feedback Form",
-        "Describe the problem above this sanitized report when filing an issue.",
-        "Describe your issue:\n\n\n--- Do not edit below this line ---\n" ..
+    addon.comms.OpenBrandedExport(L("Feedback Form"),
+        L("Describe the problem above this sanitized report when filing an issue."),
+        L("Describe your issue:") .. "\n\n\n--- " ..
+            L("Do not edit below this line") .. " ---\n" ..
             self:BuildReport(stepNumber, true), 720, 560)
 end
 
@@ -250,12 +252,12 @@ function diagnostics:OpenPrerequisiteGuide()
     local guide, step = FindGuideForQuest(questId)
     if not guide then
         addon.comms:PopupNotification("RXP_PREREQ_GUIDE_MISSING",
-            questId and ("No loaded guide accepts prerequisite quest " .. questId .. ".") or
-                "The current step has no known missing prerequisite.")
+            questId and format(L("No loaded guide accepts prerequisite quest %d."), questId) or
+                L("The current step has no known missing prerequisite."))
         return
     end
     addon.comms:ConfirmChoice("RXP_OPEN_PREREQ_GUIDE",
-        format("Open the guide containing prerequisite quest %d?", questId),
+            format(L("Open the guide containing prerequisite quest %d?"), questId),
         function(data)
             addon.guideState:Load(data.guide, false, "manual")
             if data.step then addon.GoToStep(data.step) end
@@ -267,9 +269,9 @@ function diagnostics:SkipCurrent(markComplete)
     local step = addon.currentGuide and addon.currentGuide.steps and
                      addon.currentGuide.steps[number]
     if not number or not step then return end
-    local verb = markComplete and "mark complete" or "skip"
+    local verb = markComplete and L("mark complete") or L("skip")
     addon.comms:ConfirmChoice("RXP_STEP_DOCTOR_SKIP",
-        format("Manually %s step %d? This changes only local guide progress.",
+        format(L("Manually %s step %d? This changes only local guide progress."),
                verb, number), function()
             if markComplete then
                 for _, element in ipairs(step.elements or {}) do
@@ -317,7 +319,7 @@ function diagnostics:Setup()
     if menu then
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Diagnose this step",
+            text = L("Diagnose this step"),
             func = function(arg)
                 local step = type(arg) == "table" and arg.arg1 or arg
                 diagnostics:Open(step)
@@ -325,41 +327,41 @@ function diagnostics:Setup()
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Open prerequisite guide",
+            text = L("Open prerequisite guide"),
             func = function() diagnostics:OpenPrerequisiteGuide() end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Manually complete step...",
+            text = L("Manually complete step..."),
             func = function() diagnostics:SkipCurrent(true) end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Manually skip step...",
+            text = L("Manually skip step..."),
             func = function() diagnostics:SkipCurrent(false) end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Rescan current step",
+            text = L("Rescan current step"),
             func = function() diagnostics:Rescan() end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Watch current step for no progress",
+            text = L("Watch current step for no progress"),
             func = function()
                 if addon.routePreflight then addon.routePreflight:ToggleWatch() end
             end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Find a catch-up step",
+            text = L("Find a catch-up step"),
             func = function()
                 if addon.catchUp then addon.catchUp:Preview() end
             end
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
-            text = "Plan return to route",
+            text = L("Plan return to route"),
             func = function()
                 if addon.travel then addon.travel:OpenCurrentRoute() end
             end

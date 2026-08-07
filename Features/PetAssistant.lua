@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 local _G = _G
 local format = string.format
@@ -13,10 +14,10 @@ local function IsHunter()
 end
 
 local function HappinessText(value)
-    if value == 3 then return "Happy", 0.2, 1, 0.2 end
-    if value == 2 then return "Content", 1, 0.82, 0 end
-    if value == 1 then return "Unhappy", 1, 0.25, 0.25 end
-    return "Unavailable", 0.7, 0.7, 0.7
+    if value == 3 then return L("Happy"), 0.2, 1, 0.2 end
+    if value == 2 then return L("Content"), 1, 0.82, 0 end
+    if value == 1 then return L("Unhappy"), 1, 0.25, 0.25 end
+    return L("Unavailable"), 0.7, 0.7, 0.7
 end
 
 local function KnownPetSkills()
@@ -76,14 +77,14 @@ local function PetTalentStatus()
 end
 
 function pet:BuildText()
-    if not IsHunter() then return "The Hunter Pet Assistant is available to Hunters." end
+    if not IsHunter() then return L("The Hunter Pet Assistant is available to Hunters.") end
     local lines = {}
     local hasPet = UnitExists("pet") and not UnitIsDead("pet")
     if not hasPet then
         tinsert(lines, "[!] No active living pet.")
     else
         local level = UnitLevel("pet") or 0
-        local family = UnitCreatureFamily("pet") or "Unknown family"
+    local family = UnitCreatureFamily("pet") or L("Unknown family")
         local health, healthMax = UnitHealth("pet") or 0, UnitHealthMax("pet") or 0
         local happiness = type(_G.GetPetHappiness) == "function" and
                               _G.GetPetHappiness()
@@ -184,7 +185,7 @@ function pet:CreateWindow()
         insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Hunter Pet Assistant")
+    title:SetText(L("Hunter Pet Assistant"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     local scroll = CreateFrame("ScrollFrame", "RXPHunterPetAssistantScroll", frame,
@@ -204,14 +205,14 @@ function pet:CreateWindow()
     local supplies = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     supplies:SetSize(110, 24)
     supplies:SetPoint("BOTTOMLEFT", 20, 18)
-    supplies:SetText("Supplies")
+    supplies:SetText(L("Supplies"))
     supplies:SetScript("OnClick", function()
         if addon.supplies then addon.supplies:Toggle() end
     end)
     local stepButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     stepButton:SetSize(125, 24)
     stepButton:SetPoint("LEFT", supplies, "RIGHT", 8, 0)
-    stepButton:SetText("Go to Pet Step")
+    stepButton:SetText(L("Go to Pet Step"))
     stepButton:SetScript("OnClick", function()
         local step = UpcomingPetStep()
         if step and addon.GoToStep then addon.GoToStep(step) end
@@ -220,7 +221,7 @@ function pet:CreateWindow()
     local rescan = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     rescan:SetSize(100, 24)
     rescan:SetPoint("LEFT", stepButton, "RIGHT", 8, 0)
-    rescan:SetText("Refresh")
+    rescan:SetText(L("Refresh"))
     rescan:SetScript("OnClick", function() pet:Refresh() end)
     frame:SetScript("OnShow", function() pet:Refresh() end)
     frame:Hide()

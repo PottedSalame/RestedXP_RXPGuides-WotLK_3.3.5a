@@ -3,6 +3,7 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local time = _G.time
+local L = addon.locale.Get
 local SCHEMA_VERSION = 2
 local BACKUP_PREFIX = "RXPBACKUP1"
 local MAX_BACKUP_SIZE = 1024 * 1024
@@ -201,7 +202,7 @@ function roadmap:InitializeSavedData()
 end
 
 local function ErrorFingerprint(errorText)
-    errorText = tostring(errorText or "Unknown error")
+    errorText = tostring(errorText or L("Unknown error"))
     errorText = errorText:gsub("Interface[/\\].-AddOns[/\\]", "AddOns/")
     errorText = errorText:gsub(":%d+:", ":#:")
     return errorText:sub(1, 500)
@@ -295,12 +296,12 @@ function roadmap:ShowSafeModeRecovery()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("RXPGuides Safe Mode")
+    title:SetText(L("RXPGuides Safe Mode"))
     frame.message = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.message:SetPoint("TOPLEFT", 24, -50)
     frame.message:SetPoint("TOPRIGHT", -24, -50)
     frame.message:SetJustifyH("LEFT")
-    frame.message:SetText("An optional feature failed repeatedly. The guide window remains available.")
+    frame.message:SetText(L("An optional feature failed repeatedly. The guide window remains available."))
     local function Button(text, x, callback)
         local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
         button:SetSize(100, 24)
@@ -308,22 +309,22 @@ function roadmap:ShowSafeModeRecovery()
         button:SetText(text)
         button:SetScript("OnClick", callback)
     end
-    Button("Retry Once", 22, function()
+    Button(L("Retry Once"), 22, function()
         roadmap:RetryOptional(frame.failedName, false)
     end)
-    Button("Keep Disabled", 132, function() frame:Hide() end)
-    Button("Reset Settings", 242, function()
+    Button(L("Keep Disabled"), 132, function() frame:Hide() end)
+    Button(L("Reset Settings"), 242, function()
         roadmap:RetryOptional(frame.failedName, true)
     end)
-    Button("Copy Report", 352, function()
-        addon.comms.OpenBrandedExport("Safe-mode report",
-            "Copy this sanitized report.", roadmap:BuildSafeModeReport(), 620,
+    Button(L("Copy Report"), 352, function()
+        addon.comms.OpenBrandedExport(L("Safe-mode report"),
+            L("Copy this sanitized report."), roadmap:BuildSafeModeReport(), 620,
             360)
     end)
     frame:SetScript("OnShow", function(self)
         local state = RXPData.safeMode.modules[self.failedName]
         self.message:SetText(format(
-            "The optional '%s' subsystem failed repeatedly and was disabled.\n%s",
+            L("The optional '%s' subsystem failed repeatedly and was disabled.\n%s"),
             tostring(self.failedName), tostring(state and state.lastError or "")))
     end)
     frame.failedName = failedName
@@ -455,28 +456,28 @@ function roadmap:BuildBackup()
 end
 
 function roadmap:DecodeBackup(text)
-    if type(text) ~= "string" then return nil, "Backup is not text." end
-    if #text > MAX_BACKUP_SIZE * 2 then return nil, "Backup text is too large." end
+    if type(text) ~= "string" then return nil, L("Backup is not text.") end
+    if #text > MAX_BACKUP_SIZE * 2 then return nil, L("Backup text is too large.") end
     text = text:gsub("^%s+", ""):gsub("%s+$", "")
     local checksumText, encoded = text:match("^" .. BACKUP_PREFIX ..
                                                  ":(%d+):(.+)$")
-    if not checksumText or not encoded then return nil, "Unknown backup format." end
+    if not checksumText or not encoded then return nil, L("Unknown backup format.") end
     local deflate = LibStub("LibDeflate")
     local decoded = deflate:DecodeForPrint(encoded)
-    if not decoded then return nil, "Backup encoding is damaged." end
+    if not decoded then return nil, L("Backup encoding is damaged.") end
     local serialized = deflate:DecompressDeflate(decoded)
     if not serialized or #serialized > MAX_BACKUP_SIZE then
-        return nil, "Backup is damaged or too large."
+        return nil, L("Backup is damaged or too large.")
     end
     if deflate:Adler32(serialized) ~= tonumber(checksumText) then
-        return nil, "Backup checksum does not match."
+        return nil, L("Backup checksum does not match.")
     end
     local ok, payload = LibStub("AceSerializer-3.0"):Deserialize(serialized)
     if not ok or not ValidateBackupPayload(payload) then
-        return nil, "Unsupported backup schema."
+        return nil, L("Unsupported backup schema.")
     end
     local valid = ValidateTree(payload, 0, 0)
-    if not valid then return nil, "Backup contains invalid data." end
+    if not valid then return nil, L("Backup contains invalid data.") end
     return payload
 end
 
@@ -513,7 +514,7 @@ end
 
 function roadmap:ApplyBackup(payload, replace)
     if type(payload) ~= "table" or type(payload.character) ~= "table" then
-        return false, "Backup has no character data."
+        return false, L("Backup has no character data.")
     end
     self.backupRollback = {
         settings = CopySafe(addon.settings.profile, 0),
@@ -579,8 +580,8 @@ function roadmap:ApplyBackup(payload, replace)
 end
 
 function roadmap:OpenBackupExport()
-    addon.comms.OpenBrandedExport("Backup Export",
-        "Copy this text and store it somewhere safe.", self:BuildBackup(),
+    addon.comms.OpenBrandedExport(L("Backup Export"),
+        L("Copy this text and store it somewhere safe."), self:BuildBackup(),
         620, 420)
 end
 
@@ -605,10 +606,10 @@ function roadmap:RollbackBackup()
 end
 
 function roadmap:OpenBackupImport(replace)
-    addon.comms.OpenBrandedExport("Backup Import",
+    addon.comms.OpenBrandedExport(L("Backup Import"),
         replace and
-            "Paste an RXPGuides backup and press Enter. Replacement requires one final confirmation." or
-            "Paste an RXPGuides backup and press Enter to merge it into this character.",
+            L("Paste an RXPGuides backup and press Enter. Replacement requires one final confirmation.") or
+            L("Paste an RXPGuides backup and press Enter to merge it into this character."),
         "", 620, 420, function(text)
             local payload, errorText = self:DecodeBackup(text)
             if not payload then
@@ -618,11 +619,11 @@ function roadmap:OpenBackupImport(replace)
             local function Apply()
                 local ok, applyError = roadmap:ApplyBackup(payload, replace)
                 addon.comms:PopupNotification("RXP_BACKUP_RESULT",
-                    ok and "Backup imported successfully. An Undo button remains available until reload." or applyError)
+                    ok and L("Backup imported successfully. An Undo button remains available until reload.") or applyError)
             end
             if replace then
                 addon.comms:ConfirmChoice("RXP_BACKUP_REPLACE",
-                    "Replace this character's backed-up RXPGuides data? A temporary rollback is retained until reload.",
+                    L("Replace this character's backed-up RXPGuides data? A temporary rollback is retained until reload."),
                     Apply)
             else
                 Apply()
@@ -650,30 +651,30 @@ function roadmap:OpenBackupWindow()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("RXPGuides Backup")
+    title:SetText(L("RXPGuides Backup"))
     local export = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     export:SetSize(92, 24)
     export:SetPoint("BOTTOMLEFT", 18, 22)
-    export:SetText("Export")
+    export:SetText(L("Export"))
     export:SetScript("OnClick", function() roadmap:OpenBackupExport() end)
     local import = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     import:SetSize(102, 24)
     import:SetPoint("LEFT", export, "RIGHT", 7, 0)
-    import:SetText("Merge")
+    import:SetText(L("Merge"))
     import:SetScript("OnClick", function() roadmap:OpenBackupImport(false) end)
     local replace = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     replace:SetSize(102, 24)
     replace:SetPoint("LEFT", import, "RIGHT", 7, 0)
-    replace:SetText("Replace")
+    replace:SetText(L("Replace"))
     replace:SetScript("OnClick", function() roadmap:OpenBackupImport(true) end)
     local undo = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     undo:SetSize(92, 24)
     undo:SetPoint("LEFT", replace, "RIGHT", 7, 0)
-    undo:SetText("Undo Import")
+    undo:SetText(L("Undo Import"))
     undo:SetScript("OnClick", function()
         if not roadmap:RollbackBackup() then
             addon.comms:PopupNotification("RXP_BACKUP_NO_ROLLBACK",
-                "There is no import to undo in this session.")
+                L("There is no import to undo in this session."))
         end
     end)
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")

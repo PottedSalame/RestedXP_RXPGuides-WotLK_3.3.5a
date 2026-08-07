@@ -1,4 +1,5 @@
 local _, addon = ...
+local L = addon.locale.Get
 
 -- Anonymous account-wide run history.  Records deliberately omit character,
 -- realm, GUID, guild, account, and Battle.net identifiers.  The only link from
@@ -268,10 +269,10 @@ function archive:CreateWindow()
         insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("Anonymous Leveling Archives")
+    title:SetText(L("Anonymous Leveling Archives"))
     local privacy = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     privacy:SetPoint("TOPLEFT", 22, -45)
-    privacy:SetText("Account-wide; character, realm and GUID information is never stored here.")
+    privacy:SetText(L("Account-wide; character, realm and GUID information is never stored here."))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
 
@@ -314,7 +315,7 @@ function archive:CreateWindow()
     local compare = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     compare:SetSize(92, 24)
     compare:SetPoint("BOTTOMLEFT", 20, 17)
-    compare:SetText("Compare")
+    compare:SetText(L("Compare"))
     compare:SetScript("OnClick", function()
         local run = Store().runs[archive.selected]
         if run then archive:InstallComparison(run) end
@@ -322,15 +323,15 @@ function archive:CreateWindow()
     local finish = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     finish:SetSize(92, 24)
     finish:SetPoint("LEFT", compare, "RIGHT", 7, 0)
-    finish:SetText("Finish Run")
+    finish:SetText(L("Finish Run"))
     finish:SetScript("OnClick", function() archive:Finish() end)
     local new = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     new:SetSize(92, 24)
     new:SetPoint("LEFT", finish, "RIGHT", 7, 0)
-    new:SetText("New Run")
+    new:SetText(L("New Run"))
     new:SetScript("OnClick", function()
         addon.comms:ConfirmChoice("RXP_ARCHIVE_NEW",
-            "Finish the current archive and start a new anonymous run?",
+            L("Finish the current archive and start a new anonymous run?"),
             function()
                 if archive:GetCurrent(false) then archive:Finish() end
                 archive:NewRun()
@@ -339,12 +340,12 @@ function archive:CreateWindow()
     local delete = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     delete:SetSize(92, 24)
     delete:SetPoint("LEFT", new, "RIGHT", 7, 0)
-    delete:SetText("Delete")
+    delete:SetText(L("Delete"))
     delete:SetScript("OnClick", function()
         local id = archive.selected
         if not id or id == RXPCData.levelingArchiveRunId then return end
         addon.comms:ConfirmChoice("RXP_ARCHIVE_DELETE",
-            "Delete the selected anonymous archive?", function()
+            L("Delete the selected anonymous archive?"), function()
                 Store().runs[id] = nil
                 archive.selected = nil
                 archive:Refresh()

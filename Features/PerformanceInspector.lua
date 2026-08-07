@@ -2,6 +2,7 @@ local addonName, addon = ...
 
 local _G = _G
 local format = string.format
+local L = addon.locale.Get
 local floor, max, min = math.floor, math.max, math.min
 local tinsert = table.insert
 
@@ -181,20 +182,20 @@ function inspector:BuildText()
     local profile = addon.settings and addon.settings.profile or {}
     local effective = self:GetEffectiveUpdateFrequency(profile.updateFrequency or 75)
     local lines = {
-        format("FPS: %.1f", tonumber(self.lastFPS) or 0),
-        format("Main update: %d ms configured / %d ms effective",
+        format(L("FPS: %.1f"), tonumber(self.lastFPS) or 0),
+        format(L("Main update: %d ms configured / %d ms effective"),
                tonumber(profile.updateFrequency) or 75, effective),
-        format("Known active ticker loops: %d", CountTickers()),
-        format("Addon memory: %.1f MB", (tonumber(self.memoryKB) or 0) / 1024),
-        format("Adaptive mode: %s%s",
-            profile.enableAdaptivePerformance and "enabled" or "disabled",
+        format(L("Known active ticker loops: %d"), CountTickers()),
+        format(L("Addon memory: %.1f MB"), (tonumber(self.memoryKB) or 0) / 1024),
+        format(L("Adaptive mode: %s%s"),
+            profile.enableAdaptivePerformance and L("enabled") or L("disabled"),
             self.adaptiveActive and (" (active: " .. tostring(self.adaptiveReason) .. ")") or ""),
-        self.captureUntil and format("Capture: %.0f seconds remaining",
+        self.captureUntil and format(L("Capture: %.0f seconds remaining"),
                                      max(0, self.captureUntil - _G.GetTime())) or
-            "Capture: idle",
+            L("Capture: idle"),
         "",
-        "Measured RXPGuides work:",
-        "Subsystem                         calls     average       maximum       last"
+        L("Measured RXPGuides work:"),
+        L("Subsystem                         calls     average       maximum       last")
     }
     local names = {}
     for name in pairs(self.metrics or {}) do tinsert(names, name) end
@@ -237,8 +238,8 @@ function inspector:Export()
             name, metric.calls, metric.calls > 0 and metric.total / metric.calls or 0,
             metric.maximum, metric.last))
     end
-    addon.comms.OpenBrandedExport("Performance Report",
-        "No player, realm, chat, account, or GUID data is included.",
+    addon.comms.OpenBrandedExport(L("Performance Report"),
+        L("No player, realm, chat, account, or GUID data is included."),
         table.concat(lines, "\n"), 620, 420)
 end
 
@@ -258,7 +259,7 @@ function inspector:CreateWindow()
         insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("RXPGuides Performance Inspector")
+    title:SetText(L("RXPGuides Performance Inspector"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     local scroll = CreateFrame("ScrollFrame", "RXPPerformanceInspectorScroll", frame,
@@ -277,17 +278,17 @@ function inspector:CreateWindow()
     local capture = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     capture:SetSize(105, 24)
     capture:SetPoint("BOTTOMLEFT", 20, 18)
-    capture:SetText("Capture 30s")
+    capture:SetText(L("Capture 30s"))
     capture:SetScript("OnClick", function() inspector:StartCapture(30) end)
     local reset = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     reset:SetSize(92, 24)
     reset:SetPoint("LEFT", capture, "RIGHT", 8, 0)
-    reset:SetText("Reset")
+    reset:SetText(L("Reset"))
     reset:SetScript("OnClick", function() inspector:ResetMetrics() end)
     local export = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     export:SetSize(92, 24)
     export:SetPoint("LEFT", reset, "RIGHT", 8, 0)
-    export:SetText("Export")
+    export:SetText(L("Export"))
     export:SetScript("OnClick", function() inspector:Export() end)
     frame:SetScript("OnShow", function() inspector:Refresh() end)
     frame:Hide()

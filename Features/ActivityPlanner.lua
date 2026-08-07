@@ -3,6 +3,7 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local time = _G.time
+local L = addon.locale.Get
 
 addon.activityPlanner = addon.activityPlanner or {}
 local planner = addon.activityPlanner
@@ -134,7 +135,7 @@ function planner:BuildCatalog()
     end
     for _, id in ipairs(weeklyQuestIds) do self.weeklyQuestLookup[id] = true end
     table.insert(self.catalog, {
-        kind = "weekly", name = "Dalaran Weekly Raid Quest",
+        kind = "weekly", name = L("Dalaran Weekly Raid Quest"),
         questIds = weeklyQuestIds, active = UnitLevel("player") >= 80
     })
     table.sort(self.catalog, function(a, b)
@@ -186,11 +187,11 @@ function planner:GetEntryState(entry)
 end
 
 local stateText = {
-    completed = "|cff40ff40Completed|r",
-    active = "|cffffd100Active|r",
-    available = "|cff80c0ffAvailable|r",
-    reputation = "|cffcc79a7[REP] Reputation gated|r",
-    locked = "|cff888888Locked|r"
+    completed = "|cff40ff40" .. L("Completed") .. "|r",
+    active = "|cffffd100" .. L("Active") .. "|r",
+    available = "|cff80c0ff" .. L("Available") .. "|r",
+    reputation = "|cffcc79a7[REP] " .. L("Reputation gated") .. "|r",
+    locked = "|cff888888" .. L("Locked") .. "|r"
 }
 
 function planner:Refresh()
@@ -216,9 +217,9 @@ function planner:Refresh()
     local daily = RXPCData.activityPlanner.nextDailyReset
     local weekly = RXPCData.activityPlanner.nextWeeklyReset
     self.frame.resetText:SetText(format(
-        "Daily reset: %s   Weekly reset: %s",
-        daily and date("%c", daily) or "unknown",
-        weekly and date("%c", weekly) or "unknown"))
+        L("Daily reset: %s   Weekly reset: %s"),
+        daily and date("%c", daily) or L("unknown"),
+        weekly and date("%c", weekly) or L("unknown")))
 end
 
 function planner:OpenEntry(entry)
@@ -243,7 +244,7 @@ function planner:CreateFrame()
                        insets = {left = 8, right = 8, top = 8, bottom = 8}})
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("WotLK Daily & Weekly Planner")
+    title:SetText(L("WotLK Daily & Weekly Planner"))
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -5, -5)
     frame.rows = {}
@@ -260,7 +261,7 @@ function planner:CreateFrame()
         row.open = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
         row.open:SetSize(82, 22)
         row.open:SetPoint("RIGHT", -1, 0)
-        row.open:SetText("Continue")
+        row.open:SetText(L("Continue"))
         row.open:SetScript("OnClick", function()
             planner:OpenEntry(row.entry)
         end)
@@ -280,10 +281,10 @@ function planner:CreateFrame()
     local reset = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     reset:SetSize(105, 22)
     reset:SetPoint("BOTTOMRIGHT", -24, 18)
-    reset:SetText("Reset Weekly")
+    reset:SetText(L("Reset Weekly"))
     reset:SetScript("OnClick", function()
         addon.comms:ConfirmChoice("RXP_WEEKLY_RESET",
-            "Clear the locally tracked weekly completions?", function()
+            L("Clear the locally tracked weekly completions?"), function()
                 RXPCData.activityPlanner.weeklyCompleted = {}
                 RXPCData.activityPlanner.nextWeeklyReset = ObservedWeeklyReset()
                 planner:Refresh()

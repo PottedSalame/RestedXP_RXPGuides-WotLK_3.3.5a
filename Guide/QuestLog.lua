@@ -684,7 +684,7 @@ local function RXP_RunCleanupOrphanedQuests()
     local DLG = "RXP_CONFIRM_ORPHANED_CLEANUP_LIST"
     if not _G.StaticPopupDialogs[DLG] then
         _G.StaticPopupDialogs[DLG] = {
-            text = "Abandon the following quests?\n%s",
+        text = L("Abandon the following quests?\n%s"),
             button1 = ACCEPT,
             button2 = CANCEL,
             OnAccept = function(_, data)
