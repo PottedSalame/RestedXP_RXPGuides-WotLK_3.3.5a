@@ -130,9 +130,14 @@ foreach ($match in [regex]::Matches($areaBlock.Groups[1].Value, '\[(\d+)\]\s*=\s
     $areaIds[[int]$match.Groups[1].Value] = $true
 }
 
+# The runtime surface is the authoritative directive and guide-key contract.
+# Reading it here also captures handlers owned by database modules, which are
+# intentionally outside Guide/Directives/Handlers.lua after the refactor.
+$surfacePath = Join-Path $root 'tests/runtime-surface.json'
+$surface = [IO.File]::ReadAllText($surfacePath) | ConvertFrom-Json
 $functionNames = @{}
-foreach ($line in [IO.File]::ReadLines((Join-Path $root 'Guide/Directives/Handlers.lua'))) {
-    if ($line -match 'addon\.functions(?:\.|\[["''])([A-Za-z0-9_]+)') { $functionNames[$Matches[1]] = $true }
+foreach ($name in @($surface.directives) + @($surface.directiveAliases)) {
+    $functionNames[[string]$name] = $true
 }
 foreach ($name in @('goto','subzone','turn','talent','scenario')) { $functionNames[$name] = $true }
 
@@ -171,7 +176,7 @@ $guideCount = 0
 $stepCount = 0
 
 foreach ($file in $files) {
-    $relative = $file.Substring($root.Length).TrimStart('\')
+    $relative = $file.Substring($root.Length).TrimStart([char[]]@('\', '/'))
     $text = [IO.File]::ReadAllText($file)
     if ($text -match '(?m)^\s*print\s*\(') { Add-Error "$relative contains a debug print" }
     if ($text -match 'RXP\.enabledLocale') { Add-Error "$relative contains the unsupported modern guide-locale guard" }
@@ -355,13 +360,17 @@ foreach ($file in $files) {
 # Guide group/name/condition signatures are part of the saved-progress
 # compatibility surface. Structural counts alone would not catch a renamed key
 # that silently orphaned an existing character checkpoint.
-$surfacePath = Join-Path $root 'tests\runtime-surface.json'
-$surface = [IO.File]::ReadAllText($surfacePath) | ConvertFrom-Json
-$serializedKeys = (@($keys.Keys) | Sort-Object) -join "`n"
+$sortedGuideKeys = [string[]]@($keys.Keys)
+[Array]::Sort($sortedGuideKeys, [StringComparer]::Ordinal)
+$serializedKeys = $sortedGuideKeys -join "`n"
 $sha256 = [Security.Cryptography.SHA256]::Create()
-$guideKeyHash = ($sha256.ComputeHash(
-    [Text.Encoding]::UTF8.GetBytes($serializedKeys)) |
-    ForEach-Object { $_.ToString('x2') }) -join ''
+try {
+    $guideKeyHash = ($sha256.ComputeHash(
+        [Text.Encoding]::UTF8.GetBytes($serializedKeys)) |
+        ForEach-Object { $_.ToString('x2') }) -join ''
+} finally {
+    $sha256.Dispose()
+}
 if ($guideKeyHash -cne [string]$surface.guideKeyHash) {
     Add-Error (
         "Guide-key compatibility surface changed: $guideKeyHash. " +
