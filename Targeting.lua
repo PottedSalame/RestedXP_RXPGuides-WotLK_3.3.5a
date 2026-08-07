@@ -449,8 +449,11 @@ function addon.targeting:RefreshScanTicker()
 
     legacyScanner.wantedDirty = true
     self:LegacyScanTick()
-    local frequency = mmax((addon.settings.profile.updateFrequency or 75) /
-                               1000, 0.10)
+    local milliseconds = addon.settings.profile.updateFrequency or 75
+    if addon.GetEffectiveUpdateFrequency then
+        milliseconds = addon.GetEffectiveUpdateFrequency(milliseconds)
+    end
+    local frequency = mmax(milliseconds / 1000, 0.10)
     self.legacyTicker = C_Timer.NewTicker(frequency, function()
         self:LegacyScanTick()
     end)

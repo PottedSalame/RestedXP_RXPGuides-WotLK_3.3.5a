@@ -8,7 +8,9 @@ $toc = [IO.File]::ReadAllText($tocPath)
 $modules = @(
     'RoadmapCore.lua','GuideHub.lua','Diagnostics.lua','Recovery.lua',
     'CompatibilityPacks.lua','PartySync.lua','Supplies.lua','GearAdvisor.lua',
-    'ActivityPlanner.lua','Accessibility.lua','GuideRecorder.lua'
+    'ActivityPlanner.lua','Accessibility.lua','GuideRecorder.lua',
+    'PerformanceInspector.lua','GuideAnalysis.lua','RunArchive.lua',
+    'PetAssistant.lua'
 )
 $lastOffset = -1
 foreach ($module in $modules) {
@@ -26,7 +28,8 @@ if ($coreText -notmatch 'local cacheVersion\s*=\s*32\b') {
 }
 
 $settingsText = [IO.File]::ReadAllText((Join-Path $root 'SettingsPanel.lua'))
-foreach ($command in @('guides','diagnose','backup','supplies','gear','dailies','record')) {
+foreach ($command in @('guides','diagnose','backup','supplies','gear','dailies','record',
+        'preflight','watch','archives','pet','perf')) {
     if ($settingsText -notmatch ('input\s*==\s*"' + [regex]::Escape($command) + '"')) {
         Add-Error "Missing /rxp $command command routing."
     }

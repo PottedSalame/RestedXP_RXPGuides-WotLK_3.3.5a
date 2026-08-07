@@ -244,6 +244,16 @@ function addon.settings.ChatCommand(input)
         if addon.roadmap then addon.roadmap:OpenBackupWindow() end
     elseif input == "diagnose" or input == "doctor" then
         if addon.diagnostics then addon.diagnostics:Open() end
+    elseif input == "preflight" or input == "reservations" then
+        if addon.routePreflight then addon.routePreflight:Toggle() end
+    elseif input == "watch" then
+        if addon.routePreflight then addon.routePreflight:ToggleWatch() end
+    elseif input == "archives" or input == "best" or input == "pb" then
+        if addon.runArchive then addon.runArchive:Toggle() end
+    elseif input == "pet" then
+        if addon.petAssistant then addon.petAssistant:Toggle() end
+    elseif input == "perf" or input == "performance" then
+        if addon.performanceInspector then addon.performanceInspector:Toggle() end
     elseif input == "catchup" then
         if addon.catchUp then addon.catchUp:Preview() end
     elseif input == "route" then
@@ -351,6 +361,10 @@ local settingsDBDefaults = {
         guideScrollSteps = 1,
         activeItemsScale = 1,
         maxSoulShards = 100,
+        preflightLookahead = 20,
+        reservationLookahead = 20,
+        stuckWatchdogTimeout = 120,
+        adaptivePerformanceFPSThreshold = 25,
 
         showEnabled = true,
 
@@ -424,6 +438,11 @@ local settingsDBDefaults = {
         partyGuideSync = false,
         partyGuideWait = false,
         colorBlindMode = "off",
+        enableRoutePreflight = true,
+        enableXPShortfallPredictor = true,
+        enableItemReservations = true,
+        enablePetAssistant = true,
+        enableAdaptivePerformance = false,
     }
 }
 
@@ -444,6 +463,14 @@ function addon.settings:InitializeDatabase()
                                    self.profile.soundOnFind)
     self.profile.guideScrollSteps = math.max(1, math.min(10,
         math.floor(tonumber(self.profile.guideScrollSteps) or 1)))
+    self.profile.preflightLookahead = math.max(1, math.min(100,
+        math.floor(tonumber(self.profile.preflightLookahead) or 20)))
+    self.profile.reservationLookahead = math.max(1, math.min(100,
+        math.floor(tonumber(self.profile.reservationLookahead) or 20)))
+    self.profile.stuckWatchdogTimeout = math.max(30, math.min(600,
+        math.floor(tonumber(self.profile.stuckWatchdogTimeout) or 120)))
+    self.profile.adaptivePerformanceFPSThreshold = math.max(15, math.min(60,
+        math.floor(tonumber(self.profile.adaptivePerformanceFPSThreshold) or 25)))
     NormalizeCustomThemeTooltip(self.profile)
     loadedProfileKey = settingsDB.keys.profile
 end
@@ -1924,6 +1951,142 @@ function addon.settings:CreateAceOptionsPanel()
                             addon.RXPFrame.GenerateMenuTable()
                         end,
                     },
+                    preflightHeader = {
+                        name = "Route Planning",
+                        type = "header",
+                        width = "full",
+                        order = 3.0,
+                        hidden = addon.gameVersion ~= 30300
+                    },
+                    enableRoutePreflight = {
+                        name = "Enable Route Preflight",
+                        desc = "Checks upcoming processed guide steps for proven prerequisite, quest-log, flight, map, item, and XP risks.",
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.1,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.routePreflight then addon.routePreflight:ScheduleScan(0.05) end
+                        end
+                    },
+                    preflightLookahead = {
+                        name = "Preflight steps ahead",
+                        desc = "Number of current and upcoming steps checked by Route Preflight and the XP predictor.",
+                        type = "range",
+                        width = optionsWidth,
+                        order = 3.2,
+                        min = 1,
+                        max = 100,
+                        step = 1,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, math.floor(value + 0.5))
+                            if addon.routePreflight then addon.routePreflight:ScheduleScan(0.05) end
+                        end,
+                        disabled = function() return not self.profile.enableRoutePreflight end
+                    },
+                    enableXPShortfallPredictor = {
+                        name = "XP Shortfall Predictor",
+                        desc = "Uses explicit XP gates, current XP, live rewards, and anonymous observed quest rewards. Unknown rewards remain clearly marked as unknown.",
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.3,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.routePreflight then addon.routePreflight:ScheduleScan(0.05) end
+                        end
+                    },
+                    enableItemReservations = {
+                        name = "Enable Item Reservations",
+                        desc = "Protects items required by upcoming guide steps from automatic junk handling and marks them in bags.",
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.4,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.routePreflight then addon.routePreflight:ScheduleScan(0.05) end
+                            if addon.inventoryManager then addon.inventoryManager.RefreshJunkIcons(0.05) end
+                        end
+                    },
+                    reservationLookahead = {
+                        name = "Reservation steps ahead",
+                        desc = "Number of current and upcoming steps searched for item requirements.",
+                        type = "range",
+                        width = optionsWidth,
+                        order = 3.5,
+                        min = 1,
+                        max = 100,
+                        step = 1,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, math.floor(value + 0.5))
+                            if addon.routePreflight then addon.routePreflight:ScheduleScan(0.05) end
+                        end,
+                        disabled = function() return not self.profile.enableItemReservations end
+                    },
+                    stuckWatchdogTimeout = {
+                        name = "Manual watchdog timeout",
+                        desc = "Seconds without measurable progress before an explicitly armed step watchdog warns. The watchdog never starts automatically.",
+                        type = "range",
+                        width = optionsWidth,
+                        order = 3.6,
+                        min = 30,
+                        max = 600,
+                        step = 10,
+                        hidden = addon.gameVersion ~= 30300
+                    },
+                    openRoutePreflight = {
+                        name = "Open Route Preflight",
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 3.7,
+                        hidden = addon.gameVersion ~= 30300,
+                        func = function()
+                            if addon.routePreflight then addon.routePreflight:Toggle() end
+                        end
+                    },
+                    enablePetAssistant = {
+                        name = "Enable Hunter Pet Assistant",
+                        desc = "Tracks pet happiness, compatible food, talents, known skills, supplies, and guide-linked stable/tame preparation.",
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.8,
+                        hidden = function()
+                            return addon.gameVersion ~= 30300 or
+                                not (addon.player and addon.player.class == "HUNTER")
+                        end,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if value and addon.petAssistant then
+                                if addon.roadmap then
+                                    addon.roadmap:RunOptional("hunter pet assistant",
+                                        function() addon.petAssistant:Setup() end)
+                                else
+                                    addon.petAssistant:Setup()
+                                end
+                            end
+                            if not value and addon.petAssistant and addon.petAssistant.frame then
+                                addon.petAssistant.frame:Hide()
+                            end
+                        end
+                    },
+                    openPetAssistant = {
+                        name = "Open Hunter Pet Assistant",
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 3.9,
+                        hidden = function()
+                            return addon.gameVersion ~= 30300 or
+                                not (addon.player and addon.player.class == "HUNTER")
+                        end,
+                        disabled = function() return not self.profile.enablePetAssistant end,
+                        func = function()
+                            if addon.petAssistant then addon.petAssistant:Toggle() end
+                        end
+                    },
                     questCleanupHeader = {
                         name = L("Quest Cleanup"),
                         type = "header",
@@ -2483,6 +2646,17 @@ function addon.settings:CreateAceOptionsPanel()
                         disabled = function()
                             return not self.profile.enableTracker or
                                        not self.profile.enablelevelSplits
+                        end
+                    },
+                    personalBestArchives = {
+                        name = "Personal-Best Archives",
+                        desc = "Open anonymous account-wide leveling runs and select a split comparison.",
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 2.8,
+                        hidden = addon.gameVersion ~= 30300,
+                        func = function()
+                            if addon.runArchive then addon.runArchive:Toggle() end
                         end
                     }
                 }
@@ -3751,7 +3925,49 @@ function addon.settings:CreateAceOptionsPanel()
                                         addon.targeting.RefreshScanTicker then
                                         addon.targeting:RefreshScanTicker()
                                     end
-                                end)
+                            end)
+                        end
+                    },
+                    performanceInspector = {
+                        name = "Open Performance Inspector",
+                        desc = "Measures bounded RXPGuides work and exports a sanitized report.",
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 1.61,
+                        hidden = addon.gameVersion ~= 30300,
+                        func = function()
+                            if addon.performanceInspector then
+                                addon.performanceInspector:Toggle()
+                            end
+                        end
+                    },
+                    enableAdaptivePerformance = {
+                        name = "Adaptive performance throttling",
+                        desc = "Opt in to temporary RXP-only scan/update slowing after sustained low FPS. Saved preferences are not changed and normal rates return automatically.",
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 1.62,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if not value and addon.performanceInspector then
+                                addon.performanceInspector:SetAdapted(false,
+                                    "adaptation disabled")
+                            end
+                        end
+                    },
+                    adaptivePerformanceFPSThreshold = {
+                        name = "Adaptive FPS threshold",
+                        desc = "Temporary adaptation begins only after FPS remains below this value for five samples.",
+                        type = "range",
+                        width = optionsWidth,
+                        order = 1.63,
+                        min = 15,
+                        max = 60,
+                        step = 1,
+                        hidden = addon.gameVersion ~= 30300,
+                        disabled = function()
+                            return not self.profile.enableAdaptivePerformance
                         end
                     },
                     preLoadData = {

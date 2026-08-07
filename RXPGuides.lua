@@ -2142,7 +2142,11 @@ function addon.ScheduleTask(self, ref, ...)
     local updateFrequency = 0.075
 
     if addon.settings.profile and addon.settings.profile.updateFrequency then
-        updateFrequency = addon.settings.profile.updateFrequency / 1000
+        local milliseconds = addon.settings.profile.updateFrequency
+        if addon.GetEffectiveUpdateFrequency then
+            milliseconds = addon.GetEffectiveUpdateFrequency(milliseconds)
+        end
+        updateFrequency = milliseconds / 1000
     end
     local time = type(self) == "number" and self or GetTime() + updateFrequency
     --print(type(ref))
@@ -2330,7 +2334,11 @@ function addon.tickers:SetupTickerLoops()
     local updateFrequency = 0.075
 
     if addon.settings.profile and addon.settings.profile.updateFrequency then
-        updateFrequency = addon.settings.profile.updateFrequency / 1000
+        local milliseconds = addon.settings.profile.updateFrequency
+        if addon.GetEffectiveUpdateFrequency then
+            milliseconds = addon.GetEffectiveUpdateFrequency(milliseconds)
+        end
+        updateFrequency = milliseconds / 1000
     end
 
     local jitter = {

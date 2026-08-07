@@ -28,6 +28,11 @@ H["What are command the line options?"] = [[
 |cff909090/rxp guides|r - Open the searchable Guide Hub
 |cff909090/rxp backup|r - Export, merge, replace, or undo a settings/progress backup
 |cff909090/rxp diagnose|r - Explain the current step and its blockers
+|cff909090/rxp preflight|r - Inspect upcoming route, XP, and reserved-item risks
+|cff909090/rxp watch|r - Arm or stop the manual watchdog for the current step
+|cff909090/rxp archives|r - Open anonymous account-wide personal-best archives
+|cff909090/rxp pet|r - Open the Hunter Pet Assistant
+|cff909090/rxp perf|r - Open the Performance Inspector
 |cff909090/rxp catchup|r - Preview a safe starting step
 |cff909090/rxp route|r - Plan a conservative return route
 |cff909090/rxp supplies|r - Open the class supplies checklist

@@ -345,6 +345,13 @@ function diagnostics:Setup()
         })
         table.insert(menu, #menu, {
             notCheckable = 1,
+            text = "Watch current step for no progress",
+            func = function()
+                if addon.routePreflight then addon.routePreflight:ToggleWatch() end
+            end
+        })
+        table.insert(menu, #menu, {
+            notCheckable = 1,
             text = "Find a catch-up step",
             func = function()
                 if addon.catchUp then addon.catchUp:Preview() end

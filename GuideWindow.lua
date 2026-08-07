@@ -1435,7 +1435,7 @@ Footer:SetHeight(20)
 Footer.text = GuideName:CreateFontString(nil, "OVERLAY")
 -- GuideName.text:SetFontObject(GameFontNormalSmall)
 Footer.text:ClearAllPoints()
-Footer.text:SetPoint("LEFT", Footer, 92, 1)
+Footer.text:SetPoint("LEFT", Footer, addon.gameVersion == 30300 and 113 or 92, 1)
 Footer.text:SetPoint("RIGHT", Footer, -16, 1)
 Footer.text:SetJustifyH("LEFT")
 Footer.text:SetJustifyV("MIDDLE")
@@ -1533,6 +1533,61 @@ Footer.browse:SetScript("OnEnter", function(self)
 end)
 Footer.browse:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
 addon.UpdateBrowseModeButton()
+
+-- Compact live summary for Route Preflight.  It deliberately occupies a
+-- fixed footer slot rather than changing guide height, and remains useful on
+-- the stock 3.3.5 UI without relying on an icon library.
+Footer.preflight = CreateFrame("Button", nil, Footer, "UIPanelButtonTemplate")
+Footer.preflight:SetFrameLevel(Footer:GetFrameLevel() + 1)
+Footer.preflight:SetSize(19, 18)
+Footer.preflight:SetPoint("LEFT", Footer.browse, "RIGHT", 1, 0)
+Footer.preflight:SetText("?")
+if addon.gameVersion ~= 30300 then Footer.preflight:Hide() end
+Footer.preflight:SetScript("OnClick", function()
+    if addon.routePreflight then addon.routePreflight:Toggle() end
+end)
+Footer.preflight:SetScript("OnEnter", function(self)
+    local report = addon.routePreflight and addon.routePreflight.report
+    _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
+    _G.GameTooltip:AddLine("Route Preflight")
+    if not report or report.empty then
+        _G.GameTooltip:AddLine("No guide route is currently available.", 1, 1, 1, true)
+    else
+        _G.GameTooltip:AddLine(fmt("%d blocker(s), %d warning(s), %d note(s)",
+            report.counts.error or 0, report.counts.warning or 0,
+            report.counts.info or 0), 1, 1, 1, true)
+        local reserved = 0
+        for _ in pairs(report.reservations or {}) do reserved = reserved + 1 end
+        _G.GameTooltip:AddLine(fmt("%d reserved item type(s). Click for details.",
+                                   reserved), 0.85, 0.85, 0.85, true)
+    end
+    _G.GameTooltip:Show()
+end)
+Footer.preflight:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+
+function addon.UpdatePreflightBadge(report)
+    local button = Footer.preflight
+    if not button then return end
+    local available = addon.currentGuide and not addon.currentGuide.empty
+    if available then button:Enable() else button:Disable() end
+    local errors = report and report.counts and report.counts.error or 0
+    local warnings = report and report.counts and report.counts.warning or 0
+    local notes = report and report.counts and report.counts.info or 0
+    button:SetText(errors > 0 and "X" or warnings > 0 and "!" or notes > 0 and "?" or "OK")
+    local fontString = button:GetFontString()
+    if fontString then
+        if errors > 0 then
+            fontString:SetTextColor(1, 0.25, 0.25)
+        elseif warnings > 0 then
+            fontString:SetTextColor(1, 0.72, 0.1)
+        elseif notes > 0 then
+            fontString:SetTextColor(0.45, 0.75, 1)
+        else
+            fontString:SetTextColor(0.35, 1, 0.35)
+        end
+    end
+end
+addon.UpdatePreflightBadge()
 -- local buttonToggle = 0
 -- Footer.cog:HookScript("OnEnter", function(self) buttonToggle = GetTime() end)
 -- Footer.cog:HookScript("OnLeave", function(self) self:Hide() end)
@@ -3084,6 +3139,65 @@ function RXPFrame:GenerateMenuTable(menu)
         tinsert(menuList,
                      {text = text, notCheckable = 1, func = addon.GAToggle})
     end
+
+    -- Keep the recently-added analysis tools available from both consumers
+    -- of this menu: the guide-window cog and the minimap button.  XP shortfall
+    -- and item reservations are parts of Route Preflight, while the watchdog
+    -- is deliberately a separate manual action.
+    local featureTools = {
+        {
+            text = "Route Preflight, XP & Reservations",
+            notCheckable = 1,
+            disabled = not addon.routePreflight,
+            func = function()
+                if addon.routePreflight then addon.routePreflight:Toggle() end
+            end
+        },
+        {
+            text = "Toggle Current-Step Watchdog",
+            notCheckable = 1,
+            disabled = not addon.routePreflight or not addon.currentGuide or
+                           addon.currentGuide.empty,
+            func = function()
+                if addon.routePreflight then
+                    addon.routePreflight:ToggleWatch()
+                end
+            end
+        },
+        {
+            text = "Personal-Best Archives",
+            notCheckable = 1,
+            disabled = not addon.runArchive,
+            func = function()
+                if addon.runArchive then addon.runArchive:Toggle() end
+            end
+        },
+        {
+            text = "Hunter Pet Assistant",
+            notCheckable = 1,
+            disabled = not addon.petAssistant or
+                           select(2, UnitClass("player")) ~= "HUNTER",
+            func = function()
+                if addon.petAssistant then addon.petAssistant:Toggle() end
+            end
+        },
+        {
+            text = "Performance Inspector",
+            notCheckable = 1,
+            disabled = not addon.performanceInspector,
+            func = function()
+                if addon.performanceInspector then
+                    addon.performanceInspector:Toggle()
+                end
+            end
+        }
+    }
+    tinsert(menuList, {
+        text = "Feature Tools",
+        notCheckable = 1,
+        hasArrow = true,
+        menuList = featureTools
+    })
 
     tinsert(menuList, {
         text = _G.GAMEOPTIONS_MENU .. "...",

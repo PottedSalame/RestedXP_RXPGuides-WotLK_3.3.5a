@@ -191,6 +191,30 @@ local function PetAcceptsFamily(family, diets)
     return type(localized) == "string" and diets[localized:lower()] == true
 end
 
+function supplies:GetPetFoodStatus()
+    local diets = PetFoodTypes()
+    local status = {diets = {}, items = {}, total = 0}
+    for family, ids in pairs(foodFamilies) do
+        if PetAcceptsFamily(family, diets) then
+            table.insert(status.diets, family)
+            for id in pairs(ids) do
+                local count = GetItemCount(id) or 0
+                if count > 0 then
+                    table.insert(status.items, {id = id, count = count,
+                        name = GetItemInfo(id) or ("Item " .. id), family = family})
+                    status.total = status.total + count
+                end
+            end
+        end
+    end
+    table.sort(status.diets)
+    table.sort(status.items, function(a, b)
+        if a.count == b.count then return a.id < b.id end
+        return a.count > b.count
+    end)
+    return status
+end
+
 local function AddRequirement(output, definition, merchant, targetOverride)
     local target = supplies:GetTarget(definition.key,
                                       targetOverride or definition.target)

@@ -348,6 +348,41 @@ local function BuildOptions()
                 name = "Open Class Supplies",
                 func = function() if addon.supplies then addon.supplies:Toggle() end end,
             },
+            preflight = {
+                type = "execute",
+                order = 8.11,
+                name = "Open Route Preflight",
+                func = function()
+                    if addon.routePreflight then addon.routePreflight:Toggle() end
+                end,
+            },
+            archives = {
+                type = "execute",
+                order = 8.12,
+                name = "Open Personal-Best Archives",
+                func = function()
+                    if addon.runArchive then addon.runArchive:Toggle() end
+                end,
+            },
+            petAssistant = {
+                type = "execute",
+                order = 8.13,
+                name = "Open Hunter Pet Assistant",
+                hidden = function()
+                    return not (addon.player and addon.player.class == "HUNTER")
+                end,
+                func = function()
+                    if addon.petAssistant then addon.petAssistant:Toggle() end
+                end,
+            },
+            performance = {
+                type = "execute",
+                order = 8.14,
+                name = "Open Performance Inspector",
+                func = function()
+                    if addon.performanceInspector then addon.performanceInspector:Toggle() end
+                end,
+            },
             gearAdvisor = {
                 type = "execute",
                 order = 8.2,

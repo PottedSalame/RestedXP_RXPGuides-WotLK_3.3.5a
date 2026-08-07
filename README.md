@@ -127,6 +127,11 @@ Roadmap tools are also available directly:
 - `/rxp gear` opens the complete-layout Gear Advisor.
 - `/rxp dailies` opens the WotLK daily and weekly planner.
 - `/rxp record` opens the opt-in Guide Author recorder.
+- `/rxp preflight` opens upcoming route, XP-shortfall, and item-reservation checks.
+- `/rxp watch` explicitly arms or stops the watchdog for the current step.
+- `/rxp archives` opens anonymous account-wide personal-best archives.
+- `/rxp pet` opens the Hunter Pet Assistant.
+- `/rxp perf` opens the Performance Inspector and sanitized capture tools.
 
 The aliases `/rxpg` and `/rxpguides` are also registered. See
 [FEATURES_335.md](FEATURES_335.md) for the roadmap services, privacy boundaries,

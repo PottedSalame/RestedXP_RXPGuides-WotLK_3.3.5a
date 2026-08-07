@@ -407,6 +407,8 @@ local function IsJunk(id, bag, slot)
     if IsConsumable(id, itemLink, itemType) then return false end
     if addon.supplies and addon.supplies.IsProtectedItem and
         addon.supplies:IsProtectedItem(id) then return false end
+    if addon.routePreflight and addon.routePreflight.IsItemReserved and
+        addon.routePreflight:IsItemReserved(id) then return false end
 
     -- `manualJunkOverrides` records all choices made by current versions. Keep a
     -- legacy "useful" choice as a safety override, but defer legacy junk=true
@@ -785,6 +787,7 @@ f:SetScript("OnEvent",function(self)
 end)
 
 local junkIcons = {}
+local reservationIcons = {}
 
 local function ShowJunkIcon(frame)
 
@@ -833,6 +836,37 @@ local function HideJunkIcon(frame)
 
 end
 
+local function ShowReservationIcon(frame)
+    if not frame.RXPReservationIcon then
+        local overlay = CreateFrame("Frame", nil, frame)
+        overlay:SetAllPoints(frame)
+        overlay:SetFrameLevel((frame:GetFrameLevel() or 0) + 9)
+        overlay:EnableMouse(false)
+        local texture = overlay:CreateTexture(nil, "OVERLAY")
+        table.insert(reservationIcons, texture)
+        texture:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+        texture:SetSize(17, 17)
+        texture:SetTexCoord(0, 1, 0, 1)
+        texture:SetVertexColor(0.2, 0.9, 1)
+        if inventoryManager.alignment == "TOPRIGHT" then
+            texture:SetPoint("TOPLEFT", overlay, "TOPLEFT", 0, 0)
+        else
+            texture:SetPoint("TOPRIGHT", overlay, "TOPRIGHT", 0, 0)
+        end
+        frame.RXPReservationOverlay = overlay
+        frame.RXPReservationIcon = texture
+    end
+    frame.RXPReservationOverlay:Show()
+    frame.RXPReservationIcon:Show()
+end
+
+local function HideReservationIcon(frame)
+    if frame.RXPReservationIcon then
+        frame.RXPReservationIcon:Hide()
+        if frame.RXPReservationOverlay then frame.RXPReservationOverlay:Hide() end
+    end
+end
+
 local function UpdateBagButton(button,bag,slot)
     local id = GetContainerItemID(bag, slot)
 
@@ -842,6 +876,28 @@ local function UpdateBagButton(button,bag,slot)
         ShowJunkIcon(button)
     else
         HideJunkIcon(button)
+    end
+    local reserved = addon.routePreflight and
+        addon.routePreflight.IsItemReserved and
+        addon.routePreflight:IsItemReserved(id)
+    if reserved then ShowReservationIcon(button) else HideReservationIcon(button) end
+    if not button.RXPReservationTooltipHook then
+        button.RXPReservationTooltipHook = true
+        button:HookScript("OnEnter", function(self)
+            local parent = self:GetParent()
+            local currentBag = parent and parent:GetID()
+            local currentSlot = self:GetID()
+            local itemId = currentBag and GetContainerItemID(currentBag, currentSlot)
+            local isReserved, needed, step = addon.routePreflight and
+                addon.routePreflight.IsItemReserved and
+                addon.routePreflight:IsItemReserved(itemId)
+            if isReserved and _G.GameTooltip and _G.GameTooltip:IsShown() then
+                _G.GameTooltip:AddLine(format(
+                    "RestedXP: reserved x%d for guide step %d", needed or 1,
+                    step or 0), 0.2, 0.9, 1, true)
+                _G.GameTooltip:Show()
+            end
+        end)
     end
 end
 
@@ -854,7 +910,8 @@ end
 
 
 local function UpdateBag(frame,name,pattern)
-    if not inventoryManager.IsJunkIconEnabled() then
+    if not inventoryManager.IsJunkIconEnabled() and
+        not (addon.settings.profile.enableItemReservations and addon.routePreflight) then
         return
     end
     pattern = pattern or inventoryManager.containerPattern
@@ -920,7 +977,14 @@ local function UpdateAllBags(self,name,i)
         for _,icon in pairs(junkIcons) do
             icon:Hide()
         end
-        return
+        if not (addon.settings.profile.enableItemReservations and
+                addon.routePreflight) then
+            for _, icon in pairs(reservationIcons) do icon:Hide() end
+            return
+        end
+    end
+    if not addon.settings.profile.enableItemReservations then
+        for _, icon in pairs(reservationIcons) do icon:Hide() end
     end
     DetectBagMods()
     i = i or inventoryManager.containerIndex

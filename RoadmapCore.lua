@@ -3,7 +3,7 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local time = _G.time
-local SCHEMA_VERSION = 1
+local SCHEMA_VERSION = 2
 local BACKUP_PREFIX = "RXPBACKUP1"
 local MAX_BACKUP_SIZE = 1024 * 1024
 
@@ -22,7 +22,13 @@ local moduleSettingKeys = {
     ["item upgrades"] = {"enableItemUpgrades", "itemUpgradeSpec",
                            "itemUpgradeSpecManual"},
     ["party synchronization"] = {"partyGuideSync", "partyGuideWait"},
-    ["accessibility"] = {"colorBlindMode"}
+    ["accessibility"] = {"colorBlindMode"},
+    ["route preflight"] = {"enableRoutePreflight", "preflightLookahead",
+                             "enableXPShortfallPredictor", "enableItemReservations",
+                             "reservationLookahead", "stuckWatchdogTimeout"},
+    ["hunter pet assistant"] = {"enablePetAssistant"},
+    ["performance inspector"] = {"enableAdaptivePerformance",
+                                    "adaptivePerformanceFPSThreshold"}
 }
 
 local function CopySafe(value, depth, seen)
@@ -73,20 +79,22 @@ local function ValidateTree(value, depth, count)
 end
 
 local function ValidateBackupPayload(payload)
-    if type(payload) ~= "table" or payload.schema ~= 1 or
+    if type(payload) ~= "table" or
+        (payload.schema ~= 1 and payload.schema ~= 2) or
         type(payload.settings) ~= "table" or
         type(payload.character) ~= "table" or
         type(payload.favorites) ~= "table" then return false end
     local rootFields = {
         schema = true, addon = true, created = true, settings = true,
-        character = true, favorites = true
+        character = true, favorites = true, levelingArchives = true
     }
     for key in pairs(payload) do if not rootFields[key] then return false end end
     local characterFields = {
         guideProgress = true, recentGuides = true, currentGuideGroup = true,
         currentGuideName = true, currentStep = true, currentStepId = true,
         stepSkip = true, completedWaypoints = true, discardPile = true,
-        manualJunkOverrides = true, activeTalentGuide = true
+        manualJunkOverrides = true, activeTalentGuide = true,
+        levelingArchiveRunId = true
     }
     for key in pairs(payload.character) do
         if not characterFields[key] then return false end
@@ -107,6 +115,29 @@ local function ValidateBackupPayload(payload)
             type(checkpoint.name) ~= "string" or
             (checkpoint.step ~= nil and type(checkpoint.step) ~= "number") then
             return false
+        end
+    end
+    if payload.character.levelingArchiveRunId ~= nil and
+        type(payload.character.levelingArchiveRunId) ~= "number" then return false end
+    if payload.levelingArchives ~= nil then
+        if type(payload.levelingArchives) ~= "table" or
+            type(payload.levelingArchives.runs) ~= "table" then return false end
+        local archiveFields = {nextId = true, runs = true}
+        for key in pairs(payload.levelingArchives) do
+            if not archiveFields[key] then return false end
+        end
+        local runFields = {id = true, class = true, race = true, faction = true,
+            xpRate = true, startLevel = true, endLevel = true, startedAt = true,
+            updatedAt = true, finishedAt = true, levels = true, route = true,
+            finished = true, pinned = true, totalDuration = true,
+            currentLevelElapsed = true}
+        for id, run in pairs(payload.levelingArchives.runs) do
+            if type(id) ~= "number" or type(run) ~= "table" then return false end
+            for key in pairs(run) do if not runFields[key] then return false end end
+            if type(run.levels) ~= "table" or type(run.route) ~= "table" or
+                type(run.class) ~= "string" or type(run.race) ~= "string" then
+                return false
+            end
         end
     end
     return true
@@ -139,6 +170,12 @@ function roadmap:InitializeSavedData()
     RXPData.compatibilityPacks =
         type(RXPData.compatibilityPacks) == "table" and
             RXPData.compatibilityPacks or {}
+    RXPData.questXPObservations =
+        type(RXPData.questXPObservations) == "table" and
+            RXPData.questXPObservations or {}
+    RXPData.levelingArchives =
+        type(RXPData.levelingArchives) == "table" and
+            RXPData.levelingArchives or {nextId = 1, runs = {}}
 
     -- Seed the sparse checkpoint store from the legacy active-guide fields.
     if RXPData.featureSchemaVersion < 1 and
@@ -381,8 +418,11 @@ end
 
 function roadmap:BuildBackup()
     guideState:SaveCurrent()
+    if addon.runArchive and addon.runArchive.Snapshot then
+        addon.runArchive:Snapshot()
+    end
     local payload = {
-        schema = 1,
+        schema = 2,
         addon = addon.release,
         created = time(),
         settings = CopySafe(addon.settings and addon.settings.profile or {}, 0),
@@ -398,9 +438,12 @@ function roadmap:BuildBackup()
             discardPile = CopySafe(RXPCData.discardPile or {}, 0),
             manualJunkOverrides =
                 CopySafe(RXPCData.manualJunkOverrides or {}, 0),
-            activeTalentGuide = RXPCData.activeTalentGuide
+            activeTalentGuide = RXPCData.activeTalentGuide,
+            levelingArchiveRunId = RXPCData.levelingArchiveRunId
         },
-        favorites = CopySafe(RXPData.guideHub.favorites or {}, 0)
+        favorites = CopySafe(RXPData.guideHub.favorites or {}, 0),
+        levelingArchives = CopySafe(RXPData.levelingArchives or
+                                        {nextId = 1, runs = {}}, 0)
     }
     local serializer = LibStub("AceSerializer-3.0")
     local deflate = LibStub("LibDeflate")
@@ -449,6 +492,25 @@ local function MergeInto(target, source)
     end
 end
 
+local function MergeArchiveStore(target, source)
+    target = type(target) == "table" and target or {nextId = 1, runs = {}}
+    target.runs = type(target.runs) == "table" and target.runs or {}
+    source = type(source) == "table" and source or {}
+    local nextId = math.max(1, math.floor(tonumber(target.nextId) or 1))
+    local remap = {}
+    for oldId, sourceRun in pairs(type(source.runs) == "table" and
+                                      source.runs or {}) do
+        while target.runs[nextId] do nextId = nextId + 1 end
+        local run = CopySafe(sourceRun, 0)
+        run.id = nextId
+        target.runs[nextId] = run
+        remap[tonumber(oldId)] = nextId
+        nextId = nextId + 1
+    end
+    target.nextId = math.max(nextId, math.floor(tonumber(source.nextId) or 1))
+    return target, remap
+end
+
 function roadmap:ApplyBackup(payload, replace)
     if type(payload) ~= "table" or type(payload.character) ~= "table" then
         return false, "Backup has no character data."
@@ -456,7 +518,8 @@ function roadmap:ApplyBackup(payload, replace)
     self.backupRollback = {
         settings = CopySafe(addon.settings.profile, 0),
         character = CopySafe(RXPCData, 0),
-        guideHub = CopySafe(RXPData.guideHub, 0)
+        guideHub = CopySafe(RXPData.guideHub, 0),
+        levelingArchives = CopySafe(RXPData.levelingArchives, 0)
     }
     if replace then
         for key in pairs(addon.settings.profile) do addon.settings.profile[key] = nil end
@@ -483,6 +546,33 @@ function roadmap:ApplyBackup(payload, replace)
     end
     if replace then RXPData.guideHub.favorites = {} end
     MergeInto(RXPData.guideHub.favorites, payload.favorites or {})
+    if payload.levelingArchives then
+        if replace then
+            RXPData.levelingArchives = CopySafe(payload.levelingArchives, 0)
+            RXPCData.levelingArchiveRunId =
+                payload.character.levelingArchiveRunId
+        else
+            RXPData.levelingArchives = type(RXPData.levelingArchives) == "table" and
+                                           RXPData.levelingArchives or
+                                           {nextId = 1, runs = {}}
+            local remap
+            RXPData.levelingArchives, remap =
+                MergeArchiveStore(RXPData.levelingArchives,
+                                  payload.levelingArchives)
+            if not RXPCData.levelingArchiveRunId and
+                payload.character.levelingArchiveRunId then
+                RXPCData.levelingArchiveRunId =
+                    remap[tonumber(payload.character.levelingArchiveRunId)]
+            end
+        end
+    elseif replace then
+        RXPCData.levelingArchiveRunId = nil
+    end
+    if addon.runArchive then
+        addon.runArchive.current = nil
+        if addon.runArchive.Prune then addon.runArchive:Prune() end
+        if addon.runArchive.Refresh then addon.runArchive:Refresh() end
+    end
     addon:RestoreCharacterGuideProgress()
     if addon.guideHub then addon.guideHub:Refresh() end
     return true
@@ -502,6 +592,12 @@ function roadmap:RollbackBackup()
     for key in pairs(RXPCData) do RXPCData[key] = nil end
     MergeInto(RXPCData, rollback.character or {})
     RXPData.guideHub = CopySafe(rollback.guideHub or {}, 0)
+    RXPData.levelingArchives =
+        CopySafe(rollback.levelingArchives or {nextId = 1, runs = {}}, 0)
+    if addon.runArchive then
+        addon.runArchive.current = nil
+        if addon.runArchive.Refresh then addon.runArchive:Refresh() end
+    end
     self.backupRollback = nil
     addon:RestoreCharacterGuideProgress()
     if addon.guideHub then addon.guideHub:Refresh() end
@@ -629,6 +725,23 @@ function roadmap:Setup()
         self:RunOptional("guide recorder",
             function() addon.guideRecorder:Setup() end,
             function() RXPCData.recorderDraft = nil end)
+    end
+    if addon.performanceInspector and addon.performanceInspector.Setup then
+        self:RunOptional("performance inspector",
+            function() addon.performanceInspector:Setup() end)
+    end
+    if addon.routePreflight and addon.routePreflight.Setup then
+        self:RunOptional("route preflight",
+            function() addon.routePreflight:Setup() end)
+    end
+    if addon.runArchive and addon.runArchive.Setup then
+        self:RunOptional("personal-best archives",
+            function() addon.runArchive:Setup() end)
+    end
+    if addon.petAssistant and addon.petAssistant.Setup and
+        addon.settings.profile.enablePetAssistant then
+        self:RunOptional("hunter pet assistant",
+            function() addon.petAssistant:Setup() end)
     end
     self:ShowSafeModeRecovery()
 end
