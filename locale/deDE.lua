@@ -41,7 +41,7 @@ L.words = {["Accept"] = _G.ACCEPT, ["Kill"] = "Toeten"}
 -- Communications.lua file
 
 L["Give Feedback for step"] = "Feedback für diesen Schritt geben"
-L["I just leveled from %d to %d in %s"] = "Ich habe in %s von %d auf %d gelevelt."
+L["I just leveled from %d to %d in %s"] = "Ich habe von Stufe %d auf %d in %s gelevelt."
 L["I just leveled up to %d"] = "Ich habe gerade auf %d gelevelt"
 L["There's a new addon version (%s) available"] = "Eine neue Addonversion (%s) ist verfuegbar"
 L["There's a new version (%s) available for %s"] = "Eine neue Addonversion (%s) fuer %s ist verfuegbar"

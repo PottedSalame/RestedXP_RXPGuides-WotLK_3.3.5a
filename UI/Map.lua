@@ -914,11 +914,15 @@ end
 
 -- Generate pins using the current guide's steps, then add the pins to the world map
 local function addWorldMapPins()
-	if addon.settings.profile.numMapPins == 0 then return end
-
     -- Calculate which pins should be on the world map
-    local pins = generatePins(addon.currentGuide.steps, addon.settings.profile.numMapPins,
+    local configuredPins = math.max(0, tonumber(
+        addon.settings.profile.numMapPins) or 0)
+    local pins = generatePins(addon.currentGuide.steps, configuredPins,
                               RXPCData.currentStep, false)
+
+    -- A zero pin preference hides world-map artwork, not navigation. Generating
+    -- the active set above is still required by the independent arrow feature.
+    if configuredPins == 0 then return end
 
     -- Convert each "pin" data structure into a WoW frame. Then add that frame to the world map
     if IsInInstance() then return end
@@ -1148,9 +1152,14 @@ function addon.ResetArrowPosition()
     if not addon.settings.profile.showEnabled then
         addon.settings.ToggleActive()
     end
+    addon.hideArrow = false
     af:ClearAllPoints()
     af:SetPoint("CENTER", 0, 200)
-    updateArrowData()
+    if addon.currentGuide then
+        addon.UpdateMap(true)
+    else
+        updateArrowData()
+    end
 end
 
 -- Removes all pins from the map and mini map and resets all data structrures

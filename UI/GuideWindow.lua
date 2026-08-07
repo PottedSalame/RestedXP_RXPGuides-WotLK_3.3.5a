@@ -306,6 +306,7 @@ RXPFrame:SetScript("OnMouseUp", RXPFrame.OnMouseUp)
 RXPFrame:EnableMouse(1)
 
 local stepPos = {}
+local refreshScrollRange
 
 local lastScrollValue
 local function GetStepScrollValue(n)
@@ -330,6 +331,9 @@ function BottomFrame:StepScroll(n, suppressRetry)
         end
     end]]
     local value = GetStepScrollValue(n)
+    if refreshScrollRange then
+        refreshScrollRange(ScrollFrame.ScrollBar, value)
+    end
     ScrollFrame.ScrollBar:SetValue(value)
 
     value = math.floor(value+0.5)
@@ -1641,20 +1645,55 @@ function RXPFrame.UpdateScrollBar()
     ScrollFrame.ScrollBar:SetThumbTexture(prefix .. "Knob")
 end
 
-hooksecurefunc(ScrollFrame.ScrollBar, "SetValue", function(self, value)
-    local h = math.floor(ScrollChild:GetHeight() + 10)
-    local scroll = h - BottomFrame:GetHeight()
-    local index = RXPCData.currentStep and RXPCData.currentStep > 1 and
-                      stepPos[RXPCData.currentStep - 1]
-    local zero = addon.settings.profile.hideCompletedSteps and index and
-                     index + RXPCData.currentStep or 0
-    if scroll < zero then scroll = zero end
-    if scroll <= value then ScrollFrame.ScrollBar.ScrollDownButton:Disable() end
-    local oldMinimum, oldMaximum = self:GetMinMaxValues()
-    if math.abs(oldMinimum - zero) > 0.01 or
-        math.abs(oldMaximum - scroll) > 0.01 then
-        self:SetMinMaxValues(zero, scroll)
+local updatingScrollRange
+local function FiniteNumber(value, fallback)
+    value = tonumber(value)
+    if not value or value ~= value or value == math.huge or
+        value == -math.huge then
+        return fallback
     end
+    return value
+end
+
+refreshScrollRange = function(self, value)
+    if updatingScrollRange or not self then return end
+
+    local childHeight = FiniteNumber(ScrollChild:GetHeight(), 0)
+    local frameHeight = FiniteNumber(BottomFrame:GetHeight(), 0)
+    local scroll = math.floor(childHeight + 10) - frameHeight
+    local currentStep = FiniteNumber(RXPCData.currentStep, 1)
+    local index = currentStep > 1 and
+                      FiniteNumber(stepPos[currentStep - 1], nil)
+    local zero = addon.settings.profile.hideCompletedSteps and index and
+                     index + currentStep or 0
+
+    zero = math.max(0, FiniteNumber(zero, 0))
+    scroll = math.max(zero, FiniteNumber(scroll, zero))
+    value = FiniteNumber(value, self:GetValue()) or zero
+
+    local oldMinimum, oldMaximum = self:GetMinMaxValues()
+    oldMinimum = FiniteNumber(oldMinimum, nil)
+    oldMaximum = FiniteNumber(oldMaximum, nil)
+    if not oldMinimum or not oldMaximum or
+        math.abs(oldMinimum - zero) > 0.01 or
+        math.abs(oldMaximum - scroll) > 0.01 then
+        -- Some 3.3.5 private-server clients reject a range update while the
+        -- slider is dispatching SetValue. Keep the guide load alive even if a
+        -- non-stock implementation does so; the default template range remains
+        -- usable and the next layout pass retries with sanitized numbers.
+        updatingScrollRange = true
+        pcall(self.SetMinMaxValues, self, zero, scroll)
+        updatingScrollRange = false
+    end
+
+    local down = self.ScrollDownButton
+    if down then
+        if value >= scroll - 0.01 then down:Disable() else down:Enable() end
+    end
+end
+
+hooksecurefunc(ScrollFrame.ScrollBar, "SetValue", function(self, value)
+    refreshScrollRange(self, value)
 end)
 
 ScrollChild.framePool = {}

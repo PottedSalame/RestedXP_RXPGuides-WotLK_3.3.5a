@@ -3,6 +3,7 @@ local _, addon = ...
 local _G = _G
 
 local fmt, mrand, smatch, sbyte, tostr = string.format, math.random, string.match, string.byte, tostring
+local concat = table.concat
 
 local GetNumGroupMembers, GetTime, pcall = _G.GetNumGroupMembers, _G.GetTime, _G.pcall
 local UnitXP, UnitXPMax, UnitName = _G.UnitXP, _G.UnitXPMax, _G.UnitName
@@ -13,6 +14,26 @@ end
 local SendChatMessage = C_ChatInfo and C_ChatInfo.SendChatMessage or _G.SendChatMessage
 
 local L = addon.locale.Get
+
+-- Lua 5.1's string.format has no positional placeholders. A malformed or
+-- reordered translation must never abort an event handler (level-up
+-- announcements run while the tracker is committing its split). The locale
+-- files keep their placeholders in call-site order, while this last-resort
+-- formatter leaves a readable diagnostic message if a custom locale does not.
+local function FormatMessage(message, ...)
+    message = tostr(message or "")
+    local count = select("#", ...)
+    if count == 0 then return message end
+
+    local ok, formatted = pcall(fmt, message, ...)
+    if ok then return formatted end
+
+    local values = {}
+    for index = 1, count do
+        values[index] = tostr(select(index, ...))
+    end
+    return message .. " [" .. concat(values, ", ") .. "]"
+end
 
 local function GetGroupChannel()
     return _G.IsInRaid() and "RAID" or "PARTY"
@@ -414,18 +435,23 @@ function addon.comms:AnnounceStepEvent(event, data)
 
 end
 
-function addon.comms.BuildNotification(msg, ...) return fmt("{rt3} %s: %s", addon.title, fmt(msg, ...)) end
+function addon.comms.BuildNotification(msg, ...)
+    return fmt("{rt3} %s: %s", tostr(addon.title or "RestedXP Guides"),
+               FormatMessage(msg, ...))
+end
 
 function addon.comms.PrettyPrint(msg, ...)
     if not msg then return end
 
-    print(fmt("%s: %s", addon.title, fmt(msg, ...)))
+    print(fmt("%s: %s", tostr(addon.title or "RestedXP Guides"),
+              FormatMessage(msg, ...)))
 end
 
 function addon.comms.PrettyAnnounce(channel, msg, ...)
     if not msg then return end
 
-    SendChatMessage(fmt("%s: %s", addon.title, fmt(msg, ...)), channel, nil)
+    SendChatMessage(fmt("%s: %s", tostr(addon.title or "RestedXP Guides"),
+                        FormatMessage(msg, ...)), channel, nil)
 end
 
 addon.comms.debugThrottle = {}

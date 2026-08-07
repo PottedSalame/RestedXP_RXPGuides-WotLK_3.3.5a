@@ -264,6 +264,28 @@ foreach ($name in $surface.globals) {
     }
 }
 
+# Lua 5.1 string.format does not support positional arguments. Localized
+# announcements therefore have to retain the source placeholder order or a
+# level-up event can abort the communications callback.
+$levelFormatKey = 'I just leveled from %d to %d in %s'
+foreach ($localeFile in Get-ChildItem (Join-Path $root 'locale') -File -Filter '*.lua') {
+    $localeText = [IO.File]::ReadAllText($localeFile.FullName)
+    $translationMatch = [regex]::Match(
+        $localeText,
+        'L\["' + [regex]::Escape($levelFormatKey) + '"\]\s*=\s*"([^"]*)"')
+    if (-not $translationMatch.Success) { continue }
+    $signature = @([regex]::Matches(
+        $translationMatch.Groups[1].Value,
+        '%[-+0 #]*\d*(?:\.\d+)?([dfs])') | ForEach-Object {
+            $_.Groups[1].Value
+        }) -join ','
+    if ($signature -cne 'd,d,s') {
+        Add-ValidationError (
+            "$($localeFile.Name) reorders the level announcement placeholders: " +
+            "$signature (expected d,d,s).")
+    }
+}
+
 $allowedWrites = @{}
 foreach ($entry in $surface.allowedGlobalWrites) {
     $allowedWrites[[string]$entry] = $true
