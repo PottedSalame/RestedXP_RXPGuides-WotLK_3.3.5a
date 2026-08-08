@@ -12,6 +12,7 @@ local fmt, tinsert, ipairs, pairs, next, type, wipe, tonumber, strlower, smatch 
 local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
 local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
 local NativeIsEquippedItem = C_Item and C_Item.IsEquippedItem or _G.IsEquippedItem
+local NativeIsUsableItem = C_Item and C_Item.IsUsableItem or _G.IsUsableItem
 local GetItemStats = C_Item and C_Item.GetItemStats or _G.GetItemStats
 local UnitLevel = _G.UnitLevel
 local GetInventoryItemLink = _G.GetInventoryItemLink
@@ -570,6 +571,13 @@ local function enableTotalEPLines(itemData, lines)
     else -- Armor
         tinsert(lines, fmt("  Total EP: %.2f", itemData.totalWeight))
     end
+end
+
+local function IsClientItemUsable(itemLink)
+    if not (itemLink and type(NativeIsUsableItem) == "function") then return nil end
+    local ok, usable = pcall(NativeIsUsableItem, itemLink)
+    if not ok then return nil end
+    return usable == true or usable == 1
 end
 
 local function AddUnavailableComparisonLine(tooltip, message)
@@ -1310,16 +1318,28 @@ end
 -- localized AH categories and proficiency spell names are added below.
 local WEAPON_SUBCLASS_BY_NAME = {
     ["One-Handed Axes"] = ItemWeaponSubclass.Axe1H,
+    ["Axe"] = ItemWeaponSubclass.Axe1H,
+    ["Axes"] = ItemWeaponSubclass.Axe1H,
     ["Two-Handed Axes"] = ItemWeaponSubclass.Axe2H,
+    ["Two-Handed Axe"] = ItemWeaponSubclass.Axe2H,
     ["Bows"] = ItemWeaponSubclass.Bows,
     ["Guns"] = ItemWeaponSubclass.Guns,
     ["One-Handed Maces"] = ItemWeaponSubclass.Mace1H,
+    ["Mace"] = ItemWeaponSubclass.Mace1H,
+    ["Maces"] = ItemWeaponSubclass.Mace1H,
     ["Two-Handed Maces"] = ItemWeaponSubclass.Mace2H,
+    ["Two-Handed Mace"] = ItemWeaponSubclass.Mace2H,
     ["Polearms"] = ItemWeaponSubclass.Polearm,
     ["One-Handed Swords"] = ItemWeaponSubclass.Sword1H,
+    ["Sword"] = ItemWeaponSubclass.Sword1H,
+    ["Swords"] = ItemWeaponSubclass.Sword1H,
     ["Two-Handed Swords"] = ItemWeaponSubclass.Sword2H,
+    ["Two-Handed Sword"] = ItemWeaponSubclass.Sword2H,
+    ["Staff"] = ItemWeaponSubclass.Staff,
     ["Staves"] = ItemWeaponSubclass.Staff,
+    ["Fist Weapon"] = ItemWeaponSubclass.Unarmed,
     ["Fist Weapons"] = ItemWeaponSubclass.Unarmed,
+    ["Dagger"] = ItemWeaponSubclass.Dagger,
     ["Daggers"] = ItemWeaponSubclass.Dagger,
     ["Thrown"] = ItemWeaponSubclass.Thrown,
     ["Crossbows"] = ItemWeaponSubclass.Crossbow,
@@ -1338,6 +1358,11 @@ local ARMOR_SUBCLASS_BY_NAME = {
     ["Idols"] = ItemArmorSubclass.Idol,
     ["Totems"] = ItemArmorSubclass.Totem,
     ["Sigils"] = ItemArmorSubclass.Sigil,
+}
+local TWO_HANDED_WEAPON_SUBCLASS = {
+    [ItemWeaponSubclass.Axe1H] = ItemWeaponSubclass.Axe2H,
+    [ItemWeaponSubclass.Mace1H] = ItemWeaponSubclass.Mace2H,
+    [ItemWeaponSubclass.Sword1H] = ItemWeaponSubclass.Sword2H
 }
 
 -- Weapon-proficiency spell IDs are stable across locales.  Their localized
@@ -1572,12 +1597,20 @@ function addon.itemUpgrades.SubclassNameToID(subclassName, itemEquipLoc)
     if type(subclassName) ~= "string" then return nil end
     BuildLegacySubclassMaps()
     if IsWeaponSlot(itemEquipLoc) then
-        return LookupSubclassName(WEAPON_SUBCLASS_BY_NAME, subclassName)
+        local subclassID = LookupSubclassName(WEAPON_SUBCLASS_BY_NAME,
+                                               subclassName)
+        -- A few private clients shorten both item categories to "Swords",
+        -- "Axes", or "Maces". The inventory location disambiguates those
+        -- labels without assuming an English tooltip.
+        if subclassID and itemEquipLoc == "INVTYPE_2HWEAPON" then
+            subclassID = TWO_HANDED_WEAPON_SUBCLASS[subclassID] or subclassID
+        end
+        return subclassID
     end
     return LookupSubclassName(ARMOR_SUBCLASS_BY_NAME, subclassName)
 end
 
-local function IsUsableForClass(itemSubTypeID, itemEquipLoc)
+local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
     if type(itemEquipLoc) ~= "string" then return true end
 
     -- INVTYPE_SHIELD is sufficient to make this decision even when a localized
@@ -1600,7 +1633,13 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc)
     -- keep this conservative and refuse to score the item; other equipment may
     -- still use the client's hint. A hint must never override a recognized
     -- class, level, or proficiency restriction.
-    if type(itemSubTypeID) ~= "number" then return nil end
+    if type(itemSubTypeID) ~= "number" then
+        if addon.gameVersion == 30300 and IsWeaponSlot(itemEquipLoc) and
+            IsClientItemUsable(itemLink) then
+            return true
+        end
+        return nil
+    end
 
     if IsWeaponSlot(itemEquipLoc) then
         local proficiencySpell = WEAPON_PROFICIENCY_SPELL[itemSubTypeID]
@@ -1615,7 +1654,14 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc)
             -- cleanup can protect uncertain items, but neither may be scored,
             -- recommended, or auto-equipped as an upgrade.
             if proficiencySpell then
-                if trained ~= true then return trained end
+                if trained ~= true then
+                    -- IsUsableItem is the stock per-item check and is more
+                    -- precise than a localized skill-name match. Accept only a
+                    -- positive result; false/absent results retain the safe
+                    -- skill and spellbook decision above.
+                    if IsClientItemUsable(itemLink) then return true end
+                    return trained
+                end
             else
                 return nil
             end
@@ -1690,7 +1736,7 @@ function addon.itemUpgrades:GetItemWearability(itemLink)
         itemSubTypeID == ItemWeaponSubclass.Fishingpole then
         return "utility"
     end
-    local usability = IsUsableForClass(itemSubTypeID, itemEquipLoc)
+    local usability = IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
     if usability == nil then return "unknown" end
     return usability and "wearable" or "unwearable"
 end
@@ -1872,7 +1918,8 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
 
     local itemData
 
-    local classUsability = IsUsableForClass(itemSubTypeID, itemEquipLoc)
+    local classUsability = IsUsableForClass(itemSubTypeID, itemEquipLoc,
+                                             itemLink)
     -- The equipped slots are authoritative for every item type, including
     -- off-hand frills granted by custom/private-server class rules. Restricting
     -- this bypass to weapons could leave an actually equipped off hand with no
@@ -2161,17 +2208,29 @@ function addon.itemUpgrades:GetEquippedComparisonRatio(equippedItemLink, compare
     local equippedWeight, comparedWeight
 
     -- _G.INVSLOT_RANGED, _G.INVSLOT_OFFHAND, _G.INVSLOT_MAINHAND
-    -- MH / OH have more complex handling, requires DPS calculations here
-    if IsWeaponSlot(equippedData.itemEquipLoc) then
-        if IsCrossHandLayout(equippedData, comparedData,
-                             slotComparisonId) then
+    -- Either side can be a weapon: a one-hander may replace a held-in-off-hand
+    -- item, and a held item may replace an off-hand weapon. Calculate weapon
+    -- DPS for whichever side needs it instead of keying only on the equipped
+    -- item type.
+    local equippedIsWeapon = IsWeaponSlot(equippedData.itemEquipLoc)
+    local comparedIsWeapon = IsWeaponSlot(comparedData.itemEquipLoc)
+    if equippedIsWeapon or comparedIsWeapon then
+        if equippedIsWeapon and comparedIsWeapon and
+            IsCrossHandLayout(equippedData, comparedData,
+                              slotComparisonId) then
             equippedWeight = self:CalculateWeaponLayoutWeight(
                                  equippedData, slotComparisonId)
             comparedWeight = self:CalculateWeaponLayoutWeight(
                                  comparedData, slotComparisonId)
         else
-            equippedWeight = self:CalculateWeaponWeight(equippedData, slotComparisonId)
-            comparedWeight = self:CalculateWeaponWeight(comparedData, slotComparisonId)
+            equippedWeight = equippedIsWeapon and
+                                 self:CalculateWeaponWeight(
+                                     equippedData, slotComparisonId) or
+                                 equippedData.totalWeight
+            comparedWeight = comparedIsWeapon and
+                                 self:CalculateWeaponWeight(
+                                     comparedData, slotComparisonId) or
+                                 comparedData.totalWeight
         end
     else
         equippedWeight = equippedData.totalWeight
@@ -2255,7 +2314,8 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
     if comparedData.unusable then return nil, "unusable" end
 
     local classUsability = IsUsableForClass(comparedData.itemSubTypeID,
-                                             comparedData.itemEquipLoc)
+                                             comparedData.itemEquipLoc,
+                                             comparedData.itemLink)
     if addon.gameVersion == 30300 and
         IsWeaponSlot(comparedData.itemEquipLoc) and classUsability ~= true then
         return nil, "unusable"
