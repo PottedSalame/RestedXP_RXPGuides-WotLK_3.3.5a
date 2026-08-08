@@ -572,6 +572,40 @@ local function enableTotalEPLines(itemData, lines)
     end
 end
 
+local function AddUnavailableComparisonLine(tooltip, message)
+    if not (tooltip and message) then return end
+    tooltip:AddLine(fmt("%s - %s", addon.title, _G.ITEM_UPGRADE))
+    tooltip:AddLine(message, 1, 0.35, 0.35, true)
+    tooltip:Show()
+end
+
+local function ExplainUnavailableComparison(itemLink, itemData)
+    local _, _, _, _, minimumLevel, _, itemSubType, _, itemEquipLoc =
+        GetItemInfo(itemLink)
+    minimumLevel = tonumber(minimumLevel) or 0
+    local playerLevel = tonumber(UnitLevel("player")) or 0
+
+    if minimumLevel > playerLevel then
+        return fmt(L("Requires level %d; EP will be compared once it can be equipped."),
+                   minimumLevel)
+    end
+
+    if itemData and itemData.unusable then
+        if itemData.proficiencyUnknown then
+            return L("Weapon proficiency could not be verified; this item is kept safe but is not scored.")
+        end
+        if IsWeaponSlot(itemEquipLoc or itemData.itemEquipLoc) then
+            return fmt(L("%s proficiency is not trained; this weapon is kept safe but is not scored."),
+                       itemSubType or L("Required weapon"))
+        end
+        return L("This item cannot currently be equipped, so it is not scored.")
+    end
+
+    if IsWeaponSlot(itemEquipLoc) then
+        return L("EP comparison is waiting for complete weapon data.")
+    end
+end
+
 local function TooltipSetItem(tooltip, ...)
     if not addon.settings.profile.enableItemUpgrades or
         not addon.settings.profile.enableTips or
@@ -596,7 +630,11 @@ local function TooltipSetItem(tooltip, ...)
 
     local itemData = addon.itemUpgrades:GetItemData(itemLink, tooltip,
                                                      clientUsable)
-    if not (itemData and itemData.totalWeight) then return end
+    if not (itemData and itemData.totalWeight) then
+        AddUnavailableComparisonLine(
+            tooltip, ExplainUnavailableComparison(itemLink, itemData))
+        return
+    end
 
     local lines = {}
     -- Exclude addon text when looking at an equipped item
@@ -615,8 +653,9 @@ local function TooltipSetItem(tooltip, ...)
         return
     end
 
-    local statComparisons = addon.itemUpgrades:CompareItemWeight(
-                                itemLink, tooltip, true, clientUsable)
+    local statComparisons, comparisonReason, comparisonState =
+        addon.itemUpgrades:CompareItemWeight(itemLink, tooltip, true,
+                                             clientUsable)
 
     -- Effectively only used when an item downgrade
     -- TODO when weapons have stats, this may be a problem
@@ -629,6 +668,13 @@ local function TooltipSetItem(tooltip, ...)
 
                 for _, line in ipairs(lines) do tooltip:AddLine(line) end
             end
+        end
+
+        if #lines == 0 and IsWeaponSlot(itemData.itemEquipLoc) and
+            (comparisonReason == "query failed" or
+                comparisonState == "unknown") then
+            AddUnavailableComparisonLine(
+                tooltip, L("EP comparison is waiting for complete weapon data."))
         end
 
         return
@@ -1135,6 +1181,11 @@ local function AddParsedStat(stats, key, value, sign)
     stats[key] = (stats[key] or 0) + value
 end
 
+local function ParseLegacyNumber(value)
+    if type(value) ~= "string" then return tonumber(value) end
+    return tonumber((value:gsub(",", ".", 1)))
+end
+
 local function ParseLegacyTooltipStats(stats, lines)
     local damageLow, damageHigh, weaponSpeed
     local providedStats = {}
@@ -1197,8 +1248,22 @@ local function ParseLegacyTooltipStats(stats, lines)
             end
         end
 
-        local low, high = smatch(line, "(%d+)%s*%-%s*(%d+)%s+damage")
-        if low and high then damageLow, damageHigh = tonumber(low), tonumber(high) end
+        -- Damage templates are localized while their leading numeric range is
+        -- stable. Do not require the English word "Damage" here.
+        if not damageLow then
+            local low, high = smatch(
+                                  line,
+                                  "^%s*([%d%.,]+)%s*%-%s*([%d%.,]+)")
+            if not (low and high) then
+                low, high = smatch(
+                                line,
+                                "([%d%.,]+)%s*%-%s*([%d%.,]+)%s+damage")
+            end
+            if low and high then
+                damageLow, damageHigh = ParseLegacyNumber(low),
+                                        ParseLegacyNumber(high)
+            end
+        end
         -- gsub returns both the new string and its replacement count. Parenthesize
         -- the call so Lua passes only the string to tonumber (otherwise the count
         -- becomes tonumber's optional base and can raise "base out of range").
@@ -1808,7 +1873,11 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     local itemData
 
     local classUsability = IsUsableForClass(itemSubTypeID, itemEquipLoc)
-    if currentlyEquipped and IsWeaponSlot(itemEquipLoc) then
+    -- The equipped slots are authoritative for every item type, including
+    -- off-hand frills granted by custom/private-server class rules. Restricting
+    -- this bypass to weapons could leave an actually equipped off hand with no
+    -- EP data, which in turn made a 2H comparison incomplete.
+    if currentlyEquipped then
         classUsability = true
     end
     -- On 3.3.5 GetQuestItemInfo's fifth return is only a UI hint on several
@@ -2035,10 +2104,29 @@ end
 -- after crossing a level bracket. For a layout change, compare the ordinary
 -- stat and DPS contribution and let the complete-hand calculation below add
 -- the displaced off hand.
-function addon.itemUpgrades:CalculateWeaponLayoutWeight(itemData)
+function addon.itemUpgrades:CalculateWeaponLayoutWeight(itemData,
+                                                         slotComparisonId)
     if not itemData or not itemData.dpsWeights then return -1 end
 
-    for _, dpsData in pairs(itemData.dpsWeights) do
+    local preferredSuffix
+    if itemData.itemEquipLoc == "INVTYPE_2HWEAPON" then
+        preferredSuffix = "2H"
+    elseif itemData.itemEquipLoc == "INVTYPE_RANGED" or
+        itemData.itemEquipLoc == "INVTYPE_RANGEDRIGHT" or
+        itemData.itemEquipLoc == "INVTYPE_THROWN" then
+        preferredSuffix = "RANGED"
+    elseif itemData.itemEquipLoc == "INVTYPE_WEAPONOFFHAND" or
+        slotComparisonId == _G.INVSLOT_OFFHAND then
+        preferredSuffix = "OH"
+    else
+        preferredSuffix = "MH"
+    end
+
+    -- INVTYPE_WEAPON can expose both MH and OH entries. Never let pairs()
+    -- choose one arbitrarily when evaluating a complete hand layout.
+    local dpsData = itemData.dpsWeights[preferredSuffix]
+    if not dpsData then _, dpsData = next(itemData.dpsWeights) end
+    if dpsData then
         local total = tonumber(dpsData.totalWeight)
         if total then
             return (tonumber(itemData.totalWeight) or 0) + total -
@@ -2077,8 +2165,10 @@ function addon.itemUpgrades:GetEquippedComparisonRatio(equippedItemLink, compare
     if IsWeaponSlot(equippedData.itemEquipLoc) then
         if IsCrossHandLayout(equippedData, comparedData,
                              slotComparisonId) then
-            equippedWeight = self:CalculateWeaponLayoutWeight(equippedData)
-            comparedWeight = self:CalculateWeaponLayoutWeight(comparedData)
+            equippedWeight = self:CalculateWeaponLayoutWeight(
+                                 equippedData, slotComparisonId)
+            comparedWeight = self:CalculateWeaponLayoutWeight(
+                                 comparedData, slotComparisonId)
         else
             equippedWeight = self:CalculateWeaponWeight(equippedData, slotComparisonId)
             comparedWeight = self:CalculateWeaponWeight(comparedData, slotComparisonId)
@@ -2285,7 +2375,16 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
                 slotId == _G.INVSLOT_MAINHAND then
                 local offhandLink = GetInventoryItemLink("player", _G.INVSLOT_OFFHAND)
                 local offhandData = self:GetItemData(offhandLink, nil)
-                if offhandData then
+                if offhandLink and not offhandData then
+                    -- Never call a two-hander an upgrade until every displaced
+                    -- item has been parsed. A later item/inventory event retries
+                    -- the comparison after the legacy cache finishes loading.
+                    ratio = nil
+                    weightIncrease = nil
+                    equippedWeight = nil
+                    comparedWeight = nil
+                    debug = _G.UNKNOWN
+                elseif offhandData then
                     local offhandWeight
                     if IsWeaponSlot(offhandData.itemEquipLoc) then
                         -- The main-hand comparison above excludes speed when
@@ -2294,7 +2393,8 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
                         if equippedData and IsCrossHandLayout(
                             equippedData, comparedData, slotId) then
                             offhandWeight =
-                                self:CalculateWeaponLayoutWeight(offhandData)
+                                self:CalculateWeaponLayoutWeight(
+                                    offhandData, _G.INVSLOT_OFFHAND)
                         else
                             offhandWeight = self:CalculateWeaponWeight(
                                                 offhandData,
