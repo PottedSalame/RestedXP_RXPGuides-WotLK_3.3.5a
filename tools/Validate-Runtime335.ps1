@@ -90,7 +90,8 @@ $orderedPaths = @(
     'Core\Services.lua', 'Core\Scheduler.lua', 'Core\Storage.lua',
     'Core\Runtime.lua', 'Core\Facade.lua', 'Guide\QuestAcceptState.lua',
     'Core\Addon.lua',
-    'Guide\ElementState.lua', 'Guide\Directives\Handlers.lua',
+    'Guide\ElementState.lua', 'Guide\AutomationOrder.lua',
+    'Guide\Directives\Handlers.lua',
     'Guide\Directives\Registry.lua', 'Guide\Loader.lua',
     'Guide\Registry.lua', 'GuideList_335.xml',
     'Features\Talents.lua', 'Talents_wotlk_335.xml', 'Compat\Options.lua'

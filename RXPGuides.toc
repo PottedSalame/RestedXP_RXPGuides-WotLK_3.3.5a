@@ -66,6 +66,7 @@ Features\VendorTreasures.lua
 
 UI\Map.lua
 Guide\ElementState.lua
+Guide\AutomationOrder.lua
 Guide\Prerequisites.lua
 Guide\Directives\Handlers.lua
 Guide\Directives\Registry.lua

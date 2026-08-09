@@ -60,6 +60,7 @@ loadAddonFile("Guide/QuestAcceptState.lua", addon)
 addon.functions = {events = {fixtureDirective = {"FIXTURE_EVENT"}}}
 addon.functions.fixtureDirective = function() return "directive" end
 loadAddonFile("Guide/ElementState.lua", addon)
+loadAddonFile("Guide/AutomationOrder.lua", addon)
 loadAddonFile("Guide/Prerequisites.lua", addon)
 loadAddonFile("Guide/Directives/Registry.lua", addon)
 addon.directives:RegisterDomain("fixture-domain", {"fixtureDirective"})
@@ -79,6 +80,32 @@ check(addon.elementState:Sync(stateFixture) == "complete",
 check(addon.elementState:Set(stateFixture, "blocked") and
           addon.elementState:Get(stateFixture) == "blocked",
       "explicit blocked element state was not retained")
+
+local orderStep = {active = true, index = 7, elements = {}}
+local firstAction = {step = orderStep, tag = "turnin"}
+local secondAction = {step = orderStep, tag = "accept"}
+local thirdAction = {step = orderStep, tag = "fly"}
+orderStep.elements = {firstAction, secondAction, thirdAction}
+check(addon.automationOrder:IsReady(firstAction) and
+          not addon.automationOrder:IsReady(secondAction) and
+          not addon.automationOrder:IsReady(thirdAction),
+      "automation did not wait for preceding authored elements")
+firstAction.completed = true
+check(addon.automationOrder:IsReady(secondAction) and
+          not addon.automationOrder:IsReady(thirdAction),
+      "automation did not advance to the next authored element")
+secondAction.completed = true
+check(addon.automationOrder:IsReady(thirdAction),
+      "travel automation remained blocked after quest confirmation")
+local earlierStep = {active = true, index = 6, elements = {}}
+local earlierAction = {step = earlierStep, tag = "accept"}
+earlierStep.elements[1] = earlierAction
+local selectedAction = addon.automationOrder:Select({
+    {element = thirdAction, selector = 3},
+    {element = earlierAction, selector = 1}
+})
+check(selectedAction and selectedAction.selector == 1,
+      "automation candidate selection ignored guide order")
 
 local laterTurnIn = {questId = "42"}
 addon.questTurnIn = {NamedQuest = laterTurnIn}

@@ -2796,7 +2796,10 @@ function addon.functions.fp(self, ...)
                 end
                 addon.SetElementComplete(self)
             end
-        elseif (GetTime() - element.confirm) > 10 and event == "GOSSIP_SHOW" and addon.SelectGossipType("taxi") then
+        elseif (GetTime() - element.confirm) > 10 and event == "GOSSIP_SHOW" and
+            (not addon.IsAutomationElementReady or
+                addon.IsAutomationElementReady(element)) and
+            addon.SelectGossipType("taxi") then
             element.confirm = GetTime()
         end
     end
@@ -2860,10 +2863,27 @@ function addon.functions.fly(self, ...)
     local event = ...
     local automationEnabled = addon.settings.profile.enableFPAutomation and
                                   not IsShiftKeyDown()
+    local automationReady = not addon.IsAutomationElementReady or
+                                addon.IsAutomationElementReady(element)
     if automationEnabled and not element.confirm and event == "GOSSIP_SHOW" and
+        automationReady and
         addon.SelectGossipType("taxi") then
         element.confirm = true
     elseif automationEnabled and event == "TAXIMAP_OPENED" and element.location then
+        if not automationReady then
+            element.orderRetryCount = (element.orderRetryCount or 0) + 1
+            if element.orderRetryCount <= 10 and addon.scheduler then
+                addon.scheduler:After(self, "ordered-flight", 0.05, function()
+                    if self.element == element and element.step.active and
+                        _G.TaxiFrame and _G.TaxiFrame:IsShown() then
+                        addon.Call("fly", addon.functions.fly, self,
+                                   "TAXIMAP_OPENED")
+                    end
+                end)
+            end
+            return
+        end
+        element.orderRetryCount = nil
         addon:TAXIMAP_OPENED()
         local matches = {}
         for i = 1, NumTaxiNodes() do
