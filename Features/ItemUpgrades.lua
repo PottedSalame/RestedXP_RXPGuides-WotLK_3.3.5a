@@ -61,10 +61,12 @@ local session = {
     equippableArmor = {},
     equippableWeapons = {},
     trainedWeapons = {},
+    trainedWeaponSources = {},
     trainedArmor = {},
     trainedShield = nil,
     wearabilityLevel = nil,
     wearabilityClass = nil,
+    proficiencyRefreshSerial = 0,
 
     weaponSlotToWeightKey = {},
 
@@ -820,6 +822,9 @@ function addon.itemUpgrades:Setup()
     self:RegisterEvent("SKILL_LINES_CHANGED", "WEAPON_PROFICIENCY_CHANGED")
     self:RegisterEvent("SPELLS_CHANGED", "WEAPON_PROFICIENCY_CHANGED")
     self:RegisterEvent("LEARNED_SPELL_IN_TAB", "WEAPON_PROFICIENCY_CHANGED")
+    -- SKILL_LINES_CHANGED is authoritative on the stock client, but a few
+    -- private cores only finish updating weapon skills when the trainer closes.
+    self:RegisterEvent("TRAINER_CLOSED", "WEAPON_PROFICIENCY_CHANGED")
     -- BAG_UPDATE_DELAYED was added after the original 3.3.5 client. Some
     -- private cores expose it, others do not, and item data can arrive after
     -- the one bag event raised by looting. Always listen to the stock legacy
@@ -899,21 +904,35 @@ function addon.itemUpgrades:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 function addon.itemUpgrades:WEAPON_PROFICIENCY_CHANGED()
-    if not addon.settings.profile.enableItemUpgrades then return end
-    -- Re-resolve slot functions as well as subtype proficiencies. This matters
-    -- for Dual Wield (including the WotLK Shaman talent), which changes whether
-    -- an off-hand-only weapon is usable without changing the item itself.
-    self:UpdateSlotMap()
-    RefreshWeaponProficiencies()
-    -- Previously rejected items must be reconsidered as soon as the player
-    -- trains a new weapon skill.
-    session.itemCache = {}
-    wipe(session.promptedUpgrades)
-    if addon.inventoryManager and addon.inventoryManager.UpdateAllBags then
-        addon.inventoryManager.UpdateAllBags()
+    session.proficiencyRefreshSerial = session.proficiencyRefreshSerial + 1
+    local serial = session.proficiencyRefreshSerial
+
+    local function ApplyProficiencyChange(queueUpgradeScan)
+        if serial ~= session.proficiencyRefreshSerial then return end
+        -- Re-resolve slot functions as well as subtype proficiencies. This
+        -- matters for level-gated armor and Dual Wield (including the WotLK
+        -- Shaman talent), which change usable layouts without changing an item.
+        addon.itemUpgrades:UpdateSlotMap()
+        RefreshWeaponProficiencies()
+        -- Every recommendation and junk decision must be recalculated against
+        -- the newly learned state; an old unwearable cache entry is no longer
+        -- valid after visiting a weapon master.
+        session.itemCache = {}
+        wipe(session.promptedUpgrades)
+        if addon.inventoryManager and addon.inventoryManager.UpdateAllBags then
+            addon.inventoryManager.UpdateAllBags()
+        end
+        addon:SendEvent("RXP_JUNK")
+        if queueUpgradeScan and addon.settings.profile.enableItemUpgrades then
+            QueueUpgradeScan(0.25)
+        end
     end
-    addon:SendEvent("RXP_JUNK")
-    QueueUpgradeScan(0.25)
+
+    -- Update immediately for the stock 3.3.5 event order, then once more after
+    -- the trainer/spellbook has settled. The serial makes the delayed refresh
+    -- idempotent when several skill and spell events fire for one purchase.
+    ApplyProficiencyChange(false)
+    C_Timer.After(0.25, function() ApplyProficiencyChange(true) end)
 end
 
 function addon.itemUpgrades:LoadStatWeights()
@@ -1543,6 +1562,7 @@ end
 RefreshWeaponProficiencies = function()
     BuildLegacySubclassMaps()
     wipe(session.trainedWeapons)
+    wipe(session.trainedWeaponSources)
     wipe(session.trainedArmor)
 
     -- On 3.3.5 the Skills panel is the closest representation of what the
@@ -1560,11 +1580,15 @@ RefreshWeaponProficiencies = function()
             subclassID ~= ItemWeaponSubclass.Unarmed then
             session.trainedWeapons[subclassID] =
                 legacyWeaponSkills[subclassID] == true
+            session.trainedWeaponSources[subclassID] = "skill"
         else
             -- Fist Weapons deliberately retain the proficiency-spell result:
             -- the legacy Skills panel commonly calls the skill "Unarmed", which
             -- every class has and which is not proof that fist weapons are usable.
             session.trainedWeapons[subclassID] = knownBySpell
+            if knownBySpell ~= nil then
+                session.trainedWeaponSources[subclassID] = "spell"
+            end
         end
     end
 
@@ -1645,6 +1669,8 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
         local proficiencySpell = WEAPON_PROFICIENCY_SPELL[itemSubTypeID]
         local trained = proficiencySpell and
                             session.trainedWeapons[itemSubTypeID] or nil
+        local proficiencySource = proficiencySpell and
+                                      session.trainedWeaponSources[itemSubTypeID]
         -- On 3.3.5 the learned proficiency is authoritative. This both rejects
         -- trainable-but-unlearned weapons and permits WotLK/custom-core weapon
         -- training which may be absent from the static class fallback map.
@@ -1655,11 +1681,20 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
             -- recommended, or auto-equipped as an upgrade.
             if proficiencySpell then
                 if trained ~= true then
+                    -- Once the Skills panel contains recognizable weapon data,
+                    -- it is the authoritative record of what this character has
+                    -- actually trained. In particular, a Tauren Druid may be
+                    -- allowed to learn two-handed maces but cannot equip one
+                    -- until the weapon-master step has added that skill.
+                    if proficiencySource == "skill" then return false end
                     -- IsUsableItem is the stock per-item check and is more
-                    -- precise than a localized skill-name match. Accept only a
-                    -- positive result; false/absent results retain the safe
-                    -- skill and spellbook decision above.
-                    if IsClientItemUsable(itemLink) then return true end
+                    -- precise than a localized spellbook fallback on cores
+                    -- whose Skills API is unavailable. Restrict this escape
+                    -- hatch to weapon types the stock class can train; an
+                    -- over-broad private-server result must not grant a Druid
+                    -- swords or a Hunter an untrained class-incompatible type.
+                    if session.equippableWeapons[itemSubTypeID] and
+                        IsClientItemUsable(itemLink) then return true end
                     return trained
                 end
             else
