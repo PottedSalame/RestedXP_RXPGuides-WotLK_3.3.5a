@@ -197,7 +197,15 @@ local function ResolveBindMap()
     if type(bind) ~= "string" or bind == "" then return end
     local wanted = bind:lower()
     for name, id in pairs(addon.mapId or {}) do
-        if type(name) == "string" and name:lower() == wanted then return id end
+        if type(name) == "string" then
+            if name:lower() == wanted then return id end
+            local localized = addon.LocalizeLegacyLocationName and
+                                  addon.LocalizeLegacyLocationName(name)
+            if type(localized) == "string" and
+                localized:lower() == wanted then
+                return id
+            end
+        end
     end
 end
 

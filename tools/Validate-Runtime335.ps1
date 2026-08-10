@@ -90,6 +90,7 @@ $orderedPaths = @(
     'Core\Services.lua', 'Core\Scheduler.lua', 'Core\Storage.lua',
     'Core\Runtime.lua', 'Core\Facade.lua', 'Guide\QuestAcceptState.lua',
     'Core\Addon.lua',
+    'DB\wotlk\db.lua', 'Compat\LocationLocales335.lua',
     'Guide\ElementState.lua', 'Guide\AutomationOrder.lua',
     'Guide\Directives\Handlers.lua',
     'Guide\Directives\Registry.lua', 'Guide\Loader.lua',
@@ -105,6 +106,114 @@ foreach ($path in $orderedPaths) {
         Add-ValidationError "Load-order entry is out of order: $path"
     }
     $lastIndex = [Math]::Max($lastIndex, $index)
+}
+
+# The 3.3.5 map APIs expose localized display names. Navigation must bind map
+# IDs through Astrolabe's stable GetMapInfo() tokens instead; otherwise every
+# non-English client loses world coordinates, arrows, and pins. Validate the
+# complete bundled token set so future database or library updates cannot
+# silently reintroduce that failure.
+$hbdPath = Join-Path $root 'libs\HBD335\HereBeDragons-335.lua'
+$hbdText = [IO.File]::ReadAllText($hbdPath)
+$mapDbText = [IO.File]::ReadAllText((Join-Path $root 'DB\wotlk\db.lua'))
+$astrolabeText = [IO.File]::ReadAllText(
+    (Join-Path $root 'libs\Astrolabe\Astrolabe.lua'))
+
+function ConvertTo-StableMapKey([string]$Name) {
+    if ([string]::IsNullOrWhiteSpace($Name)) { return $null }
+    $key = ($Name.ToLowerInvariant() -replace '[^a-z0-9]', '')
+    if ($key.StartsWith('the')) { $key = $key.Substring(3) }
+    return $key
+}
+
+$mapIDs = @{}
+$mapBlock = [regex]::Match(
+    $mapDbText, '(?s)addon\.mapId\s*=\s*\{(?<body>.*?)\n\}')
+foreach ($match in [regex]::Matches(
+    $mapBlock.Groups['body'].Value,
+    '\["(?<name>(?:\\.|[^"])*)"\]\s*=\s*(?<id>\d+)')) {
+    $mapIDs[$match.Groups['name'].Value] = [int]$match.Groups['id'].Value
+}
+foreach ($match in [regex]::Matches(
+    $mapDbText,
+    'addon\.mapId\["(?<name>(?:\\.|[^"])*)"\]\s*=\s*(?<id>\d+)')) {
+    $mapIDs[$match.Groups['name'].Value] = [int]$match.Groups['id'].Value
+}
+$stableMapIDs = @{}
+foreach ($entry in $mapIDs.GetEnumerator()) {
+    $key = ConvertTo-StableMapKey $entry.Key
+    if (-not $key) { continue }
+    if (-not $stableMapIDs.ContainsKey($key)) {
+        $stableMapIDs[$key] = $entry.Value
+    } elseif ($stableMapIDs[$key] -ne $entry.Value) {
+        $stableMapIDs[$key] = $false
+    }
+}
+
+$mapAliases = @{}
+$aliasBlock = [regex]::Match(
+    $hbdText, '(?s)local legacyMapFileAliases\s*=\s*\{(?<body>.*?)\n\}')
+foreach ($match in [regex]::Matches(
+    $aliasBlock.Groups['body'].Value,
+    '(?m)^\s*(?<token>[A-Za-z][A-Za-z0-9]*)\s*=\s*"(?<name>[^"]+)"')) {
+    $mapAliases[$match.Groups['token'].Value] = $match.Groups['name'].Value
+}
+
+$mapTokens = [Collections.Generic.HashSet[string]]::new(
+    [StringComparer]::Ordinal)
+foreach ($match in [regex]::Matches(
+    $astrolabeText,
+    '(?m)^\t{3}(?<token>[A-Za-z][A-Za-z0-9]*)\s*=\s*\{')) {
+    [void]$mapTokens.Add($match.Groups['token'].Value)
+}
+if ($mapTokens.Count -lt 60) {
+    Add-ValidationError (
+        "Astrolabe map-token validation found only $($mapTokens.Count) zones.")
+}
+foreach ($token in $mapTokens) {
+    $name = if ($mapAliases.ContainsKey($token)) { $mapAliases[$token] } else { $token }
+    $key = ConvertTo-StableMapKey $name
+    if (-not $mapIDs.ContainsKey($name) -and
+        (-not $stableMapIDs.ContainsKey($key) -or
+            $stableMapIDs[$key] -eq $false)) {
+        Add-ValidationError "Astrolabe map token does not resolve to a map ID: $token"
+    }
+}
+
+$locationLocaleText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\LocationLocales335.lua'))
+$legacyAreaBlock = [regex]::Match(
+    $hbdText, '(?s)local legacyAreaNames\s*=\s*\{(?<body>.*?)\n\}')
+$legacyAreaNames = @([regex]::Matches(
+    $legacyAreaBlock.Groups['body'].Value,
+    '\[\d+\]\s*=\s*"(?<name>(?:\\.|[^"])*)"') |
+        ForEach-Object { $_.Groups['name'].Value } | Sort-Object -Unique)
+foreach ($clientLocale in @('deDE', 'esES', 'frFR', 'koKR', 'ruRU', 'zhCN', 'zhTW')) {
+    $localeBlock = [regex]::Match(
+        $locationLocaleText,
+        '(?s)\["' + [regex]::Escape($clientLocale) +
+            '"\]\s*=\s*\{(?<body>.*?)\n\s*\},')
+    if (-not $localeBlock.Success) {
+        Add-ValidationError "Legacy location translations are missing: $clientLocale"
+        continue
+    }
+    $translatedNames = [Collections.Generic.HashSet[string]]::new(
+        [StringComparer]::Ordinal)
+    foreach ($match in [regex]::Matches(
+        $localeBlock.Groups['body'].Value,
+        '\["(?<name>(?:\\.|[^"])*)"\]\s*=')) {
+        [void]$translatedNames.Add($match.Groups['name'].Value)
+    }
+    $missingAreaNames = @($legacyAreaNames | Where-Object {
+        -not $translatedNames.Contains($_)
+    })
+    if ($missingAreaNames.Count -gt 0) {
+        Add-ValidationError (
+            "$clientLocale lacks $($missingAreaNames.Count) legacy area translation(s).")
+    }
+}
+if ($hbdText -notmatch 'Astrolabe\.ContinentList') {
+    Add-ValidationError 'The legacy map bridge no longer uses stable Astrolabe map tokens.'
 }
 
 $surface = [IO.File]::ReadAllText(

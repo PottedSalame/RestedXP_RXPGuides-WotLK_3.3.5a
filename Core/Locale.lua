@@ -56,6 +56,22 @@ end
 
 addon.locale.IsEnglish = locale == "enUS" or locale == "enGB"
 
+-- Quest turn-ins use the locale's unnamed XP-gain message. Tracker and group
+-- accounting must filter that message without assuming it begins with the
+-- English word "You". Keep the comparison deliberately prefix-based, matching
+-- the legacy behavior while deriving the prefix from Blizzard's own format.
+local unnamedXPFormat = _G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED
+local unnamedXPPrefix = type(unnamedXPFormat) == "string" and
+                            unnamedXPFormat:match("^(.-)%%") or nil
+if not unnamedXPPrefix or unnamedXPPrefix == "" then
+    unnamedXPPrefix = addon.locale.IsEnglish and "You" or nil
+end
+
+function addon.IsUnattributedXPMessage(text)
+    return type(text) == "string" and type(unnamedXPPrefix) == "string" and
+               text:sub(1, #unnamedXPPrefix) == unnamedXPPrefix
+end
+
 -- Guide prose is authored in English, but creature names are already bundled
 -- for every supported locale. Translate exact phrases first, then replace the
 -- names inside the guide's semantic colour spans without changing directives

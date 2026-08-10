@@ -8,7 +8,7 @@ Creative Commons Attribution-NonCommercial 3.0 Unported https://creativecommons.
 local L = addon.locale.Get
 local build = select(4, GetBuildInfo())
 local legacy335 = build == 30300
-if build > 40000 or GetLocale() == "zhCN" then return end
+if build > 40000 then return end
 local HBD = LibStub("HereBeDragons-2.0")
 local HBDPins = LibStub("HereBeDragons-Pins-2.0")
 

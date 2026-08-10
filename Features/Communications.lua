@@ -197,9 +197,8 @@ function addon.comms:PLAYER_LEVEL_UP(_, level)
     end)
 end
 
-local questXPPrefix = _G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED:sub(0, 5)
 function addon.comms:CHAT_MSG_COMBAT_XP_GAIN(_, text, ...)
-    if questXPPrefix == text:sub(0, #questXPPrefix) then return end
+    if addon.IsUnattributedXPMessage(text) then return end
 
     local xpGained = tonumber(smatch(text, "%d+"))
 

@@ -1282,6 +1282,28 @@ do
         end
     end
 
+    local function taxiBaseName(name)
+        if type(name) ~= "string" then return nil end
+        -- zhCN/zhTW clients and some private-server locale packs use a
+        -- full-width or ideographic comma in compound flight-node names.
+        local delimiter = name:find(",", 1, true)
+        for _, punctuation in ipairs({"，", "、"}) do
+            local position = name:find(punctuation, 1, true)
+            if position and (not delimiter or position < delimiter) then
+                delimiter = position
+            end
+        end
+        return delimiter and name:sub(1, delimiter - 1) or name
+    end
+
+    local function addTaxiName(exact, short, records, name, id)
+        addTaxiLookup(exact, name, id)
+        if type(name) == "string" then
+            addTaxiLookup(short, taxiBaseName(name), id)
+            addTaxiRecord(records, name, id)
+        end
+    end
+
     local function buildTaxiLookup()
         local exact, short, records = {}, {}, {}
         local faction = addon and addon.player and addon.player.faction
@@ -1289,20 +1311,21 @@ do
         if db then
             for id, data in pairs(db) do
                 if type(id) == "number" and type(data) == "table" and data.name then
-                    addTaxiLookup(exact, data.name, id)
-                    addTaxiLookup(short, data.name:match("^([^,]+)"), id)
-                    addTaxiRecord(records, data.name, id)
+                    addTaxiName(exact, short, records, data.name, id)
+                    if addon and
+                        type(addon.LocalizeLegacyLocationName) == "function" then
+                        local localized = addon.LocalizeLegacyLocationName(data.name)
+                        if localized ~= data.name then
+                            addTaxiName(exact, short, records, localized, id)
+                        end
+                    end
                 end
             end
         end
         if type(_G.RXPCData) == "table" and type(_G.RXPCData.flightPaths) == "table" then
             for id, name in pairs(_G.RXPCData.flightPaths) do
                 if type(id) == "number" then
-                    addTaxiLookup(exact, name, id)
-                    if type(name) == "string" then
-                        addTaxiLookup(short, name:match("^([^,]+)"), id)
-                        addTaxiRecord(records, name, id)
-                    end
+                    addTaxiName(exact, short, records, name, id)
                 end
             end
         end
@@ -1314,7 +1337,7 @@ do
         local id = normalized and exact[normalized]
         if id == false then return nil, true end
         if not id and type(name) == "string" then
-            local base = normalizeTaxiName(name:match("^([^,]+)"))
+            local base = normalizeTaxiName(taxiBaseName(name))
             id = base and short[base]
             if id == false then return nil, true end
         end

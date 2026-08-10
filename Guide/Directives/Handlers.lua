@@ -2621,8 +2621,15 @@ function addon.functions.home(self, ...)
         local element = {}
         local text, location = ...
         element.tag = "home"
-        location = tonumber(location)
-        element.location = location and C_Map.GetAreaInfo(location)
+        local locationID = tonumber(location)
+        element.locationID = locationID
+        if locationID then
+            element.location = C_Map.GetAreaInfo(locationID)
+        elseif type(location) == "string" and location ~= "" then
+            element.location = addon.LocalizeLegacyLocationName and
+                                   addon.LocalizeLegacyLocationName(location) or
+                                   location
+        end
         if text and text ~= "" then
             element.text = text
         elseif element.location then
@@ -2686,6 +2693,7 @@ function addon.functions.bindlocation(self, ...)
         local text, location, flags = ...
         element.tag = "home"
         location = tonumber(location)
+        element.locationID = location
         element.flags = tonumber(flags) or 0
         element.location = location and C_Map.GetAreaInfo(location)
         element.text = text

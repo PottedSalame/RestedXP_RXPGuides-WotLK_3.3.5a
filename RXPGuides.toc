@@ -40,6 +40,7 @@ DB\wotlk\quest.lua
 DB\wotlk\spells.lua
 DB\wotlk\rares.lua
 DB\wotlk\db.lua
+Compat\LocationLocales335.lua
 DB\wotlk\dungeonData_335.lua
 DB\wotlk\questPrerequisites_335.lua
 DB\wotlk\compatibilityPacks_335.lua

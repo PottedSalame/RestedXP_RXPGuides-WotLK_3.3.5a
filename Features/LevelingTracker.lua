@@ -374,10 +374,9 @@ function addon.tracker:GenerateDBLevel(level)
 end
 
 function addon.tracker:CHAT_MSG_COMBAT_XP_GAIN(_, text, ...)
-    -- Exclude "You gain 360 experience" from quest turnin, doubles up on mob kill
-    -- TODO use _G.COMBATLOG_XPGAIN_FIRSTPERSON or _G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED
-    -- TODO won't track zhCN
-    if 'You' == strsub(text, 0, #'You') then return end
+    -- Exclude the locale's unnamed XP message used by quest turn-ins; quest XP
+    -- is recorded authoritatively by QUEST_TURNED_IN instead.
+    if addon.IsUnattributedXPMessage(text) then return end
 
     local xpGained = tonumber(smatch(text, "%d+"))
 

@@ -11,8 +11,8 @@
     (the classic continent/zone-index coordinate library, bundled in libs/Astrolabe).
 
     The bridge between RXP's uiMapIDs and Astrolabe's (continent, zone) indices is
-    built from RXP's own `addon.mapId` (zone name -> uiMapID) table combined with
-    the client's localized GetMapZones() enumeration.
+    built from Astrolabe's locale-independent map-file tokens. Localized
+    GetMapZones() values are retained only for display.
 
     "World coordinates" in this shim are continent-normalized (0-1) coordinates
     plus an instance == continent index. All conversions round-trip through
@@ -48,6 +48,54 @@ local bridgeBuilt  = false
 
 local function czKey(c, z) return c * 1000 + z end
 
+-- GetMapZones() returns localized display names, while addon.mapId is keyed by
+-- the English names authored in guides. Astrolabe already resolves every zone
+-- index to GetMapInfo()'s stable map-file token during its initialization, so
+-- use that token as the identity boundary. These aliases cover the historical
+-- file-name abbreviations and misspellings present in the 3.3.5 client data.
+local legacyMapFileAliases = {
+    Aszhara = "Azshara",
+    Barrens = "The Barrens",
+    Darnassis = "Darnassus",
+    Dustwallow = "Dustwallow Marsh",
+    Ogrimmar = "Orgrimmar",
+    Alterac = "Alterac Mountains",
+    Arathi = "Arathi Highlands",
+    Elwynn = "Elwynn Forest",
+    Hilsbrad = "Hillsbrad Foothills",
+    Hinterlands = "The Hinterlands",
+    Redridge = "Redridge Mountains",
+    Silverpine = "Silverpine Forest",
+    Stormwind = "Stormwind City",
+    Stranglethorn = "Stranglethorn Vale",
+    Sunwell = "Isle of Quel'Danas",
+    Tirisfal = "Tirisfal Glades",
+    Hellfire = "Hellfire Peninsula",
+    LakeWintergrasp = "Wintergrasp",
+}
+
+local function normalizeMapName(name)
+    if type(name) ~= "string" then return nil end
+    local normalized = name:lower():gsub("[^%w]", "")
+    normalized = normalized:gsub("^the", "")
+    return normalized ~= "" and normalized or nil
+end
+
+local function buildStableMapLookup(mapId)
+    local lookup = {}
+    for name, id in pairs(mapId) do
+        if type(name) == "string" and type(id) == "number" then
+            local key = normalizeMapName(name)
+            if key and lookup[key] == nil then
+                lookup[key] = id
+            elseif key and lookup[key] ~= id then
+                lookup[key] = false
+            end
+        end
+    end
+    return lookup
+end
+
 local function computeContSize(c)
     if contSize[c] then return contSize[c] end
     local w = Astrolabe:ComputeDistance(c, 0, 0, 0.5, c, 0, 1, 0.5)
@@ -67,31 +115,49 @@ local function BuildBridge()
 
     wipe(uiMapIDToCZ); wipe(czToUiMapID); wipe(nameByID)
 
-    -- Continents (zone index 0). GetMapContinents() returns localized names,
-    -- indexed by continent number, on 3.3.5a.
+    local stableMapIDs = buildStableMapLookup(mapId)
+
+    -- Continent indexes are stable in the 3.3.5 client; only their display
+    -- names are localized. Resolve the authored map IDs by canonical identity.
     local continents = { _G.GetMapContinents() }
+    local continentKeys = {
+        [1] = "Kalimdor",
+        [2] = "Eastern Kingdoms",
+        [3] = "Outland",
+        [4] = "Northrend",
+    }
     for c, cname in ipairs(continents) do
-        if type(cname) == "string" then
-            local id = mapId[cname]
-            if id then
-                uiMapIDToCZ[id] = { c, 0 }
-                czToUiMapID[czKey(c, 0)] = id
-                nameByID[id] = cname
-            end
+        local canonical = continentKeys[c]
+        local id = canonical and mapId[canonical]
+        if id then
+            uiMapIDToCZ[id] = { c, 0 }
+            czToUiMapID[czKey(c, 0)] = id
+            nameByID[id] = type(cname) == "string" and cname or canonical
         end
     end
 
-    -- Zones within each continent, matched by localized name.
+    -- Astrolabe.ContinentList contains locale-independent map-file tokens in
+    -- the same indexes as the localized GetMapZones() result.
     for c = 1, #continents do
-        local zones = { _G.GetMapZones(c) }
-        for zoneIdx, zoneName in ipairs(zones) do
-            if type(zoneName) == "string" then
-                local id = mapId[zoneName]
-                if id then
-                    uiMapIDToCZ[id] = { c, zoneIdx }
-                    czToUiMapID[czKey(c, zoneIdx)] = id
-                    nameByID[id] = zoneName
-                end
+        local localizedZones = { _G.GetMapZones(c) }
+        local mapFiles = Astrolabe.ContinentList and
+                             Astrolabe.ContinentList[c] or {}
+        for zoneIdx, mapFile in ipairs(mapFiles) do
+            local canonical = legacyMapFileAliases[mapFile]
+            local id = canonical and mapId[canonical]
+            if not id then
+                local key = normalizeMapName(mapFile)
+                id = key and stableMapIDs[key]
+                if id == false then id = nil end
+            end
+            -- English clients can still resolve unusual private-server map
+            -- tokens from their display name, but localized names are never
+            -- treated as identity.
+            if not id then id = mapId[localizedZones[zoneIdx]] end
+            if id then
+                uiMapIDToCZ[id] = { c, zoneIdx }
+                czToUiMapID[czKey(c, zoneIdx)] = id
+                nameByID[id] = localizedZones[zoneIdx] or canonical or mapFile
             end
         end
     end
@@ -133,7 +199,12 @@ end)
 local function currentPlayerUiMapID()
     local mapId = addon and addon.mapId
     if not mapId then return nil end
-    return mapId[_G.GetSubZoneText()] or mapId[_G.GetZoneText()] or mapId[_G.GetRealZoneText()]
+    if not bridgeBuilt then BuildBridge() end
+    local c, z = Astrolabe:GetCurrentPlayerPosition()
+    local id = c and czToUiMapID[czKey(c, z or 0)]
+    if id then return id end
+    return mapId[_G.GetSubZoneText()] or mapId[_G.GetZoneText()] or
+               mapId[_G.GetRealZoneText()]
 end
 
 --=========================================================================
@@ -422,7 +493,15 @@ local legacyAreaNames = {
 }
 
 function C_Map.GetAreaInfo(areaID)
-    return legacyAreaNames[tonumber(areaID)]
+    areaID = tonumber(areaID)
+    local name = legacyAreaNames[areaID]
+    if not name and addon and type(addon.LegacyAreaNames335) == "table" then
+        name = addon.LegacyAreaNames335[areaID]
+    end
+    if name and addon and type(addon.LocalizeLegacyLocationName) == "function" then
+        return addon.LocalizeLegacyLocationName(name)
+    end
+    return name
 end
 
 -- GetWorldPosFromMapPos(uiMapID, mapPos) -> instanceID, worldVector
