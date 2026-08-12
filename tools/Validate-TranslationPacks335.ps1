@@ -10,6 +10,59 @@ function Join-RepoPath([string]$Relative) {
     $native = $Relative -replace '[\\/]', [IO.Path]::DirectorySeparatorChar
     return Join-Path $RepoRoot $native
 }
+function Get-CanonicalJson([string]$Path) {
+    $document = [IO.File]::ReadAllText($Path) | ConvertFrom-Json
+    return $document | ConvertTo-Json -Depth 20 -Compress
+}
+function Decode-ForPrint([string]$Encoded) {
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()'
+    $values = @{}
+    for ($index = 0; $index -lt $alphabet.Length; $index++) {
+        $values[$alphabet[$index]] = $index
+    }
+    $bytes = New-Object Collections.Generic.List[byte]
+    [uint64]$cache = 0
+    $bits = 0
+    foreach ($character in $Encoded.ToCharArray()) {
+        if (-not $values.ContainsKey($character)) {
+            throw "Invalid LibDeflate print character '$character'."
+        }
+        $cache += [uint64]$values[$character] *
+            [uint64][math]::Pow(2, $bits)
+        $bits += 6
+        while ($bits -ge 8) {
+            $bytes.Add([byte]($cache % 256))
+            $cache = [uint64][math]::Floor($cache / 256)
+            $bits -= 8
+        }
+    }
+    return ,$bytes.ToArray()
+}
+function Get-PackPayload([string]$Path) {
+    $text = [IO.File]::ReadAllText($Path)
+    $payloadBlock = [regex]::Match($text,
+        '(?s)local payload = table\.concat\(\{(.*?)\}\)')
+    if (-not $payloadBlock.Success) {
+        throw "Could not read compiled translation payload: $Path"
+    }
+    $encoded = (@([regex]::Matches($payloadBlock.Groups[1].Value,
+        '"([A-Za-z0-9()]+)"') | ForEach-Object {
+            $_.Groups[1].Value
+        }) -join '')
+    $compressed = Decode-ForPrint $encoded
+    $input = New-Object IO.MemoryStream(,([byte[]]$compressed))
+    $inflater = New-Object IO.Compression.DeflateStream($input,
+        [IO.Compression.CompressionMode]::Decompress)
+    $output = New-Object IO.MemoryStream
+    try {
+        $inflater.CopyTo($output)
+        return [Convert]::ToBase64String($output.ToArray())
+    } finally {
+        $inflater.Dispose()
+        $input.Dispose()
+        $output.Dispose()
+    }
+}
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) `
     ('rxp-translations-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
@@ -47,8 +100,8 @@ try {
         $committedCatalog = Join-RepoPath `
             ("translations/imported/" + $outputName)
         if (-not (Test-Path -LiteralPath $committedCatalog -PathType Leaf) -or
-            [Convert]::ToBase64String([IO.File]::ReadAllBytes($generatedCatalog)) -ne
-            [Convert]::ToBase64String([IO.File]::ReadAllBytes($committedCatalog))) {
+            (Get-CanonicalJson $generatedCatalog) -cne
+            (Get-CanonicalJson $committedCatalog)) {
             throw "Imported translation catalog is stale: translations/imported/$outputName"
         }
     }
@@ -67,11 +120,7 @@ try {
         if (-not (Test-Path -LiteralPath $committed -PathType Leaf)) {
             throw "Missing compiled runtime pack for $locale."
         }
-        $left = [IO.File]::ReadAllBytes($generated)
-        $right = [IO.File]::ReadAllBytes($committed)
-        if ($left.Length -ne $right.Length -or
-            [Convert]::ToBase64String($left) -ne
-            [Convert]::ToBase64String($right)) {
+        if ((Get-PackPayload $generated) -cne (Get-PackPayload $committed)) {
             throw "Compiled runtime pack is stale: locale/GuidePack.$locale.lua"
         }
         if ($RequireLua) {
@@ -133,11 +182,8 @@ assert(payload:find(string.char(30), 1, true))
             if (-not (Test-Path -LiteralPath $committedAllowlist -PathType Leaf)) {
                 throw "Missing documented $locale fallback allowlist."
             }
-            $generatedText = [IO.File]::ReadAllText($generatedAllowlist).
-                Replace("`r`n", "`n").TrimEnd("`r", "`n")
-            $committedText = [IO.File]::ReadAllText($committedAllowlist).
-                Replace("`r`n", "`n").TrimEnd("`r", "`n")
-            if ($generatedText -cne $committedText) {
+            if ((Get-CanonicalJson $generatedAllowlist) -cne
+                (Get-CanonicalJson $committedAllowlist)) {
                 throw "The documented $locale fallback allowlist is stale."
             }
         }
