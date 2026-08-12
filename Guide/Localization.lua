@@ -15,6 +15,7 @@ service.englishNames = {
     spells = {},
     factions = {},
 }
+service.englishObjectives = {}
 
 local locale = GetLocale()
 local supported = {
@@ -169,6 +170,28 @@ end
 function service:IndexEnglishGuideSource(source)
     if type(source) ~= "string" then return end
     for line in source:gmatch("[^\r\n]+") do
+        -- Guide comments are deliberately removed before directive parsing,
+        -- but many `.complete` comments contain the authored English
+        -- objective name. Capture that display-only metadata first so
+        -- Original English mode on a localized client does not need generic
+        -- "Complete objective N" wording.
+        local completeArgs, objectiveName = line:match(
+            "^%s*%.complete%s+([^>]-)%s*%-%-%s*(.-)%s*$")
+        if completeArgs and objectiveName then
+            local questId, objective = completeArgs:match(
+                "^%-?(%d+)%s*,%s*(%d+)")
+            questId, objective = tonumber(questId), tonumber(objective)
+            objectiveName = StripMarkup(
+                objectiveName:gsub("%s*<<.*$", ""):gsub("%s*%(%d+%)%s*$", ""))
+            if questId and objective and objectiveName ~= "" then
+                local objectives = self.englishObjectives[questId]
+                if not objectives then
+                    objectives = {}
+                    self.englishObjectives[questId] = objectives
+                end
+                objectives[objective] = objectives[objective] or objectiveName
+            end
+        end
         local dailyTag, dailyIds, dailyText = line:match(
             "^%s*%.([%a]+)%s+([^>]+)>>%s*(.-)%s*$")
         if (dailyTag == "daily" or dailyTag == "dailyturnin") and
@@ -859,15 +882,19 @@ local function GeneratedEnglish(element, current)
                          ("Collect Item #" .. tostring(element.id))
         return text
     elseif tag == "complete" and element.questId then
-        local objectiveText = type(element.sourceLine) == "string" and
-                                  element.sourceLine:match("%-%-%s*(.-)%s*$")
+        local questId, objective = tonumber(element.questId),
+                                       tonumber(element.obj) or 1
+        local indexed = questId and service.englishObjectives[questId]
+        local objectiveText = indexed and indexed[objective]
+        objectiveText = objectiveText or
+                            (type(element.sourceLine) == "string" and
+                                 element.sourceLine:match("%-%-%s*(.-)%s*$"))
         if objectiveText and objectiveText ~= "" then
             objectiveText = objectiveText:gsub("%s*%(%d+%)%s*$", "")
             return objectiveText
         end
-        local quest = service.englishNames.quests[tonumber(element.questId)] or
+        local quest = service.englishNames.quests[questId] or
                           ("Quest #" .. tostring(element.questId))
-        local objective = tonumber(element.obj) or 1
         return "Complete objective " .. objective .. " for " .. quest
     elseif tag == "reputation" and element.faction then
         local faction = service.englishNames.factions[tonumber(element.faction)] or
@@ -932,6 +959,14 @@ end
 
 local function SourceFor(text, element, field, localized)
     if type(element) ~= "table" then return text, false end
+    -- On an English client the live quest log already supplies the best
+    -- English objective wording and counters. Preserve the pre-localization
+    -- behavior for generated/dynamic elements instead of replacing it with a
+    -- synthetic catalog sentence.
+    if not localized and englishClient and not element.sourceAuthored and
+       type(text) == "string" and Trim(text) ~= "" and Trim(text) ~= " " then
+        return text, true, nil
+    end
     -- Quest objectives supplied by the client are already authoritative and
     -- localized. Preserve those live counters/descriptions in translated mode;
     -- English mode uses the stable quest/objective formatter below.

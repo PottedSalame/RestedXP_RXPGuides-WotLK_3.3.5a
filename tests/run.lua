@@ -324,6 +324,8 @@ local collectOutput = addon.guideLocalization:Render(
     "Collect Relic\n2/5", collectElement)
 check(collectOutput == "收集 Relic\n2/5",
       "live objective progress was frozen into the translation lookup")
+addon.guideLocalization:IndexEnglishGuideSource(
+    ".complete 834,1 --Sack of Supplies (5)")
 local uiOutput, uiMetadata =
     addon.guideLocalization:UIWithMetadata("Compact label")
 check(uiOutput == "紧凑标签" and uiMetadata.machine,
@@ -333,6 +335,57 @@ local englishOutput = addon.guideLocalization:Render(machineSource)
 check(englishOutput == machineSource and
           not englishOutput:find("[MT]", 1, true),
       "Original English mode retained a translation status badge")
+
+local englishObjective = addon.guideLocalization:Render(
+    "Localized objective: 2/5", {
+        tag = "complete", questId = 834, obj = 1,
+        sourceAuthored = false,
+    })
+check(englishObjective == "Sack of Supplies\n2/5",
+      "Original English mode discarded the indexed objective name")
+
+-- English clients must retain the exact live quest-log objective instead of
+-- replacing it with a synthetic "Complete objective N" sentence.
+_G.GetLocale = function() return "enUS" end
+addon.locale = {}
+addon.settings = {profile = {guideLanguage = "localized"}}
+loadAddonFile("Guide/Localization.lua", addon)
+local liveEnglishObjective = "Sack of Supplies: 2/5"
+local preservedObjective = addon.guideLocalization:Render(
+    liveEnglishObjective, {
+        tag = "complete", questId = 834, obj = 1,
+        sourceAuthored = false,
+    })
+check(preservedObjective == liveEnglishObjective,
+      "English client objective text was replaced with generated prose")
+
+-- Every supported non-English locale shares the same safe objective path:
+-- localized mode keeps the client's authoritative text, while Original
+-- English uses the pre-parser objective catalog and retains the live count.
+for _, localeCode in ipairs({
+    "deDE", "esES", "frFR", "koKR", "ruRU", "zhCN", "zhTW",
+}) do
+    _G.GetLocale = function() return localeCode end
+    addon.locale = {}
+    addon.settings = {profile = {guideLanguage = "localized"}}
+    loadAddonFile("Guide/Localization.lua", addon)
+    addon.guideLocalization:IndexEnglishGuideSource(
+        ".complete 834,1 --Sack of Supplies (5)")
+    local objective = {
+        tag = "complete", questId = 834, obj = 1,
+        sourceAuthored = false,
+    }
+    local localizedObjective = "Localized " .. localeCode .. ": 2/5"
+    local localizedOutput, localizedMeta = addon.guideLocalization:Render(
+        localizedObjective, objective)
+    check(localizedOutput == localizedObjective and localizedMeta.official,
+          localeCode .. " client objective text was replaced")
+    addon.guideLocalization:SetMode("english")
+    local originalEnglish = addon.guideLocalization:Render(
+        localizedObjective, objective)
+    check(originalEnglish == "Sack of Supplies\n2/5",
+          localeCode .. " Original English objective was generated incorrectly")
+end
 
 if failures > 0 then os.exit(1) end
 print("Core Lua 5.1 tests passed.")
