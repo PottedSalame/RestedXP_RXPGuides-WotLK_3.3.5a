@@ -903,14 +903,19 @@ function addon.GetNpcName(id)
 end
 
 function addon.ReplaceNpcIds(textLine,element)
+    -- Guide display formatters may return a second metadata value.  Treat an
+    -- object without a real guide step like the historical one-argument call
+    -- instead of assuming every table is a parsed element.
+    local step = type(element) == "table" and
+                     type(element.step) == "table" and element.step or nil
     textLine = textLine:gsub("npc:(.-):(%d+)",function(name,id)
-        if not element or element.step.active then
+        if not step or step.active then
             return addon.GetNpcName(tonumber(id)) or name
         else
             return id
         end
     end)
-    if element and not element.step.active then
+    if step and not step.active then
         return textLine:gsub("::%d+","")
     end
     for name,npcId in string.gmatch(textLine, "|c%x%x%x%x%x%x%x%x([^|:]+)::(%d+)|r") do
@@ -1196,7 +1201,7 @@ function addon.functions.accept(self, ...)
         if text and text ~= "" then
             element.text = text
         else
-            element.text = _G.ACCEPT .. " *quest*"
+            element.text = "Accept *quest*"
             element.requestFromServer = true
         end
         if element.text:find("%*quest%*") then
@@ -1438,7 +1443,7 @@ function addon.functions.turnin(self, ...)
         if text and text ~= "" then
             element.text = text
         else
-            element.text = _G.TURN_IN_QUEST .. " *quest*"
+            element.text = "Turn in *quest*"
             element.requestFromServer = true
         end
         if element.text:find("%*quest%*") then
@@ -1953,6 +1958,7 @@ addon.functions["goto"] = function(self, ...)
         else
             zone = lastZone
         end
+        element.sourceLocation = zone
         --print(zone)
         local subzone,continent = zone:match("(.-)/(%d+)")
         if subzone then
@@ -2621,6 +2627,7 @@ function addon.functions.home(self, ...)
         local element = {}
         local text, location = ...
         element.tag = "home"
+        element.sourceLocation = location
         local locationID = tonumber(location)
         element.locationID = locationID
         if locationID then
@@ -2735,6 +2742,7 @@ function addon.functions.fp(self, ...)
         local element = {}
         local text, location, skipStep = ...
         element.tag = "fp"
+        element.sourceLocation = location
         element.confirm = 0
         if skipStep then
             element.text = text
@@ -2827,6 +2835,7 @@ function addon.functions.fly(self, ...)
         local element = {}
         local text, location = ...
         element.tag = "fly"
+        element.sourceLocation = location
 
         if text and text ~= "" then
             element.text = text
@@ -4578,6 +4587,7 @@ function addon.functions.zone(self, ...)
                            ": Invalid map name\n" .. self)
         end
         element.map = mapID
+        element.sourceLocation = zone
         element.icon = addon.icons["goto"]
         if text and text ~= "" then
             element.text = text

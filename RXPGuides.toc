@@ -18,6 +18,9 @@ locale\locales.xml
 
 # --- Core runtime and stable compatibility facade. ---
 Core\Locale.lua
+Guide\Localization.lua
+locale\GuideCatalogs.lua
+locale\GuideExact.zhCN.lua
 Core\Services.lua
 Core\Scheduler.lua
 Core\Storage.lua
@@ -44,6 +47,7 @@ Compat\LocationLocales335.lua
 DB\wotlk\dungeonData_335.lua
 DB\wotlk\questPrerequisites_335.lua
 DB\wotlk\compatibilityPacks_335.lua
+DB\wotlk\guideEnglishNames_335.lua
 DB\questDB.lua
 # Prefer the existing level-bracketed speedrun weights, then fill missing Wrath
 # classes/specs with the 3.3.5 fallback table.

@@ -331,7 +331,12 @@ end
 function addon.RegisterGuide(groupOrContent, text, defaultFor)
     if not groupOrContent then
         return error('Guide has no contents')
-    elseif addon.addonLoaded then
+    end
+    if addon.guideLocalization and
+       addon.guideLocalization.IndexEnglishGuideSource then
+        addon.guideLocalization:IndexEnglishGuideSource(text or groupOrContent)
+    end
+    if addon.addonLoaded then
         local importedGuide, errorMsg = addon.ParseGuide(groupOrContent, text,
                                                         defaultFor)
 
@@ -838,6 +843,32 @@ local function parseLine(linetext,step,parsingLogic)
         addon.lastObjective = element
     end
 
+    -- Keep authored English immutable. Runtime handlers are free to update
+    -- element.text with live counters and localized server names, but display
+    -- language changes always have a canonical source to return to.
+    if element then
+        element.sourceAuthored = (type(text) == "string" and text ~= "") or
+                                     line:sub(1, 1) == "+" or
+                                     line:sub(1, 1) == "*"
+        if type(text) == "string" and text ~= "" then
+            element.sourceText = text
+        elseif type(element.text) == "string" then
+            element.sourceText = element.text
+        end
+        if type(element.tooltipText) == "string" and
+           type(element.sourceText) == "string" then
+            local sourceIcon = element.tooltipText:match("^(|T.-|t%s*)") or ""
+            element.sourceTooltipText = sourceIcon .. element.sourceText
+        else
+            element.sourceTooltipText = element.tooltipText
+        end
+        element.sourceRawText = element.rawtext
+        element.sourceMapTooltip = element.mapTooltip
+        element.sourceTitle = element.title
+        element.sourceArrowText = element.arrowtext
+        element.sourceLine = linetext
+    end
+
     --[[if RXPData.localeTable and element and element.text then
         RXPData.localeTable[element.text] = ""
     end]]
@@ -861,6 +892,10 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
 
     addon.lastObjective = nil
     if not groupOrContent then return end
+    if addon.guideLocalization and
+       addon.guideLocalization.IndexEnglishGuideSource then
+        addon.guideLocalization:IndexEnglishGuideSource(text or groupOrContent)
+    end
 
     local playerLevel = UnitLevel("player")
     local parentGroup
@@ -1032,8 +1067,21 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
         --guide.lowPrio = groupOrContent
     end
 
+    guide.sourceGroup = guide.group
+    guide.sourceName = guide.name
+    guide.sourceDisplayName = guide.displayname or guide.name
+    guide.sourceSubgroup = guide.subgroup
+    guide.sourceTitle = guide.title
+    guide.sourceSomName = guide.somname
+    guide.sourceEraName = guide.eraname
     guide.displayname = addon.settings.ReplaceColors(guide.displayname or guide.name)
     guide.name = guide.name:gsub("^(%d)-(%d%d?)", addon.affix)
+
+    for _, parsedStep in ipairs(guide.steps) do
+        parsedStep.sourceTitle = parsedStep.title
+        parsedStep.sourceMapTooltip = parsedStep.mapTooltip
+        parsedStep.sourceArrowText = parsedStep.arrowtext
+    end
 
     guide.key = addon.BuildGuideKey(guide)
     guide.version = tonumber(guide.version) or 0

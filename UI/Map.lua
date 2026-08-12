@@ -120,14 +120,16 @@ function addon.DrawArrow(self)
         local title = step and (step.arrowtext or step.title or step.index and
             string.format(addon.locale.Get("Step %d"), step.index))
         if element.title then
-            local elementTitle = addon.locale.GuideText(element.title)
+            local elementTitle = addon.locale.GuideText(element.title, element,
+                                                        "title")
             for RXP_ in string.gmatch(elementTitle, "RXP_[A-Z]+_") do
                 elementTitle = elementTitle:gsub(RXP_, addon.guideTextColors[RXP_] or
                                                   addon.guideTextColors.default["error"])
             end
             self.text:SetText(string.format("%s\n(%dyd)", elementTitle, dist))
         elseif title then
-            title = addon.locale.GuideText(title)
+            local field = step and step.arrowtext and "arrowtext" or "title"
+            title = addon.locale.GuideText(title, step or element, field)
             for RXP_ in string.gmatch(title, "RXP_[A-Z]+_") do
                 title = title:gsub(RXP_, addon.guideTextColors[RXP_] or addon.guideTextColors.default["error"])
             end
@@ -165,6 +167,7 @@ local function PinOnEnter(self)
     _G.GameTooltip:ClearLines()
     local lines = 0
     local lastStep
+    local translationFallback = false
 
     for _, element in pairs(pin.elements or showTooltip or {}) do
         local parent = element.parent
@@ -184,13 +187,22 @@ local function PinOnEnter(self)
             text = parent.mapTooltip or parent.tooltipText or hiddentext or parent.text or ""
             local title = step.mapTooltip or step.title or step.index and ("Step " .. step.index) or step.tip and "Tip"
             if title and title ~= lastStep then
+                local titleField = step.mapTooltip and "mapTooltip" or "title"
+                local renderedTitle, titleMeta = addon.guideLocalization:Render(
+                    title, step, titleField)
+                translationFallback = translationFallback or
+                                          (titleMeta and titleMeta.fallback) or false
                 _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
-                    icon .. addon.locale.GuideText(title)),
+                    icon .. renderedTitle),
                     unpack(addon.colors.mapPins))
                 lastStep = title
             end
-            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
-                debug .. addon.locale.GuideText(text)))
+            local renderedText, textMeta = addon.guideLocalization:Render(text, parent,
+                parent.tooltipText and "tooltipText" or
+                (parent.mapTooltip and "mapTooltip" or "text"))
+            translationFallback = translationFallback or
+                                      (textMeta and textMeta.fallback) or false
+            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug .. renderedText))
             lines = lines + 1
         elseif not parent and not element.hideTooltip then
             local hiddentext = step.hiddentext
@@ -200,15 +212,30 @@ local function PinOnEnter(self)
             text = element.mapTooltip or element.tooltipText or hiddentext or step.text or ""
             local title = step.mapTooltip or step.title or step.index and ("Step " .. step.index) or step.tip and "Tip"
             if title and step ~= lastStep then
+                local titleField = step.mapTooltip and "mapTooltip" or "title"
+                local renderedTitle, titleMeta = addon.guideLocalization:Render(
+                    title, step, titleField)
+                translationFallback = translationFallback or
+                                          (titleMeta and titleMeta.fallback) or false
                 _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
-                    icon .. addon.locale.GuideText(title)),
+                    icon .. renderedTitle),
                     unpack(addon.colors.mapPins))
                 lastStep = title
             end
-            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
-                debug .. addon.locale.GuideText(text)))
+            local renderedText, textMeta = addon.guideLocalization:Render(text, element,
+                element.tooltipText and "tooltipText" or
+                (element.mapTooltip and "mapTooltip" or "text"))
+            translationFallback = translationFallback or
+                                      (textMeta and textMeta.fallback) or false
+            _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug .. renderedText))
             lines = lines + 1
         end
+    end
+
+    if translationFallback and addon.guideLocalization then
+        _G.GameTooltip:AddLine(
+            addon.guideLocalization:GetFallbackExplanation(),
+            0.65, 0.65, 0.65, true)
     end
 
     _G.GameTooltip:SetShown(lines > 0)
@@ -1255,6 +1282,12 @@ if addon.gameVersion and addon.gameVersion < 40000 then
             end
         end)
     end)
+end
+
+function addon.RefreshNavigationLanguage()
+    af.distance = nil
+    af.forceUpdate = true
+    if addon.currentGuide then addon.UpdateMap(true) end
 end
 
 local scale = 0

@@ -47,8 +47,16 @@ local function GuideKey(guide)
 end
 
 local function DisplayName(guide)
-    return addon.GetGuideName(guide) or guide.displayname or guide.name or
-               L("Unnamed guide")
+    local name, meta = addon.GetGuideName(guide, true)
+    return name or guide.displayname or guide.name or L("Unnamed guide"), meta
+end
+
+local function DisplayGroup(group)
+    local source = tostring(group or ""):gsub("^[*+]", "")
+    if addon.guideLocalization then
+        return addon.guideLocalization:RenderGroup(source)
+    end
+    return source
 end
 
 local function Availability(guide)
@@ -92,11 +100,19 @@ local function BuildGuideList()
             if key and modeMatches and not seen[key] then
                 seen[key] = true
                 local active, reason = Availability(guide)
+                local displayGroup, groupMeta = DisplayGroup(group)
+                local displayName, nameMeta = DisplayName(guide)
                 table.insert(output, {
                     guide = guide,
                     key = key,
-                    group = group,
-                    name = DisplayName(guide),
+                    group = displayGroup,
+                    canonicalGroup = group,
+                    name = displayName,
+                    canonicalName = guide.sourceDisplayName or guide.displayname or
+                                        guide.name or "",
+                    translationFallback = (groupMeta and groupMeta.fallback) or
+                                              (nameMeta and nameMeta.fallback) or
+                                              nil,
                     active = active,
                     reason = reason
                 })
@@ -124,7 +140,9 @@ function hub:GetFilteredGuides()
         local favorite = RXPData.guideHub.favorites[entry.key]
         local textMatch = search == "" or
             lower(entry.name):find(search, 1, true) or
-            lower(entry.group):find(search, 1, true)
+            lower(entry.group):find(search, 1, true) or
+            lower(entry.canonicalName or ""):find(search, 1, true) or
+            lower(entry.canonicalGroup or ""):find(search, 1, true)
         local guide = entry.guide
         local condition = type(guide.enabledFor) == "string" and
                               guide.enabledFor or ""
@@ -235,7 +253,7 @@ function hub:RefreshRows()
         if entry then
             row:Show()
             row.name:SetText(entry.name)
-            row.group:SetText(entry.group:gsub("^[*+]", ""))
+            row.group:SetText(entry.group)
             row.favorite:SetText(entry.favorite and "|cffffd100*|r" or "+")
             if entry.active then
                 row.name:SetTextColor(1, 0.82, 0)
@@ -413,6 +431,22 @@ function hub:CreateFrame()
                 hub:ToggleFavorite(self.entry)
             else
                 hub:Select(self.entry)
+            end
+        end)
+        row:SetScript("OnEnter", function(self)
+            if self.entry and self.entry.translationFallback and
+               addon.guideLocalization then
+                _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                _G.GameTooltip:ClearLines()
+                _G.GameTooltip:AddLine(
+                    addon.guideLocalization:GetFallbackExplanation(),
+                    0.65, 0.65, 0.65, true)
+                _G.GameTooltip:Show()
+            end
+        end)
+        row:SetScript("OnLeave", function(self)
+            if self.entry and self.entry.translationFallback then
+                _G.GameTooltip:Hide()
             end
         end)
         row:RegisterForClicks("LeftButtonUp", "RightButtonUp")

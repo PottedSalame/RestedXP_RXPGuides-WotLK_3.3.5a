@@ -359,6 +359,7 @@ local settingsDBDefaults = {
         xprate = 1,
         guideFontSize = 9,
         guideScrollSteps = 1,
+        guideLanguage = "localized",
         activeItemsScale = 1,
         maxSoulShards = 100,
         preflightLookahead = 20,
@@ -3592,6 +3593,42 @@ function addon.settings:CreateAceOptionsPanel()
                             SetProfileOption(info,
                                 math.floor(tonumber(value) or 1))
                         end
+                    },
+                    guideLanguage = {
+                        name = addon.guideLocalization and
+                            addon.guideLocalization:UI("Guide Language") or
+                            "Guide Language",
+                        desc = addon.guideLocalization and
+                            addon.guideLocalization:UI(
+                                "Translated (client language)") or
+                            "Translated (client language)",
+                        type = "select",
+                        style = "radio",
+                        width = optionsWidth,
+                        order = 3.35,
+                        values = function()
+                            local localization = addon.guideLocalization
+                            return {
+                                localized = localization and localization:UI(
+                                    "Translated (client language)") or
+                                    "Translated (client language)",
+                                english = localization and localization:UI(
+                                    "Original English") or "Original English",
+                            }
+                        end,
+                        sorting = {"localized", "english"},
+                        get = function()
+                            return self.profile.guideLanguage or "localized"
+                        end,
+                        set = function(_, value)
+                            self.profile.guideLanguage = value == "english" and
+                                                             "english" or
+                                                             "localized"
+                            if addon.guideLocalization then
+                                addon.guideLocalization:SetMode(
+                                    self.profile.guideLanguage)
+                            end
+                        end,
                     },
                     anchorOrientation = {
                         name = L("Current step frame anchor"),

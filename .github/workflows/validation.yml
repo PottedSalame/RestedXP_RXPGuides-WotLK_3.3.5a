@@ -35,6 +35,10 @@ jobs:
         shell: pwsh
         run: ./tools/Validate-Guides335.ps1
 
+      - name: Validate multilingual guide display catalogs
+        shell: pwsh
+        run: ./tools/Validate-GuideTranslations335.ps1
+
       - name: Validate quest flow
         shell: pwsh
         run: ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation

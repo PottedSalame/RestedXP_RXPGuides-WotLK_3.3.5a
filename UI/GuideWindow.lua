@@ -1050,10 +1050,19 @@ function addon.SetStep(n, n2, loopback)
                         return
                     end
                     local element = self.element or self:GetParent().element
-                    if element and element.tooltip then
+                    if element and (element.tooltip or
+                       element.guideTranslationFallback) then
                         _G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -10)
                         _G.GameTooltip:ClearLines()
-                        _G.GameTooltip:AddLine(element.tooltip, 1, 1, 1)
+                        if element.tooltip then
+                            _G.GameTooltip:AddLine(element.tooltip, 1, 1, 1)
+                        end
+                        if element.guideTranslationFallback and
+                           addon.guideLocalization then
+                            _G.GameTooltip:AddLine(
+                                addon.guideLocalization:GetFallbackExplanation(),
+                                0.65, 0.65, 0.65, true)
+                        end
                         _G.GameTooltip:Show()
                     end
                 end
@@ -1063,7 +1072,8 @@ function addon.SetStep(n, n2, loopback)
                         return
                     end
                     local element = self.element or self:GetParent().element
-                    if element and element.tooltip then
+                    if element and (element.tooltip or
+                       element.guideTranslationFallback) then
                         _G.GameTooltip:Hide()
                     end
                 end
@@ -1236,8 +1246,8 @@ function CurrentStepFrame.EventHandler(self, event, ...)
     end
 end
 
-function CurrentStepFrame.UpdateText()
-    addon.updateStepText = false
+function CurrentStepFrame.UpdateText(languageRefresh)
+    if not languageRefresh then addon.updateStepText = false end
     local guide = addon.currentGuide
     if not guide then return end
 
@@ -1273,8 +1283,9 @@ function CurrentStepFrame.UpdateText()
                 anchor = c
             end
 
-            stepframe.number.text:SetText(step.title or
-                                            (fmt(L("Step %d"), loopStepIndex)))
+            stepframe.number.text:SetText(step.title and
+                addon.locale.GuideText(step.title, step, "title") or
+                (fmt(L("Step %d"), loopStepIndex)))
             stepframe.number:SetSize(stepframe.number.text:GetStringWidth() + 10, 17)
 
             e = 0
@@ -1305,9 +1316,11 @@ function CurrentStepFrame.UpdateText()
 
                          -- Prevent text from overwritten with " ", could be stale text
                         if element.text ~= ' ' then
-                            elementFrame.text:SetText(addon.ReplaceNpcIds(
-                                addon.locale.GuideText(element.text)))
-                        else
+                            local renderedText = addon.locale.GuideText(
+                                element.text, element, "text")
+                            elementFrame.text:SetText(
+                                addon.ReplaceNpcIds(renderedText, element))
+                        elseif not languageRefresh then
                             element.requestFromServer = true
                         end
 
@@ -1333,7 +1346,7 @@ function CurrentStepFrame.UpdateText()
                         if element.textOnly then
                             elementFrame.button:SetChecked(true)
                             elementFrame.button:Hide()
-                            element.completed = true
+                            if not languageRefresh then element.completed = true end
                         else
                             elementFrame.button:Show()
                         end
@@ -1344,7 +1357,7 @@ function CurrentStepFrame.UpdateText()
                         elementFrame:SetAlpha(0)
                         elementFrame.button:Hide()
                         elementFrame:SetHeight(1)
-                        element.completed = true
+                        if not languageRefresh then element.completed = true end
                         spacing = 1
                     end
 
@@ -1620,6 +1633,22 @@ Footer:SetScript("OnMouseDown", GuideName.OnMouseDown)
 
 GuideName:SetScript("OnMouseUp", GuideName.OnMouseUp)
 Footer:SetScript("OnMouseUp", GuideName.OnMouseUp)
+GuideName:SetScript("OnEnter", function(self)
+    if addon.currentGuide and addon.currentGuide.guideTitleFallback and
+       addon.guideLocalization then
+        _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        _G.GameTooltip:ClearLines()
+        _G.GameTooltip:AddLine(
+            addon.guideLocalization:GetFallbackExplanation(),
+            0.65, 0.65, 0.65, true)
+        _G.GameTooltip:Show()
+    end
+end)
+GuideName:SetScript("OnLeave", function()
+    if addon.currentGuide and addon.currentGuide.guideTitleFallback then
+        _G.GameTooltip:Hide()
+    end
+end)
 
 --[[GuideName:SetScript("OnEnter", function() Footer.cog:Show() end)
 GuideName:SetScript("OnLeave", function()
@@ -1746,20 +1775,28 @@ ScrollFrame:SetScript("OnMouseWheel", function(_, delta)
     BottomFrame:ScrollBySteps(delta)
 end)
 
-function addon.GetGuideName(guide)
+function addon.GetGuideName(guide, returnMetadata)
     if not guide then guide = addon.currentGuide end
     local som = addon.settings.profile.season == 1
     --sod p2
     --[[if addon.settings.profile.season == 2 and UnitLevel("player") < 25 then
         som = true
     end]]
+    local value
     if som and guide.somname then
-        return guide.somname
+        value = guide.sourceSomName or guide.somname
     elseif not som and guide.eraname then
-        return guide.eraname
+        value = guide.sourceEraName or guide.eraname
     else
-        return guide.displayname
+        value = guide.sourceDisplayName or guide.displayname
     end
+    if addon.guideLocalization then
+        local rendered, metadata =
+            addon.guideLocalization:RenderGuideName(guide, value)
+        if returnMetadata then return rendered, metadata end
+        return rendered
+    end
+    return value
 end
 
 RXPFrame.bottomMenu = {
@@ -1780,6 +1817,14 @@ RXPFrame.bottomMenu = {
         notCheckable = 1,
         text = L("Select another guide"),
         func = RXPFrame.DropDownMenu
+    }, {
+        text = addon.guideLocalization and
+                   addon.guideLocalization:UI("Guide Language") or
+                   "Guide Language",
+        notCheckable = 1,
+        hasArrow = true,
+        menuList = addon.guideLocalization and
+                       addon.guideLocalization:Menu() or {},
     }, {
         text = L("Reload Guide"),
         notCheckable = 1,
@@ -2248,7 +2293,17 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     RXPCData.currentGuideName = guide.name
     RXPCData.currentGuideGroup = guide.group
     addon.UpdateBrowseModeButton()
-    local guidename = guide.title or addon.GetGuideName(guide)
+    local guidename, titleMeta, subgroupMeta
+    if guide.title then
+        local sourceTitle = guide.sourceTitle or guide.title
+        if addon.guideLocalization then
+            guidename, titleMeta = addon.guideLocalization:RenderTitle(sourceTitle)
+        else
+            guidename = sourceTitle
+        end
+    else
+        guidename, titleMeta = addon.GetGuideName(guide, true)
+    end
     -- OnEnable may still be called by some AceAddon revisions after an earlier
     -- initialization error. Ensure this lazily-created FontString is usable so
     -- restoring a guide cannot produce a second, misleading cascade error.
@@ -2259,10 +2314,16 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
                             guideFontSize + 2, "")
     end
     if guide.subgroup and not guide.title then
-        GuideName.text:SetText(guidename .. "\n" .. guide.subgroup)
+        local subgroup = guide.sourceSubgroup or guide.subgroup
+        if addon.guideLocalization then
+            subgroup, subgroupMeta = addon.guideLocalization:RenderTitle(subgroup)
+        end
+        GuideName.text:SetText(guidename .. "\n" .. subgroup)
     else
         GuideName.text:SetText(guidename:gsub("\\n","\n"))
     end
+    guide.guideTitleFallback = (titleMeta and titleMeta.fallback) or
+                                   (subgroupMeta and subgroupMeta.fallback) or nil
 
     guide.labels = {}
 
@@ -2360,11 +2421,20 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
                 self:SetAlpha(1)
                 self:SetBackdropColor(unpack(addon.colors.bottomFrameHighlight))
             end
+            if self.guideTranslationFallback and addon.guideLocalization then
+                _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                _G.GameTooltip:ClearLines()
+                _G.GameTooltip:AddLine(
+                    addon.guideLocalization:GetFallbackExplanation(),
+                    0.65, 0.65, 0.65, true)
+                _G.GameTooltip:Show()
+            end
         end)
         frame:SetScript("OnLeave", function(self)
             self:SetBackdropColor(unpack(self.stepVisualBackground or
                                              addon.colors.bottomFrameBG))
             self:SetAlpha(self.currentAlpha)
+            if self.guideTranslationFallback then _G.GameTooltip:Hide() end
         end)
         frame.timer = 0
         frame.index = n
@@ -2468,7 +2538,53 @@ function addon:ReloadGuide(keepStep)
     return guide and addon:LoadGuide(guide,keepStep)
 end
 
-function BottomFrame.UpdateFrame(self, stepn)
+-- Repaint only presentation state. In particular, this intentionally avoids
+-- LoadGuide/SetStep and skips directive callbacks so changing language cannot
+-- repeat quest, taxi, targeting or item automation.
+function addon.RefreshGuideLanguage()
+    local guide = addon.currentGuide
+    if guide and GuideName and GuideName.text then
+        local guidename, titleMeta, subgroupMeta
+        if guide.title then
+            guidename, titleMeta = addon.guideLocalization:RenderTitle(
+                guide.sourceTitle or guide.title)
+        else
+            guidename, titleMeta = addon.GetGuideName(guide, true)
+        end
+        if guide.subgroup and not guide.title then
+            local subgroup
+            subgroup, subgroupMeta = addon.guideLocalization:RenderTitle(
+                guide.sourceSubgroup or guide.subgroup)
+            GuideName.text:SetText(guidename .. "\n" .. subgroup)
+        else
+            GuideName.text:SetText(guidename:gsub("\\n", "\n"))
+        end
+        guide.guideTitleFallback = (titleMeta and titleMeta.fallback) or
+                                       (subgroupMeta and subgroupMeta.fallback) or nil
+    end
+
+    if CurrentStepFrame and CurrentStepFrame.UpdateText then
+        CurrentStepFrame.UpdateText(true)
+    end
+    for _, frame in ipairs(ScrollChild.framePool or {}) do
+        if frame:IsShown() and frame.step then
+            BottomFrame.UpdateFrame(frame, nil, true)
+        end
+    end
+    if RXPFrame and RXPFrame.GenerateMenuTable then
+        RXPFrame.GenerateMenuTable()
+    end
+    if addon.guideHub and addon.guideHub.Refresh then
+        addon.guideHub:Refresh()
+    end
+    if addon.RefreshNavigationLanguage then
+        addon.RefreshNavigationLanguage()
+    elseif addon.UpdateMap and guide then
+        addon.UpdateMap(true)
+    end
+end
+
+function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
     local level = UnitLevel("player")
 
     if stepPos[0] and ((not self and stepn) or (self and self.step)) and IsFrameShown(self,self and self.step) then
@@ -2488,13 +2604,14 @@ function BottomFrame.UpdateFrame(self, stepn)
         local hideStep = step.level > level or (not IsFrameShown(frame,step))
 
         local text, rawtext, icon
+        local translationFallback = false
         local stepDiff
 
         for _, element in ipairs(frame.step.elements or {}) do
             stepDiff = element.step.index - RXPCData.currentStep
             element.element = element
 
-            if element.requestFromServer then
+            if not languageRefresh and element.requestFromServer then
                 --addon.lastCall = element.tag
                 addon.Call(element.tag,addon.functions[element.tag],element,"WindowUpdate")
                 addon.updateStepText =
@@ -2502,7 +2619,7 @@ function BottomFrame.UpdateFrame(self, stepn)
                         not element.requestFromServer
                 addon.stepUpdateList[element.step.index] =
                     not element.requestFromServer
-            elseif element.tag and
+            elseif not languageRefresh and element.tag and
                 (stepDiff <= 8 and stepDiff >= 0 or element.keepUpdating) then
                 --addon.lastCall = element.tag
                 --addon.functions[element.tag](element,"WindowUpdate")
@@ -2521,8 +2638,12 @@ function BottomFrame.UpdateFrame(self, stepn)
             end
 
             if rawtext and not element.hideTooltip then
-                rawtext = addon.ReplaceNpcIds(
-                    addon.locale.GuideText(rawtext), element)
+                local rendered, meta = addon.guideLocalization:Render(
+                    rawtext, element, element.tooltipText and
+                        "tooltipText" or "text")
+                translationFallback = translationFallback or
+                                          (meta and meta.fallback) or false
+                rawtext = addon.ReplaceNpcIds(rendered, element)
                 if not text then
                     text = "   " .. rawtext
                 else
@@ -2541,6 +2662,7 @@ function BottomFrame.UpdateFrame(self, stepn)
         if frame.text then
             frame.text:SetText(text)
         end
+        frame.guideTranslationFallback = translationFallback or nil
 
         if hideStep then
             fheight = 1
@@ -2569,6 +2691,7 @@ function BottomFrame.UpdateFrame(self, stepn)
         for n, frame in ipairs(ScrollChild.framePool) do
             if not frame:IsShown() then break end
             local text
+            local translationFallback = false
             --frame.step = addon.currentGuide.steps[BottomFrame.stepList[n]]
             frame.step = addon.currentGuide.steps[n]
             local step = frame.step
@@ -2606,8 +2729,12 @@ function BottomFrame.UpdateFrame(self, stepn)
                 end
 
                 if rawtext and not element.hideTooltip and rawtext ~= "" then
-                    rawtext = addon.ReplaceNpcIds(
-                        addon.locale.GuideText(rawtext), element)
+                    local rendered, meta = addon.guideLocalization:Render(
+                        rawtext, element, element.tooltipText and
+                            "tooltipText" or "text")
+                    translationFallback = translationFallback or
+                                              (meta and meta.fallback) or false
+                    rawtext = addon.ReplaceNpcIds(rendered, element)
                     if not text then
                         text = "   " .. rawtext
                     else
@@ -2643,6 +2770,7 @@ function BottomFrame.UpdateFrame(self, stepn)
                 end
             end
             step.text = text
+            frame.guideTranslationFallback = translationFallback or nil
 
             if fheight == 1 and not IsFrameShown(frame,step) then
                 frame:SetHeight(1)
@@ -2746,6 +2874,15 @@ addon.IsGuideActive = IsGuideActive
 function RXPFrame:GenerateMenuTable(menu)
     local menuList = menu or {}
 
+    if addon.guideLocalization then
+        tinsert(menuList, {
+            text = addon.guideLocalization:UI("Guide Language"),
+            notCheckable = 1,
+            hasArrow = true,
+            menuList = addon.guideLocalization:Menu(),
+        })
+    end
+
     local groupList = {}
     local originalGroupList = {}
     local farmGuides = {}
@@ -2806,6 +2943,12 @@ function RXPFrame:GenerateMenuTable(menu)
     table.sort(originalUnusedGuides,sortfunc)
 
     local menuIndex = 1
+    local function AddTranslationFallbackTooltip(item, meta)
+        if item and meta and meta.fallback and addon.guideLocalization and
+           not item.tooltipTitle then
+            item.tooltipTitle = addon.guideLocalization:GetFallbackExplanation()
+        end
+    end
     local function ProcessChapters(guide,tbl,activeChapters)
         if guide.chapters then
             if not activeChapters then activeChapters = {} end
@@ -2819,13 +2962,15 @@ function RXPFrame:GenerateMenuTable(menu)
                         tbl.arg2 = nil
                         tbl.hasArrow = true
                     end
+                    local chapterText, chapterMeta = addon.GetGuideName(chapter, true)
                     local item = {
                         arg1 = guide.group,
                         arg2 = chapterName,
                         func = addon.LoadGuideTable,
-                        text = addon.GetGuideName(chapter),
+                        text = chapterText,
                         notCheckable = 1,
                     }
+                    AddTranslationFallbackTooltip(item, chapterMeta)
                     if not activeChapters[chapterName] then
                         ProcessChapters(chapter,item,activeChapters)
                     end
@@ -2848,12 +2993,18 @@ function RXPFrame:GenerateMenuTable(menu)
         local displayGroup = addon.GroupOverride(group)
         displayGroup = displayGroup:gsub(
                            "^([+*]?)Original Guides %- ", "%1")
+        local displayGroupMeta
+        if addon.guideLocalization then
+            displayGroup, displayGroupMeta =
+                addon.guideLocalization:RenderTitle(displayGroup)
+        end
         local item = {
             text = displayGroup,
             notCheckable = 1,
             hasArrow = true,
             menuList = {}
         }
+        AddTranslationFallbackTooltip(item, displayGroupMeta)
         item.subgroups = {}
         item.subtable = {}
         local submenuIndex = 0
@@ -2892,18 +3043,25 @@ function RXPFrame:GenerateMenuTable(menu)
                     if not subtable then
                         local subname = subgroup:gsub("^(%d)-(%d%d?)",
                                                       addon.affix)
+                        local subgroupText, subgroupMeta = subgroup
+                        if addon.guideLocalization then
+                            subgroupText, subgroupMeta =
+                                addon.guideLocalization:RenderTitle(subgroup)
+                        end
                         subtable = {
-                            text = subgroup,
+                            text = subgroupText,
                             notCheckable = 1,
                             hasArrow = true,
                             menuList = {},
                             subweight = 0
                         }
+                        AddTranslationFallbackTooltip(subtable, subgroupMeta)
                         item.subtable[subname] = subtable
                         tinsert(item.subgroups, subname)
                     end
                     local subitem = {}
-                    subitem.text = addon.GetGuideName(guide)
+                    local guideMeta
+                    subitem.text, guideMeta = addon.GetGuideName(guide, true)
                     if guide.disabled or not goldCompatible then
                         subitem.isTitle = 1
                         subitem.disabled = 1
@@ -2913,6 +3071,7 @@ function RXPFrame:GenerateMenuTable(menu)
                         subitem.arg1 = guide.group
                         subitem.arg2 = guideName
                     end
+                    AddTranslationFallbackTooltip(subitem, guideMeta)
                     subitem.notCheckable = 1
                     if flattenLegacyLeveling then
                         subitem.legacyMinLevel, subitem.legacyMaxLevel =
@@ -2928,7 +3087,8 @@ function RXPFrame:GenerateMenuTable(menu)
                     guide.menuIndex = menuIndex
                     guide.submenuIndex = submenuIndex
                     local subitem = {}
-                    subitem.text = addon.GetGuideName(guide)
+                    local guideMeta
+                    subitem.text, guideMeta = addon.GetGuideName(guide, true)
                     if guide.disabled or not goldCompatible then
                         subitem.isTitle = 1
                         subitem.disabled = 1
@@ -2938,6 +3098,7 @@ function RXPFrame:GenerateMenuTable(menu)
                         subitem.arg1 = guide.group
                         subitem.arg2 = guideName
                     end
+                    AddTranslationFallbackTooltip(subitem, guideMeta)
                     subitem.notCheckable = 1
                     ProcessChapters(guide,subitem)
                     tinsert(item.menuList, subitem)
