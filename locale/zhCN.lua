@@ -674,8 +674,6 @@ L["Configure your guide."] = "配置你的指南。"
 -- Missing strings
 L["Set your Hearthstone to"] = "将你的炉石设置到"
 L["Error parsing"] = "解析错误"
-L["Active Items"] = "活动物品"
-L["Active Targets"] = "活动目标"
 L["Automatically scan nearby targets"] = "自动扫描附近目标"
 L["Dungeons"] = "副本"
 L["Enable Active Targets"] = "启用活动目标"

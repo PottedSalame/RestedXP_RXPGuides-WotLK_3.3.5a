@@ -167,7 +167,7 @@ local function PinOnEnter(self)
     _G.GameTooltip:ClearLines()
     local lines = 0
     local lastStep
-    local translationFallback = false
+    local translationFallback, translationMachine = false, false
 
     for _, element in pairs(pin.elements or showTooltip or {}) do
         local parent = element.parent
@@ -192,6 +192,8 @@ local function PinOnEnter(self)
                     title, step, titleField)
                 translationFallback = translationFallback or
                                           (titleMeta and titleMeta.fallback) or false
+                translationMachine = translationMachine or
+                                         (titleMeta and titleMeta.machine) or false
                 _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
                     icon .. renderedTitle),
                     unpack(addon.colors.mapPins))
@@ -202,6 +204,8 @@ local function PinOnEnter(self)
                 (parent.mapTooltip and "mapTooltip" or "text"))
             translationFallback = translationFallback or
                                       (textMeta and textMeta.fallback) or false
+            translationMachine = translationMachine or
+                                     (textMeta and textMeta.machine) or false
             _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug .. renderedText))
             lines = lines + 1
         elseif not parent and not element.hideTooltip then
@@ -217,6 +221,8 @@ local function PinOnEnter(self)
                     title, step, titleField)
                 translationFallback = translationFallback or
                                           (titleMeta and titleMeta.fallback) or false
+                translationMachine = translationMachine or
+                                         (titleMeta and titleMeta.machine) or false
                 _G.GameTooltip:AddLine(addon.ReplaceNpcIds(
                     icon .. renderedTitle),
                     unpack(addon.colors.mapPins))
@@ -227,6 +233,8 @@ local function PinOnEnter(self)
                 (element.mapTooltip and "mapTooltip" or "text"))
             translationFallback = translationFallback or
                                       (textMeta and textMeta.fallback) or false
+            translationMachine = translationMachine or
+                                     (textMeta and textMeta.machine) or false
             _G.GameTooltip:AddLine(addon.ReplaceNpcIds(debug .. renderedText))
             lines = lines + 1
         end
@@ -236,6 +244,10 @@ local function PinOnEnter(self)
         _G.GameTooltip:AddLine(
             addon.guideLocalization:GetFallbackExplanation(),
             0.65, 0.65, 0.65, true)
+    elseif translationMachine and addon.guideLocalization then
+        _G.GameTooltip:AddLine(
+            addon.guideLocalization:GetMachineExplanation(),
+            0.45, 0.65, 1, true)
     end
 
     _G.GameTooltip:SetShown(lines > 0)

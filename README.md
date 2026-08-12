@@ -81,6 +81,9 @@ Existing guide keys and save structures are retained wherever possible so update
 - Legacy group communications, quest sharing, corpse navigation, emergency-action detection, hearthstone batching, and taxi timers.
 - World-map UI coordination so the guide, Active Targets, level splits, menus, and vendor pins behave correctly on the fullscreen legacy map.
 - Offline validators for guide structure, quest flow, and talent plans.
+- Display-only multilingual guides with live Original English switching,
+  official client names, reviewed translations, and clearly marked `[MT]` or
+  `[EN]` fallbacks that never feed quest automation.
 
 ## Key Controls
 
@@ -136,6 +139,9 @@ Roadmap tools are also available directly:
 The aliases `/rxpg` and `/rxpguides` are also registered. See
 [FEATURES_335.md](FEATURES_335.md) for the roadmap services, privacy boundaries,
 and safe-mode behavior.
+
+Translation contributors can find the deterministic extraction, token-safety,
+catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 
 ## Quick Install
 

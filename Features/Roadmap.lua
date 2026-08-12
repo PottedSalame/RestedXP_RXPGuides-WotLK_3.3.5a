@@ -307,6 +307,9 @@ function roadmap:ShowSafeModeRecovery()
         button:SetSize(100, 24)
         button:SetPoint("BOTTOMLEFT", x, 24)
         button:SetText(text)
+        if addon.locale and addon.locale.AttachStatusTooltip then
+            addon.locale.AttachStatusTooltip(button, text)
+        end
         button:SetScript("OnClick", callback)
     end
     Button(L("Retry Once"), 22, function()

@@ -21,6 +21,7 @@ Core\Locale.lua
 Guide\Localization.lua
 locale\GuideCatalogs.lua
 locale\GuideExact.zhCN.lua
+locale\GuidePack.zhCN.lua
 Core\Services.lua
 Core\Scheduler.lua
 Core\Storage.lua

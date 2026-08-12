@@ -39,6 +39,10 @@ jobs:
         shell: pwsh
         run: ./tools/Validate-GuideTranslations335.ps1
 
+      - name: Validate deterministic translation packs
+        shell: pwsh
+        run: ./tools/Validate-TranslationPacks335.ps1 -RequireLua
+
       - name: Validate quest flow
         shell: pwsh
         run: ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation

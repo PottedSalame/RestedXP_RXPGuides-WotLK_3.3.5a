@@ -260,5 +260,79 @@ check(addon.fixtureFacade == facadeValue and
           addon.facade:IsAddonExport("fixtureFacade"),
       "addon compatibility facade did not expose its value")
 
+-- Guide localization must remain presentation-only while preserving named
+-- tokens, status precedence, official names, and changing live counters.
+_G.GetLocale = function() return "zhCN" end
+addon.locale = {}
+addon.settings = {profile = {guideLanguage = "localized"}}
+function addon:SendMessage() end
+loadAddonFile("Guide/Localization.lua", addon)
+addon.guideLocalization:RegisterCatalog("zhCN", {
+    ui = {
+        ["This instruction has not yet been reviewed in your language."] =
+            "fallback explanation",
+        ["This text was machine translated and has not yet been reviewed."] =
+            "machine explanation",
+    },
+    actions = {
+        {pattern = "^Accept%s+(.+)$", template = "接受 {value}"},
+        {pattern = "^Collect%s+(.+)$", template = "收集 {value}"},
+    },
+    translations = {reviewed = {}, machine = {}, contextualReviewed = {},
+        contextualMachine = {}, uiReviewed = {}, uiMachine = {}},
+})
+local machineSource = "|cRXP_WARN_Use %d potions|r"
+local machineMessage = addon.guideLocalization:Tokenize(machineSource)
+machineMessage = machineMessage:gsub("Use ", "使用 ")
+addon.guideLocalization:RegisterTranslationPack("zhCN", {
+    schema = 1,
+    revision = "test-pack",
+    source = "unit test",
+    machine = {
+        [machineSource] = {
+            text = machineMessage,
+            status = "machine",
+            tokenized = true,
+            sourceSignature = addon.guideLocalization.HashSource(machineSource),
+        },
+    },
+    uiMachine = {
+        ["Compact label"] = {
+            text = "紧凑标签", status = "machine",
+            sourceSignature = addon.guideLocalization.HashSource("Compact label"),
+        },
+    },
+})
+local machineOutput, machineMetadata =
+    addon.guideLocalization:Render(machineSource)
+check(machineMetadata.machine and machineOutput:find("%%d") and
+          machineOutput:find("[MT]", 1, true),
+      "machine guide text lost its format token or status badge")
+local semanticOutput, semanticMetadata =
+    addon.guideLocalization:Render("Accept Quest Name")
+check(semanticOutput == "接受 Quest Name" and semanticMetadata.reviewed,
+      "reviewed semantic grammar did not outrank machine entries")
+local questElement = {tag = "accept", sourceAuthored = true,
+    sourceText = "Accept Quest Name", title = "本地任务"}
+local questOutput = addon.guideLocalization:Render(
+    "Accept Quest Name", questElement)
+check(questOutput == "接受 本地任务",
+      "official quest name was inserted before canonical translation")
+local collectElement = {tag = "collect", sourceAuthored = true,
+    sourceText = "Collect Relic"}
+local collectOutput = addon.guideLocalization:Render(
+    "Collect Relic\n2/5", collectElement)
+check(collectOutput == "收集 Relic\n2/5",
+      "live objective progress was frozen into the translation lookup")
+local uiOutput, uiMetadata =
+    addon.guideLocalization:UIWithMetadata("Compact label")
+check(uiOutput == "紧凑标签" and uiMetadata.machine,
+      "UI translation metadata was not retained")
+addon.guideLocalization:SetMode("english")
+local englishOutput = addon.guideLocalization:Render(machineSource)
+check(englishOutput == machineSource and
+          not englishOutput:find("[MT]", 1, true),
+      "Original English mode retained a translation status badge")
+
 if failures > 0 then os.exit(1) end
 print("Core Lua 5.1 tests passed.")

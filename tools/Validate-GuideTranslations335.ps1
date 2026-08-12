@@ -7,7 +7,8 @@ $utf8 = New-Object System.Text.UTF8Encoding($false, $true)
 $errors = New-Object System.Collections.Generic.List[string]
 
 function Read-Utf8([string]$relative) {
-    $path = Join-Path $RepoRoot $relative
+    $native = $relative -replace '[\\/]', [IO.Path]::DirectorySeparatorChar
+    $path = Join-Path $RepoRoot $native
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         $errors.Add("Missing translation resource: $relative")
         return ''
@@ -17,8 +18,10 @@ function Read-Utf8([string]$relative) {
 }
 
 $service = Read-Utf8 'Guide\Localization.lua'
+$uiLocale = Read-Utf8 'Core\Locale.lua'
 $catalogs = Read-Utf8 'locale\GuideCatalogs.lua'
 $zhExact = Read-Utf8 'locale\GuideExact.zhCN.lua'
+$zhPack = Read-Utf8 'locale\GuidePack.zhCN.lua'
 $englishNames = Read-Utf8 'DB\wotlk\guideEnglishNames_335.lua'
 $toc = Read-Utf8 'RXPGuides.toc'
 $settings = Read-Utf8 'UI\Settings.lua'
@@ -26,6 +29,13 @@ $loader = Read-Utf8 'Guide\Loader.lua'
 $guideWindow = Read-Utf8 'UI\GuideWindow.lua'
 $handlers = Read-Utf8 'Guide\Directives\Handlers.lua'
 $guideList = Read-Utf8 'GuideList_335.xml'
+
+if ($uiLocale -match 'local\s+ssplit[^\r\n]*strsplittable' -or
+    $uiLocale -notmatch 'local\s+function\s+SplitLiteral\s*\(' -or
+    $uiLocale -notmatch 'local\s+words\s*=\s*SplitLiteral\(delim, text\)' -or
+    $uiLocale -notmatch 'local\s+lazyPhrase\s*=\s*tconcat\(words, delim\)') {
+    $errors.Add('Core locale fallback still depends on unavailable modern string split/join helpers.')
+}
 
 $loadedVisible = @{}
 foreach ($script in [regex]::Matches($guideList,
@@ -82,13 +92,19 @@ if ($service -notmatch 'FALLBACK_BADGE\s*=\s*" \|cff9d9d9d\[EN\]\|r"' -or
     $service -notmatch 'guideTranslationFallback') {
     $errors.Add('English fallback badge/metadata wiring is missing.')
 }
-foreach ($api in @('RenderElement','RenderGuideName','RenderGroup','SetMode')) {
+if ($service -notmatch 'MACHINE_BADGE\s*=\s*" \|cff70a0ff\[MT\]\|r"' -or
+    $service -notmatch 'guideTranslationMachine') {
+    $errors.Add('Machine-translation badge/metadata wiring is missing.')
+}
+foreach ($api in @('RenderElement','RenderGuideName','RenderGroup','SetMode',
+        'RegisterTranslationPack','RegisterCompressedPack','Tokenize',
+        'UIWithMetadata','GetStatusExplanation')) {
     if ($service -notmatch ('function\s+service:' + $api + '\s*\(')) {
         $errors.Add("Missing guide-localization API: $api")
     }
 }
 foreach ($field in @('sourceText','sourceTooltipText','sourceGroup','sourceName',
-        'sourceDisplayName','sourceSubgroup','sourceTitle')) {
+        'sourceDisplayName','sourceSubgroup','sourceTitle','sourceGuideKey')) {
     if ($loader -notmatch [regex]::Escape($field)) {
         $errors.Add("Immutable English source field is not captured: $field")
     }
@@ -106,13 +122,17 @@ if ($service -notmatch
         '(?s)addon\.locale\.GuideText\s*=\s*function.*?local rendered\s*=\s*service:Render\(.*?return rendered\s*end') {
     $errors.Add('Legacy GuideText no longer preserves its single-return contract.')
 }
+if ($service -notmatch '(?s)TranslateLines\(output, element, field\).*?ReplaceQuestName\(output, element, true\)' -or
+    $service -notmatch '(?s)SourceFor\(text, element, field, localized\).*?if liveProgress then output = output \.\. liveProgress end') {
+    $errors.Add('Official quest names or live counters can bypass canonical translation order.')
+}
 if ($handlers -notmatch
         'type\(element\.step\)\s*==\s*"table"') {
     $errors.Add('ReplaceNpcIds does not guard non-element localization metadata.')
 }
 
 $order = @('Core\Locale.lua','Guide\Localization.lua','locale\GuideCatalogs.lua',
-    'locale\GuideExact.zhCN.lua','UI\GuideWindow.lua',
+    'locale\GuideExact.zhCN.lua','locale\GuidePack.zhCN.lua','UI\GuideWindow.lua',
     'DB\wotlk\guideEnglishNames_335.lua','Guide\Loader.lua')
 $last = -1
 foreach ($entry in $order) {
@@ -149,6 +169,24 @@ foreach ($match in [regex]::Matches($zhExact,
 }
 if ($exactCount -lt 1) {
     $errors.Add('No safely aligned upstream zhCN display strings were imported.')
+}
+if ($zhPack -notmatch 'GetLocale\(\)\s*~=\s*"zhCN"' -or
+    $zhPack -notmatch 'RegisterCompressedPack\("zhCN", payload\)') {
+    $errors.Add('Compiled active-locale zhCN pack is missing or not locale gated.')
+}
+foreach ($tool in @('Export-TranslationUnits335.ps1',
+        'Import-GuideTranslations335.ps1','Import-TranslationMap335.ps1',
+        'Compile-TranslationPack335.ps1','New-TranslationDraft335.ps1',
+        'New-GlossaryMachineCatalog335.ps1',
+        'Import-AceLocaleTranslations335.ps1',
+        'Get-TranslationCoverage335.ps1',
+        'Get-UiLocalizationCoverage335.ps1',
+        'Validate-TranslationPacks335.ps1')) {
+    $toolPath = Join-Path (Join-Path $RepoRoot 'tools') $tool
+    if (-not (Test-Path -LiteralPath $toolPath `
+            -PathType Leaf)) {
+        $errors.Add("Missing localization workflow tool: $tool")
+    }
 }
 
 # Verify that directives which must synthesize English display text can resolve

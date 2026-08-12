@@ -153,6 +153,31 @@ end
 local function NormalizeLegacyAceConfigOptions(option)
     if addon.gameVersion ~= 30300 or type(option) ~= "table" then return end
 
+    if not option._rxpTranslationStatus and addon.locale.GetMetadataForText then
+        local metadata = type(option.name) == "string" and
+                             addon.locale.GetMetadataForText(option.name) or nil
+        if (not metadata or not metadata.machine) and
+           type(option.desc) == "string" then
+            metadata = addon.locale.GetMetadataForText(option.desc)
+        end
+        if metadata and metadata.machine and addon.guideLocalization then
+            local notice = addon.guideLocalization:GetMachineExplanation()
+            local description = option.desc
+            if type(description) == "string" then
+                option.desc = description .. "\n\n|cff70a0ff" .. notice .. "|r"
+            elseif type(description) == "function" then
+                option.desc = function(...)
+                    local value = description(...)
+                    return tostring(value or "") .. "\n\n|cff70a0ff" ..
+                               notice .. "|r"
+                end
+            else
+                option.desc = "|cff70a0ff" .. notice .. "|r"
+            end
+            option._rxpTranslationStatus = "machine"
+        end
+    end
+
     if type(option.width) == "number" then
         if option.width <= 0.75 then
             option.width = "half"

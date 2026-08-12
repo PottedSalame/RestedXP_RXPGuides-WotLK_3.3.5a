@@ -1,6 +1,28 @@
 local addonName, addon = ...
 
-local ssplit, strjoin, ipairs, unpack, next = strsplittable, strjoin, ipairs, unpack, next
+local ipairs, next, type, tostring = ipairs, next, type, tostring
+local sfind, ssub, tconcat = string.find, string.sub, table.concat
+
+-- `strsplittable` is not part of every 3.3.5 client build.  Locale word
+-- fallback only needs literal delimiter splitting, so keep it independent of
+-- newer Blizzard string helpers and preserve empty fields/spacing exactly.
+local function SplitLiteral(delimiter, text)
+    if type(text) ~= "string" then return {} end
+    delimiter = tostring(delimiter or " ")
+    if delimiter == "" then return {text} end
+
+    local fields, offset = {}, 1
+    while true do
+        local boundary = sfind(text, delimiter, offset, true)
+        if not boundary then
+            fields[#fields + 1] = ssub(text, offset)
+            break
+        end
+        fields[#fields + 1] = ssub(text, offset, boundary - 1)
+        offset = boundary + #delimiter
+    end
+    return fields
+end
 
 addon = LibStub("AceAddon-3.0"):NewAddon(addon, addonName, "AceEvent-3.0")
 
@@ -8,39 +30,74 @@ addon.locale = {}
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local delim = L.delimiter
+if type(delim) ~= "string" or delim == "" then delim = " " end
 
 local DEBUG = false -- One of the first files loaded, so no settings
 local lazyTranslationCache = {}
+local uiMetadataByText = {}
 
 if DEBUG then print(addonName .. ": Processing locale: " .. GetLocale()) end
 
-local function getForeign(text)
+local function getForeignWithMetadata(text)
     if not text then return end
-    if L[text] then return L[text] end
+    local translated = L[text]
+    if translated and translated ~= text then
+        return translated, {status = "reviewed", reviewed = true, fallback = false}
+    end
 
-    if lazyTranslationCache[text] then return lazyTranslationCache[text] end
+    -- Machine UI packs are registered after this compatibility module loads.
+    -- Consult them lazily so existing reviewed AceLocale phrases always win.
+    if addon.guideLocalization and addon.guideLocalization.UIWithMetadata then
+        local packed, metadata = addon.guideLocalization:UIWithMetadata(text)
+        if metadata and not metadata.fallback then return packed, metadata end
+    end
+
+    if lazyTranslationCache[text] then
+        return lazyTranslationCache[text],
+               {status = "machine", machine = true, fallback = false,
+                source = "legacy word translation"}
+    end
 
     if next(L.words) == nil then
         -- No custom words added
         lazyTranslationCache[text] = text
-        return text
+        return text, {status = "fallback", fallback = true}
     end
 
     if DEBUG then print("Phrase not found, looking for words") end
 
     -- Direct text doesn't match, so iterate over phrase and lazy translate
-    local words = ssplit(delim, text)
+    local words = SplitLiteral(delim, text)
 
     -- TODO string insensitive lookups
     for i, w in ipairs(words) do if L.words[w] then words[i] = L.words[w] end end
 
-    local lazyPhrase = strjoin(delim, unpack(words))
+    local lazyPhrase = tconcat(words, delim)
     lazyTranslationCache[text] = lazyPhrase
+    if lazyPhrase ~= text then
+        return lazyPhrase,
+               {status = "machine", machine = true, fallback = false,
+                source = "legacy word translation"}
+    end
+    return translated or text, {status = "fallback", fallback = true}
+end
 
-    return lazyPhrase
+local function RememberMetadata(text, metadata)
+    if type(text) == "string" and type(metadata) == "table" then
+        local previous = uiMetadataByText[text]
+        if not previous or metadata.fallback or
+           metadata.machine and not previous.fallback then
+            uiMetadataByText[text] = metadata
+        end
+    end
+    return text
 end
 
 local function noop(text) return text end
+local function getForeign(text)
+    local translated, metadata = getForeignWithMetadata(text)
+    return RememberMetadata(translated, metadata)
+end
 
 local locale = GetLocale()
 
@@ -50,8 +107,62 @@ if locale == 'zhCN' or locale == 'zhTW' or locale == 'frFR' or
     locale == 'koKR' or locale == 'esES' or locale == 'ruRU' or
     locale == 'deDE' then
     addon.locale.Get = getForeign
+    addon.locale.GetWithMetadata = getForeignWithMetadata
 else
     addon.locale.Get = noop
+    addon.locale.GetWithMetadata = function(text)
+        return text, {status = "reviewed", reviewed = true, fallback = false}
+    end
+end
+
+
+function addon.locale.GetMetadataForText(text)
+    return type(text) == "string" and uiMetadataByText[text] or nil
+end
+
+function addon.locale.GetStatusExplanationForText(text)
+    local metadata = addon.locale.GetMetadataForText(text)
+    if metadata and addon.guideLocalization and
+       addon.guideLocalization.GetStatusExplanation then
+        return addon.guideLocalization:GetStatusExplanation(metadata.status),
+               metadata
+    end
+end
+
+-- Compact controls keep their labels clean.  Translation provenance is
+-- exposed on hover instead, and the hook is installed only once per frame.
+function addon.locale.AttachStatusTooltip(frame, renderedText, metadata)
+    if not frame or type(frame.HookScript) ~= "function" then
+        return renderedText
+    end
+    metadata = metadata or addon.locale.GetMetadataForText(renderedText)
+    frame.rxpLocaleMetadata = metadata
+    if frame.rxpLocaleTooltipHooked then return renderedText end
+    frame.rxpLocaleTooltipHooked = true
+    frame:HookScript("OnEnter", function(self)
+        local current = self.rxpLocaleMetadata
+        local localization = addon.guideLocalization
+        local explanation = current and localization and
+                                localization.GetStatusExplanation and
+                                localization:GetStatusExplanation(current.status)
+        if not explanation or explanation == "" or not GameTooltip then return end
+        if not GameTooltip.IsOwned or not GameTooltip:IsOwned(self) then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        end
+        GameTooltip:AddLine(explanation, 0.65, 0.78, 1, true)
+        GameTooltip:Show()
+    end)
+    frame:HookScript("OnLeave", function(self)
+        if GameTooltip and (not GameTooltip.IsOwned or
+           GameTooltip:IsOwned(self)) then GameTooltip:Hide() end
+    end)
+    return renderedText
+end
+
+function addon.locale.Widget(frame, english)
+    local rendered, metadata = addon.locale.GetWithMetadata(english)
+    addon.locale.AttachStatusTooltip(frame, rendered, metadata)
+    return rendered
 end
 
 addon.locale.IsEnglish = locale == "enUS" or locale == "enGB"

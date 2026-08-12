@@ -1051,7 +1051,8 @@ function addon.SetStep(n, n2, loopback)
                     end
                     local element = self.element or self:GetParent().element
                     if element and (element.tooltip or
-                       element.guideTranslationFallback) then
+                       element.guideTranslationFallback or
+                       element.guideTranslationMachine) then
                         _G.GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -10)
                         _G.GameTooltip:ClearLines()
                         if element.tooltip then
@@ -1062,6 +1063,11 @@ function addon.SetStep(n, n2, loopback)
                             _G.GameTooltip:AddLine(
                                 addon.guideLocalization:GetFallbackExplanation(),
                                 0.65, 0.65, 0.65, true)
+                        elseif element.guideTranslationMachine and
+                               addon.guideLocalization then
+                            _G.GameTooltip:AddLine(
+                                addon.guideLocalization:GetMachineExplanation(),
+                                0.45, 0.65, 1, true)
                         end
                         _G.GameTooltip:Show()
                     end
@@ -1073,7 +1079,8 @@ function addon.SetStep(n, n2, loopback)
                     end
                     local element = self.element or self:GetParent().element
                     if element and (element.tooltip or
-                       element.guideTranslationFallback) then
+                       element.guideTranslationFallback or
+                       element.guideTranslationMachine) then
                         _G.GameTooltip:Hide()
                     end
                 end
@@ -1634,18 +1641,25 @@ Footer:SetScript("OnMouseDown", GuideName.OnMouseDown)
 GuideName:SetScript("OnMouseUp", GuideName.OnMouseUp)
 Footer:SetScript("OnMouseUp", GuideName.OnMouseUp)
 GuideName:SetScript("OnEnter", function(self)
-    if addon.currentGuide and addon.currentGuide.guideTitleFallback and
+    if addon.currentGuide and
+       (addon.currentGuide.guideTitleFallback or
+        addon.currentGuide.guideTitleMachine) and
        addon.guideLocalization then
         _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
         _G.GameTooltip:ClearLines()
-        _G.GameTooltip:AddLine(
+        local machine = addon.currentGuide.guideTitleMachine
+        _G.GameTooltip:AddLine(machine and
+            addon.guideLocalization:GetMachineExplanation() or
             addon.guideLocalization:GetFallbackExplanation(),
-            0.65, 0.65, 0.65, true)
+            machine and 0.45 or 0.65, machine and 0.65 or 0.65,
+            machine and 1 or 0.65, true)
         _G.GameTooltip:Show()
     end
 end)
 GuideName:SetScript("OnLeave", function()
-    if addon.currentGuide and addon.currentGuide.guideTitleFallback then
+    if addon.currentGuide and
+       (addon.currentGuide.guideTitleFallback or
+        addon.currentGuide.guideTitleMachine) then
         _G.GameTooltip:Hide()
     end
 end)
@@ -2324,6 +2338,8 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     end
     guide.guideTitleFallback = (titleMeta and titleMeta.fallback) or
                                    (subgroupMeta and subgroupMeta.fallback) or nil
+    guide.guideTitleMachine = (titleMeta and titleMeta.machine) or
+                                  (subgroupMeta and subgroupMeta.machine) or nil
 
     guide.labels = {}
 
@@ -2421,12 +2437,16 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
                 self:SetAlpha(1)
                 self:SetBackdropColor(unpack(addon.colors.bottomFrameHighlight))
             end
-            if self.guideTranslationFallback and addon.guideLocalization then
+            if (self.guideTranslationFallback or
+                self.guideTranslationMachine) and addon.guideLocalization then
                 _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 _G.GameTooltip:ClearLines()
-                _G.GameTooltip:AddLine(
+                local machine = self.guideTranslationMachine
+                _G.GameTooltip:AddLine(machine and
+                    addon.guideLocalization:GetMachineExplanation() or
                     addon.guideLocalization:GetFallbackExplanation(),
-                    0.65, 0.65, 0.65, true)
+                    machine and 0.45 or 0.65, machine and 0.65 or 0.65,
+                    machine and 1 or 0.65, true)
                 _G.GameTooltip:Show()
             end
         end)
@@ -2434,7 +2454,9 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
             self:SetBackdropColor(unpack(self.stepVisualBackground or
                                              addon.colors.bottomFrameBG))
             self:SetAlpha(self.currentAlpha)
-            if self.guideTranslationFallback then _G.GameTooltip:Hide() end
+            if self.guideTranslationFallback or self.guideTranslationMachine then
+                _G.GameTooltip:Hide()
+            end
         end)
         frame.timer = 0
         frame.index = n
@@ -2561,6 +2583,8 @@ function addon.RefreshGuideLanguage()
         end
         guide.guideTitleFallback = (titleMeta and titleMeta.fallback) or
                                        (subgroupMeta and subgroupMeta.fallback) or nil
+        guide.guideTitleMachine = (titleMeta and titleMeta.machine) or
+                                      (subgroupMeta and subgroupMeta.machine) or nil
     end
 
     if CurrentStepFrame and CurrentStepFrame.UpdateText then
@@ -2604,7 +2628,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
         local hideStep = step.level > level or (not IsFrameShown(frame,step))
 
         local text, rawtext, icon
-        local translationFallback = false
+        local translationFallback, translationMachine = false, false
         local stepDiff
 
         for _, element in ipairs(frame.step.elements or {}) do
@@ -2643,6 +2667,8 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
                         "tooltipText" or "text")
                 translationFallback = translationFallback or
                                           (meta and meta.fallback) or false
+                translationMachine = translationMachine or
+                                         (meta and meta.machine) or false
                 rawtext = addon.ReplaceNpcIds(rendered, element)
                 if not text then
                     text = "   " .. rawtext
@@ -2663,6 +2689,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             frame.text:SetText(text)
         end
         frame.guideTranslationFallback = translationFallback or nil
+        frame.guideTranslationMachine = translationMachine or nil
 
         if hideStep then
             fheight = 1
@@ -2691,7 +2718,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
         for n, frame in ipairs(ScrollChild.framePool) do
             if not frame:IsShown() then break end
             local text
-            local translationFallback = false
+            local translationFallback, translationMachine = false, false
             --frame.step = addon.currentGuide.steps[BottomFrame.stepList[n]]
             frame.step = addon.currentGuide.steps[n]
             local step = frame.step
@@ -2734,6 +2761,8 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
                             "tooltipText" or "text")
                     translationFallback = translationFallback or
                                               (meta and meta.fallback) or false
+                    translationMachine = translationMachine or
+                                             (meta and meta.machine) or false
                     rawtext = addon.ReplaceNpcIds(rendered, element)
                     if not text then
                         text = "   " .. rawtext
@@ -2771,6 +2800,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             end
             step.text = text
             frame.guideTranslationFallback = translationFallback or nil
+            frame.guideTranslationMachine = translationMachine or nil
 
             if fheight == 1 and not IsFrameShown(frame,step) then
                 frame:SetHeight(1)
@@ -2943,10 +2973,12 @@ function RXPFrame:GenerateMenuTable(menu)
     table.sort(originalUnusedGuides,sortfunc)
 
     local menuIndex = 1
-    local function AddTranslationFallbackTooltip(item, meta)
-        if item and meta and meta.fallback and addon.guideLocalization and
+    local function AddTranslationStatusTooltip(item, meta)
+        if item and meta and (meta.fallback or meta.machine) and
+           addon.guideLocalization and
            not item.tooltipTitle then
-            item.tooltipTitle = addon.guideLocalization:GetFallbackExplanation()
+            item.tooltipTitle = addon.guideLocalization:GetStatusExplanation(
+                meta.status)
         end
     end
     local function ProcessChapters(guide,tbl,activeChapters)
@@ -2970,7 +3002,7 @@ function RXPFrame:GenerateMenuTable(menu)
                         text = chapterText,
                         notCheckable = 1,
                     }
-                    AddTranslationFallbackTooltip(item, chapterMeta)
+                    AddTranslationStatusTooltip(item, chapterMeta)
                     if not activeChapters[chapterName] then
                         ProcessChapters(chapter,item,activeChapters)
                     end
@@ -3004,7 +3036,7 @@ function RXPFrame:GenerateMenuTable(menu)
             hasArrow = true,
             menuList = {}
         }
-        AddTranslationFallbackTooltip(item, displayGroupMeta)
+        AddTranslationStatusTooltip(item, displayGroupMeta)
         item.subgroups = {}
         item.subtable = {}
         local submenuIndex = 0
@@ -3055,7 +3087,7 @@ function RXPFrame:GenerateMenuTable(menu)
                             menuList = {},
                             subweight = 0
                         }
-                        AddTranslationFallbackTooltip(subtable, subgroupMeta)
+                        AddTranslationStatusTooltip(subtable, subgroupMeta)
                         item.subtable[subname] = subtable
                         tinsert(item.subgroups, subname)
                     end
@@ -3071,7 +3103,7 @@ function RXPFrame:GenerateMenuTable(menu)
                         subitem.arg1 = guide.group
                         subitem.arg2 = guideName
                     end
-                    AddTranslationFallbackTooltip(subitem, guideMeta)
+                    AddTranslationStatusTooltip(subitem, guideMeta)
                     subitem.notCheckable = 1
                     if flattenLegacyLeveling then
                         subitem.legacyMinLevel, subitem.legacyMaxLevel =
@@ -3098,7 +3130,7 @@ function RXPFrame:GenerateMenuTable(menu)
                         subitem.arg1 = guide.group
                         subitem.arg2 = guideName
                     end
-                    AddTranslationFallbackTooltip(subitem, guideMeta)
+                    AddTranslationStatusTooltip(subitem, guideMeta)
                     subitem.notCheckable = 1
                     ProcessChapters(guide,subitem)
                     tinsert(item.menuList, subitem)

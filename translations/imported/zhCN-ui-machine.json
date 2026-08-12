@@ -1,0 +1,1269 @@
+{
+    "schema":  1,
+    "locale":  "zhCN",
+    "sourceRevision":  "cf0b2fea",
+    "revision":  "zhCN-ui-machine-1",
+    "source":  "Machine-assisted zhCN UI translation batch; pending human review",
+    "units":  [
+                  {
+                      "id":  "ed7dee09",
+                      "english":  "Welcome to RestedXP Guides\nRight click to pick a guide",
+                      "translation":  "欢迎使用 RestedXP Guides{newline_a}右键点击以选择指南",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "502ea4b8",
+                      "english":  "Availability:",
+                      "translation":  "可用性：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5f05f794",
+                      "english":  "EP comparison is waiting for complete weapon data.",
+                      "translation":  "EP 比较正在等待完整的武器数据。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0d8d103b",
+                      "english":  "Equal",
+                      "translation":  "相同",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "18e48935",
+                      "english":  "%d copper",
+                      "translation":  "{format_a} 铜币",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "9c19d740",
+                      "english":  "%d steps / %d captured events",
+                      "translation":  "{format_a} 个步骤 / {format_b} 个已捕获事件",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "84ebb307",
+                      "english":  "%s  %s  step %s",
+                      "translation":  "{format_a}  {format_b}  步骤 {format_c}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "678997bc",
+                      "english":  "%s proficiency is not trained; this weapon is kept safe but is not scored.",
+                      "translation":  "尚未训练{format_a}熟练度；此武器会被保留，但不会评分。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4d881cb2",
+                      "english":  "%s Step %d: %s",
+                      "translation":  "{format_a} 步骤 {format_b}：{format_c}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b9272298",
+                      "english":  "%s suggests guide %s%s at step %d. Apply it?",
+                      "translation":  "{format_a} 建议在步骤 {format_d} 使用指南 {format_b}{format_c}。是否应用？",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e48b2759",
+                      "english":  "%s x%d (have %d), steps %d-%d - %s",
+                      "translation":  "{format_a} x{format_b}（已有 {format_c}），步骤 {format_d}-{format_e} - {format_f}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "1ac34252",
+                      "english":  ". Select it with /rxp pack",
+                      "translation":  "。使用 /rxp pack 选择它",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "9ac8130e",
+                      "english":  "Abandon the following quests?\n%s",
+                      "translation":  "要放弃以下任务吗？{newline_a}{format_b}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "6297312c",
+                      "english":  "Account-wide; character, realm and GUID information is never stored here.",
+                      "translation":  "账号通用；这里绝不会存储角色、服务器或 GUID 信息。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "23e7df4a",
+                      "english":  "Active compatibility pack: %s (%s). Use /rxp pack import or /rxp pack export.",
+                      "translation":  "当前兼容包：{format_a}（{format_b}）。使用 /rxp pack import 或 /rxp pack export。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e25d684a",
+                      "english":  "active in quest log",
+                      "translation":  "已在任务日志中激活",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "343461ee",
+                      "english":  "Active time",
+                      "translation":  "活动时间",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "21b3f060",
+                      "english":  "Adaptive mode: %s%s",
+                      "translation":  "自适应模式：{format_a}{format_b}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "015841f5",
+                      "english":  "Addon memory: %.1f MB",
+                      "translation":  "插件内存：{format_a} MB",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b637322c",
+                      "english":  "Adjusts the guide routes to match the content phase\nPhase 2: Dire Maul quests\nPhase 3: 100% quest XP (SoM)\nPhase 4: ZG/Silithus quests\nPhase 5: AQ quests\nPhase 6: Eastern Plaguelands quests",
+                      "translation":  "调整指南路线以匹配内容阶段{newline_a}阶段 {number_f}：厄运之槌任务{newline_b}阶段 {number_g}：任务经验值 {number_h}%（SoM）{newline_c}阶段 {number_i}：祖尔格拉布/希利苏斯任务{newline_d}阶段 {number_j}：安其拉任务{newline_e}阶段 {number_k}：东瘟疫之地任务",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0d46987a",
+                      "english":  "Audit",
+                      "translation":  "检查",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "155ae635",
+                      "english":  "Automatically mark surplus Soul Shards in ordinary bags as junk",
+                      "translation":  "自动将普通背包中多余的灵魂碎片标记为垃圾",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5ed3cdb8",
+                      "english":  "Automatically skip quest tasks whose required quests were not completed",
+                      "translation":  "自动跳过前置任务未完成的任务步骤",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4f8d9081",
+                      "english":  "Available emergency action",
+                      "translation":  "可用的紧急动作",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3b8a02b2",
+                      "english":  "Backup imported successfully. An Undo button remains available until reload.",
+                      "translation":  "备份导入成功。重新加载前仍可使用“撤销”按钮。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b80b31f8",
+                      "english":  "Bottom",
+                      "translation":  "底部",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "d801394c",
+                      "english":  "Browse mode (freeze)",
+                      "translation":  "浏览模式（冻结）",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "a063cec3",
+                      "english":  "Capture: %.0f seconds remaining",
+                      "translation":  "捕获：剩余 {format_a} 秒",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2484bacf",
+                      "english":  "Capture: idle",
+                      "translation":  "捕获：空闲",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "f79edd85",
+                      "english":  "Check if targets are nearby\nWarning: This relies on ADDON_ACTION_FORBIDDEN errors from TargetUnit() to function.",
+                      "translation":  "检查目标是否在附近{newline_a}警告：此功能依赖 TargetUnit() 产生的 ADDON_ACTION_FORBIDDEN 错误。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "dd3dfb5b",
+                      "english":  "Choose a route from Gold Assistant mode.",
+                      "translation":  "请从金币助手模式中选择一条路线。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "602c0942",
+                      "english":  "Click to inspect each item",
+                      "translation":  "点击以检查每件物品",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5774849e",
+                      "english":  "Compatibility Pack Export",
+                      "translation":  "兼容包导出",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "60021997",
+                      "english":  "Compatibility Pack Import",
+                      "translation":  "兼容包导入",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4ca14636",
+                      "english":  "Compatibility pack:",
+                      "translation":  "兼容包：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2660c4a7",
+                      "english":  "complete in quest log",
+                      "translation":  "在任务日志中已完成",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "ad136fb8",
+                      "english":  "Coordinates:",
+                      "translation":  "坐标：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3dec3f96",
+                      "english":  "Cpt. Stadics\u0027 Vendor Treasures",
+                      "translation":  "斯塔迪克上尉的商人物资",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "c89f60cb",
+                      "english":  "Current level, XP rate, mode, race, or guide condition is not met",
+                      "translation":  "当前等级、经验倍率、模式、种族或指南条件不符合要求",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e1e11b71",
+                      "english":  "Daily reset: %s   Weekly reset: %s",
+                      "translation":  "每日重置：{format_a}   每周重置：{format_b}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4b8d2079",
+                      "english":  "Dalaran Weekly Raid Quest",
+                      "translation":  "达拉然每周团队任务",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2d439724",
+                      "english":  "Deuteranopia",
+                      "translation":  "绿色盲",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "581eecdd",
+                      "english":  "Disable Upgrade Tooltips",
+                      "translation":  "禁用升级提示",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "76cc575b",
+                      "english":  "disabled",
+                      "translation":  "已禁用",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3d68d11e",
+                      "english":  "Draft parser check failed:",
+                      "translation":  "草稿解析检查失败：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "612d1e18",
+                      "english":  "Edit a target count; 0 disables that supply.",
+                      "translation":  "编辑目标数量；设为 {number_a} 可禁用该补给品。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3bf0d8ee",
+                      "english":  "enabled",
+                      "translation":  "已启用",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "345e90a6",
+                      "english":  "Enables the group-oriented preset. Turning it off restores the settings that were active before the preset was enabled.",
+                      "translation":  "启用面向队伍的预设。关闭后会恢复启用该预设前的设置。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "a9993d46",
+                      "english":  "Enter a guide note",
+                      "translation":  "输入指南备注",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "afd4fbd6",
+                      "english":  "Estimated gold/hour",
+                      "translation":  "预计金币/小时",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "c8cbd127",
+                      "english":  "Estimated total",
+                      "translation":  "预计总计",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3b4caae1",
+                      "english":  "Faction:",
+                      "translation":  "阵营：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5e21153d",
+                      "english":  "Factor only the high-impact dungeons into the route",
+                      "translation":  "路线中只考虑影响较大的地下城",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "3d527076",
+                      "english":  "Farming route",
+                      "translation":  "刷取路线",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "984141b0",
+                      "english":  "FPS: %.1f",
+                      "translation":  "帧率：{format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0b594dd0",
+                      "english":  "Gear Vendor",
+                      "translation":  "装备商人",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "a3ea0812",
+                      "english":  "Grind to level",
+                      "translation":  "刷怪至等级",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4986f89f",
+                      "english":  "Guide steps %d-%d",
+                      "translation":  "指南步骤 {format_a}-{format_b}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "90fb2143",
+                      "english":  "Hide item-upgrade comparison lines without disabling recommendations or calculations",
+                      "translation":  "隐藏物品升级比较行，但不禁用推荐或计算",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b9ca9be7",
+                      "english":  "Imported",
+                      "translation":  "已导入",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "a5223998",
+                      "english":  "including %s",
+                      "translation":  "包括 {format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "8951d687",
+                      "english":  "Internal chapter",
+                      "translation":  "内部章节",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2458f4c9",
+                      "english":  "invalid quest ID",
+                      "translation":  "无效的任务 ID",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "7d1302ea",
+                      "english":  "item data loading",
+                      "translation":  "正在加载物品数据",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "85d6103e",
+                      "english":  "Known active ticker loops: %d",
+                      "translation":  "已知活动计时循环：{format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e9631d5d",
+                      "english":  "Main update: %d ms configured / %d ms effective",
+                      "translation":  "主更新：配置 {format_a} 毫秒 / 实际 {format_b} 毫秒",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "09b06627",
+                      "english":  "mark complete",
+                      "translation":  "标记为完成",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "6b27df9e",
+                      "english":  "Maximize nameplate visibility distance for target detection",
+                      "translation":  "最大化姓名板可见距离以检测目标",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "39db6b13",
+                      "english":  "Maximize supported target-acquisition and nameplate distance settings without forcing nameplates on",
+                      "translation":  "在不强制开启姓名板的情况下，将支持的目标获取和姓名板距离设为最大",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2f7a0cd7",
+                      "english":  "Maximize Targeting Distance",
+                      "translation":  "最大化目标距离",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "d1dc5c51",
+                      "english":  "Measured RXPGuides work:",
+                      "translation":  "已测量的 RXPGuides 工作：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "93fe5186",
+                      "english":  "No complete comparison yet",
+                      "translation":  "尚无完整比较",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4988acfc",
+                      "english":  "No farming route selected",
+                      "translation":  "未选择刷取路线",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "07ada649",
+                      "english":  "No guide is currently selected.",
+                      "translation":  "当前未选择指南。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "7ebb6da8",
+                      "english":  "No proven route blockers found.",
+                      "translation":  "未发现已确认的路线阻碍。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "57a13d99",
+                      "english":  "No XP gate appears in the selected look-ahead.",
+                      "translation":  "所选预读范围内没有经验值门槛。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "c5b65e17",
+                      "english":  "None in the selected look-ahead.",
+                      "translation":  "所选预读范围内没有内容。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "fe4786ed",
+                      "english":  "not accepted",
+                      "translation":  "未接受",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "14a386c6",
+                      "english":  "Notable Stock:",
+                      "translation":  "重要库存：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "dc0a0b51",
+                      "english":  "Open an Auction House first.",
+                      "translation":  "请先打开拍卖行。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "d83b04cf",
+                      "english":  "Open an Auction House, then use RXPGuides\u0027 bounded upgrade scan.\nResults use the same complete-layout EP solver as bags and rewards.",
+                      "translation":  "打开拍卖行，然后使用 RXPGuides 的有限升级扫描。{newline_a}结果使用与背包和奖励相同的完整装备布局 EP 求解器。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "1637db68",
+                      "english":  "Open anonymous account-wide leveling runs and select a split comparison.",
+                      "translation":  "打开匿名的账号通用升级记录，并选择分段比较。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "acee7ad9",
+                      "english":  "Open RXP Auction Tab",
+                      "translation":  "打开 RXP 拍卖标签页",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e12a19d8",
+                      "english":  "Party Guide Sync (%d)",
+                      "translation":  "队伍指南同步（{format_a}）",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "7fd65fdd",
+                      "english":  "Paste a validated data-only RXPPACK and press Enter.",
+                      "translation":  "粘贴已验证的纯数据 RXPPACK，然后按回车键。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "6ab4bd5b",
+                      "english":  "Paste an RXPGuides backup and press Enter to merge it into this character.",
+                      "translation":  "粘贴 RXPGuides 备份并按回车键，将其合并到此角色。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "97df99af",
+                      "english":  "Paste an RXPGuides backup and press Enter. Replacement requires one final confirmation.",
+                      "translation":  "粘贴 RXPGuides 备份并按回车键。替换前还需最后确认。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "dd755b6a",
+                      "english":  "Potion Vendor",
+                      "translation":  "药水商人",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "262c3080",
+                      "english":  "Protanopia",
+                      "translation":  "红色盲",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "ad45851e",
+                      "english":  "Recommended level %d or higher for %s",
+                      "translation":  "{format_b}的建议等级为 {format_a} 或更高",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "32365d65",
+                      "english":  "Replace this character\u0027s backed-up RXPGuides data? A temporary rollback is retained until reload.",
+                      "translation":  "要替换此角色已备份的 RXPGuides 数据吗？重新加载前会保留临时回滚数据。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "4ed461a3",
+                      "english":  "Replaces main-hand + off-hand layout%s",
+                      "translation":  "替换主手 + 副手布局{format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "1fd8a310",
+                      "english":  "replacing %s",
+                      "translation":  "替换 {format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "fa4a5ace",
+                      "english":  "Required weapon",
+                      "translation":  "所需武器",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "fc48fd74",
+                      "english":  "Requires level %d",
+                      "translation":  "需要等级 {format_a}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "d2909f14",
+                      "english":  "Requires level %d; EP will be compared once it can be equipped.",
+                      "translation":  "需要等级 {format_a}；可装备后才会比较 EP。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e003833f",
+                      "english":  "Reserved Items:",
+                      "translation":  "已预留物品：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b3ff7c1a",
+                      "english":  "Reset Junk List",
+                      "translation":  "重置垃圾列表",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2a644d22",
+                      "english":  "Reset the current farming run?",
+                      "translation":  "要重置当前刷取记录吗？",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "7eae7add",
+                      "english":  "Route is compatible with this character.",
+                      "translation":  "该路线与此角色兼容。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "8e45be1e",
+                      "english":  "Route Preflight: %d blocker(s), %d warning(s), %d note(s)",
+                      "translation":  "路线预检：{format_a} 个阻碍、{format_b} 个警告、{format_c} 条备注",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0e089387",
+                      "english":  "Route Preflight: disabled (reservations and XP may remain active).",
+                      "translation":  "路线预检：已禁用（物品预留和经验预测可能仍然有效）。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "f8d97df0",
+                      "english":  "Safe-mode report",
+                      "translation":  "安全模式报告",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "1fe3b971",
+                      "english":  "Show available emergency items and spells when your health is low",
+                      "translation":  "生命值较低时显示可用的紧急物品和法术",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "274bf05a",
+                      "english":  "skip",
+                      "translation":  "跳过",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "274bf565",
+                      "english":  "slot",
+                      "translation":  "栏位",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "ebea42f2",
+                      "english":  "Started level",
+                      "translation":  "开始等级",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "080db0e2",
+                      "english":  "Step %d has shown no measurable progress for %d seconds. Use /rxp diagnose to inspect it, or /rxp watch to stop watching.",
+                      "translation":  "步骤 {format_a} 已有 {format_b} 秒没有可测量的进度。使用 /rxp diagnose 检查，或使用 /rxp watch 停止监视。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "a1fd7c2e",
+                      "english":  "Subsystem                         calls     average       maximum       last",
+                      "translation":  "子系统                           调用次数   平均值        最大值        最近值",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0a96f6a2",
+                      "english":  "Target current guide target",
+                      "translation":  "选中当前指南目标",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5be028af",
+                      "english":  "Temporarily disables supplemental features and uses slower update settings. Turning this off restores your previous configuration.",
+                      "translation":  "暂时禁用辅助功能并使用较慢的更新设置。关闭后会恢复之前的配置。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "5eff9034",
+                      "english":  "The Hunter Pet Assistant is available to Hunters.",
+                      "translation":  "猎人宠物助手仅供猎人使用。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "fffb6e59",
+                      "english":  "The optional \u0027%s\u0027 subsystem failed repeatedly and was disabled.\n%s",
+                      "translation":  "可选的“{format_b}”子系统多次失败，现已禁用。{newline_a}{format_c}",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "9f893a51",
+                      "english":  "The runtime parser accepted this draft. The offline guide and quest-flow validators are still required before publishing.",
+                      "translation":  "运行时解析器已接受此草稿。发布前仍需运行离线指南和任务流程验证器。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "548a9c46",
+                      "english":  "This action will reload your current guide when toggled off.\nAre you sure?",
+                      "translation":  "关闭此选项会重新加载当前指南。{newline_a}确定吗？",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2f405ce0",
+                      "english":  "This action will remove ALL guides from the database\nAre you sure?",
+                      "translation":  "此操作将从数据库中移除所有指南。{newline_a}确定吗？",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "f20794cf",
+                      "english":  "This action will reset every manual junk assignment. Are you sure?",
+                      "translation":  "此操作将重置所有手动垃圾标记。确定吗？",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "43982802",
+                      "english":  "This export contains no realm identity.",
+                      "translation":  "此导出内容不包含服务器身份信息。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "6c42399f",
+                      "english":  "This item cannot currently be equipped, so it is not scored.",
+                      "translation":  "当前无法装备此物品，因此不会评分。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "20381756",
+                      "english":  "Top",
+                      "translation":  "顶部",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "accb77be",
+                      "english":  "Tritanopia",
+                      "translation":  "蓝黄色盲",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "7cbde2cc",
+                      "english":  "turned in",
+                      "translation":  "已交付",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e1ea7dbd",
+                      "english":  "Unknown error",
+                      "translation":  "未知错误",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "2058e5b5",
+                      "english":  "Unknown family",
+                      "translation":  "未知类别",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0e9cb842",
+                      "english":  "Unknown item",
+                      "translation":  "未知物品",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "f42b7355",
+                      "english":  "Unmark every manually assigned junk or useful item for this character",
+                      "translation":  "清除此角色所有手动指定的垃圾或有用物品标记",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "aab2d613",
+                      "english":  "Unsold loot value",
+                      "translation":  "未出售战利品价值",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "64f44c96",
+                      "english":  "Upgrade +%.2f EP",
+                      "translation":  "升级 +{format_a} EP",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "db711ded",
+                      "english":  "Vendor Type:",
+                      "translation":  "商人类型：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "e7f52488",
+                      "english":  "Vendor values are guaranteed estimates; Auction House prices are not used.",
+                      "translation":  "商店售价是可靠估值；不使用拍卖行价格。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "f5a1b58e",
+                      "english":  "Waiting for %d item price%s from the server cache.",
+                      "translation":  "正在等待服务器缓存中的 {format_a} 个物品价格{format_b}。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "84c0750d",
+                      "english":  "Waiting for XP data.",
+                      "translation":  "正在等待经验值数据。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "582a8172",
+                      "english":  "Wallet change",
+                      "translation":  "钱包变化",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "54bb1fd2",
+                      "english":  "Warning: Changing this setting mid-guide may cause quest pre-requisite failures.\nGuides were optimized for experience, disabling this option will result in a disjointed guide steps.",
+                      "translation":  "警告：在指南途中更改此设置可能导致任务前置条件失败。{newline_a}指南已针对经验获取进行优化；禁用此选项会使指南步骤不连贯。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "dee5a1e3",
+                      "english":  "Watchdog: armed for step %d (%d seconds without progress).",
+                      "translation":  "卡步监视器：正在监视步骤 {format_a}（{format_b} 秒无进度）。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "276e29bc",
+                      "english":  "Weapon proficiency could not be verified; this item is kept safe but is not scored.",
+                      "translation":  "无法验证武器熟练度；此物品会被保留，但不会评分。",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "b91a6799",
+                      "english":  "Weights: %s (%s)",
+                      "translation":  "权重：{format_a}（{format_b}）",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "23e7c260",
+                      "english":  "XP Shortfall Predictor:",
+                      "translation":  "经验缺口预测：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "20adac53",
+                      "english":  "You must input a non-negative integer",
+                      "translation":  "必须输入非负整数",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  },
+                  {
+                      "id":  "0f07dc99",
+                      "english":  "Zone:",
+                      "translation":  "区域：",
+                      "status":  "machine",
+                      "domain":  "ui",
+                      "tokenized":  true,
+                      "attribution":  "Machine-assisted zhCN UI translation batch; pending human review"
+                  }
+              ]
+}

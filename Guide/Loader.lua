@@ -1084,6 +1084,12 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     end
 
     guide.key = addon.BuildGuideKey(guide)
+    for _, parsedStep in ipairs(guide.steps) do
+        parsedStep.sourceGuideKey = guide.key
+        for _, element in ipairs(parsedStep.elements or {}) do
+            element.sourceGuideKey = guide.key
+        end
+    end
     guide.version = tonumber(guide.version) or 0
     addon.minGuideVersion = math.min(guide.version,addon.minGuideVersion)
     addon.maxGuideVersion = math.max(guide.version,addon.maxGuideVersion)

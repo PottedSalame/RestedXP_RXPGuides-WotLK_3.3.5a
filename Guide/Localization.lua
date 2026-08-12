@@ -26,7 +26,29 @@ local cache = {}
 local catalog
 local standingNames
 local FALLBACK_BADGE = " |cff9d9d9d[EN]|r"
+local MACHINE_BADGE = " |cff70a0ff[MT]|r"
 local FALLBACK_PATTERN = "%s*|cff9d9d9d%[EN%]|r$"
+local MACHINE_PATTERN = "%s*|cff70a0ff%[MT%]|r$"
+local PACK_SCHEMA = 1
+
+local statusRank = {official = 1, reviewed = 2, machine = 3, fallback = 4}
+
+local function MergeStatus(left, right)
+    left = statusRank[left] and left or "fallback"
+    right = statusRank[right] and right or "fallback"
+    return statusRank[left] >= statusRank[right] and left or right
+end
+
+local function HashSource(value)
+    local hash = 5381
+    value = tostring(value or "")
+    for index = 1, #value do
+        hash = (hash * 33 + value:byte(index)) % 4294967296
+    end
+    return string.format("%08x", hash)
+end
+
+service.HashSource = HashSource
 
 local sourceFields = {
     text = "sourceText",
@@ -46,6 +68,79 @@ local function Substitute(template, values)
         local value = values and values[key]
         return value == nil and ("{" .. key .. "}") or tostring(value)
     end))
+end
+
+local function AlphaIndex(value)
+    local output = ""
+    repeat
+        local digit = value % 26
+        output = string.char(97 + digit) .. output
+        value = math.floor(value / 26) - 1
+    until value < 0
+    return output
+end
+
+local function Tokenize(value)
+    if type(value) ~= "string" then return value, {}, "" end
+    local tokens, count = {}, 0
+    local function Protect(kind, atom)
+        count = count + 1
+        local key = kind .. "_" .. AlphaIndex(count - 1)
+        tokens[key] = atom
+        return "{" .. key .. "}"
+    end
+
+    -- Protect complete atoms first. Warning/action colour spans deliberately
+    -- remain translatable; only entity spans are opaque named values.
+    value = value:gsub("|H.-|h.-|h", function(atom)
+        return Protect("link", atom)
+    end)
+    value = value:gsub("|T.-|t", function(atom)
+        return Protect("texture", atom)
+    end)
+    value = value:gsub("|cRXP_FRIENDLY_.-|r", function(atom)
+        return Protect("friendly", atom)
+    end)
+    value = value:gsub("|cRXP_ENEMY_.-|r", function(atom)
+        return Protect("enemy", atom)
+    end)
+    value = value:gsub("\\n", function(atom)
+        return Protect("newline", atom)
+    end)
+    value = value:gsub("\n", function(atom)
+        return Protect("newline", atom)
+    end)
+    value = value:gsub("|cRXP_[A-Z]+_", function(atom)
+        return Protect("rxpcolor", atom)
+    end)
+    value = value:gsub("|c%x%x%x%x%x%x%x%x", function(atom)
+        return Protect("color", atom)
+    end)
+    value = value:gsub("|r", function(atom)
+        return Protect("colorend", atom)
+    end)
+    value = value:gsub("%%[%d%.%-%+]*[sdif]", function(atom)
+        return Protect("format", atom)
+    end)
+    value = value:gsub("%-?%d+%.?%d*", function(atom)
+        return Protect("number", atom)
+    end)
+
+    local names = {}
+    for name in value:gmatch("{([%a_]+)}") do names[#names + 1] = name end
+    table.sort(names)
+    return value, tokens, table.concat(names, "\031")
+end
+
+local function Materialize(template, tokens)
+    if type(template) ~= "string" then return template end
+    return (template:gsub("{([%a_]+)}", function(key)
+        return tokens[key] or ("{" .. key .. "}")
+    end))
+end
+
+function service:Tokenize(text)
+    return Tokenize(text)
 end
 
 local function StripMarkup(value)
@@ -124,6 +219,10 @@ end
 function service:RegisterCatalog(code, data)
     if code ~= locale or type(data) ~= "table" then return false end
     catalog = data
+    catalog.translations = catalog.translations or {
+        reviewed = {}, machine = {}, contextualReviewed = {},
+        contextualMachine = {}, uiReviewed = {}, uiMachine = {},
+    }
     cache = {}
     return true
 end
@@ -133,16 +232,160 @@ function service:RegisterExactCatalog(code, entries, source)
     catalog = catalog or {}
     catalog.exact = catalog.exact or {}
     catalog.exactSources = catalog.exactSources or {}
+    catalog.translations = catalog.translations or {
+        reviewed = {}, machine = {}, contextualReviewed = {},
+        contextualMachine = {}, uiReviewed = {}, uiMachine = {},
+    }
     for english, translated in pairs(entries) do
         if type(english) == "string" and english ~= "" and
            type(translated) == "string" and translated ~= "" and
            not catalog.exact[english] then
             catalog.exact[english] = translated
             catalog.exactSources[english] = source
+            catalog.translations.reviewed[english] = {
+                text = translated,
+                status = "reviewed",
+                source = source,
+                sourceSignature = HashSource(english),
+            }
         end
     end
     cache = {}
     return true
+end
+
+local function NormalizePackEntry(english, value, defaultStatus, source,
+                                  revision)
+    if type(english) ~= "string" or english == "" then return end
+    local entry
+    if type(value) == "string" then
+        entry = {text = value}
+    elseif type(value) == "table" then
+        entry = value
+    else
+        return
+    end
+    if type(entry.text) ~= "string" or entry.text == "" then return end
+    local status = entry.status or defaultStatus
+    if status ~= "reviewed" and status ~= "machine" then return end
+    local expected = entry.sourceSignature or HashSource(english)
+    if expected ~= HashSource(english) then return end
+    local tokenized, tokens, sourceTokens = Tokenize(english)
+    local translatedTokens = ""
+    if entry.tokenized then
+        local names = {}
+        for name in entry.text:gmatch("{([%a_]+)}") do
+            names[#names + 1] = name
+        end
+        table.sort(names)
+        translatedTokens = table.concat(names, "\031")
+        if translatedTokens ~= sourceTokens then return end
+    end
+    return {
+        text = entry.text,
+        status = status,
+        source = entry.source or source,
+        sourceSignature = expected,
+        tokenized = entry.tokenized == true,
+        tokens = entry.tokenized and tokens or nil,
+        tokenizedSource = entry.tokenized and tokenized or nil,
+        revision = entry.revision or revision,
+    }
+end
+
+function service:RegisterTranslationPack(code, pack)
+    if code ~= locale or type(pack) ~= "table" or
+       tonumber(pack.schema) ~= PACK_SCHEMA then return false end
+    catalog = catalog or {}
+    catalog.translations = catalog.translations or {
+        reviewed = {}, machine = {}, contextualReviewed = {},
+        contextualMachine = {}, uiReviewed = {}, uiMachine = {},
+    }
+    local translations = catalog.translations
+    local source = pack.source or "translation pack"
+    local revision = pack.revision or "unspecified"
+    local function Import(values, defaultStatus, destination, contextual)
+        if type(values) ~= "table" then return end
+        for key, value in pairs(values) do
+            local english = contextual and type(value) == "table" and
+                                value.english or key
+            local entry = NormalizePackEntry(english, value, defaultStatus,
+                                             source, revision)
+            if entry and not destination[key] then
+                destination[key] = entry
+            end
+        end
+    end
+    Import(pack.reviewed, "reviewed", translations.reviewed)
+    Import(pack.machine, "machine", translations.machine)
+    Import(pack.contextualReviewed, "reviewed",
+           translations.contextualReviewed, true)
+    Import(pack.contextualMachine, "machine",
+           translations.contextualMachine, true)
+    Import(pack.uiReviewed, "reviewed", translations.uiReviewed)
+    Import(pack.uiMachine, "machine", translations.uiMachine)
+    catalog.revision = revision
+    cache = {}
+    return true
+end
+
+function service:RegisterCompressedPack(code, encoded)
+    if code ~= locale or type(encoded) ~= "string" or encoded == "" then
+        return false
+    end
+    local deflate = LibStub and LibStub("LibDeflate", true)
+    if not deflate then return false end
+    local compressed = deflate:DecodeForPrint(encoded)
+    local payload = compressed and deflate:DecompressDeflate(compressed)
+    if type(payload) ~= "string" or #payload > 16 * 1024 * 1024 then
+        return false
+    end
+    local recordSeparator, fieldSeparator = string.char(30), string.char(31)
+    local pack = {
+        schema = PACK_SCHEMA,
+        reviewed = {}, machine = {}, contextualReviewed = {},
+        contextualMachine = {}, uiReviewed = {}, uiMachine = {},
+    }
+    local first = true
+    for record in payload:gmatch("[^" .. recordSeparator .. "]+") do
+        local fields, offset = {}, 1
+        for index = 1, 6 do
+            local boundary = record:find(fieldSeparator, offset, true)
+            if not boundary then break end
+            fields[index] = record:sub(offset, boundary - 1)
+            offset = boundary + 1
+        end
+        fields[7] = record:sub(offset)
+        local kind, status, key, english, translated, signature, tokenized =
+            unpack(fields)
+        if first then
+            first = false
+            if kind ~= "H" or tonumber(status) ~= PACK_SCHEMA then return false end
+            pack.revision, pack.source = key, english
+        else
+            local destination
+            if kind == "G" then
+                destination = status == "R" and pack.reviewed or pack.machine
+                english = key
+            elseif kind == "C" then
+                destination = status == "R" and pack.contextualReviewed or
+                                  pack.contextualMachine
+            elseif kind == "U" then
+                destination = status == "R" and pack.uiReviewed or pack.uiMachine
+                english = key
+            end
+            if destination and english and translated and signature then
+                destination[key] = {
+                    english = kind == "C" and english or nil,
+                    text = translated,
+                    status = status == "R" and "reviewed" or "machine",
+                    sourceSignature = signature,
+                    tokenized = tokenized == "1",
+                }
+            end
+        end
+    end
+    return self:RegisterTranslationPack(code, pack)
 end
 
 function service:RegisterEnglishNames(names)
@@ -165,12 +408,94 @@ function service:IsSupported() return supported[locale] == true end
 function service:GetMode() return GetMode() end
 function service:IsLocalized() return GetMode() == "localized" end
 
+local function ContextKey(element, field, source)
+    if type(element) ~= "table" then return end
+    local step = type(element.step) == "table" and element.step or element
+    local guideKey = element.sourceGuideKey or step.sourceGuideKey or
+                         element.key
+    local stepId = step.stepId
+    if not guideKey then return end
+    return table.concat({tostring(guideKey), tostring(stepId or "guide"),
+                         tostring(field or "text"), HashSource(source)}, "\031")
+end
+
+function service:BuildContextKey(element, field, source)
+    return ContextKey(element, field, source)
+end
+
+local function LookupTranslation(source, element, field, wantedStatus)
+    local translations = catalog and catalog.translations
+    if not translations or type(source) ~= "string" then return end
+    local context = ContextKey(element, field, source)
+    local entry
+    if wantedStatus ~= "machine" then
+        entry = context and translations.contextualReviewed[context] or nil
+        entry = entry or translations.reviewed[source]
+    end
+    if not entry and wantedStatus ~= "reviewed" then
+        entry = context and translations.contextualMachine[context] or nil
+        entry = entry or translations.machine[source]
+    end
+    if not entry or entry.sourceSignature ~= HashSource(source) then return end
+    if entry.tokenized then
+        local _, tokens, signature = Tokenize(source)
+        local names = {}
+        for name in entry.text:gmatch("{([%a_]+)}") do
+            names[#names + 1] = name
+        end
+        table.sort(names)
+        if table.concat(names, "\031") ~= signature then return end
+        return Materialize(entry.text, tokens), entry
+    end
+    return entry.text, entry
+end
+
+function service:UIWithMetadata(key)
+    local translations = catalog and catalog.translations
+    local entry = translations and
+                      (translations.uiReviewed[key] or
+                           translations.uiMachine[key])
+    if entry and entry.sourceSignature == HashSource(key) then
+        local text = entry.tokenized and
+                         Materialize(entry.text, select(2, Tokenize(key))) or
+                         entry.text
+        return text, {
+            status = entry.status,
+            source = entry.source,
+            catalogRevision = entry.revision,
+            sourceSignature = entry.sourceSignature,
+            machine = entry.status == "machine",
+            reviewed = entry.status == "reviewed",
+            fallback = false,
+        }
+    end
+    local reviewed = catalog and catalog.ui and catalog.ui[key]
+    if reviewed then
+        return reviewed, {status = "reviewed", reviewed = true, fallback = false}
+    end
+    return key, {status = "fallback", fallback = true}
+end
+
 function service:UI(key)
-    return catalog and catalog.ui and catalog.ui[key] or key
+    return (self:UIWithMetadata(key))
 end
 
 function service:GetFallbackExplanation()
     return self:UI("This instruction has not yet been reviewed in your language.")
+end
+
+
+function service:GetMachineExplanation()
+    local value = self:UI("This text was machine translated and has not yet been reviewed.")
+    if value == "This text was machine translated and has not yet been reviewed." then
+        return value
+    end
+    return value
+end
+
+function service:GetStatusExplanation(status)
+    if status == "machine" then return self:GetMachineExplanation() end
+    if status == "fallback" then return self:GetFallbackExplanation() end
 end
 
 function service:ClearCache()
@@ -375,26 +700,32 @@ local function ValueLooksReviewed(value)
     return words <= 7
 end
 
-local function TranslateLine(line)
-    if not catalog then return line, false end
-    local exact = catalog.exact and catalog.exact[line]
-    if exact then return exact, true end
+local function TranslateLine(line, element, field)
+    if not catalog then return line, "fallback" end
+    local exact, exactEntry = LookupTranslation(line, element, field, "reviewed")
+    if exact then return exact, exactEntry.status, exactEntry end
 
-    local function TranslateBody(body)
+    local function TranslateBody(body, wantedStatus)
+        local bodyExact, bodyEntry = LookupTranslation(
+            body, element, field, wantedStatus)
+        if bodyExact then return bodyExact, bodyEntry.status, bodyEntry end
+        if wantedStatus == "machine" then return body, "fallback" end
         local flight = body:match("^Get the (.+) flight path$")
         if flight and catalog.flightPath then
             flight = LocalizeLocation(flight)
-            return Substitute(catalog.flightPath, {value = flight}), true
+            return Substitute(catalog.flightPath, {value = flight}), "reviewed",
+                   {source = "reviewed semantic template"}
         end
         for _, action in ipairs(catalog.actions or {}) do
             local value = body:match(action.pattern)
             if value then
                 value = LocalizeLocation(value)
                 return Substitute(action.template, {value = value}),
-                       ValueLooksReviewed(value)
+                       ValueLooksReviewed(value) and "reviewed" or "fallback",
+                       {source = "reviewed semantic template"}
             end
         end
-        return body, false
+        return body, "fallback"
     end
 
     local indent, icon, body = line:match("^(%s*)(|T.-|t%s*)(.*)$")
@@ -403,18 +734,33 @@ local function TranslateLine(line)
         icon = ""
     end
 
-    local bodyExact = catalog.exact and catalog.exact[body]
-    if bodyExact then return indent .. icon .. bodyExact, true end
+    local translated, bodyStatus, bodyMeta = TranslateBody(body, "reviewed")
+    local partial, partialMeta
+    if translated ~= body and bodyStatus == "reviewed" then
+        return indent .. icon .. translated, bodyStatus, bodyMeta
+    elseif translated ~= body then
+        partial, partialMeta = translated, bodyMeta
+    end
 
-    local translated, reviewed = TranslateBody(body)
-    if translated ~= body then return indent .. icon .. translated, reviewed end
+    exact, exactEntry = LookupTranslation(line, element, field, "machine")
+    if exact then return exact, exactEntry.status, exactEntry end
+    translated, bodyStatus, bodyMeta = TranslateBody(body, "machine")
+    if translated ~= body then
+        return indent .. icon .. translated, bodyStatus, bodyMeta
+    end
 
-    local changed, spansReviewed = false, true
+    local changed, spanStatus, spanMeta = false, "reviewed"
     body = body:gsub("(|cRXP_[A-Z]+_)(.-)(|r)", function(prefix, content, suffix)
-        local replacement, contentReviewed = TranslateBody(content)
+        local replacement, contentStatus, contentMeta =
+            TranslateBody(content, "reviewed")
+        if replacement == content then
+            replacement, contentStatus, contentMeta =
+                TranslateBody(content, "machine")
+        end
         if replacement ~= content then
             changed = true
-            spansReviewed = spansReviewed and contentReviewed
+            spanStatus = MergeStatus(spanStatus, contentStatus)
+            spanMeta = spanMeta or contentMeta
         end
         return prefix .. replacement .. suffix
     end)
@@ -423,33 +769,38 @@ local function TranslateLine(line)
         -- A semantic span can translate the actionable clause while adjacent
         -- authored commentary remains English. Keep that sentence visibly
         -- marked unless the remainder is only punctuation/short named data.
-        return indent .. icon .. body,
-               spansReviewed and ValueLooksReviewed(outside)
+        if not ValueLooksReviewed(outside) then spanStatus = "fallback" end
+        return indent .. icon .. body, spanStatus, spanMeta
     end
-    return line, false
+    if partial then
+        return indent .. icon .. partial, "fallback", partialMeta
+    end
+    return line, "fallback"
 end
 
-local function TranslateLines(text)
-    local output, reviewed, count = {}, true, 0
+local function TranslateLines(text, element, field)
+    local output, status, count, provenance = {}, "official", 0
     for line in (text .. "\n"):gmatch("(.-)\n") do
-        local translated, lineReviewed = TranslateLine(line)
+        local translated, lineStatus, lineMeta = TranslateLine(line, element, field)
         output[#output + 1] = translated
         if HasDisplayText(line) then
             count = count + 1
-            reviewed = reviewed and lineReviewed
+            status = MergeStatus(status, lineStatus)
+            provenance = provenance or lineMeta
         end
     end
-    return table.concat(output, "\n"), reviewed and count > 0
+    return table.concat(output, "\n"), count > 0 and status or "official",
+           provenance
 end
 
-local function AppendLiveProgress(source, current)
+local function GetLiveProgress(source, current)
     if type(source) ~= "string" or type(current) ~= "string" or
-       source == current then return source end
+       source == current then return nil end
     local count, total = current:match("(%d+)%s*/%s*(%d+)")
     if count and total and not source:find("%d+%s*/%s*%d+") then
-        return source .. "\n" .. count .. "/" .. total
+        return "\n" .. count .. "/" .. total
     end
-    return source
+    return nil
 end
 
 standingNames = {
@@ -506,19 +857,18 @@ local function GeneratedEnglish(element, current)
         local item = service.englishNames.items[tonumber(element.id)]
         local text = item and ("Collect " .. item) or
                          ("Collect Item #" .. tostring(element.id))
-        return AppendLiveProgress(text, current)
+        return text
     elseif tag == "complete" and element.questId then
         local objectiveText = type(element.sourceLine) == "string" and
                                   element.sourceLine:match("%-%-%s*(.-)%s*$")
         if objectiveText and objectiveText ~= "" then
             objectiveText = objectiveText:gsub("%s*%(%d+%)%s*$", "")
-            return AppendLiveProgress(objectiveText, current)
+            return objectiveText
         end
         local quest = service.englishNames.quests[tonumber(element.questId)] or
                           ("Quest #" .. tostring(element.questId))
         local objective = tonumber(element.obj) or 1
-        return AppendLiveProgress("Complete objective " .. objective ..
-                                      " for " .. quest, current)
+        return "Complete objective " .. objective .. " for " .. quest
     elseif tag == "reputation" and element.faction then
         local faction = service.englishNames.factions[tonumber(element.faction)] or
                             ("Faction #" .. tostring(element.faction))
@@ -587,7 +937,7 @@ local function SourceFor(text, element, field, localized)
     -- English mode uses the stable quest/objective formatter below.
     if localized and element.tag == "complete" and
        type(text) == "string" and Trim(text) ~= "" and Trim(text) ~= " " then
-        return text, true
+        return text, true, nil
     end
     local source = sourceFields[field or "text"]
     source = source and element[source] or nil
@@ -600,28 +950,30 @@ local function SourceFor(text, element, field, localized)
     if generated then
         if field == "tooltipText" then
             local icon = text:match("^(|T.-|t%s*)") or ""
-            return icon .. generated, false
+            local value = icon .. generated
+            return value, false, GetLiveProgress(value, text)
         end
-        return generated, false
+        return generated, false, GetLiveProgress(generated, text)
     end
     if type(source) == "string" and Trim(source) ~= "" then
-        return AppendLiveProgress(source, text), false
+        return source, false, GetLiveProgress(source, text)
     end
     if (element.tag == "accept" or element.tag == "turnin" or
        element.tag == "abandon") and type(element.sourceText) == "string" and
        Trim(element.sourceText) ~= "" then
-        return AppendLiveProgress(element.sourceText, text), false
+        return element.sourceText, false, GetLiveProgress(element.sourceText, text)
     end
-    return text, false
+    return text, false, nil
 end
 
 function service:Render(text, element, field, options)
     if type(text) ~= "string" then
         return text, {mode = GetMode(), locale = locale, fallback = false}
     end
-    text = text:gsub(FALLBACK_PATTERN, "")
+    text = text:gsub(FALLBACK_PATTERN, ""):gsub(MACHINE_PATTERN, "")
     local localized = GetMode() == "localized"
-    local source, sourceOfficial = SourceFor(text, element, field, localized)
+    local source, sourceOfficial, liveProgress =
+        SourceFor(text, element, field, localized)
     if type(source) ~= "string" then source = text end
     local generatedDisplay = type(element) == "table" and
                                  not element.sourceAuthored and
@@ -637,15 +989,15 @@ function service:Render(text, element, field, options)
 
     local semanticLocalized = localized and GeneratedLocalized(element)
     local output = semanticLocalized or source
-    local reviewed = semanticLocalized ~= nil or sourceOfficial
-    local official = semanticLocalized ~= nil or sourceOfficial
-    local questChanged
-    output, questChanged = ReplaceQuestName(output, element, localized)
-    official = official or questChanged
+    local status = semanticLocalized and "official" or
+                       sourceOfficial and "official" or "fallback"
+    local translationMeta
     if localized then
-        local translated
-        translated, reviewed = TranslateLines(output)
-        output = translated
+        if not semanticLocalized and not sourceOfficial then
+            output, status, translationMeta =
+                TranslateLines(output, element, field)
+        end
+        output = ReplaceQuestName(output, element, true)
         local creatureChanged
         output, creatureChanged = ReplaceCreatureNames(output)
         local itemChanged
@@ -656,32 +1008,49 @@ function service:Render(text, element, field, options)
         output, factionChanged = ReplaceFactionNames(output, element)
         local locationChanged
         output, locationChanged = ReplaceLocationName(output, element)
-        official = official or creatureChanged or itemChanged or spellChanged or
-                       factionChanged or locationChanged
-        reviewed = reviewed or semanticLocalized ~= nil or sourceOfficial or
-                       questChanged or generatedDisplay and
-                           (itemChanged or spellChanged or factionChanged or
-                            locationChanged)
+        if status == "fallback" and generatedDisplay and
+           (itemChanged or spellChanged or factionChanged or locationChanged) then
+            -- Generated sentences use reviewed action grammar; official names
+            -- fill the named value without making authored English prose look
+            -- reviewed merely because one proper noun changed.
+            status = "reviewed"
+        end
     else
-        reviewed = true
+        output = ReplaceQuestName(output, element, false)
+        status = "reviewed"
     end
+    if liveProgress then output = output .. liveProgress end
 
-    local fallback = localized and HasDisplayText(output) and not reviewed
+    local hasText = HasDisplayText(output)
+    local fallback = localized and hasText and status == "fallback"
+    local machine = localized and hasText and status == "machine"
     if addon.settings and addon.settings.ReplaceColors then
         output = addon.settings.ReplaceColors(output)
     end
-    if fallback and not (options and options.noBadge) then
-        output = output .. FALLBACK_BADGE
+    if not (options and options.noBadge) then
+        if fallback then
+            output = output .. FALLBACK_BADGE
+        elseif machine then
+            output = output .. MACHINE_BADGE
+        end
     end
     local meta = {
         mode = localized and "localized" or "english",
         locale = locale,
-        reviewed = reviewed,
-        official = official,
+        status = status,
+        reviewed = status == "reviewed" or status == "official",
+        official = status == "official",
+        machine = machine,
         fallback = fallback,
+        source = translationMeta and translationMeta.source or
+                     status == "official" and "localized client data" or nil,
+        catalogRevision = translationMeta and translationMeta.revision or
+                              catalog and catalog.revision,
+        sourceSignature = HashSource(source),
     }
     if type(element) == "table" and (field == nil or field == "text") then
         element.guideTranslationFallback = fallback or nil
+        element.guideTranslationMachine = machine or nil
     end
     if cacheKey then cache[cacheKey] = {output, meta} end
     return output, meta
@@ -709,20 +1078,26 @@ local function TranslateTitleWords(text)
     return text, changed and residue == "", namedRemainder
 end
 
-function service:RenderTitle(text, noBadge)
-    if type(text) ~= "string" then return text, {fallback = false} end
+function service:RenderTitle(text, noBadge, context)
+    if type(text) ~= "string" then
+        return text, {status = "official", fallback = false}
+    end
     if GetMode() ~= "localized" then
         if addon.settings and addon.settings.ReplaceColors then
             text = addon.settings.ReplaceColors(text)
         end
-        return text, {fallback = false}
+        return text, {status = "reviewed", reviewed = true, fallback = false}
     end
-    local source = text:gsub(FALLBACK_PATTERN, "")
-    local exact = catalog and catalog.titles and catalog.titles[source]
-    local output, reviewed
+    local source = text:gsub(FALLBACK_PATTERN, ""):gsub(MACHINE_PATTERN, "")
+    local output, entry = LookupTranslation(source, context, "title", "reviewed")
+    local status = entry and entry.status
+    local exact = not output and catalog and catalog.titles and
+                      catalog.titles[source]
+    local reviewed
     if exact then
         output, reviewed = exact, true
-    else
+        status = "reviewed"
+    elseif not output then
         local namedRemainder
         output, reviewed, namedRemainder = TranslateTitleWords(source)
         if namedRemainder and namedRemainder ~= "" then
@@ -741,13 +1116,38 @@ function service:RenderTitle(text, noBadge)
                 reviewed = true
             end
         end
+        status = reviewed and "reviewed" or "fallback"
+        if not reviewed then
+            local machineOutput, machineEntry =
+                LookupTranslation(source, context, "title", "machine")
+            if machineOutput then
+                output, entry, status = machineOutput, machineEntry, "machine"
+            end
+        end
     end
-    local fallback = HasDisplayText(output) and not reviewed
+    local fallback = HasDisplayText(output) and status == "fallback"
+    local machine = HasDisplayText(output) and status == "machine"
     if addon.settings and addon.settings.ReplaceColors then
         output = addon.settings.ReplaceColors(output)
     end
-    if fallback and not noBadge then output = output .. FALLBACK_BADGE end
-    return output, {fallback = fallback, reviewed = reviewed}
+    if not noBadge then
+        if fallback then
+            output = output .. FALLBACK_BADGE
+        elseif machine then
+            output = output .. MACHINE_BADGE
+        end
+    end
+    return output, {
+        status = status,
+        fallback = fallback,
+        machine = machine,
+        reviewed = status == "reviewed" or status == "official",
+        official = status == "official",
+        source = entry and entry.source,
+        catalogRevision = entry and entry.revision or
+                              catalog and catalog.revision,
+        sourceSignature = HashSource(source),
+    }
 end
 
 function service:RenderElement(element, field, text, options)
@@ -761,7 +1161,7 @@ function service:RenderGuideName(guide, text, noBadge)
         text = guide.sourceDisplayName or guide.displayname or
                    guide.sourceName or guide.name
     end
-    return self:RenderTitle(text, noBadge)
+    return self:RenderTitle(text, noBadge, guide)
 end
 
 function service:RenderGroup(group, noBadge)

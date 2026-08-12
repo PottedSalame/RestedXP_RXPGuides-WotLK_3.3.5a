@@ -338,6 +338,9 @@ local function Button(frame, text, width, callback)
     local button = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     button:SetSize(width, 23)
     button:SetText(text)
+    if addon.locale and addon.locale.AttachStatusTooltip then
+        addon.locale.AttachStatusTooltip(button, text)
+    end
     button:SetScript("OnClick", callback)
     return button
 end

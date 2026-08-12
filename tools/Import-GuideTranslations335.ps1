@@ -2,112 +2,252 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$UpstreamRoot,
+    [string]$Locale = 'zhCN',
+    [ValidateSet('reviewed','machine')]
+    [string]$Status = 'reviewed',
     [string]$SourceVersion = 'unspecified',
     [string]$AddonRoot,
+    [string]$SourceCatalog,
     [string]$OutputPath
 )
 
 $ErrorActionPreference = 'Stop'
-$utf8 = New-Object System.Text.UTF8Encoding($false)
-if (-not $AddonRoot) { $AddonRoot = Split-Path -Parent $PSScriptRoot }
-if (-not $OutputPath) {
-    $OutputPath = Join-Path $AddonRoot 'locale\GuideExact.zhCN.lua'
+if ($Locale -notin @('deDE','esES','frFR','koKR','ruRU','zhCN','zhTW')) {
+    throw "Unsupported guide locale '$Locale'."
 }
+if (-not $AddonRoot) { $AddonRoot = Split-Path -Parent $PSScriptRoot }
+function Join-NativePath([string]$Root, [string]$Relative) {
+    $native = $Relative -replace '[\\/]', [IO.Path]::DirectorySeparatorChar
+    return Join-Path $Root $native
+}
+if (-not $SourceCatalog) {
+    $SourceCatalog = Join-Path $env:TEMP 'rxp-translation-source-335.json'
+    & (Join-Path $PSScriptRoot 'Export-TranslationUnits335.ps1') `
+        -AddonRoot $AddonRoot -OutputPath $SourceCatalog -Scope guides
+}
+if (-not $OutputPath) {
+    $OutputPath = Join-NativePath $AddonRoot "translations/imported/$Locale-upstream.json"
+}
+$utf8Strict = New-Object Text.UTF8Encoding($false, $true)
+$utf8 = New-Object Text.UTF8Encoding($false)
 $englishRoot = Join-Path $UpstreamRoot 'Guides'
-$translatedRoot = Join-Path $UpstreamRoot 'lang\Guides-zhCN'
+$translatedRoot = Join-NativePath $UpstreamRoot "lang/Guides-$Locale"
 if (-not (Test-Path -LiteralPath $englishRoot -PathType Container)) {
     throw "Missing upstream English guide directory: $englishRoot"
 }
 if (-not (Test-Path -LiteralPath $translatedRoot -PathType Container)) {
-    throw "Missing upstream zhCN guide directory: $translatedRoot"
+    throw "Missing upstream $Locale guide directory: $translatedRoot"
 }
 
-function Get-VisibleText([string]$line) {
-    $match = [regex]::Match($line, '>>\s*(.+?)\s*$')
-    if ($match.Success) { return $match.Groups[1].Value }
+function Get-VisibleText([string]$Line) {
+    $line = [regex]::Replace($Line, '\s*<<\s*(.+)$', '')
+    $match = [regex]::Match($line, '>>\s*(.*?)\s*$')
+    if ($match.Success -and $match.Groups[1].Value) {
+        return $match.Groups[1].Value
+    }
     $match = [regex]::Match($line, '^\s*[+*]\s*(.+?)\s*$')
     if ($match.Success) { return $match.Groups[1].Value }
     return $null
 }
 
-function Get-SortedMatches([string]$text, [string]$pattern) {
-    return @([regex]::Matches($text, $pattern) | ForEach-Object { $_.Value } | Sort-Object)
+function Get-LineSignature([string]$Line) {
+    $line = $Line -replace '\s*--.*$',''
+    $line = [regex]::Replace($line, '\s*<<\s*(.+)$', '')
+    if ($line -match '^\s*\.([a-zA-Z0-9_]+)\s+([^>]*)>>') {
+        $tag = $Matches[1].ToLowerInvariant()
+        $id = ([regex]::Match($Matches[2], '-?\d+')).Value
+        return "directive:${tag}:$id"
+    }
+    if ($line -match '^\s*>>') { return 'continuation' }
+    if ($line -match '^\s*\+') { return 'plus' }
+    if ($line -match '^\s*\*') { return 'star' }
+    return $null
 }
 
-function Test-SameSignature([string]$english, [string]$translated) {
-    if ($translated -notmatch '[\u3400-\u9fff]') { return $false }
-    if ($translated.TrimStart().StartsWith('.')) { return $false }
-    if ($translated -match '<<|^#|RXPGuides\.RegisterGuide') { return $false }
-    $checks = @(
-        @('\|cRXP_[A-Z]+_', 'semantic colors'),
-        @('\|T', 'texture opens'),
-        @('\|t', 'texture closes'),
-        @('\|H', 'hyperlink opens'),
-        @('\|h', 'hyperlink fields'),
-        @('\d+(?:\.\d+)?', 'numbers')
-    )
-    foreach ($check in $checks) {
-        $left = @(Get-SortedMatches $english $check[0])
-        $right = @(Get-SortedMatches $translated $check[0])
-        if (($left -join [char]31) -ne ($right -join [char]31)) { return $false }
+function Get-SortedMatches([string]$Text, [string]$Pattern) {
+    return @([regex]::Matches($Text, $Pattern) |
+        ForEach-Object { $_.Value } | Sort-Object)
+}
+
+function Test-SameSignature([string]$English, [string]$Translated) {
+    if ($Translated.TrimStart().StartsWith('.') -or
+        $Translated -match '<<|^#|RXPGuides\.RegisterGuide') { return $false }
+    if ($Locale -in @('zhCN','zhTW') -and
+        $Translated -notmatch '[\u3400-\u9fff]') { return $false }
+    if ($Locale -eq 'koKR' -and $Translated -notmatch '[\uac00-\ud7af]') {
+        return $false
+    }
+    if ($Locale -eq 'ruRU' -and $Translated -notmatch '[\u0400-\u04ff]') {
+        return $false
+    }
+    foreach ($pattern in @('\|cRXP_[A-Z]+_','\|r','\|T','\|t','\|H','\|h',
+            '-?\d+(?:\.\d+)?')) {
+        $left = @(Get-SortedMatches $English $pattern) -join [char]31
+        $right = @(Get-SortedMatches $Translated $pattern) -join [char]31
+        if ($left -ne $right) {
+            return $false
+        }
     }
     return $true
 }
 
-function Escape-Lua([string]$value) {
-    return $value.Replace('\', '\\').Replace('"', '\"').Replace("`r", '\r').Replace("`n", '\n')
+function Add-Candidate([hashtable]$Candidates, [hashtable]$Conflicts,
+                       [string]$English, [string]$Translated) {
+    if (-not $English -or -not $Translated -or $English -eq $Translated) { return }
+    if (-not (Test-SameSignature $English $Translated)) { return }
+    if ($Candidates.ContainsKey($English) -and
+        $Candidates[$English] -ne $Translated) {
+        $Conflicts[$English] = $true
+    } else {
+        $Candidates[$English] = $Translated
+    }
 }
 
-$currentVisible = @{}
-$guideListPath = Join-Path $AddonRoot 'GuideList_335.xml'
-$guideList = [IO.File]::ReadAllText($guideListPath, $utf8)
-foreach ($match in [regex]::Matches($guideList, '<Script\s+file="([^"]+\.lua)"')) {
-    $relative = $match.Groups[1].Value.Replace('\', [IO.Path]::DirectorySeparatorChar)
-    $path = Join-Path $AddonRoot $relative
-    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
-    foreach ($line in [IO.File]::ReadAllLines($path, $utf8)) {
-        $visible = Get-VisibleText $line
-        if ($visible) { $currentVisible[$visible] = $true }
+function Get-StepBlocks([string[]]$Lines) {
+    $steps = New-Object Collections.Generic.List[object]
+    $current = $null
+    function Finish-Step($Step) {
+        if (-not $Step) { return }
+        $Step.fingerprint = $Step.parts -join '|'
+        $steps.Add($Step)
     }
+    for ($index = 0; $index -lt $Lines.Count; $index++) {
+        if ($Lines[$index] -match '^\s*step(?:\s|$)') {
+            Finish-Step $current
+            $current = [pscustomobject]@{
+                entries = New-Object Collections.Generic.List[object]
+                parts = New-Object Collections.Generic.List[string]
+                fingerprint = ''
+            }
+        }
+        if (-not $current) { continue }
+        $operational = [regex]::Replace($Lines[$index], '\s*>>.*$', '')
+        $operational = [regex]::Replace($operational, '\s*--.*$', '')
+        $directive = [regex]::Match($operational,
+            '^\s*\.([a-zA-Z0-9_]+)\s*(.*)$')
+        if ($directive.Success) {
+            $numbers = @([regex]::Matches($directive.Groups[2].Value,
+                '-?\d+(?:\.\d+)?') | ForEach-Object { $_.Value })
+            $current.parts.Add(($directive.Groups[1].Value.ToLowerInvariant() +
+                ':' + ($numbers -join ',')))
+        }
+        $visible = Get-VisibleText $Lines[$index]
+        if ($visible) {
+            $current.entries.Add([pscustomobject]@{
+                text = $visible
+                signature = Get-LineSignature $Lines[$index]
+            })
+        }
+    }
+    Finish-Step $current
+    return $steps
+}
+
+function Align-DifferentFiles([string[]]$EnglishLines,
+                              [string[]]$TranslatedLines,
+                              [hashtable]$Candidates,
+                              [hashtable]$Conflicts) {
+    $englishSteps = Get-StepBlocks $EnglishLines
+    $translatedSteps = Get-StepBlocks $TranslatedLines
+    $translatedIndex = 0
+    for ($stepIndex = 0; $stepIndex -lt $englishSteps.Count; $stepIndex++) {
+        $leftStep = $englishSteps[$stepIndex]
+        if (-not $leftStep.fingerprint) { continue }
+        $matchedStep = -1
+        for ($candidateStep = $translatedIndex;
+             $candidateStep -lt $translatedSteps.Count; $candidateStep++) {
+            if ($translatedSteps[$candidateStep].fingerprint -eq
+                $leftStep.fingerprint) {
+                $matchedStep = $candidateStep
+                break
+            }
+        }
+        if ($matchedStep -lt 0) { continue }
+        $translatedIndex = $matchedStep + 1
+        $left = $leftStep.entries
+        $right = $translatedSteps[$matchedStep].entries
+        $rightIndex = 0
+        for ($leftIndex = 0; $leftIndex -lt $left.Count; $leftIndex++) {
+            $source = $left[$leftIndex]
+            $matchIndex = -1
+            $limit = [math]::Min($right.Count - 1, $rightIndex + 8)
+            for ($candidateIndex = $rightIndex;
+                 $candidateIndex -le $limit; $candidateIndex++) {
+                if ($right[$candidateIndex].signature -eq $source.signature) {
+                    $matchIndex = $candidateIndex
+                    break
+                }
+            }
+            if ($matchIndex -lt 0) { continue }
+            Add-Candidate $Candidates $Conflicts $source.text `
+                $right[$matchIndex].text
+            $rightIndex = $matchIndex + 1
+        }
+    }
+}
+
+$sourceDocument = [IO.File]::ReadAllText(
+    [IO.Path]::GetFullPath($SourceCatalog), $utf8Strict) | ConvertFrom-Json
+$sourceByEnglish = @{}
+foreach ($unit in $sourceDocument.units) {
+    if ($unit.kind -ne 'ui') { $sourceByEnglish[[string]$unit.english] = $unit }
 }
 
 $candidates = @{}
 $conflicts = @{}
-foreach ($translatedFile in Get-ChildItem -LiteralPath $translatedRoot -Recurse -Filter '*.lua' -File) {
-    $relative = $translatedFile.FullName.Substring($translatedRoot.Length).TrimStart('\', '/')
+$alignedFiles = 0
+$relaxedFiles = 0
+foreach ($translatedFile in Get-ChildItem -LiteralPath $translatedRoot `
+        -Recurse -Filter '*.lua' -File) {
+    $relative = $translatedFile.FullName.Substring(
+        $translatedRoot.Length).TrimStart('\', '/')
     $englishFile = Join-Path $englishRoot $relative
     if (-not (Test-Path -LiteralPath $englishFile -PathType Leaf)) { continue }
-    $englishLines = [IO.File]::ReadAllLines($englishFile, $utf8)
-    $translatedLines = [IO.File]::ReadAllLines($translatedFile.FullName, $utf8)
-    if ($englishLines.Count -ne $translatedLines.Count) { continue }
-    for ($index = 0; $index -lt $englishLines.Count; $index++) {
-        $english = Get-VisibleText $englishLines[$index]
-        $translated = Get-VisibleText $translatedLines[$index]
-        if (-not $english -or -not $translated -or $english -eq $translated) { continue }
-        if (-not $currentVisible.ContainsKey($english)) { continue }
-        if (-not (Test-SameSignature $english $translated)) { continue }
-        if ($candidates.ContainsKey($english) -and $candidates[$english] -ne $translated) {
-            $conflicts[$english] = $true
-        } else {
-            $candidates[$english] = $translated
+    $englishLines = [IO.File]::ReadAllLines($englishFile, $utf8Strict)
+    $translatedLines = [IO.File]::ReadAllLines($translatedFile.FullName,
+        $utf8Strict)
+    if ($englishLines.Count -eq $translatedLines.Count) {
+        $alignedFiles++
+        for ($index = 0; $index -lt $englishLines.Count; $index++) {
+            Add-Candidate $candidates $conflicts `
+                (Get-VisibleText $englishLines[$index]) `
+                (Get-VisibleText $translatedLines[$index])
         }
+    } else {
+        $relaxedFiles++
+        Align-DifferentFiles $englishLines $translatedLines $candidates $conflicts
     }
 }
 foreach ($english in $conflicts.Keys) { $candidates.Remove($english) }
 
-$builder = New-Object Text.StringBuilder
-[void]$builder.AppendLine('local _, addon = ...')
-[void]$builder.AppendLine('if GetLocale() ~= "zhCN" or not addon.guideLocalization then return end')
-[void]$builder.AppendLine('')
-[void]$builder.AppendLine("-- Source: RestedXP upstream zhCN guide catalog ($SourceVersion snapshot).")
-[void]$builder.AppendLine('-- Visible display text only; operational guide data is never imported.')
-[void]$builder.AppendLine('-- Retain the upstream project''s attribution and licensing when redistributing.')
-[void]$builder.AppendLine('local exact = {')
+$units = New-Object Collections.Generic.List[object]
 foreach ($english in @($candidates.Keys | Sort-Object)) {
-    [void]$builder.AppendLine(('    ["{0}"] = "{1}",' -f (Escape-Lua $english), (Escape-Lua $candidates[$english])))
+    $sourceUnit = $sourceByEnglish[$english]
+    if (-not $sourceUnit) { continue }
+    $units.Add([ordered]@{
+        id = $sourceUnit.id
+        english = $english
+        translation = $candidates[$english]
+        status = $Status
+        domain = 'guide'
+        tokenized = $false
+        attribution = "RestedXP upstream $Locale visible guide text ($SourceVersion)"
+    })
 }
-[void]$builder.AppendLine('}')
-[void]$builder.AppendLine('addon.guideLocalization:RegisterExactCatalog("zhCN", exact,')
-[void]$builder.AppendLine('    "RestedXP upstream zhCN visible guide text")')
-[IO.File]::WriteAllText($OutputPath, $builder.ToString(), $utf8)
-Write-Host ("Imported {0} reviewed zhCN display strings; rejected {1} conflicts." -f $candidates.Count, $conflicts.Count)
+$document = [ordered]@{
+    schema = 1
+    locale = $Locale
+    sourceRevision = $sourceDocument.sourceRevision
+    revision = "$SourceVersion-$Locale"
+    source = "RestedXP upstream $Locale visible guide text"
+    units = $units
+}
+$parent = Split-Path -Parent $OutputPath
+if ($parent -and -not (Test-Path -LiteralPath $parent)) {
+    New-Item -ItemType Directory -Path $parent -Force | Out-Null
+}
+[IO.File]::WriteAllText($OutputPath,
+    ($document | ConvertTo-Json -Depth 7), $utf8)
+Write-Host ("Imported {0} of {1} aligned {2} guide translations from {3} strict and {4} relaxed files; rejected {5} conflicts." -f `
+    $units.Count, $candidates.Count, $Locale, $alignedFiles, $relaxedFiles,
+    $conflicts.Count)

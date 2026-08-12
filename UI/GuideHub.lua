@@ -113,6 +113,9 @@ local function BuildGuideList()
                     translationFallback = (groupMeta and groupMeta.fallback) or
                                               (nameMeta and nameMeta.fallback) or
                                               nil,
+                    translationMachine = (groupMeta and groupMeta.machine) or
+                                             (nameMeta and nameMeta.machine) or
+                                             nil,
                     active = active,
                     reason = reason
                 })
@@ -131,6 +134,12 @@ end
 
 function hub:GetFilteredGuides()
     local search = self.searchText and lower(self.searchText) or ""
+    local function SearchText(value)
+        value = tostring(value or "")
+        value = value:gsub("%s*|cff9d9d9d%[EN%]|r", "")
+        value = value:gsub("%s*|cff70a0ff%[MT%]|r", "")
+        return lower(value)
+    end
     local favoritesOnly = self.favoritesOnly
     local recentOnly = self.recentOnly
     local recent = {}
@@ -139,10 +148,10 @@ function hub:GetFilteredGuides()
     for _, entry in ipairs(self.guides or {}) do
         local favorite = RXPData.guideHub.favorites[entry.key]
         local textMatch = search == "" or
-            lower(entry.name):find(search, 1, true) or
-            lower(entry.group):find(search, 1, true) or
-            lower(entry.canonicalName or ""):find(search, 1, true) or
-            lower(entry.canonicalGroup or ""):find(search, 1, true)
+            SearchText(entry.name):find(search, 1, true) or
+            SearchText(entry.group):find(search, 1, true) or
+            SearchText(entry.canonicalName):find(search, 1, true) or
+            SearchText(entry.canonicalGroup):find(search, 1, true)
         local guide = entry.guide
         local condition = type(guide.enabledFor) == "string" and
                               guide.enabledFor or ""
@@ -284,6 +293,9 @@ local function CreateButton(parent, text, width)
     local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     button:SetSize(width, 24)
     button:SetText(text)
+    if addon.locale and addon.locale.AttachStatusTooltip then
+        addon.locale.AttachStatusTooltip(button, text)
+    end
     return button
 end
 
@@ -434,18 +446,23 @@ function hub:CreateFrame()
             end
         end)
         row:SetScript("OnEnter", function(self)
-            if self.entry and self.entry.translationFallback and
+            if self.entry and (self.entry.translationFallback or
+               self.entry.translationMachine) and
                addon.guideLocalization then
                 _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 _G.GameTooltip:ClearLines()
-                _G.GameTooltip:AddLine(
+                local machine = self.entry.translationMachine
+                _G.GameTooltip:AddLine(machine and
+                    addon.guideLocalization:GetMachineExplanation() or
                     addon.guideLocalization:GetFallbackExplanation(),
-                    0.65, 0.65, 0.65, true)
+                    machine and 0.45 or 0.65, machine and 0.65 or 0.65,
+                    machine and 1 or 0.65, true)
                 _G.GameTooltip:Show()
             end
         end)
         row:SetScript("OnLeave", function(self)
-            if self.entry and self.entry.translationFallback then
+            if self.entry and (self.entry.translationFallback or
+               self.entry.translationMachine) then
                 _G.GameTooltip:Hide()
             end
         end)
