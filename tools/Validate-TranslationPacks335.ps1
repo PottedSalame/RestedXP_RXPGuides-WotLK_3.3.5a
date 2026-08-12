@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$RepoRoot,
+    [string]$SourceCatalog,
     [switch]$RequireLua
 )
 
@@ -53,7 +54,7 @@ function Decode-ForPrint([string]$Encoded) {
     }
     return ,$bytes.ToArray()
 }
-function Get-PackPayload([string]$Path) {
+function Get-CanonicalPackPayload([string]$Path) {
     $text = [IO.File]::ReadAllText($Path)
     $payloadBlock = [regex]::Match($text,
         '(?s)local payload = table\.concat\(\{(.*?)\}\)')
@@ -71,7 +72,38 @@ function Get-PackPayload([string]$Path) {
     $output = New-Object IO.MemoryStream
     try {
         $inflater.CopyTo($output)
-        return [Convert]::ToBase64String($output.ToArray())
+        $utf8Strict = New-Object Text.UTF8Encoding($false, $true)
+        $payload = $utf8Strict.GetString($output.ToArray())
+        $recordSeparator, $fieldSeparator = [char]30, [char]31
+        $records = @($payload.Split(
+            [char[]]@($recordSeparator),
+            [StringSplitOptions]::RemoveEmptyEntries))
+        if ($records.Count -lt 1) { throw "Empty translation pack: $Path" }
+        $header = @($records[0].Split([char[]]@($fieldSeparator)))
+        if ($header.Count -ne 7 -or $header[0] -ne 'H' -or $header[1] -ne '1') {
+            throw "Invalid translation pack header: $Path"
+        }
+        foreach ($index in @(2, 3)) {
+            $separator = if ($index -eq 2) { '+' } else { '; ' }
+            $parts = New-Object 'System.Collections.Generic.List[string]'
+            foreach ($part in @($header[$index].Split(
+                    [string[]]@($separator),
+                    [StringSplitOptions]::RemoveEmptyEntries))) {
+                $parts.Add($part)
+            }
+            $parts.Sort([StringComparer]::Ordinal)
+            $header[$index] = $parts -join $separator
+        }
+        $data = New-Object 'System.Collections.Generic.List[string]'
+        for ($index = 1; $index -lt $records.Count; $index++) {
+            $fields = @($records[$index].Split([char[]]@($fieldSeparator)))
+            if ($fields.Count -ne 7 -or $fields[0] -notin @('G','C','U')) {
+                throw "Invalid translation pack record $index in $Path"
+            }
+            $data.Add($records[$index])
+        }
+        $data.Sort([StringComparer]::Ordinal)
+        return (@($header -join $fieldSeparator) + @($data)) -join $recordSeparator
     } finally {
         $inflater.Dispose()
         $input.Dispose()
@@ -82,9 +114,25 @@ $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) `
     ('rxp-translations-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
 try {
-    $source = Join-Path $temporaryRoot 'source.json'
-    & (Join-Path $PSScriptRoot 'Export-TranslationUnits335.ps1') `
-        -AddonRoot $RepoRoot -OutputPath $source
+    $source = if ($SourceCatalog) {
+        [IO.Path]::GetFullPath((Join-Path $RepoRoot $SourceCatalog))
+    } else { Join-Path $temporaryRoot 'source.json' }
+    $importedRoot = Join-RepoPath 'translations/imported'
+    $contextMatches = @(Get-ChildItem $importedRoot -Filter '*.json' -File `
+        -ErrorAction SilentlyContinue | Select-String `
+        -Pattern '"contextKey"\s*:' -Quiet)
+    $hasContextual = $contextMatches -contains $true
+    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+        $sourceParent = Split-Path -Parent $source
+        if ($sourceParent -and -not (Test-Path -LiteralPath $sourceParent)) {
+            New-Item -ItemType Directory -Path $sourceParent -Force | Out-Null
+        }
+        $exportArguments = @{AddonRoot = $RepoRoot; OutputPath = $source}
+        if (-not $hasContextual) { $exportArguments.OmitContexts = $true }
+        & (Join-Path $PSScriptRoot 'Export-TranslationUnits335.ps1') @exportArguments
+    } else {
+        Write-Host "Using cached translation inventory: $source"
+    }
     $maps = @(Get-ChildItem (Join-RepoPath 'translations/source') `
         -Filter '*.json' -File -ErrorAction SilentlyContinue | Sort-Object Name)
     foreach ($map in $maps) {
@@ -135,7 +183,8 @@ try {
         if (-not (Test-Path -LiteralPath $committed -PathType Leaf)) {
             throw "Missing compiled runtime pack for $locale."
         }
-        if ((Get-PackPayload $generated) -cne (Get-PackPayload $committed)) {
+        if ((Get-CanonicalPackPayload $generated) -cne
+            (Get-CanonicalPackPayload $committed)) {
             throw "Compiled runtime pack is stale: locale/GuidePack.$locale.lua"
         }
         if ($RequireLua) {

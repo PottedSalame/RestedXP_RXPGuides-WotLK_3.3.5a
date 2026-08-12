@@ -47,9 +47,15 @@ jobs:
         shell: pwsh
         run: ./tools/Validate-GuideTranslations335.ps1
 
+      - name: Cache deterministic translation inventory
+        uses: actions/cache@v4
+        with:
+          path: .validation-cache/translation-source.json
+          key: translation-source-v2-${{ runner.os }}-${{ hashFiles('RXPGuides.toc', '**/*.xml', 'Compat/**/*.lua', 'Core/**/*.lua', 'DB/**/*.lua', 'Features/**/*.lua', 'Guide/**/*.lua', 'Guides/**/*.lua', 'UI/**/*.lua', '*.lua', 'tools/Export-TranslationUnits335.ps1') }}
+
       - name: Validate deterministic translation packs
         shell: pwsh
-        run: ./tools/Validate-TranslationPacks335.ps1 -RequireLua
+        run: ./tools/Validate-TranslationPacks335.ps1 -SourceCatalog .validation-cache/translation-source.json -RequireLua
 
       - name: Validate quest flow and talent plans
         shell: pwsh

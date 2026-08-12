@@ -3,7 +3,8 @@ param(
     [string]$AddonRoot,
     [string]$OutputPath,
     [ValidateSet('all','guides','ui')]
-    [string]$Scope = 'all'
+    [string]$Scope = 'all',
+    [switch]$OmitContexts
 )
 
 $ErrorActionPreference = 'Stop'
@@ -141,7 +142,7 @@ function Add-Unit([string]$English, [string]$Kind, [string]$Field,
         $unit.guideOccurrences++
         if ($unit.uiOccurrences -gt 0) { $unit.kind = 'shared' }
     }
-    if ($unit.contexts.Count -lt 24) {
+    if (-not $OmitContexts -and $unit.contexts.Count -lt 24) {
         $relative = $File.Substring($AddonRoot.Length).TrimStart('\','/')
         $unit.contexts.Add([ordered]@{
             file = $relative.Replace('\','/')
