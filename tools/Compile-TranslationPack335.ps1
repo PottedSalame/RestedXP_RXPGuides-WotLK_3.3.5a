@@ -146,7 +146,22 @@ foreach ($document in $translationDocuments) {
     }
 }
 $seen = @{}
-foreach ($translation in @($mergedTranslations.Values | Sort-Object english, id)) {
+$translationList = New-Object 'System.Collections.Generic.List[object]'
+foreach ($translation in $mergedTranslations.Values) {
+    $translationList.Add($translation)
+}
+$translationList.Sort([Comparison[object]]{
+    param($left, $right)
+    $comparison = [StringComparer]::Ordinal.Compare(
+        [string]$left.english, [string]$right.english)
+    if ($comparison -ne 0) { return $comparison }
+    $comparison = [StringComparer]::Ordinal.Compare(
+        [string]$left.id, [string]$right.id)
+    if ($comparison -ne 0) { return $comparison }
+    return [StringComparer]::Ordinal.Compare(
+        [string]$left.contextKey, [string]$right.contextKey)
+})
+foreach ($translation in $translationList) {
     $sourceUnit = $null
     if ($translation.id) { $sourceUnit = $byId[[string]$translation.id] }
     if (-not $sourceUnit -and $translation.english) {

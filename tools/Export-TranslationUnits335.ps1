@@ -283,7 +283,19 @@ function Export-UiUnits {
 if ($Scope -in @('all','guides')) { Export-GuideUnits }
 if ($Scope -in @('all','ui')) { Export-UiUnits }
 
-$sorted = @($units.Values | Sort-Object kind, @{Expression='occurrences';Descending=$true}, english)
+$sortedList = New-Object 'System.Collections.Generic.List[object]'
+foreach ($unit in $units.Values) { $sortedList.Add($unit) }
+$sortedList.Sort([Comparison[object]]{
+    param($left, $right)
+    $comparison = [StringComparer]::Ordinal.Compare(
+        [string]$left.kind, [string]$right.kind)
+    if ($comparison -ne 0) { return $comparison }
+    $comparison = [int]$right.occurrences - [int]$left.occurrences
+    if ($comparison -ne 0) { return $comparison }
+    return [StringComparer]::Ordinal.Compare(
+        [string]$left.english, [string]$right.english)
+})
+$sorted = @($sortedList.ToArray())
 foreach ($unit in $sorted) {
     $unit.id = Get-SourceSignature ("$($unit.kind)`0$($unit.english)")
 }

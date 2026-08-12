@@ -12,6 +12,21 @@ function Join-RepoPath([string]$Relative) {
 }
 function Get-CanonicalJson([string]$Path) {
     $document = [IO.File]::ReadAllText($Path) | ConvertFrom-Json
+    if ($document.units) {
+        $unitList = New-Object 'System.Collections.Generic.List[object]'
+        foreach ($unit in $document.units) { $unitList.Add($unit) }
+        $unitList.Sort([Comparison[object]]{
+            param($left, $right)
+            foreach ($property in @('id','domain','status','english',
+                                      'translation','contextKey')) {
+                $comparison = [StringComparer]::Ordinal.Compare(
+                    [string]$left.$property, [string]$right.$property)
+                if ($comparison -ne 0) { return $comparison }
+            }
+            return 0
+        })
+        $document.units = @($unitList.ToArray())
+    }
     return $document | ConvertTo-Json -Depth 20 -Compress
 }
 function Decode-ForPrint([string]$Encoded) {
