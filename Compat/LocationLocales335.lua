@@ -3376,3 +3376,36 @@ function addon.LocalizeLegacyLocationName(name)
     end
     return table.concat(parts, ", ")
 end
+
+local activeLocationKeys
+local function GetActiveLocationKeys()
+    if activeLocationKeys then return activeLocationKeys end
+    activeLocationKeys = {}
+    if not active then return activeLocationKeys end
+    for english, localized in pairs(active) do
+        if type(english) == "string" and english ~= "" and
+           type(localized) == "string" and localized ~= "" and
+           english ~= localized then
+            activeLocationKeys[#activeLocationKeys + 1] = english
+        end
+    end
+    table.sort(activeLocationKeys, function(left, right)
+        if #left ~= #right then return #left > #right end
+        return left < right
+    end)
+    return activeLocationKeys
+end
+
+function addon.LocalizeLegacyLocationText(text)
+    if type(text) ~= "string" or not active then return text, false end
+    local changed = false
+    for _, english in ipairs(GetActiveLocationKeys()) do
+        if text:find(english, 1, true) then
+            local escaped = english:gsub("(%W)", "%%%1")
+            local count
+            text, count = text:gsub(escaped, active[english])
+            changed = changed or count > 0
+        end
+    end
+    return text, changed
+end

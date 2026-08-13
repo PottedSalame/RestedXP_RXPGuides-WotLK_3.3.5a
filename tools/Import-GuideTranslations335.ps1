@@ -95,12 +95,30 @@ function Add-Candidate([hashtable]$Candidates, [hashtable]$Conflicts,
                        [string]$English, [string]$Translated) {
     if (-not $English -or -not $Translated -or $English -eq $Translated) { return }
     if (-not (Test-SameSignature $English $Translated)) { return }
-    if ($Candidates.ContainsKey($English) -and
-        $Candidates[$English] -ne $Translated) {
-        $Conflicts[$English] = $true
-    } else {
-        $Candidates[$English] = $Translated
+    if (-not $Candidates.ContainsKey($English)) {
+        $Candidates[$English] = @{}
     }
+    $votes = $Candidates[$English]
+    $votes[$Translated] = 1 + [int]$votes[$Translated]
+    if ($votes.Count -gt 1) { $Conflicts[$English] = $true }
+}
+
+function Resolve-Candidates([hashtable]$Candidates,
+                            [hashtable]$Conflicts) {
+    $resolved = @{}
+    $rejected = 0
+    foreach ($english in $Candidates.Keys) {
+        $ranked = @($Candidates[$english].GetEnumerator() | Sort-Object `
+            @{Expression = {[int]$_.Value}; Descending = $true}, `
+            @{Expression = {[string]$_.Key}; Descending = $false})
+        if ($ranked.Count -eq 1 -or
+            [int]$ranked[0].Value -gt [int]$ranked[1].Value) {
+            $resolved[$english] = [string]$ranked[0].Key
+        } else {
+            $rejected++
+        }
+    }
+    return [pscustomobject]@{ Values = $resolved; Rejected = $rejected }
 }
 
 function Get-StepBlocks([string[]]$Lines) {
@@ -218,7 +236,8 @@ foreach ($translatedFile in Get-ChildItem -LiteralPath $translatedRoot `
         Align-DifferentFiles $englishLines $translatedLines $candidates $conflicts
     }
 }
-foreach ($english in $conflicts.Keys) { $candidates.Remove($english) }
+$resolution = Resolve-Candidates $candidates $conflicts
+$candidates = $resolution.Values
 
 $units = New-Object Collections.Generic.List[object]
 foreach ($english in @($candidates.Keys | Sort-Object)) {
@@ -250,4 +269,4 @@ if ($parent -and -not (Test-Path -LiteralPath $parent)) {
     ($document | ConvertTo-Json -Depth 7), $utf8)
 Write-Host ("Imported {0} of {1} aligned {2} guide translations from {3} strict and {4} relaxed files; rejected {5} conflicts." -f `
     $units.Count, $candidates.Count, $Locale, $alignedFiles, $relaxedFiles,
-    $conflicts.Count)
+    $resolution.Rejected)

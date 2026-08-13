@@ -153,6 +153,16 @@ local function StripMarkup(value)
     return Trim(value)
 end
 
+local function IsLanguageNeutral(value)
+    local plain = StripMarkup(value)
+    return plain == "" or plain:match("^[%d%s%p]+$") ~= nil
+end
+
+local function IsEntityOnly(value)
+    local plain = StripMarkup(value)
+    return plain:match("^%[[^%]]+%]$") ~= nil
+end
+
 local function EnglishNameFromText(tag, text)
     text = StripMarkup((text or ""):gsub("%s*<<.*$", ""))
     if tag == "accept" then
@@ -685,6 +695,13 @@ local function ReplaceLocationName(text, element)
     return text, count > 0
 end
 
+local function ReplaceKnownLocationNames(text)
+    if type(addon.LocalizeLegacyLocationText) ~= "function" then
+        return text, false
+    end
+    return addon.LocalizeLegacyLocationText(text)
+end
+
 local function ValueLooksReviewed(value)
     -- A named semantic token is safe to move through a reviewed template, but
     -- adjacent prose is not. Strip the named spans and require the remainder
@@ -1010,6 +1027,8 @@ function service:Render(text, element, field, options)
     local source, sourceOfficial, liveProgress =
         SourceFor(text, element, field, localized)
     if type(source) ~= "string" then source = text end
+    if localized and IsLanguageNeutral(source) then sourceOfficial = true end
+    local entityOnly = IsEntityOnly(source)
     local generatedDisplay = type(element) == "table" and
                                  not element.sourceAuthored and
                                  GeneratedEnglish(element, text) ~= nil
@@ -1043,6 +1062,16 @@ function service:Render(text, element, field, options)
         output, factionChanged = ReplaceFactionNames(output, element)
         local locationChanged
         output, locationChanged = ReplaceLocationName(output, element)
+        local embeddedLocationChanged
+        output, embeddedLocationChanged = ReplaceKnownLocationNames(output)
+        locationChanged = locationChanged or embeddedLocationChanged
+        if status == "fallback" and entityOnly and
+           (itemChanged or spellChanged) then
+            -- A line containing only a texture and one bracketed entity has
+            -- no prose left to translate once the client supplies its
+            -- localized item/spell name.
+            status = "official"
+        end
         if status == "fallback" and generatedDisplay and
            (itemChanged or spellChanged or factionChanged or locationChanged) then
             -- Generated sentences use reviewed action grammar; official names
