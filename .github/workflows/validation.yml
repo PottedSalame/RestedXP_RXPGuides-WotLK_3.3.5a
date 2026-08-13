@@ -73,6 +73,16 @@ jobs:
         shell: pwsh
         run: ./.release-localizations/tools/Validate-TranslationPacks335.ps1 -RepoRoot .release-localizations -SourceCatalog .validation-cache/translation-source.json -RequireLua
 
+      - name: Validate locale release packaging
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./tools/Build-LocalePackages335.sh \
+            --source .release-localizations \
+            --output .locale-release \
+            --version v0-ci \
+            --revision "${{ steps.localizations.outputs.commit }}"
+
       - name: Validate quest flow
         shell: pwsh
         run: ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation
