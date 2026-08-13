@@ -97,6 +97,9 @@ coverage/
 build/
 dist/
 .release/
+.release-localizations/
+.localization-worktree/
+.locale-release/
 *.zip
 *.7z
 *.rar

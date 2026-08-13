@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([string]$RepoRoot)
+param(
+    [string]$RepoRoot,
+    [switch]$CoreOnly
+)
 
 $ErrorActionPreference = 'Stop'
 if (-not $RepoRoot) { $RepoRoot = Split-Path -Parent $PSScriptRoot }
@@ -20,12 +23,15 @@ function Read-Utf8([string]$relative) {
 $service = Read-Utf8 'Guide\Localization.lua'
 $uiLocale = Read-Utf8 'Core\Locale.lua'
 $catalogs = Read-Utf8 'locale\GuideCatalogs.lua'
-$zhExact = Read-Utf8 'locale\GuideExact.zhCN.lua'
+$addonCore = Read-Utf8 'Core\Addon.lua'
+$zhExact = if ($CoreOnly) { '' } else { Read-Utf8 'locale\GuideExact.zhCN.lua' }
 $translationLocales = @('deDE','esES','frFR','koKR','ruRU','zhCN','zhTW')
 $packs = @{}
-foreach ($translationLocale in $translationLocales) {
-    $packs[$translationLocale] = Read-Utf8 `
-        "locale\GuidePack.$translationLocale.lua"
+if (-not $CoreOnly) {
+    foreach ($translationLocale in $translationLocales) {
+        $packs[$translationLocale] = Read-Utf8 `
+            "locale\GuidePack.$translationLocale.lua"
+    }
 }
 $englishNames = Read-Utf8 'DB\wotlk\guideEnglishNames_335.lua'
 $toc = Read-Utf8 'RXPGuides.toc'
@@ -140,10 +146,15 @@ if ($handlers -notmatch
     $errors.Add('ReplaceNpcIds does not guard non-element localization metadata.')
 }
 
-$order = @('Core\Locale.lua','Guide\Localization.lua','locale\GuideCatalogs.lua',
-    'locale\GuideExact.zhCN.lua') +
-    @($translationLocales | ForEach-Object { "locale\GuidePack.$_.lua" }) +
-    @('UI\GuideWindow.lua','DB\wotlk\guideEnglishNames_335.lua','Guide\Loader.lua')
+$order = @('Core\Locale.lua','Guide\Localization.lua','locale\GuideCatalogs.lua')
+if (-not $CoreOnly) {
+    $order += @('locale\GuideExact.zhCN.lua')
+    $order += @($translationLocales | ForEach-Object {
+        "locale\GuidePack.$_.lua"
+    })
+}
+$order += @('UI\GuideWindow.lua','DB\wotlk\guideEnglishNames_335.lua',
+    'Guide\Loader.lua')
 $last = -1
 foreach ($entry in $order) {
     $index = $toc.IndexOf($entry)
@@ -153,53 +164,99 @@ foreach ($entry in $order) {
 }
 
 $exactCount = 0
-foreach ($match in [regex]::Matches($zhExact,
-        '(?m)^\s*\["((?:\\.|[^"\\])*)"\]\s*=\s*"((?:\\.|[^"\\])*)",\s*$')) {
-    $exactCount++
-    $english = $match.Groups[1].Value
-    $translated = $match.Groups[2].Value
-    $sourceEnglish = $english.Replace('\"', '"').Replace('\\', '\')
-    if (-not $loadedVisible.ContainsKey($sourceEnglish)) {
-        $errors.Add("Stale zhCN source string is not present in loaded guides: $sourceEnglish")
-    }
-    if ($translated -notmatch '[\u3400-\u9fff]') {
-        $errors.Add("zhCN exact entry has no Chinese display text: $english")
-    }
-    foreach ($token in @('\|cRXP_[A-Z]+_','\|r','\|T','\|t','\|H','\|h',
-            '\d+(?:\.\d+)?')) {
-        if ([regex]::Matches($english, $token).Count -ne
-            [regex]::Matches($translated, $token).Count) {
-            $errors.Add("Markup signature changed for zhCN entry: $english")
-            break
+if (-not $CoreOnly) {
+    foreach ($match in [regex]::Matches($zhExact,
+            '(?m)^\s*\["((?:\\.|[^"\\])*)"\]\s*=\s*"((?:\\.|[^"\\])*)",\s*$')) {
+        $exactCount++
+        $english = $match.Groups[1].Value
+        $translated = $match.Groups[2].Value
+        $sourceEnglish = $english.Replace('\"', '"').Replace('\\', '\')
+        if (-not $loadedVisible.ContainsKey($sourceEnglish)) {
+            $errors.Add("Stale zhCN source string is not present in loaded guides: $sourceEnglish")
+        }
+        if ($translated -notmatch '[\u3400-\u9fff]') {
+            $errors.Add("zhCN exact entry has no Chinese display text: $english")
+        }
+        foreach ($token in @('\|cRXP_[A-Z]+_','\|r','\|T','\|t','\|H','\|h',
+                '\d+(?:\.\d+)?')) {
+            if ([regex]::Matches($english, $token).Count -ne
+                [regex]::Matches($translated, $token).Count) {
+                $errors.Add("Markup signature changed for zhCN entry: $english")
+                break
+            }
+        }
+        if ($translated -match '(^|\\n)\s*\.[a-z]+\s') {
+            $errors.Add("Translated directive leaked into display catalog: $english")
         }
     }
-    if ($translated -match '(^|\\n)\s*\.[a-z]+\s') {
-        $errors.Add("Translated directive leaked into display catalog: $english")
+    if ($exactCount -lt 1) {
+        $errors.Add('No safely aligned upstream zhCN display strings were imported.')
+    }
+    foreach ($translationLocale in $translationLocales) {
+        $pack = $packs[$translationLocale]
+        if ($pack -notmatch ('GetLocale\(\)\s*~=\s*"' + $translationLocale + '"') -or
+            $pack -notmatch ('RegisterCompressedPack\("' + $translationLocale +
+                '", payload\)')) {
+            $errors.Add("Compiled active-locale $translationLocale pack is missing or not locale gated.")
+        }
     }
 }
-if ($exactCount -lt 1) {
-    $errors.Add('No safely aligned upstream zhCN display strings were imported.')
-}
-foreach ($translationLocale in $translationLocales) {
-    $pack = $packs[$translationLocale]
-    if ($pack -notmatch ('GetLocale\(\)\s*~=\s*"' + $translationLocale + '"') -or
-        $pack -notmatch ('RegisterCompressedPack\("' + $translationLocale +
-            '", payload\)')) {
-        $errors.Add("Compiled active-locale $translationLocale pack is missing or not locale gated.")
+
+if ($CoreOnly) {
+    $bootstrap = Read-Utf8 'packaging\locale\Bootstrap.lua'
+    $packager = Read-Utf8 'tools\Build-LocalePackages335.sh'
+    $releaseWorkflow = Read-Utf8 '.github\workflows\release.yml'
+    $lock = (Read-Utf8 'LOCALIZATIONS.lock').Trim()
+    if ($toc -match 'locale\\Guide(?:Exact|Pack)\.') {
+        $errors.Add('The core TOC still embeds optional locale payloads.')
+    }
+    foreach ($api in @('GetCompanionAddonName','LoadCompanion',
+            'GetCompanionState')) {
+        if ($service -notmatch ('function\s+service:' + $api + '\s*\(')) {
+            $errors.Add("Missing locale-companion API: $api")
+        }
+    }
+    if ($addonCore -notmatch
+            'addon\.guideLocalization:LoadCompanion\(\)') {
+        $errors.Add('Core startup does not load the matching locale companion.')
+    }
+    if ($bootstrap -notmatch 'GetAddon\("RXPGuides", true\)' -or
+        $bootstrap -notmatch 'companion\.guideLocalization\s*=') {
+        $errors.Add('Locale companion bootstrap does not bind to the core presentation service.')
+    }
+    if ($lock -notmatch '^[0-9a-f]{40}$') {
+        $errors.Add('LOCALIZATIONS.lock must contain one full Git commit ID.')
+    }
+    foreach ($locale in $translationLocales) {
+        if ($packager -notmatch ('\b' + $locale + '\b')) {
+            $errors.Add("Locale packager does not include $locale.")
+        }
+    }
+    if ($packager -notmatch '## LoadOnDemand: 1' -or
+        $packager -notmatch 'scripts=\("Bootstrap\.lua"\)' -or
+        $packager -notmatch 'X-RXPGuides-Localization-Commit') {
+        $errors.Add('Locale package manifest/order metadata is incomplete.')
+    }
+    if ($releaseWorkflow -notmatch 'LOCALIZATIONS\.lock' -or
+        $releaseWorkflow -notmatch 'Build-LocalePackages335\.sh' -or
+        $releaseWorkflow -notmatch '\.locale-release/\*\.zip') {
+        $errors.Add('Release workflow does not publish the pinned locale assets.')
     }
 }
-foreach ($tool in @('Export-TranslationUnits335.ps1',
-        'Import-GuideTranslations335.ps1','Import-TranslationMap335.ps1',
-        'Compile-TranslationPack335.ps1','New-TranslationDraft335.ps1',
-        'New-GlossaryMachineCatalog335.ps1',
-        'Import-AceLocaleTranslations335.ps1',
-        'Get-TranslationCoverage335.ps1',
-        'Get-UiLocalizationCoverage335.ps1',
-        'Validate-TranslationPacks335.ps1')) {
-    $toolPath = Join-Path (Join-Path $RepoRoot 'tools') $tool
-    if (-not (Test-Path -LiteralPath $toolPath `
-            -PathType Leaf)) {
-        $errors.Add("Missing localization workflow tool: $tool")
+if (-not $CoreOnly) {
+    foreach ($tool in @('Export-TranslationUnits335.ps1',
+            'Import-GuideTranslations335.ps1','Import-TranslationMap335.ps1',
+            'Compile-TranslationPack335.ps1','New-TranslationDraft335.ps1',
+            'New-GlossaryMachineCatalog335.ps1',
+            'Import-AceLocaleTranslations335.ps1',
+            'Get-TranslationCoverage335.ps1',
+            'Get-UiLocalizationCoverage335.ps1',
+            'Validate-TranslationPacks335.ps1')) {
+        $toolPath = Join-Path (Join-Path $RepoRoot 'tools') $tool
+        if (-not (Test-Path -LiteralPath $toolPath `
+                -PathType Leaf)) {
+            $errors.Add("Missing localization workflow tool: $tool")
+        }
     }
 }
 
@@ -282,4 +339,8 @@ if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Error $_ }
     throw "Guide translation validation failed with $($errors.Count) error(s)."
 }
-Write-Host "Guide translations OK: 7 locale catalogs and locale-gated packs, $exactCount reviewed zhCN exact strings, named templates, immutable source, and explicit fallbacks."
+if ($CoreOnly) {
+    Write-Host 'Guide localization core OK: optional companion loading, named templates, immutable source, and pinned release input.'
+} else {
+    Write-Host "Guide translations OK: 7 locale catalogs and locale-gated packs, $exactCount reviewed zhCN exact strings, named templates, immutable source, and explicit fallbacks."
+}

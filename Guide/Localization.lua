@@ -418,7 +418,63 @@ function service:RegisterCompressedPack(code, encoded)
             end
         end
     end
-    return self:RegisterTranslationPack(code, pack)
+    local registered = self:RegisterTranslationPack(code, pack)
+    if registered then self.loadedCompanion = code end
+    return registered
+end
+
+function service:GetCompanionAddonName()
+    if englishClient or not supported[locale] then return end
+    return "RXPGuides_Locale_" .. locale
+end
+
+function service:LoadCompanion()
+    local companion = self:GetCompanionAddonName()
+    if not companion then
+        self.companionState = "not-required"
+        return true
+    end
+    if self.loadedCompanion == locale then
+        self.companionState = "loaded"
+        return true
+    end
+    if type(GetAddOnInfo) ~= "function" or type(LoadAddOn) ~= "function" then
+        self.companionState = "unsupported"
+        return false, "API_UNAVAILABLE"
+    end
+    local installed = GetAddOnInfo(companion)
+    if not installed then
+        self.companionState = "missing"
+        return false, "MISSING"
+    end
+    if type(IsAddOnLoaded) == "function" and IsAddOnLoaded(companion) then
+        self.companionState = self.loadedCompanion == locale and "loaded" or
+                                  "invalid"
+        return self.loadedCompanion == locale, "PACK_NOT_REGISTERED"
+    end
+    local called, loaded, reason = pcall(LoadAddOn, companion)
+    if not called then
+        self.companionState = "failed"
+        self.companionError = loaded
+        return false, "LOAD_ERROR"
+    end
+    if not loaded then
+        self.companionState = "unavailable"
+        self.companionError = reason
+        return false, reason
+    end
+    if self.loadedCompanion ~= locale then
+        self.companionState = "invalid"
+        return false, "PACK_NOT_REGISTERED"
+    end
+    self.companionState = "loaded"
+    self.companionError = nil
+    return true
+end
+
+function service:GetCompanionState()
+    return self.companionState, self.companionError,
+           self:GetCompanionAddonName()
 end
 
 function service:RegisterEnglishNames(names)

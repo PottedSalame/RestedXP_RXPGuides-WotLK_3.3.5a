@@ -43,19 +43,43 @@ jobs:
         shell: pwsh
         run: ./tools/Validate-Guides335.ps1
 
-      - name: Validate multilingual guide display catalogs
+      - name: Validate optional localization loader
         shell: pwsh
-        run: ./tools/Validate-GuideTranslations335.ps1
+        run: ./tools/Validate-GuideTranslations335.ps1 -CoreOnly
+
+      - name: Resolve pinned localization commit
+        id: localizations
+        shell: bash
+        run: |
+          set -euo pipefail
+          commit="$(tr -d '\r\n[:space:]' < LOCALIZATIONS.lock)"
+          if [[ ! "${commit}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "LOCALIZATIONS.lock does not contain a full commit ID." >&2
+            exit 1
+          fi
+          echo "commit=${commit}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out pinned localization sources
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.localizations.outputs.commit }}
+          path: .release-localizations
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate pinned multilingual catalogs
+        shell: pwsh
+        run: ./.release-localizations/tools/Validate-GuideTranslations335.ps1 -RepoRoot .release-localizations
 
       - name: Cache deterministic translation inventory
         uses: actions/cache@v4
         with:
-          path: .validation-cache/translation-source.json
-          key: translation-source-v3-${{ runner.os }}-${{ hashFiles('RXPGuides.toc', '**/*.xml', 'Compat/**/*.lua', 'Core/**/*.lua', 'DB/**/*.lua', 'Features/**/*.lua', 'Guide/**/*.lua', 'Guides/**/*.lua', 'UI/**/*.lua', '*.lua', 'tools/Export-TranslationUnits335.ps1') }}
+          path: .release-localizations/.validation-cache/translation-source.json
+          key: translation-source-v4-${{ runner.os }}-${{ hashFiles('LOCALIZATIONS.lock') }}
 
       - name: Validate deterministic translation packs
         shell: pwsh
-        run: ./tools/Validate-TranslationPacks335.ps1 -SourceCatalog .validation-cache/translation-source.json -RequireLua
+        run: ./.release-localizations/tools/Validate-TranslationPacks335.ps1 -RepoRoot .release-localizations -SourceCatalog .validation-cache/translation-source.json -RequireLua
 
       - name: Validate quest flow and talent plans
         shell: pwsh
@@ -123,6 +147,19 @@ jobs:
           echo "Created ${ARCHIVE}:"
           du -h "${ARCHIVE}"
 
+      - name: Create optional locale ZIPs
+        shell: bash
+        env:
+          TAG: ${{ steps.metadata.outputs.tag }}
+        run: |
+          set -euo pipefail
+          ./tools/Build-LocalePackages335.sh \
+            --source .release-localizations \
+            --output .locale-release \
+            --version "${TAG}" \
+            --revision "${{ steps.localizations.outputs.commit }}"
+          du -h .locale-release/*.zip
+
       - name: Create or update GitHub Release
         shell: bash
         env:
@@ -136,12 +173,14 @@ jobs:
             gh release upload \
               "${TAG}" \
               "${ARCHIVE}" \
+              .locale-release/*.zip \
               --clobber \
               --repo "${GITHUB_REPOSITORY}"
           else
             gh release create \
               "${TAG}" \
               "${ARCHIVE}" \
+              .locale-release/*.zip \
               --target "${GITHUB_SHA}" \
               --title "RXPGuides ${TAG}" \
               --generate-notes \

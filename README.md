@@ -149,8 +149,13 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 
 1. Open the [latest GitHub Release](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest).
 2. Under **Assets**, download `RXPGuides-<version>.zip`.
-3. Extract the ZIP directly into your WoW `Interface\AddOns\` directory.
-4. Launch the game and enable **RestedXP Guides**.
+3. For translated guides and complete localized UI text, also download the
+   `RXPGuides_Locale_<locale>-<version>.zip` matching your client, such as
+   `RXPGuides_Locale_zhCN-<version>.zip`.
+4. Extract the core ZIP and optional locale ZIP directly into your WoW
+   `Interface\AddOns\` directory.
+5. Launch the game and enable **RestedXP Guides**. The matching installed
+   language pack is loaded automatically.
 
 > [!IMPORTANT]
 > Download the `RXPGuides-<version>.zip` file listed under **Assets**. Do **not** use GitHub's automatically generated **Source code (zip)** or **Source code (tar.gz)** downloads: those use the repository name as their outer folder and will not produce the required addon path automatically.
@@ -160,10 +165,18 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 1. Close World of Warcraft.
 2. Visit the repository's [Releases page](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases).
 3. Open the newest release and expand **Assets** if necessary.
-4. Download the packaged release asset. Its name follows this format:
+4. Download the packaged core release asset. Its name follows this format:
 
    ```text
    RXPGuides-v4.8.25-335.zip
+   ```
+
+   If desired, download the separate asset matching the language of your
+   client. For example:
+
+   ```text
+   RXPGuides_Locale_deDE-v4.8.25-335.zip
+   RXPGuides_Locale_zhTW-v4.8.25-335.zip
    ```
 
 5. Open your WoW installation and navigate to:
@@ -173,7 +186,9 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
    ```
 
 6. If an older `RXPGuides` folder exists, remove or rename that addon folder before extracting the update. Do not merge releases file by file, because obsolete Lua or XML files can remain loaded.
-7. Extract the downloaded ZIP directly into `Interface\AddOns\`. The release workflow already places every addon file beneath the correct `RXPGuides` directory.
+7. Extract the downloaded ZIP or ZIPs directly into `Interface\AddOns\`. The
+   release workflow places the core and each optional locale in their correct
+   addon folders.
 8. Confirm this exact path exists:
 
    ```text
@@ -182,6 +197,16 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 
 9. Start the game, open **AddOns** on the character-selection screen, and enable **RestedXP Guides**.
 10. Enable **Load out of date AddOns** if your custom client reports the addon as outdated.
+
+An installed German companion, for example, has this separate path:
+
+```text
+Interface\AddOns\RXPGuides_Locale_deDE\RXPGuides_Locale_deDE.toc
+```
+
+Do not place locale-pack files inside the core `RXPGuides` folder. Removing a
+locale companion simply returns guide display to safe English fallbacks and
+does not affect progress or automation.
 
 The finished installation must not contain an extra folder level such as:
 
@@ -199,6 +224,15 @@ Interface\AddOns\RestedXP_RXPGuides-WotLK_3.3.5a-v4.8.25-335\RXPGuides\
 - Enable **Load out of date AddOns**.
 - Check that the addon is enabled for the current character.
 - Avoid merging a new release into an older addon folder.
+
+### Translated guide text is unavailable
+
+- Download the locale asset whose code matches the game client: `deDE`,
+  `esES`, `frFR`, `ruRU`, `koKR`, `zhCN`, or `zhTW`.
+- Confirm its folder sits beside `RXPGuides`, not inside it.
+- Enable the locale companion in the character-selection AddOns list. The
+  core loads the matching enabled companion on demand.
+- Locale companions must come from the same release as the core addon.
 
 ### A new character shows an empty guide window
 

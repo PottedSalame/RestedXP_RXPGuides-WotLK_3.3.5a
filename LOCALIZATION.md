@@ -15,14 +15,18 @@ step progression.
 
 Original English mode bypasses all translated display text and status badges.
 
-Each rollout locale also keeps a deterministic fallback allowlist under
-`translations/source`. It records every bespoke English sentence still using
-`[EN]`, its immutable source ID, and occurrence count. Validation rejects a
-missing or stale allowlist, so English exceptions cannot grow unnoticed.
+Localization source catalogs and compiled payloads live on the repository's
+`localizations` branch. `LOCALIZATIONS.lock` on `main` pins the exact commit
+used by validation and release packaging. Each locale keeps a deterministic
+fallback allowlist under `translations/source` on that branch. It records every
+bespoke English sentence still using `[EN]`, its immutable source ID, and
+occurrence count. Validation rejects a missing or stale allowlist, so English
+exceptions cannot grow unnoticed.
 
 ## Commands
 
-Run these from the repository root with PowerShell 7 or Windows PowerShell:
+Check out the `localizations` branch, then run these from its repository root
+with PowerShell 7 or Windows PowerShell:
 
 ```powershell
 ./tools/Export-TranslationUnits335.ps1 -OutputPath ./translation-units.json
@@ -47,14 +51,19 @@ tokens in tokenized translations, operational guide syntax, altered markup,
 unknown source entries, conflicting catalogs, and reserved separators.
 
 Runtime packs are locale-gated and compressed with the bundled LibDeflate
-format. CI regenerates their source catalogs and runtime payloads, then checks
-that the committed output is byte-for-byte deterministic. Passing offline
-validation does not promote machine text to reviewed; native corrections must
-explicitly change the entry status.
+format. CI checks out the commit recorded in `LOCALIZATIONS.lock`, regenerates
+its source catalogs and runtime payloads, then checks that the committed output
+is deterministic. Passing offline validation does not promote machine text to
+reviewed; native corrections must explicitly change the entry status.
 
 ## Rollout
 
-zhCN is the first complete runtime batch. The same source-map, importer, and
-compiler accept deDE, esES, frFR, ruRU, koKR, and zhTW. Later locale packs must
-pass deterministic validation and in-game layout testing before being added to
-the 3.3.5 manifest.
+Completed companion packs are available for deDE, esES, frFR, ruRU, koKR,
+zhCN, and zhTW. A tagged release packages each language as an independent
+`RXPGuides_Locale_<locale>` addon. The core addon contains no compiled guide
+prose and safely falls back to English when no matching companion is installed.
+
+To publish localization changes, update and validate the `localizations`
+branch first, push that commit, then replace `LOCALIZATIONS.lock` on `main`
+with its full 40-character commit ID. Never point the lock at an unpushed or
+moving branch name: tagged releases must remain reproducible.

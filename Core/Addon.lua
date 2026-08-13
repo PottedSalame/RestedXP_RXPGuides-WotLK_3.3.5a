@@ -1767,6 +1767,13 @@ local function RegisterRuntimeSubsystems()
 end
 
 function addon:OnInitialize()
+    -- Locale payloads are optional load-on-demand companion addons. Load the
+    -- matching client pack before settings and guide UI begin rendering; a
+    -- missing or disabled companion safely leaves the English presentation.
+    if addon.guideLocalization and addon.guideLocalization.LoadCompanion then
+        addon.guideLocalization:LoadCompanion()
+    end
+
     local importGuidesDefault = {
         profile = {guides = {}, reports = {splits = {}}}
     }
