@@ -4,7 +4,7 @@ A standalone community backport of **RestedXP Guides** for **World of Warcraft: 
 
 This project adapts the RestedXP guide engine, interface, automation, navigation, talent guides, and supporting tools to the original 3.3.5a API. It is primarily developed and tested against AzerothCore and does not require Questie, ElvUI, WeakAuras, or another addon to run.
 
-[![Download](https://img.shields.io/badge/Download-Latest_Release-2ea043?style=for-the-badge&labelColor=555555)](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest)
+[![Download](https://img.shields.io/badge/Download-Latest_Release-2ea043?style=for-the-badge&labelColor=555555)](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest)
 [![Install](https://img.shields.io/badge/Install-Quickly-8250df?style=for-the-badge&labelColor=555555)](#quick-install)
 
 ![Version](https://img.shields.io/badge/Version-v4.8.25--335-1f6feb)
@@ -147,7 +147,7 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 
 ### Installation overview
 
-1. Open the [latest GitHub Release](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest).
+1. Open the [latest GitHub Release](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest).
 2. Under **Assets**, download `RXPGuides-<version>.zip`.
 3. For translated guides and complete localized UI text, also download the
    `RXPGuides_Locale_<locale>-<version>.zip` matching your client, such as
@@ -157,13 +157,27 @@ catalog, and validation workflow in [LOCALIZATION.md](LOCALIZATION.md).
 5. Launch the game and enable **RestedXP Guides**. The matching installed
    language pack is loaded automatically.
 
+Locale assets correspond to client languages as follows:
+
+| Client language | Locale asset |
+| --- | --- |
+| German | `RXPGuides_Locale_deDE-<version>.zip` |
+| Spanish (Spain) | `RXPGuides_Locale_esES-<version>.zip` |
+| French | `RXPGuides_Locale_frFR-<version>.zip` |
+| Russian | `RXPGuides_Locale_ruRU-<version>.zip` |
+| Korean | `RXPGuides_Locale_koKR-<version>.zip` |
+| Simplified Chinese | `RXPGuides_Locale_zhCN-<version>.zip` |
+| Traditional Chinese | `RXPGuides_Locale_zhTW-<version>.zip` |
+
+English clients need only the core `RXPGuides-<version>.zip` archive.
+
 > [!IMPORTANT]
 > Download the `RXPGuides-<version>.zip` file listed under **Assets**. Do **not** use GitHub's automatically generated **Source code (zip)** or **Source code (tar.gz)** downloads: those use the repository name as their outer folder and will not produce the required addon path automatically.
 
 ### Detailed steps
 
 1. Close World of Warcraft.
-2. Visit the repository's [Releases page](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases).
+2. Visit the repository's [Releases page](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases).
 3. Open the newest release and expand **Assets** if necessary.
 4. Download the packaged core release asset. Its name follows this format:
 
@@ -267,7 +281,7 @@ Manual useful/junk choices take priority over automatic classification.
 
 ## Reporting Issues and Suggesting Features
 
-Please use the repository's [Issues tab](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/issues) for reproducible problems and feature proposals. Search the open and closed issues first to avoid creating a duplicate.
+Please use the repository's [Issues tab](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/issues) for reproducible problems and feature proposals. Search the open and closed issues first to avoid creating a duplicate.
 
 ### Bug reports
 
@@ -302,7 +316,7 @@ Feature suggestions are evaluated against stock 3.3.5a client capabilities, Azer
 
 ## Updating
 
-1. Open the [latest release](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest) and download its `RXPGuides-<version>.zip` asset.
+1. Open the [latest release](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest) and download its `RXPGuides-<version>.zip` asset.
 2. Close World of Warcraft.
 3. Back up your `WTF` folder if you want an external copy of your settings and character progress.
 4. Remove the old `Interface\AddOns\RXPGuides` addon folder. This does not remove SavedVariables, which are stored under `WTF`.
@@ -354,7 +368,7 @@ No. This is a community-maintained compatibility backport targeting the original
 
 **Where should I download it?**
 
-Use the versioned `RXPGuides-<version>.zip` asset from the [latest GitHub Release](https://github.com/Kryastorm/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest). Do not use the automatically generated source archives for a normal addon installation.
+Use the versioned `RXPGuides-<version>.zip` asset from the [latest GitHub Release](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest). Do not use the automatically generated source archives for a normal addon installation.
 
 **Does it require Questie, ElvUI, WeakAuras, or Details?**
 
