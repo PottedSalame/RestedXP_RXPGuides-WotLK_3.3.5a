@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "deDE" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision deDE-offline-machine-1+deDE-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: fed3674bab840d905cf294e5df0192a6407df4540f82867856965b4ae06f11e5
+-- Translation input signature: 41374cb0fcd93e4adcdd9a719814370350090f6279f3c80c7632758f11b19fb7
 local payload = table.concat({
     "S3B2sYnsscc(((rSazjsVSQDyWe3hv)qjrWJGSizsUmImz3zlTuIb7WDuoCaVXrezevL)jJi9l53q(u(w8JTQQgaC4WacYAMz7x2PePy6bm1uyWo0BvTxB5A",
     "jKV4LNvPuf5LYZ2Z4BX)R7)n6XD5NvlVjxERuCMR1h0azFE9MQgBz5zcPDFhSBRzLnfS28QY)z7dYsrE5g7TD7zL2Am8pB)YFkVPfF8N(x(4LD5czJn(sSpN",

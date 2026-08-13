@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "ruRU" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision ruRU-offline-machine-1+ruRU-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: 127e501ec5c808962c4c9385eabe675996932c4f83ec206a647032cd40285ad2
+-- Translation input signature: b06a7d0511f49535f5dfa0dd92c5264cac25f59aa4f17ff775d8f92d329bd097
 local payload = table.concat({
     "K3BFZ1XX1Dd()7hIDg6QYsPneGZ7V48hU4lIKYIuKpeuwjovQu90tpaJX9EhK5EVKcY2vXxeLKxktkj7DTxh74iNKkPQNYpfiiGiijayv5tWfFf2pj75C6EE",
     "5o9CbjTF2k)XMuYKeyMt3t3N(C(DETVKHTr50R)blvKLniFKyPHm(A4FA)xs)4P5lvkUzU4wI0LSnUQ8Hmpt5QfJnfJwQCQP6fmNuYgnEaBsEXO)kZneJsZh",

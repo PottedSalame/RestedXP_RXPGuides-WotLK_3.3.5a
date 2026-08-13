@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "esES" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision esES-offline-machine-1+esES-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: ba4d1b25116865a74217b1a1703be43e1652312a95db0728a01fdb3e4cbfd96f
+-- Translation input signature: a04db0cdf0c3cb687a49c7a1c7f5b6005f758214811c3baf96ace9c0dbb66be2
 local payload = table.concat({
     "027YsYnYrIIU)(rCbOo2CP0D6InE)qZczvX3Qzrwhwv39m6yJjlq8itWcjqkGev1fhPpMEPw0loM2nBgZg(JDC3d8mImjPMJnYm1mler4iqeE4VDpELJVJS7",
     "5xFwJsvvwlpBhJVf)x))r6X9LN1kVRuEVuCMVZ70DY982nnDUY6ZKDUddW9qlRURIDOSP(FYDVSwuwVXDB)owTRgc)tUp)Nk7oGp(9)Zx9Y(sbmA8L4Eox(M",

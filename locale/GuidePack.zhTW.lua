@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "zhTW" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision zhTW-offline-direct-hant-2+zhTW-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: 58a11f74127e52a6b616cdca7fbd28e586c62c9b0d34984fd90cc721fcc8dbae
+-- Translation input signature: cb98c3db38fb4c03e7fdd7a0a5aef2101ebacb8a9d149c1f95b7bd3de5c9c3f9
 local payload = table.concat({
     "C37AZrnswcd)93FeVsDhX(2D)Syq3Vm7hMGlnqpDtdpyMP3D2yIjsjLYwJlxYRQQG29ote2agBJXChZf7gWaM72ChBSbte7FL1svv)lEpNuvjPsQSH(jE3V8",
     "UldDHYmpkvMN755CY9ZjY9l9FKFQhFx3sELP944fqTR2t)KYv7r6FM1unVEcOh1JEmQtpIChmUJ8h8q)XE75ahHpEa80Y91tv)EShS8FD)Wy5psaXXRQNFzs",

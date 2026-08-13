@@ -127,7 +127,9 @@ function Get-PackInputSignature([string]$SourcePath, [string[]]$CatalogPaths) {
                 [IO.Path]::GetFullPath($_)
             } | Sort-Object) + @([IO.Path]::GetFullPath($compilerPath))
         foreach ($path in $paths) {
-            $bytes = [IO.File]::ReadAllBytes($path)
+            $text = [IO.File]::ReadAllText($path)
+            $text = $text.Replace("`r`n", "`n").Replace("`r", "`n")
+            $bytes = [Text.Encoding]::UTF8.GetBytes($text)
             if ($bytes.Length -gt 0) {
                 [void]$sha.TransformBlock($bytes, 0, $bytes.Length, $bytes, 0)
             }

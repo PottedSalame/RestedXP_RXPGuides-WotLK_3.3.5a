@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "frFR" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision frFR-offline-machine-1+frFR-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: 0bd6fa2bab3d4b3e51d701beb5c2ecbbe7c11039ca32ad56d23a4372423d31f8
+-- Translation input signature: 3c48f0cbd13d6dc80130bab5f19c0c0d4981cf63911e85f70ecf092ece5559f3
 local payload = table.concat({
     "827YYvoY1HIo)(rCbAfHpu64MvH3pKhOGK1RwDXUktYUBB5qHIe5J9gnXgyl8GvXYQ)a8K7KZpGdp5QYd8ip5gEiJZ)1DTwja2azUzvLuCcRqDrsKzUqImx5",
     "69ALVYX3r1(IRoTrPQkRLNUJX3I)0)VLE8q5PTY7kLVtko135n6o5Ew7MMoxz9PQw3Xb423YQ7Qy9Ln1)DU7L1IY6nUBh2XQD1q4VZ95VVSRhF8v)dV9LdLc",

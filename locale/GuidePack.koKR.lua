@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "koKR" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision koKR-offline-machine-1+koKR-ui-reviewed-1. Display data only; do not edit.
--- Translation input signature: 74b66c6b6d361518963c282778e8ce74868aadb76b12d4f53f762a0a748eda97
+-- Translation input signature: c5ecaed087ed3eb9e90c9b94847ba8e9ffaf06aee493c1e853ef247aaa1a0265
 local payload = table.concat({
     "S37AZXXXrII(97pIB3YrSxkDxbO(9dVFqbFisklrrEiOT86n2Wr1DxnqBmyAS9mdPGw7iajb1cjczrTgqcucKgYIsKYb0UqKGYGhtf7)L75ByM5)WjZS6xtx",
     "ZmKApNy)Y56het3DvzxDvzLVZSoRIUYIPVXfNjnoUvsB(mlXcxa)R(FlD7EjZKXVCc)k8Oz0voVOrQhpB(0oQ82ZSyQAEhu7MXA3PfRBsA7)o1L5TJsApV6c",

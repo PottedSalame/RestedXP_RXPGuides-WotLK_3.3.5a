@@ -2,7 +2,7 @@ local _, addon = ...
 if GetLocale() ~= "zhCN" or not addon.guideLocalization then return end
 
 -- Generated from catalog revision zhCN-guide-glossary-4+zhCN-ui-machine-1+zhCN-ui-reviewed-1+RXPGuides v4.10.22-zhCN-zhCN. Display data only; do not edit.
--- Translation input signature: 068492c598b7169662c3affb15d3337e1948461076d46c9263303131088e6006
+-- Translation input signature: 80b9f435dfcb0d2047ca35783f1a0f32751a2ca839bb0b09511684b4fb3e1409
 local payload = table.concat({
     "0276tsXr2HJ(97Fe3ULJy)XUxlW17h2FWbm8CLqWDgKKTVXn2iRmZAMANA6QD1DZOr7UragHaecqpqGeGe6bGKwjbiTiabiic)VINQ7E(0(VW9CYQ6UZkZAa",
     "T(31oSLzYZjpDw5JZR8Co5EBz261xAUxARloiHX36IPz96rYxBRo)9IwhKS1vi0Ls6W3Q50wY5hoHVkNbnn))Yb3d2XETpSZ2mn2ML1wfyH)Nw7K3NNVssNK",

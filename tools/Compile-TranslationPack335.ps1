@@ -45,7 +45,12 @@ function Get-PackInputSignature([string]$SourcePath, [string[]]$CatalogPaths) {
                 [IO.Path]::GetFullPath($_)
             } | Sort-Object) + @([IO.Path]::GetFullPath($PSCommandPath))
         foreach ($path in $paths) {
-            $bytes = [IO.File]::ReadAllBytes($path)
+            # Git checks text out with platform-specific line endings. Hash a
+            # normalized UTF-8 representation so a pack generated on Windows
+            # validates byte-for-byte on the Ubuntu release runner.
+            $text = [IO.File]::ReadAllText($path)
+            $text = $text.Replace("`r`n", "`n").Replace("`r", "`n")
+            $bytes = [Text.Encoding]::UTF8.GetBytes($text)
             if ($bytes.Length -gt 0) {
                 [void]$sha.TransformBlock($bytes, 0, $bytes.Length, $bytes, 0)
             }
