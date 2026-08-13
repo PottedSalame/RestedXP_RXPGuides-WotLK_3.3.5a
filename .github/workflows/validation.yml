@@ -64,7 +64,7 @@ jobs:
         run: ./.release-localizations/tools/Validate-GuideTranslations335.ps1 -RepoRoot .release-localizations
 
       - name: Cache deterministic translation inventory
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .release-localizations/.validation-cache/translation-source.json
           key: translation-source-v4-${{ runner.os }}-${{ hashFiles('LOCALIZATIONS.lock') }}
