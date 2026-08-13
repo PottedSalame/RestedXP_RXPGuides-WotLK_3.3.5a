@@ -2721,6 +2721,90 @@ function addon.itemUpgrades:EquipBagUpgrade(data)
     return GetInventoryItemLink("player", inventorySlot) == data.itemLink
 end
 
+local function HideUpgradePromptTooltip(button)
+    if button and _G.GameTooltip and _G.GameTooltip.GetOwner and
+        _G.GameTooltip:GetOwner() == button then
+        _G.GameTooltip:Hide()
+    end
+end
+
+local function EnsureUpgradePromptHoverButton(popup)
+    if popup.rxpUpgradeHoverButton then
+        return popup.rxpUpgradeHoverButton
+    end
+
+    local button = CreateFrame("Button", nil, popup)
+    button:SetWidth(36)
+    button:SetHeight(36)
+    button:SetPoint("LEFT", popup, "RIGHT", 8, 0)
+    button:SetFrameLevel((popup:GetFrameLevel() or 0) + 2)
+
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetAllPoints(button)
+    button.icon:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+    button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+    button.border = button:CreateTexture(nil, "OVERLAY")
+    button.border:SetTexture("Interface\\Buttons\\UI-Quickslot2")
+    button.border:SetPoint("CENTER", button, "CENTER", 0, 0)
+    button.border:SetWidth(60)
+    button.border:SetHeight(60)
+
+    button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
+    button.highlight:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+    button.highlight:SetAllPoints(button)
+    button.highlight:SetBlendMode("ADD")
+
+    button:SetScript("OnEnter", function(self)
+        if not self.itemLink or not _G.GameTooltip then return end
+        _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        _G.GameTooltip:SetHyperlink(self.itemLink)
+        _G.GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function(self)
+        HideUpgradePromptTooltip(self)
+    end)
+    button:Hide()
+    popup.rxpUpgradeHoverButton = button
+    return button
+end
+
+local function UpdateUpgradePromptHover(popup, data)
+    if not popup then return end
+    local button = EnsureUpgradePromptHoverButton(popup)
+    local enabled = addon.settings and addon.settings.profile and
+                        addon.settings.profile.showUpgradeDetailsOnHover ~= false
+    local offer = type(data) == "table" and data or
+                      type(popup.data) == "table" and popup.data
+    local itemLink = offer and offer.itemLink
+    if not enabled or not itemLink then
+        HideUpgradePromptTooltip(button)
+        button.itemLink = nil
+        button:Hide()
+        return
+    end
+
+    local texture = select(10, GetItemInfo(itemLink))
+    if not texture and type(_G.GetItemIcon) == "function" then
+        local ok, result = pcall(_G.GetItemIcon, itemLink)
+        if ok then texture = result end
+    end
+    button.itemLink = itemLink
+    button.icon:SetTexture(texture or
+                               "Interface\\Icons\\INV_Misc_QuestionMark")
+    button:Show()
+end
+
+function addon.itemUpgrades:RefreshUpgradePromptHover()
+    for index = 1, (_G.STATICPOPUP_NUMDIALOGS or 4) do
+        local popup = _G["StaticPopup" .. index]
+        if popup and popup:IsShown() and
+            popup.which == "RXPItemUpgradeFound" then
+            UpdateUpgradePromptHover(popup, popup.data)
+        end
+    end
+end
+
 StaticPopupDialogs["RXPItemUpgradeFound"] = {
     text = "%s",
     button1 = _G.EQUIP_ITEM or _G.EQUIP or L("Equip"),
@@ -2728,9 +2812,10 @@ StaticPopupDialogs["RXPItemUpgradeFound"] = {
     timeout = 0,
     hideOnEscape = 1,
     showAlert = 1,
-    OnShow = function()
+    OnShow = function(self, data)
         session.pendingUpgradeEquip = nil
         session.upgradePopupOpen = true
+        UpdateUpgradePromptHover(self, data)
     end,
     OnAccept = function(_, data)
         -- A BoE equip can open Blizzard's own static popup. On 3.3.5 that
@@ -2739,7 +2824,13 @@ StaticPopupDialogs["RXPItemUpgradeFound"] = {
         -- from OnHide, which is still part of the same hardware click.
         session.pendingUpgradeEquip = data
     end,
-    OnHide = function()
+    OnHide = function(self)
+        local hoverButton = self and self.rxpUpgradeHoverButton
+        HideUpgradePromptTooltip(hoverButton)
+        if hoverButton then
+            hoverButton.itemLink = nil
+            hoverButton:Hide()
+        end
         local pendingEquip = session.pendingUpgradeEquip
         session.pendingUpgradeEquip = nil
         session.upgradePopupOpen = false
@@ -2844,6 +2935,11 @@ function addon.itemUpgrades:ScanBagUpgrades()
     if not popup then
         session.promptedUpgrades[bestOffer.itemLink] = nil
         QueueUpgradeScan(1)
+    else
+        -- Some legacy/private-server StaticPopup implementations do not pass
+        -- the data argument to OnShow. Configure the hover target again from
+        -- the authoritative offer returned by this scan.
+        UpdateUpgradePromptHover(popup, bestOffer)
     end
 end
 

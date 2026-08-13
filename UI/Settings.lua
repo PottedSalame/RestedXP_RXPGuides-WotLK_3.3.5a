@@ -438,6 +438,7 @@ local settingsDBDefaults = {
         enableItemUpgrades = true,
         enableItemUpgradesAH = true,
         disableUpgradeTooltip = false,
+        showUpgradeDetailsOnHover = true,
         enableDrowningWarning = true,
         enableDrowningWarningSound = true,
         drowningThreshold = 0.2,
@@ -3155,6 +3156,27 @@ function addon.settings:CreateAceOptionsPanel()
                             SetProfileOption(info, value)
                             if value and _G.GameTooltip then
                                 _G.GameTooltip:Hide()
+                            end
+                        end
+                    },
+                    showUpgradeDetailsOnHover = {
+                        name = L("Show upgrade details on hover"),
+                        desc = L("Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."),
+                        type = "toggle",
+                        width = optionsWidth * 1.5,
+                        order = 5.65,
+                        hidden = function()
+                            return not addon.itemUpgrades
+                        end,
+                        disabled = function()
+                            return not (self.profile.enableTips and
+                                       self.profile.enableItemUpgrades)
+                        end,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.itemUpgrades and
+                                addon.itemUpgrades.RefreshUpgradePromptHover then
+                                addon.itemUpgrades:RefreshUpgradePromptHover()
                             end
                         end
                     },

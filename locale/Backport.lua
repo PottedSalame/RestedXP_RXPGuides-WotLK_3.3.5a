@@ -20,6 +20,8 @@ local translations = {
         ["Repairs all damaged equipment when you open a repair merchant. If guild repair is also enabled, your money is used only for costs the guild repair did not cover."] = "Repariert beschaedigte Ausruestung beim Oeffnen eines Reparaturhaendlers. Eigenes Gold deckt nur Kosten, die die Gilde nicht uebernimmt.",
         ["Attempts to repair from the guild bank when you have permission. This option never spends your own money unless the personal-money option is also enabled."] = "Versucht mit der Gildenbank zu reparieren, wenn du berechtigt bist. Eigenes Gold wird nur mit aktivierter persoenlicher Reparatur verwendet.",
         ["Guide tools and accessibility"] = "Guide-Werkzeuge und Barrierefreiheit",
+        ["Show upgrade details on hover"] = "Upgrade-Details beim Darueberfahren anzeigen",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "Fuegt Ausruestungsupgrade-Hinweisen ein Gegenstandssymbol hinzu. Fahre darueber, um den vollstaendigen Gegenstands-Tooltip und den aktuellen EP-Vergleich anzuzeigen.",
         ["Quest lore pause"] = "Pause fuer Questtexte",
         ["Pauses quest accept/turn-in automation so quest text can be read."] = "Pausiert die automatische Questannahme und -abgabe, damit der Questtext gelesen werden kann.",
         ["Accessible color and symbol preset"] = "Barrierefreie Farb- und Symbolvorlage",
@@ -155,6 +157,8 @@ local translations = {
     },
     zhCN = {
         ["3.3.5a"] = "3.3.5a",
+        ["Show upgrade details on hover"] = "悬停时显示升级详情",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "在装备升级提示旁添加可悬停的物品图标。将鼠标悬停其上可查看完整物品提示和当前 EP 对比。",
         ["Compatibility and quality-of-life options for the 3.3.5a (Wrath) backport."] = "3.3.5a（巫妖王之怒）移植版的兼容性与便捷功能选项。",
         ["Hide the Active Targets frame"] = "隐藏当前目标窗口",
         ["Hides the working Active Targets window if you prefer to use only the targeting macro and nameplate markers."] = "如果只想使用目标宏和姓名板标记，则隐藏当前目标窗口。",
@@ -267,6 +271,8 @@ local translations = {
         ["There is no import to undo in this session."] = "本次会话中没有可撤销的导入。",
     },
     zhTW = {
+        ["Show upgrade details on hover"] = "滑鼠停留時顯示升級詳細資訊",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "在裝備升級提示旁新增可停留查看的物品圖示。將滑鼠移到其上可查看完整物品提示與目前的 EP 比較。",
         ["Open Guide Hub"] = "開啟指南中心", ["Backup / Restore"] = "備份 / 還原",
         ["Diagnose Current Step"] = "診斷目前步驟", ["Open Class Supplies"] = "開啟職業補給",
         ["Open Route Preflight"] = "開啟路線預檢", ["Open Performance Inspector"] = "開啟效能檢查器",
@@ -284,6 +290,8 @@ local translations = {
         ["Automatically maximize nameplate visibility distance for better target detection (Requires reload)"] = "自動最大化名條可見距離以更好地偵測目標（需要重新載入）",
     },
     frFR = {
+        ["Show upgrade details on hover"] = "Afficher les détails d'amélioration au survol",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "Ajoute une icône d'objet aux alertes d'amélioration d'équipement. Survolez-la pour afficher l'infobulle complète et la comparaison EP actuelle.",
         ["Open Guide Hub"] = "Ouvrir le centre des guides", ["Backup / Restore"] = "Sauvegarde / Restauration",
         ["Diagnose Current Step"] = "Diagnostiquer l'etape actuelle", ["Open Class Supplies"] = "Ouvrir les fournitures de classe",
         ["Open Route Preflight"] = "Ouvrir la verification d'itineraire", ["Open Performance Inspector"] = "Ouvrir l'analyseur de performances",
@@ -301,6 +309,8 @@ local translations = {
         ["Automatically maximize nameplate visibility distance for better target detection (Requires reload)"] = "Maximise automatiquement la distance de visibilite des plaques de nom pour une meilleure detection des cibles (rechargement requis)",
     },
     esES = {
+        ["Show upgrade details on hover"] = "Mostrar detalles de mejora al pasar el cursor",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "Añade un icono de objeto a los avisos de mejora de equipo. Pasa el cursor sobre él para ver la descripción completa y la comparación de EP actual.",
         ["Open Guide Hub"] = "Abrir centro de guias", ["Backup / Restore"] = "Copia / Restaurar",
         ["Diagnose Current Step"] = "Diagnosticar paso actual", ["Open Class Supplies"] = "Abrir suministros de clase",
         ["Open Route Preflight"] = "Abrir revision de ruta", ["Open Performance Inspector"] = "Abrir inspector de rendimiento",
@@ -318,6 +328,8 @@ local translations = {
         ["Automatically maximize nameplate visibility distance for better target detection (Requires reload)"] = "Maximiza automaticamente la distancia visible de las placas de nombre para detectar mejor los objetivos (requiere recarga)",
     },
     koKR = {
+        ["Show upgrade details on hover"] = "마우스를 올려 업그레이드 세부 정보 표시",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "장비 업그레이드 알림에 아이템 아이콘을 추가합니다. 아이콘에 마우스를 올리면 전체 아이템 툴팁과 현재 EP 비교를 볼 수 있습니다.",
         ["Open Guide Hub"] = "가이드 허브 열기", ["Backup / Restore"] = "백업 / 복원",
         ["Diagnose Current Step"] = "현재 단계 진단", ["Open Class Supplies"] = "직업 보급품 열기",
         ["Open Route Preflight"] = "경로 사전 점검 열기", ["Open Performance Inspector"] = "성능 검사기 열기",
@@ -335,6 +347,8 @@ local translations = {
         ["Automatically maximize nameplate visibility distance for better target detection (Requires reload)"] = "더 나은 대상 감지를 위해 이름표 표시 거리를 자동으로 최대화합니다(재시작 필요)",
     },
     ruRU = {
+        ["Show upgrade details on hover"] = "Показывать сведения об улучшении при наведении",
+        ["Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."] = "Добавляет значок предмета к уведомлениям об улучшении экипировки. Наведите на него курсор, чтобы увидеть полную подсказку предмета и текущее сравнение EP.",
         ["Open Guide Hub"] = "Открыть центр гайдов", ["Backup / Restore"] = "Резервная копия / Восстановление",
         ["Diagnose Current Step"] = "Диагностика текущего шага", ["Open Class Supplies"] = "Открыть классовые припасы",
         ["Open Route Preflight"] = "Открыть проверку маршрута", ["Open Performance Inspector"] = "Открыть анализ производительности",
