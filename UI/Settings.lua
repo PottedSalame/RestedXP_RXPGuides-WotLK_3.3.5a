@@ -439,6 +439,7 @@ local settingsDBDefaults = {
         enableItemUpgradesAH = true,
         disableUpgradeTooltip = false,
         showUpgradeDetailsOnHover = true,
+        upgradeTooltipModifier = 1,
         enableDrowningWarning = true,
         enableDrowningWarningSound = true,
         drowningThreshold = 0.2,
@@ -3161,7 +3162,7 @@ function addon.settings:CreateAceOptionsPanel()
                     },
                     showUpgradeDetailsOnHover = {
                         name = L("Show upgrade details on hover"),
-                        desc = L("Adds a hoverable item icon to equipment-upgrade prompts. Hover it to see the full item tooltip and current EP comparison."),
+                        desc = L("Shows an expanded EP breakdown while you hold the selected key over an equippable item. Upgrade prompts also provide a hoverable item icon when supported by the client."),
                         type = "toggle",
                         width = optionsWidth * 1.5,
                         order = 5.65,
@@ -3178,6 +3179,37 @@ function addon.settings:CreateAceOptionsPanel()
                                 addon.itemUpgrades.RefreshUpgradePromptHover then
                                 addon.itemUpgrades:RefreshUpgradePromptHover()
                             end
+                        end
+                    },
+                    upgradeTooltipModifier = {
+                        name = L("Upgrade detail modifier"),
+                        desc = L("Hold this key while an item tooltip is visible to show its detailed EP calculation."),
+                        type = "select",
+                        width = optionsWidth * 0.75,
+                        order = 5.66,
+                        values = {
+                            [1] = "CTRL",
+                            [2] = "ALT",
+                            [3] = "SHIFT"
+                        },
+                        get = function()
+                            return self.profile.upgradeTooltipModifier or 1
+                        end,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.itemUpgrades and
+                                addon.itemUpgrades.RefreshUpgradePromptHover then
+                                addon.itemUpgrades:RefreshUpgradePromptHover()
+                            end
+                        end,
+                        hidden = function()
+                            return not addon.itemUpgrades
+                        end,
+                        disabled = function()
+                            return not (self.profile.enableTips and
+                                       self.profile.enableItemUpgrades and
+                                       self.profile.showUpgradeDetailsOnHover ~=
+                                           false)
                         end
                     },
                     enableItemUpgradesAH = {

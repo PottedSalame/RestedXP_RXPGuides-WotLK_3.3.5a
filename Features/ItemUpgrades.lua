@@ -80,6 +80,9 @@ local session = {
     upgradePopupOpen = false,
     pendingUpgradeEquip = nil,
     upgradeQueryRetries = 0,
+    detailTooltip = nil,
+    detailTooltipSource = nil,
+    detailModifierFrame = nil,
 
     -- Remember explicit hand replacements so the displaced weapon is not
     -- offered straight back against the exact item which replaced it. The
@@ -575,18 +578,90 @@ local function enableTotalEPLines(itemData, lines)
     end
 end
 
-local function IsClientItemUsable(itemLink)
-    if not (itemLink and type(NativeIsUsableItem) == "function") then return nil end
-    local ok, usable = pcall(NativeIsUsableItem, itemLink)
-    if not ok then return nil end
-    return usable == true or usable == 1
+local function GetUpgradeDetailModifierName()
+    local modifier = addon.settings and addon.settings.profile and
+                         tonumber(addon.settings.profile.upgradeTooltipModifier) or 1
+    if modifier == 2 then return "ALT" end
+    if modifier == 3 then return "SHIFT" end
+    return "CTRL"
 end
 
-local function AddUnavailableComparisonLine(tooltip, message)
-    if not (tooltip and message) then return end
-    tooltip:AddLine(fmt("%s - %s", addon.title, _G.ITEM_UPGRADE))
-    tooltip:AddLine(message, 1, 0.35, 0.35, true)
-    tooltip:Show()
+local function IsUpgradeDetailModifierDown()
+    local modifier = GetUpgradeDetailModifierName()
+    if modifier == "ALT" then
+        return type(_G.IsAltKeyDown) == "function" and _G.IsAltKeyDown()
+    elseif modifier == "SHIFT" then
+        return type(_G.IsShiftKeyDown) == "function" and _G.IsShiftKeyDown()
+    end
+    return type(_G.IsControlKeyDown) == "function" and
+               _G.IsControlKeyDown()
+end
+
+local function CleanStatLabel(key)
+    local label = _G[key]
+    if type(label) ~= "string" or label == "" then label = KEY_TO_TEXT[key] end
+    if type(label) == "table" then label = label[1] end
+    if type(label) == "string" and label ~= "" then
+        label = label:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+        label = label:gsub("%%[%d%$%.]*[cdfgsuxX]", "")
+        label = label:gsub("^%s*[%+%-:]%s*", ""):gsub("%s*[:;,%.]%s*$", "")
+        label = label:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+        if label ~= "" then return label end
+    end
+    label = tostring(key or _G.UNKNOWN):gsub("^ITEM_MOD_", "")
+    label = label:gsub("^STAT_", ""):gsub("_SHORT$", ""):
+                gsub("_", " ")
+    label = strlower(label)
+    return label:gsub("^%l", string.upper)
+end
+
+local function GetDetailTooltip()
+    if session.detailTooltip then return session.detailTooltip end
+    local tooltip = CreateFrame("GameTooltip", "RXPItemUpgradeDetails", UIParent,
+                                "GameTooltipTemplate")
+    session.detailTooltip = tooltip
+    return tooltip
+end
+
+local function HideUpgradeDetailTooltip(source)
+    if not session.detailTooltip then return end
+    if not source or session.detailTooltipSource == source then
+        session.detailTooltipSource = nil
+        session.detailTooltip:Hide()
+    end
+end
+
+local function AddDetailedStatLines(tooltip, itemData)
+    if not (tooltip and itemData and type(itemData.stats) == "table") then
+        return
+    end
+    local rows = {}
+    for key, value in pairs(itemData.stats) do
+        local weight = tonumber(session.activeStatWeights and
+                                    session.activeStatWeights[key])
+        value = tonumber(value)
+        if weight and value and weight ~= 0 and value ~= 0 and
+            key ~= "ITEM_MOD_DAMAGE_PER_SECOND_SHORT" then
+            tinsert(rows, {
+                label = CleanStatLabel(key),
+                value = value,
+                weight = weight,
+                contribution = value * weight
+            })
+        end
+    end
+    table.sort(rows, function(a, b)
+        if a.contribution ~= b.contribution then
+            return a.contribution > b.contribution
+        end
+        return a.label < b.label
+    end)
+    for _, row in ipairs(rows) do
+        tooltip:AddDoubleLine(fmt("  %s: %g x %.3g", row.label, row.value,
+                                  row.weight),
+                              fmt("%+.2f EP", row.contribution),
+                              0.9, 0.9, 0.9, 0.35, 1, 0.35)
+    end
 end
 
 local function ExplainUnavailableComparison(itemLink, itemData)
@@ -616,6 +691,125 @@ local function ExplainUnavailableComparison(itemLink, itemData)
     end
 end
 
+local function ShowUpgradeDetailTooltip(source)
+    local profile = addon.settings and addon.settings.profile
+    if not (profile and profile.enableTips and profile.enableItemUpgrades and
+        not profile.disableUpgradeTooltip and
+        profile.showUpgradeDetailsOnHover ~= false and
+        IsUpgradeDetailModifierDown() and source and source.IsShown and
+        source:IsShown() and source.GetItem) then
+        HideUpgradeDetailTooltip(source)
+        return false
+    end
+
+    local _, itemLink = source:GetItem()
+    if not itemLink then
+        HideUpgradeDetailTooltip(source)
+        return false
+    end
+    local _, _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
+    if not itemEquipLoc or itemEquipLoc == "" then
+        HideUpgradeDetailTooltip(source)
+        return false
+    end
+
+    local itemData = addon.itemUpgrades:GetItemData(itemLink)
+    local tooltip = GetDetailTooltip()
+    tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    tooltip:ClearAllPoints()
+    tooltip:SetPoint("TOPRIGHT", source, "TOPLEFT", -8, 0)
+    tooltip:ClearLines()
+    tooltip:AddLine(fmt("%s - %s", addon.title, L("Detailed EP")), 1, 0.82,
+                    0, true)
+    tooltip:AddLine(itemLink, 1, 1, 1, true)
+    tooltip:AddDoubleLine(L("Weight set"),
+                          tostring(profile.itemUpgradeSpec or
+                                       addon.player.localeClass or
+                                       addon.player.class or _G.UNKNOWN),
+                          0.75, 0.75, 0.75, 1, 1, 1)
+
+    if not (itemData and itemData.totalWeight) then
+        tooltip:AddLine(ExplainUnavailableComparison(itemLink, itemData) or
+                            L("EP comparison is waiting for complete item data."),
+                        1, 0.35, 0.35, true)
+    else
+        AddDetailedStatLines(tooltip, itemData)
+        local comparisons, reason, state =
+            addon.itemUpgrades:CompareItemWeight(itemLink)
+        local comparison, bestDifference
+        for _, candidate in ipairs(comparisons or {}) do
+            local difference = tonumber(candidate.WeightIncrease)
+            if candidate.ComparedWeight then
+                difference = tonumber(candidate.ComparedWeight) -
+                                 (tonumber(candidate.EquippedWeight) or 0)
+            end
+            if difference and
+                (bestDifference == nil or difference > bestDifference) then
+                comparison = candidate
+                bestDifference = difference
+            end
+        end
+        local total = comparison and tonumber(comparison.ComparedWeight) or
+                          tonumber(itemData.totalWeight)
+        if total then
+            tooltip:AddDoubleLine(L("Candidate total"), fmt("%.2f EP", total),
+                                  0.9, 0.9, 0.9, 1, 1, 1)
+        end
+        if comparison then
+            local oldTotal = tonumber(comparison.EquippedWeight) or 0
+            local difference = tonumber(comparison.WeightIncrease)
+            if comparison.ComparedWeight then
+                difference = tonumber(comparison.ComparedWeight) - oldTotal
+            end
+            tooltip:AddDoubleLine(L("Equipped layout"),
+                                  fmt("%.2f EP", oldTotal), 0.9, 0.9, 0.9,
+                                  1, 1, 1)
+            if difference then
+                local red, green = difference < 0 and 1 or 0.35,
+                                   difference < 0 and 0.35 or 1
+                tooltip:AddDoubleLine(L("Final difference"),
+                                      fmt("%+.2f EP", difference),
+                                      1, 1, 1, red, green, 0.35)
+            end
+        elseif state == "unknown" or reason then
+            tooltip:AddLine(ExplainUnavailableComparison(itemLink, itemData) or
+                                L("No complete equipment comparison is available yet."),
+                            1, 0.5, 0.25, true)
+        end
+    end
+    tooltip:AddLine(fmt(L("Release %s to hide these details."),
+                        GetUpgradeDetailModifierName()), 0.55, 0.55, 0.55,
+                    true)
+    session.detailTooltipSource = source
+    tooltip:Show()
+    return true
+end
+
+local function QueueUpgradeDetailRefresh(tooltip, itemLink)
+    if not (addon.settings and addon.settings.profile and
+        addon.settings.profile.showUpgradeDetailsOnHover ~= false) then return end
+    C_Timer.After(0, function()
+        if not (tooltip and tooltip.IsShown and tooltip:IsShown() and
+            tooltip.GetItem) then return end
+        local _, currentLink = tooltip:GetItem()
+        if currentLink == itemLink then ShowUpgradeDetailTooltip(tooltip) end
+    end)
+end
+
+local function IsClientItemUsable(itemLink)
+    if not (itemLink and type(NativeIsUsableItem) == "function") then return nil end
+    local ok, usable = pcall(NativeIsUsableItem, itemLink)
+    if not ok then return nil end
+    return usable == true or usable == 1
+end
+
+local function AddUnavailableComparisonLine(tooltip, message)
+    if not (tooltip and message) then return end
+    tooltip:AddLine(fmt("%s - %s", addon.title, _G.ITEM_UPGRADE))
+    tooltip:AddLine(message, 1, 0.35, 0.35, true)
+    tooltip:Show()
+end
+
 local function TooltipSetItem(tooltip, ...)
     if not addon.settings.profile.enableItemUpgrades or
         not addon.settings.profile.enableTips or
@@ -623,6 +817,7 @@ local function TooltipSetItem(tooltip, ...)
 
     local _, itemLink = tooltip:GetItem()
     if not itemLink then return end
+    QueueUpgradeDetailRefresh(tooltip, itemLink)
     -- print("TooltipSetItem", tooltip:GetName(), itemLink)
 
     local clientUsable
@@ -863,16 +1058,50 @@ function addon.itemUpgrades:Setup()
     for key, regex in pairs(OUT_OF_BAND_KEYS) do session.statsRegexes[key] = regex end
 
     -- Inventory
-    if GameTooltip then GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem) end
+    if GameTooltip then
+        GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
+        GameTooltip:HookScript("OnHide", function(tooltip)
+            HideUpgradeDetailTooltip(tooltip)
+        end)
+    end
 
     -- Vendor?
-    if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", TooltipSetItem) end
+    if ItemRefTooltip then
+        ItemRefTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
+        ItemRefTooltip:HookScript("OnHide", function(tooltip)
+            HideUpgradeDetailTooltip(tooltip)
+        end)
+    end
 
     -- Enable AH
-    if ShoppingTooltip1 then ShoppingTooltip1:HookScript("OnTooltipSetItem", TooltipSetItem) end
+    if ShoppingTooltip1 then
+        ShoppingTooltip1:HookScript("OnTooltipSetItem", TooltipSetItem)
+        ShoppingTooltip1:HookScript("OnHide", function(tooltip)
+            HideUpgradeDetailTooltip(tooltip)
+        end)
+    end
     -- ShoppingTooltip2:HookScript("OnTooltipSetItem", TooltipSetItem)
 
     session.isInitialized = true
+
+    session.detailModifierFrame = session.detailModifierFrame or
+                                      CreateFrame("Frame")
+    session.detailModifierFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+    session.detailModifierFrame:SetScript("OnEvent", function()
+        local sources = {_G.GameTooltip, _G.ItemRefTooltip,
+                         _G.ShoppingTooltip1}
+        local shown
+        for _, source in ipairs(sources) do
+            if source and source.IsShown and source:IsShown() and
+                source.GetItem and select(2, source:GetItem()) then
+                if ShowUpgradeDetailTooltip(source) then
+                    shown = true
+                    break
+                end
+            end
+        end
+        if not shown then HideUpgradeDetailTooltip() end
+    end)
 
     self.AH:Setup()
     QueueUpgradeScan(1)
@@ -2736,7 +2965,9 @@ local function EnsureUpgradePromptHoverButton(popup)
     local button = CreateFrame("Button", nil, popup)
     button:SetWidth(36)
     button:SetHeight(36)
-    button:SetPoint("LEFT", popup, "RIGHT", 8, 0)
+    -- Keep this inside the legacy dialog. Several private-server StaticPopup
+    -- templates clip or cover children anchored outside their bounds.
+    button:SetPoint("TOPRIGHT", popup, "TOPRIGHT", -12, -12)
     button:SetFrameLevel((popup:GetFrameLevel() or 0) + 2)
 
     button.icon = button:CreateTexture(nil, "ARTWORK")
@@ -2802,6 +3033,12 @@ function addon.itemUpgrades:RefreshUpgradePromptHover()
             popup.which == "RXPItemUpgradeFound" then
             UpdateUpgradePromptHover(popup, popup.data)
         end
+    end
+    local source = session.detailTooltipSource or _G.GameTooltip
+    if source and source.IsShown and source:IsShown() then
+        ShowUpgradeDetailTooltip(source)
+    else
+        HideUpgradeDetailTooltip()
     end
 end
 
