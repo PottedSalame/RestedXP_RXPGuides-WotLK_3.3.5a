@@ -82,6 +82,13 @@ local session = {
     upgradeQueryRetries = 0,
     detailTooltip = nil,
     detailTooltipSource = nil,
+    detailTooltipItemLink = nil,
+    detailTooltipRevision = nil,
+    detailRevision = 0,
+    detailHideSerial = 0,
+    detailRefreshPending = false,
+    detailRefreshSource = nil,
+    detailRefreshItemLink = nil,
     detailModifierFrame = nil,
 
     -- Remember explicit hand replacements so the displaced weapon is not
@@ -626,9 +633,28 @@ end
 local function HideUpgradeDetailTooltip(source)
     if not session.detailTooltip then return end
     if not source or session.detailTooltipSource == source then
+        session.detailHideSerial = session.detailHideSerial + 1
         session.detailTooltipSource = nil
+        session.detailTooltipItemLink = nil
+        session.detailTooltipRevision = nil
         session.detailTooltip:Hide()
     end
+end
+
+local function QueueHideUpgradeDetailTooltip(source)
+    session.detailHideSerial = session.detailHideSerial + 1
+    local serial = session.detailHideSerial
+    C_Timer.After(0.08, function()
+        if serial ~= session.detailHideSerial then return end
+        if source and source.IsShown and source:IsShown() and source.GetItem and
+            select(2, source:GetItem()) then return end
+        HideUpgradeDetailTooltip(source)
+    end)
+end
+
+local function InvalidateUpgradeDetailTooltip()
+    session.detailRevision = session.detailRevision + 1
+    session.detailTooltipRevision = nil
 end
 
 local function AddDetailedStatLines(tooltip, itemData)
@@ -707,6 +733,17 @@ local function ShowUpgradeDetailTooltip(source)
         HideUpgradeDetailTooltip(source)
         return false
     end
+
+    -- Stock bag and quest-reward tooltips can fire OnTooltipSetItem every
+    -- frame. Cancel any deferred transient hide and keep the already-rendered
+    -- panel intact while its inputs are unchanged.
+    session.detailHideSerial = session.detailHideSerial + 1
+    if session.detailTooltip and session.detailTooltip:IsShown() and
+        session.detailTooltipSource == source and
+        session.detailTooltipItemLink == itemLink and
+        session.detailTooltipRevision == session.detailRevision then
+        return true
+    end
     local _, _, _, _, _, _, _, _, itemEquipLoc = GetItemInfo(itemLink)
     if not itemEquipLoc or itemEquipLoc == "" then
         HideUpgradeDetailTooltip(source)
@@ -781,6 +818,8 @@ local function ShowUpgradeDetailTooltip(source)
                         GetUpgradeDetailModifierName()), 0.55, 0.55, 0.55,
                     true)
     session.detailTooltipSource = source
+    session.detailTooltipItemLink = itemLink
+    session.detailTooltipRevision = session.detailRevision
     tooltip:Show()
     return true
 end
@@ -788,11 +827,20 @@ end
 local function QueueUpgradeDetailRefresh(tooltip, itemLink)
     if not (addon.settings and addon.settings.profile and
         addon.settings.profile.showUpgradeDetailsOnHover ~= false) then return end
+    session.detailRefreshSource = tooltip
+    session.detailRefreshItemLink = itemLink
+    if session.detailRefreshPending then return end
+    session.detailRefreshPending = true
     C_Timer.After(0, function()
-        if not (tooltip and tooltip.IsShown and tooltip:IsShown() and
-            tooltip.GetItem) then return end
-        local _, currentLink = tooltip:GetItem()
-        if currentLink == itemLink then ShowUpgradeDetailTooltip(tooltip) end
+        session.detailRefreshPending = false
+        local source = session.detailRefreshSource
+        local expectedLink = session.detailRefreshItemLink
+        session.detailRefreshSource = nil
+        session.detailRefreshItemLink = nil
+        if not (source and source.IsShown and source:IsShown() and
+            source.GetItem) then return end
+        local _, currentLink = source:GetItem()
+        if currentLink == expectedLink then ShowUpgradeDetailTooltip(source) end
     end)
 end
 
@@ -1002,6 +1050,7 @@ function addon.itemUpgrades:Setup()
     if not self:LoadStatWeights() then return end
     if not self:ActivateSpecWeights() then return end
     session.itemCache = {}
+    InvalidateUpgradeDetailTooltip()
 
     -- Only register events and hookScript once
     if session.isInitialized then
@@ -1061,7 +1110,7 @@ function addon.itemUpgrades:Setup()
     if GameTooltip then
         GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
         GameTooltip:HookScript("OnHide", function(tooltip)
-            HideUpgradeDetailTooltip(tooltip)
+            QueueHideUpgradeDetailTooltip(tooltip)
         end)
     end
 
@@ -1069,7 +1118,7 @@ function addon.itemUpgrades:Setup()
     if ItemRefTooltip then
         ItemRefTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
         ItemRefTooltip:HookScript("OnHide", function(tooltip)
-            HideUpgradeDetailTooltip(tooltip)
+            QueueHideUpgradeDetailTooltip(tooltip)
         end)
     end
 
@@ -1077,7 +1126,7 @@ function addon.itemUpgrades:Setup()
     if ShoppingTooltip1 then
         ShoppingTooltip1:HookScript("OnTooltipSetItem", TooltipSetItem)
         ShoppingTooltip1:HookScript("OnHide", function(tooltip)
-            HideUpgradeDetailTooltip(tooltip)
+            QueueHideUpgradeDetailTooltip(tooltip)
         end)
     end
     -- ShoppingTooltip2:HookScript("OnTooltipSetItem", TooltipSetItem)
@@ -1147,6 +1196,7 @@ function addon.itemUpgrades:WEAPON_PROFICIENCY_CHANGED()
         -- the newly learned state; an old unwearable cache entry is no longer
         -- valid after visiting a weapon master.
         session.itemCache = {}
+        InvalidateUpgradeDetailTooltip()
         wipe(session.promptedUpgrades)
         if addon.inventoryManager and addon.inventoryManager.UpdateAllBags then
             addon.inventoryManager.UpdateAllBags()
@@ -3034,6 +3084,7 @@ function addon.itemUpgrades:RefreshUpgradePromptHover()
             UpdateUpgradePromptHover(popup, popup.data)
         end
     end
+    InvalidateUpgradeDetailTooltip()
     local source = session.detailTooltipSource or _G.GameTooltip
     if source and source.IsShown and source:IsShown() then
         ShowUpgradeDetailTooltip(source)
@@ -3197,6 +3248,7 @@ function addon.itemUpgrades:UPGRADE_INVENTORY_CHANGED()
 end
 
 function addon.itemUpgrades:UPGRADE_EQUIPMENT_CHANGED()
+    InvalidateUpgradeDetailTooltip()
     -- Let the legacy inventory API settle before recording the old -> new hand
     -- transition and rescanning the displaced bag item.
     C_Timer.After(0, function()
@@ -3212,6 +3264,7 @@ end
 
 function addon.itemUpgrades:UPGRADE_ITEM_INFO_RECEIVED(_, _, success)
     if success then
+        InvalidateUpgradeDetailTooltip()
         session.upgradeQueryRetries = 0
         QueueUpgradeScan(0.25)
     end
