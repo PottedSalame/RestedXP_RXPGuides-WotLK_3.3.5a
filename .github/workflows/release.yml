@@ -153,7 +153,7 @@ jobs:
           TAG: ${{ steps.metadata.outputs.tag }}
         run: |
           set -euo pipefail
-          ./tools/Build-LocalePackages335.sh \
+          bash ./tools/Build-LocalePackages335.sh \
             --source .release-localizations \
             --output .locale-release \
             --version "${TAG}" \

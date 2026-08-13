@@ -77,7 +77,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ./tools/Build-LocalePackages335.sh \
+          bash ./tools/Build-LocalePackages335.sh \
             --source .release-localizations \
             --output .locale-release \
             --version v0-ci \
