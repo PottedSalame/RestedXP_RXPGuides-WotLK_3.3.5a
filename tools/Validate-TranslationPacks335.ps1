@@ -7,6 +7,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 if (-not $RepoRoot) { $RepoRoot = Split-Path -Parent $PSScriptRoot }
+$supportedLocales = @('deDE','esES','frFR','koKR','ruRU','zhCN','zhTW')
 function Join-RepoPath([string]$Relative) {
     $native = $Relative -replace '[\\/]', [IO.Path]::DirectorySeparatorChar
     return Join-Path $RepoRoot $native
@@ -110,6 +111,32 @@ function Get-CanonicalPackPayload([string]$Path) {
         $output.Dispose()
     }
 }
+function Get-PackInputSignature([string]$SourcePath, [string[]]$CatalogPaths) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        $compilerPath = Join-Path $PSScriptRoot 'Compile-TranslationPack335.ps1'
+        $sourceDocument = [IO.File]::ReadAllText(
+            [IO.Path]::GetFullPath($SourcePath)) | ConvertFrom-Json
+        $sourceBytes = [Text.Encoding]::UTF8.GetBytes(
+            'sourceRevision:' + [string]$sourceDocument.sourceRevision)
+        $separator = [byte[]](0)
+        [void]$sha.TransformBlock($sourceBytes, 0, $sourceBytes.Length,
+            $sourceBytes, 0)
+        [void]$sha.TransformBlock($separator, 0, 1, $separator, 0)
+        $paths = @($CatalogPaths | ForEach-Object {
+                [IO.Path]::GetFullPath($_)
+            } | Sort-Object) + @([IO.Path]::GetFullPath($compilerPath))
+        foreach ($path in $paths) {
+            $bytes = [IO.File]::ReadAllBytes($path)
+            if ($bytes.Length -gt 0) {
+                [void]$sha.TransformBlock($bytes, 0, $bytes.Length, $bytes, 0)
+            }
+            [void]$sha.TransformBlock($separator, 0, 1, $separator, 0)
+        }
+        [void]$sha.TransformFinalBlock([byte[]]@(), 0, 0)
+        return -join ($sha.Hash | ForEach-Object { $_.ToString('x2') })
+    } finally { $sha.Dispose() }
+}
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) `
     ('rxp-translations-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
@@ -170,22 +197,88 @@ try {
     }
     $catalogs = @(Get-ChildItem (Join-RepoPath 'translations/imported') `
         -Filter '*.json' -File -ErrorAction SilentlyContinue | Sort-Object Name)
+    $allowedCatalogFields = @('schema','locale','sourceRevision','revision',
+        'source','units')
+    $allowedUnitFields = @('id','english','translation','status','domain',
+        'tokenized','attribution','contextKey','sourceSignature','source')
+    foreach ($catalogFile in $catalogs) {
+        $catalogDocument = [IO.File]::ReadAllText($catalogFile.FullName) |
+            ConvertFrom-Json
+        foreach ($field in $catalogDocument.PSObject.Properties.Name) {
+            if ($field -notin $allowedCatalogFields) {
+                throw "Unknown catalog field '$field' in $($catalogFile.Name)."
+            }
+        }
+        if ([int]$catalogDocument.schema -ne 1 -or
+            [string]$catalogDocument.locale -notin $supportedLocales) {
+            throw "Invalid catalog header in $($catalogFile.Name)."
+        }
+        if ([string]$catalogDocument.locale -eq 'zhTW' -and
+            $catalogFile.Name -match 'machine' -and
+            [string]$catalogDocument.source -notmatch 'zho_Hant|Traditional Chinese') {
+            throw "zhTW machine prose must come from a direct Traditional Chinese batch: $($catalogFile.Name)."
+        }
+        $catalogIdentities = @{}
+        foreach ($unit in @($catalogDocument.units)) {
+            foreach ($field in $unit.PSObject.Properties.Name) {
+                if ($field -notin $allowedUnitFields) {
+                    throw "Unknown unit field '$field' in $($catalogFile.Name)."
+                }
+            }
+            $identity = if ($unit.contextKey) {
+                'C' + [char]31 + [string]$unit.domain + [char]31 +
+                    [string]$unit.contextKey
+            } elseif ($unit.id) {
+                'I' + [char]31 + [string]$unit.domain + [char]31 +
+                    [string]$unit.id
+            } else {
+                'E' + [char]31 + [string]$unit.domain + [char]31 +
+                    [string]$unit.english
+            }
+            if ($catalogIdentities.ContainsKey($identity)) {
+                throw "Duplicate translation identity in $($catalogFile.Name): $identity"
+            }
+            $catalogIdentities[$identity] = $true
+        }
+    }
+    $strictUtf8 = New-Object Text.UTF8Encoding($false, $true)
+    foreach ($runtimePack in @(Get-ChildItem (Join-RepoPath 'locale') `
+            -Filter 'GuidePack.*.lua' -File -ErrorAction SilentlyContinue)) {
+        try { [void][IO.File]::ReadAllText($runtimePack.FullName, $strictUtf8) }
+        catch { throw "Invalid UTF-8 runtime translation pack: $($runtimePack.Name)" }
+    }
     $groups = @($catalogs | Group-Object {
         [string](Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json).locale
     })
     foreach ($group in $groups) {
         $locale = [string]$group.Name
         $generated = Join-Path $temporaryRoot "GuidePack.$locale.lua"
-        & (Join-Path $PSScriptRoot 'Compile-TranslationPack335.ps1') `
-            -AddonRoot $RepoRoot -SourceCatalog $source `
-            -TranslationCatalog @($group.Group.FullName) -OutputPath $generated
         $committed = Join-RepoPath "locale/GuidePack.$locale.lua"
         if (-not (Test-Path -LiteralPath $committed -PathType Leaf)) {
             throw "Missing compiled runtime pack for $locale."
         }
-        if ((Get-CanonicalPackPayload $generated) -cne
-            (Get-CanonicalPackPayload $committed)) {
-            throw "Compiled runtime pack is stale: locale/GuidePack.$locale.lua"
+        $expectedSignature = Get-PackInputSignature $source `
+            @($group.Group.FullName)
+        $committedText = [IO.File]::ReadAllText($committed)
+        $signatureMatch = [regex]::Match($committedText,
+            '(?m)^-- Translation input signature: ([0-9a-f]{64})\r?$')
+        if (-not $signatureMatch.Success -or
+            $signatureMatch.Groups[1].Value -cne $expectedSignature) {
+            & (Join-Path $PSScriptRoot 'Compile-TranslationPack335.ps1') `
+                -AddonRoot $RepoRoot -SourceCatalog $source `
+                -TranslationCatalog @($group.Group.FullName) `
+                -OutputPath $generated
+            if ((Get-CanonicalPackPayload $generated) -cne
+                (Get-CanonicalPackPayload $committed)) {
+                throw "Compiled runtime pack is stale: locale/GuidePack.$locale.lua"
+            }
+            throw "Compiled runtime pack signature is stale: locale/GuidePack.$locale.lua"
+        } else {
+            # The signature covers the inventory, every input catalog, and the
+            # compiler itself. Decode the committed payload semantically but
+            # avoid recompressing tens of thousands of unchanged strings.
+            [void](Get-CanonicalPackPayload $committed)
+            $generated = $committed
         }
         if ($RequireLua) {
             $lua = Get-Command lua5.1 -ErrorAction SilentlyContinue
@@ -221,35 +314,42 @@ assert(payload:find(string.char(30), 1, true))
                 throw "LibDeflate could not decode the generated $locale pack."
             }
         }
-        if ($locale -eq 'zhCN') {
-            $generatedAllowlist = Join-Path $temporaryRoot `
-                "$locale-fallback-allowlist.json"
-            $coverageText = (& (Join-Path $PSScriptRoot `
-                    'Get-TranslationCoverage335.ps1') `
-                -SourceCatalog $source `
-                -TranslationCatalog @($group.Group.FullName) `
-                -RepoRoot $RepoRoot -Locale $locale `
-                -FallbackAllowlistPath $generatedAllowlist | Out-String)
-            $coverage = $coverageText | ConvertFrom-Json
-            if ([int]$coverage.summary.ui.fallback -ne 0) {
-                throw 'zhCN ordinary UI coverage contains unclassified fallbacks.'
-            }
-            $guideOccurrences = [double]$coverage.summary.guide.occurrences.total
-            $resolvedOccurrences = $guideOccurrences -
-                [double]$coverage.summary.guide.occurrences.fallback
-            if ($guideOccurrences -le 0 -or
-                $resolvedOccurrences / $guideOccurrences -lt 0.90) {
-                throw 'zhCN guide catalog coverage fell below the accepted rollout floor.'
-            }
-            $committedAllowlist = Join-RepoPath `
-                "translations/source/$locale-fallback-allowlist.json"
-            if (-not (Test-Path -LiteralPath $committedAllowlist -PathType Leaf)) {
-                throw "Missing documented $locale fallback allowlist."
-            }
-            if ((Get-CanonicalJson $generatedAllowlist) -cne
-                (Get-CanonicalJson $committedAllowlist)) {
-                throw "The documented $locale fallback allowlist is stale."
-            }
+        $generatedAllowlist = Join-Path $temporaryRoot `
+            "$locale-fallback-allowlist.json"
+        $coverageText = (& (Join-Path $PSScriptRoot `
+                'Get-TranslationCoverage335.ps1') `
+            -SourceCatalog $source `
+            -TranslationCatalog @($group.Group.FullName) `
+            -RepoRoot $RepoRoot -Locale $locale `
+            -FallbackAllowlistPath $generatedAllowlist | Out-String)
+        $coverage = $coverageText | ConvertFrom-Json
+        if ([int]$coverage.summary.ui.occurrences.fallback -ne 0) {
+            throw "$locale ordinary UI coverage contains unclassified fallbacks."
+        }
+        $guideOccurrences = [double]$coverage.summary.guide.occurrences.total
+        $resolvedOccurrences = $guideOccurrences -
+            [double]$coverage.summary.guide.occurrences.fallback
+        if ($guideOccurrences -le 0 -or
+            $resolvedOccurrences / $guideOccurrences -lt 0.99) {
+            $percent = if ($guideOccurrences -gt 0) {
+                100 * $resolvedOccurrences / $guideOccurrences
+            } else { 0 }
+            throw ("$locale guide occurrence coverage is {0:N2}%; 99% is required." -f $percent)
+        }
+        $committedAllowlist = Join-RepoPath `
+            "translations/source/$locale-fallback-allowlist.json"
+        if (-not (Test-Path -LiteralPath $committedAllowlist -PathType Leaf)) {
+            throw "Missing documented $locale fallback allowlist."
+        }
+        if ((Get-CanonicalJson $generatedAllowlist) -cne
+            (Get-CanonicalJson $committedAllowlist)) {
+            throw "The documented $locale fallback allowlist is stale."
+        }
+    }
+    $compiledLocales = @($groups | ForEach-Object { [string]$_.Name })
+    foreach ($locale in $supportedLocales) {
+        if ($locale -notin $compiledLocales) {
+            throw "Missing completed translation catalogs for $locale."
         }
     }
     Write-Host ("Translation packs passed deterministic validation: {0} catalog(s)." -f `

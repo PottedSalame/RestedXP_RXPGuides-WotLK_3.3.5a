@@ -21,7 +21,12 @@ $service = Read-Utf8 'Guide\Localization.lua'
 $uiLocale = Read-Utf8 'Core\Locale.lua'
 $catalogs = Read-Utf8 'locale\GuideCatalogs.lua'
 $zhExact = Read-Utf8 'locale\GuideExact.zhCN.lua'
-$zhPack = Read-Utf8 'locale\GuidePack.zhCN.lua'
+$translationLocales = @('deDE','esES','frFR','koKR','ruRU','zhCN','zhTW')
+$packs = @{}
+foreach ($translationLocale in $translationLocales) {
+    $packs[$translationLocale] = Read-Utf8 `
+        "locale\GuidePack.$translationLocale.lua"
+}
 $englishNames = Read-Utf8 'DB\wotlk\guideEnglishNames_335.lua'
 $toc = Read-Utf8 'RXPGuides.toc'
 $settings = Read-Utf8 'UI\Settings.lua'
@@ -53,12 +58,12 @@ foreach ($script in [regex]::Matches($guideList,
     }
 }
 
-foreach ($locale in @('deDE','esES','frFR','koKR','ruRU','zhCN','zhTW')) {
+foreach ($locale in $translationLocales) {
     if ($catalogs -notmatch ('locale\s*==\s*"' + $locale + '"')) {
         $errors.Add("Missing active-locale catalog: $locale")
     }
 }
-foreach ($verb in @('Accept','Turn in','Talk to','Kill','Loot','Collect','Use',
+foreach ($verb in @('Accept','Turn in','Cast','Talk to','Kill','Loot','Collect','Use',
         'Equip','Buy','Train','Vendor','Hearth to','Fly to','Travel to','Grind to')) {
     if ($catalogs -notmatch ('\{"' + [regex]::Escape($verb) + '",')) {
         $errors.Add("Missing reviewed action template: $verb")
@@ -126,14 +131,19 @@ if ($service -notmatch '(?s)TranslateLines\(output, element, field\).*?ReplaceQu
     $service -notmatch '(?s)SourceFor\(text, element, field, localized\).*?if liveProgress then output = output \.\. liveProgress end') {
     $errors.Add('Official quest names or live counters can bypass canonical translation order.')
 }
+if ($service -notmatch 'local\s+function\s+LocalizeSemanticValue\s*\(' -or
+    $service -notmatch 'value,\s*official\s*=\s*LocalizeSemanticValue\(value, element\)') {
+    $errors.Add('Reviewed semantic actions do not preserve official localized entity names.')
+}
 if ($handlers -notmatch
         'type\(element\.step\)\s*==\s*"table"') {
     $errors.Add('ReplaceNpcIds does not guard non-element localization metadata.')
 }
 
 $order = @('Core\Locale.lua','Guide\Localization.lua','locale\GuideCatalogs.lua',
-    'locale\GuideExact.zhCN.lua','locale\GuidePack.zhCN.lua','UI\GuideWindow.lua',
-    'DB\wotlk\guideEnglishNames_335.lua','Guide\Loader.lua')
+    'locale\GuideExact.zhCN.lua') +
+    @($translationLocales | ForEach-Object { "locale\GuidePack.$_.lua" }) +
+    @('UI\GuideWindow.lua','DB\wotlk\guideEnglishNames_335.lua','Guide\Loader.lua')
 $last = -1
 foreach ($entry in $order) {
     $index = $toc.IndexOf($entry)
@@ -170,9 +180,13 @@ foreach ($match in [regex]::Matches($zhExact,
 if ($exactCount -lt 1) {
     $errors.Add('No safely aligned upstream zhCN display strings were imported.')
 }
-if ($zhPack -notmatch 'GetLocale\(\)\s*~=\s*"zhCN"' -or
-    $zhPack -notmatch 'RegisterCompressedPack\("zhCN", payload\)') {
-    $errors.Add('Compiled active-locale zhCN pack is missing or not locale gated.')
+foreach ($translationLocale in $translationLocales) {
+    $pack = $packs[$translationLocale]
+    if ($pack -notmatch ('GetLocale\(\)\s*~=\s*"' + $translationLocale + '"') -or
+        $pack -notmatch ('RegisterCompressedPack\("' + $translationLocale +
+            '", payload\)')) {
+        $errors.Add("Compiled active-locale $translationLocale pack is missing or not locale gated.")
+    }
 }
 foreach ($tool in @('Export-TranslationUnits335.ps1',
         'Import-GuideTranslations335.ps1','Import-TranslationMap335.ps1',
@@ -268,4 +282,4 @@ if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Error $_ }
     throw "Guide translation validation failed with $($errors.Count) error(s)."
 }
-Write-Host "Guide translations OK: 7 locale catalogs, $exactCount reviewed zhCN exact strings, named templates, immutable source, and explicit fallbacks."
+Write-Host "Guide translations OK: 7 locale catalogs and locale-gated packs, $exactCount reviewed zhCN exact strings, named templates, immutable source, and explicit fallbacks."

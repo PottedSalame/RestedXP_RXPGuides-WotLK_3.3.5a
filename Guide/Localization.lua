@@ -740,6 +740,67 @@ local function ValueLooksReviewed(value)
     return words <= 7
 end
 
+local function LocalizeSemanticValue(value, element)
+    if type(value) ~= "string" or type(element) ~= "table" then
+        return LocalizeLocation(value), false
+    end
+    local tag = element.tag
+    local changed = false
+    if tag == "accept" or tag == "turnin" or tag == "abandon" then
+        local id = tonumber(element.questId or element.id)
+        local localized = element.title
+        if (type(localized) ~= "string" or localized == "") and
+           id and type(addon.GetQuestName) == "function" then
+            localized = addon.GetQuestName(id)
+        end
+        local authored = type(element.sourceText) == "string" and
+                             StripMarkup(element.sourceText) or ""
+        local english = service.englishNames.quests[id] or
+                            authored:match("^[Aa]ccept%s+(.+)$") or
+                            authored:match("^[Tt]urn in%s+(.+)$") or
+                            authored:match("^[Aa]bandon%s+(.+)$")
+        if type(localized) == "string" and localized ~= "" and
+           type(english) == "string" and english ~= "" and
+           localized ~= english then
+            local escaped = english:gsub("(%W)", "%%%1")
+            local count
+            value, count = value:gsub(escaped, function() return localized end, 1)
+            if count == 0 and StripMarkup(value) == english then
+                value, count = localized, 1
+            end
+            changed = count > 0
+        end
+    elseif itemTags[tag] and type(element.itemName) == "string" and
+           element.itemName ~= "" then
+        local count
+        value, count = value:gsub("%[([^%]]+)%]", function()
+            return "[" .. element.itemName .. "]"
+        end, 1)
+        changed = count > 0
+    elseif spellTags[tag] then
+        local spellId = tonumber(element.id)
+        local localized = spellId and GetSpellInfo(spellId)
+        if type(localized) == "string" and localized ~= "" then
+            local count
+            value, count = value:gsub("%[([^%]]+)%]", function()
+                return "[" .. localized .. "]"
+            end, 1)
+            if count == 0 then
+                local english = service.englishNames.spells[spellId]
+                if english and english ~= localized then
+                    value, count = value:gsub(
+                        english:gsub("(%W)", "%%%1"),
+                        function() return localized end, 1)
+                end
+            end
+            changed = count > 0
+        end
+    end
+    local located = LocalizeLocation(value)
+    if located ~= value then value, changed = located, true end
+    return value, changed
+end
+
 local function TranslateLine(line, element, field)
     if not catalog then return line, "fallback" end
     local exact, exactEntry = LookupTranslation(line, element, field, "reviewed")
@@ -759,9 +820,11 @@ local function TranslateLine(line, element, field)
         for _, action in ipairs(catalog.actions or {}) do
             local value = body:match(action.pattern)
             if value then
-                value = LocalizeLocation(value)
+                local official
+                value, official = LocalizeSemanticValue(value, element)
                 return Substitute(action.template, {value = value}),
-                       ValueLooksReviewed(value) and "reviewed" or "fallback",
+                       (official or ValueLooksReviewed(value)) and "reviewed" or
+                           "fallback",
                        {source = "reviewed semantic template"}
             end
         end

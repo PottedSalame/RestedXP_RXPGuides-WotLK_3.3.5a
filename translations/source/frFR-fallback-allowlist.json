@@ -1,0 +1,297 @@
+{
+    "schema":  1,
+    "sourceType":  "fallbackAllowlist",
+    "locale":  "frFR",
+    "sourceRevision":  "706a420a",
+    "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
+    "units":  [
+                  {
+                      "id":  "9671236e",
+                      "english":  "Grind en route",
+                      "occurrences":  16,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8d4491b5",
+                      "english":  "Abandon Buzzbox 411",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "92e07830",
+                      "english":  "Abandon Gahz\u0027rilla",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2d7aaef2",
+                      "english":  "Abandon Greed",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0d6e46c2",
+                      "english":  "Fight Ice Heart Jormungar Feeders",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "77910c2c",
+                      "english":  "Lure Malygos",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "361159f4",
+                      "english":  "Lure Veranus",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "111aa5bf",
+                      "english":  "Trap 8 Nesingwary Trappers",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b5fb9905",
+                      "english":  "Abandon Troll Temper",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d6a85632",
+                      "english":  "Abandon Vyletongue Corruption",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "871a773e",
+                      "english":  "Attain Spiritual Insight cocnerning Indu\u0027le Village",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ef8ae328",
+                      "english":  "Impale Gunnar Thorvardsson",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6b5057f9",
+                      "english":  "Jewel Of The Sewers -- 13832",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b048d2f6",
+                      "english":  "Question Hugh Glass",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2f90f68c",
+                      "english":  "Tame a Strigid Hunter",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8ce40c99",
+                      "english":  "|cRXP_ENEMY_Shadowmaw Panthers|r |cRXP_WARN_are in|r |T132320:0|t[Stealth]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c294ff7b",
+                      "english":  "|cRXP_ENEMY_Stromgarde Defenders|r |cRXP_WARN_have Shield Bash|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "32eeea03",
+                      "english":  "|cRXP_ENEMY_Wastewander Rogues|r |cRXP_WARN_are in|r |T132320:0|t[Stealth]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "05c8cd30",
+                      "english":  "Nagrand",
+                      "occurrences":  20,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "dbd1f439",
+                      "english":  "Zul\u0027Drak",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "618324da",
+                      "english":  "Ogri\u0027la",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f4e7dc32",
+                      "english":  "Sha\u0027tari Skyguard",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "30f484d7",
+                      "english":  "Un\u0027Goro Crater",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "84e87b33",
+                      "english":  "03. Blackfathom Deeps",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fd08378b",
+                      "english":  "05. Gnomeregan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a08f0190",
+                      "english":  "06a. Razorfen Kraul",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cefd63dd",
+                      "english":  "08. Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ab4e842e",
+                      "english":  "09. Uldaman",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fe08b444",
+                      "english":  "1. Karazhan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "969e5017",
+                      "english":  "104 Blackfathom Deeps",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7c387311",
+                      "english":  "105 Razorfen Kraul",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "33082caf",
+                      "english":  "106 Gnomeregan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9422cadf",
+                      "english":  "107 Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0da4fa51",
+                      "english":  "109 Uldaman",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8b0a231c",
+                      "english":  "11. Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "be348aa0",
+                      "english":  "110 Zul\u0027Farrak",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9729d67f",
+                      "english":  "111 Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a0b4b0f9",
+                      "english":  "116 Scholomance",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ea1cabb1",
+                      "english":  "117 Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4dfd8516",
+                      "english":  "16. Scholomance",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0dc89c4e",
+                      "english":  "17. Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0dcbc373",
+                      "english":  "2. Netherstorm (Aldor)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "94bf79b9",
+                      "english":  "25. Mana-Tombs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6e8de14e",
+                      "english":  "26. Auchenai Crypts",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de43b509",
+                      "english":  "J_3.2AT_Sunreavers_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "994d5113",
+                      "english":  "Karazhan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "899737a3",
+                      "english":  "Ogri\u0027la Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a1d2287b",
+                      "english":  "Sha\u0027tari Skyguard Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  }
+              ]
+}

@@ -61,6 +61,10 @@ foreach ($text in $texts) {
         $english = Convert-LuaString $match.Groups[1].Value
         $translated = Convert-LuaString $match.Groups[2].Value
         if (-not $sourceByEnglish.ContainsKey($english)) { continue }
+        # AceLocale files sometimes retain an older English placeholder before
+        # a later translated assignment. It is not a reviewed translation and
+        # must not conflict with the useful localized value.
+        if ($translated -ceq $english) { continue }
         $signatureMatches = $true
         foreach ($pattern in @('\|cRXP_[A-Z]+_','\|r','\|T','\|t','\|H','\|h',
                 '%[0-9.\-+]*[sdif]','-?\d+(?:\.\d+)?')) {
@@ -71,10 +75,8 @@ foreach ($text in $texts) {
             if ($left -ne $right) { $signatureMatches = $false; break }
         }
         if (-not $signatureMatches) { $rejected++; continue }
-        if ($translations.ContainsKey($english) -and
-            $translations[$english] -ne $translated) {
-            throw "Conflicting reviewed $Locale UI translation: '$english'."
-        }
+        # Match AceLocale's actual load semantics: later assignments in the
+        # locale file, and then the later-loaded Backport.lua entry, win.
         $translations[$english] = $translated
     }
 }
@@ -85,7 +87,7 @@ $units = foreach ($english in @($translations.Keys | Sort-Object)) {
         english = $english
         translation = $translations[$english]
         status = 'reviewed'
-        domain = 'ui'
+        domain = if ([int]$unit.guideOccurrences -gt 0) { 'both' } else { 'ui' }
         tokenized = $false
         attribution = "Existing RXPGuides $Locale AceLocale catalog"
     }

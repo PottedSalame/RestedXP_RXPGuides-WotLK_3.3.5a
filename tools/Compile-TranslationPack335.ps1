@@ -26,6 +26,36 @@ function Read-Json([string]$Path) {
     }
 }
 
+function Get-PackInputSignature([string]$SourcePath, [string[]]$CatalogPaths) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    try {
+        # Diagnostic contexts may be omitted from the cached inventory when
+        # no contextual translations exist. The revision is derived from the
+        # authoritative English units, so equivalent compact/full inventories
+        # intentionally produce the same pack signature.
+        $sourceDocument = [IO.File]::ReadAllText(
+            [IO.Path]::GetFullPath($SourcePath)) | ConvertFrom-Json
+        $sourceBytes = [Text.Encoding]::UTF8.GetBytes(
+            'sourceRevision:' + [string]$sourceDocument.sourceRevision)
+        $separator = [byte[]](0)
+        [void]$sha.TransformBlock($sourceBytes, 0, $sourceBytes.Length,
+            $sourceBytes, 0)
+        [void]$sha.TransformBlock($separator, 0, 1, $separator, 0)
+        $paths = @($CatalogPaths | ForEach-Object {
+                [IO.Path]::GetFullPath($_)
+            } | Sort-Object) + @([IO.Path]::GetFullPath($PSCommandPath))
+        foreach ($path in $paths) {
+            $bytes = [IO.File]::ReadAllBytes($path)
+            if ($bytes.Length -gt 0) {
+                [void]$sha.TransformBlock($bytes, 0, $bytes.Length, $bytes, 0)
+            }
+            [void]$sha.TransformBlock($separator, 0, 1, $separator, 0)
+        }
+        [void]$sha.TransformFinalBlock([byte[]]@(), 0, 0)
+        return -join ($sha.Hash | ForEach-Object { $_.ToString('x2') })
+    } finally { $sha.Dispose() }
+}
+
 function Get-SourceSignature([string]$Value) {
     [uint64]$hash = 5381
     foreach ($byte in $utf8.GetBytes([string]$Value)) {
@@ -70,6 +100,7 @@ $source = Read-Json $SourceCatalog
 $translationDocuments = @($TranslationCatalog | Sort-Object | ForEach-Object {
     Read-Json $_
 })
+$inputSignature = Get-PackInputSignature $SourceCatalog $TranslationCatalog
 if ([int]$source.schema -ne 1 -or $translationDocuments.Count -lt 1) {
     throw 'Unsupported translation catalog schema.'
 }
@@ -189,7 +220,7 @@ foreach ($translation in $translationList) {
     }
     $isTokenized = $translation.tokenized -ne $false
     if ($isTokenized) {
-        if ($message -match '%[0-9.\-+]*[sdif]') {
+        if ($message -match '%(?:[0-9]+\$)?[-+0-9.]*[sdif](?![\p{L}])') {
             throw "Tokenized translation contains a positional placeholder: '$english'."
         }
         $expectedTokens = @($sourceUnit.tokens | Sort-Object)
@@ -217,6 +248,7 @@ foreach ($translation in $translationList) {
         throw "Translation '$english' must be reviewed or machine."
     }
     $contextKey = [string]$translation.contextKey
+    $signature = Get-SourceSignature $english
     if ($contextKey) {
         $contextParts = @($contextKey.Split([char]$fieldSeparator))
         if ($contextParts.Count -ne 4 -or
@@ -239,7 +271,6 @@ foreach ($translation in $translationList) {
         }
     }
     $statusCode = if ($status -eq 'reviewed') { 'R' } else { 'M' }
-    $signature = Get-SourceSignature $english
     $domain = if ($translation.domain) { [string]$translation.domain } else { 'both' }
     $recordKinds = if ($contextKey) { @('C') }
         elseif ($domain -eq 'guide') { @('G') }
@@ -249,14 +280,33 @@ foreach ($translation in $translationList) {
     foreach ($kind in $recordKinds) {
         $key = if ($contextKey) { $contextKey } else { $english }
         $dedupeKey = "$kind$fieldSeparator$key"
-        if ($seen.ContainsKey($dedupeKey)) {
-            throw "Duplicate translation key '$key'."
-        }
-        $seen[$dedupeKey] = $true
-        $records.Add(($kind, $statusCode, $key,
+        $record = ($kind, $statusCode, $key,
             $(if ($kind -eq 'C') { $english } else { '' }),
             $message, $signature, $(if ($isTokenized) { '1' } else { '0' })) -join
-            $fieldSeparator)
+            $fieldSeparator
+        if ($seen.ContainsKey($dedupeKey)) {
+            $previous = $seen[$dedupeKey]
+            if ($previous.message -eq $message) { continue }
+            if ($previous.status -eq 'reviewed' -and $status -eq 'machine') {
+                continue
+            }
+            if ($status -eq 'reviewed' -and $previous.status -eq 'machine') {
+                $records[$previous.index] = $record
+                $seen[$dedupeKey] = [pscustomobject]@{
+                    index = $previous.index
+                    status = $status
+                    message = $message
+                }
+                continue
+            }
+            throw "Conflicting translation key '$key'."
+        }
+        $seen[$dedupeKey] = [pscustomobject]@{
+            index = $records.Count
+            status = $status
+            message = $message
+        }
+        $records.Add($record)
     }
 }
 
@@ -276,6 +326,7 @@ $builder = New-Object Text.StringBuilder
 [void]$builder.AppendLine(('if GetLocale() ~= "{0}" or not addon.guideLocalization then return end' -f $locale))
 [void]$builder.AppendLine('')
 [void]$builder.AppendLine(('-- Generated from catalog revision {0}. Display data only; do not edit.' -f $revision))
+[void]$builder.AppendLine(('-- Translation input signature: {0}' -f $inputSignature))
 [void]$builder.AppendLine('local payload = table.concat({')
 for ($index = 0; $index -lt $encoded.Length; $index += 120) {
     $length = [math]::Min(120, $encoded.Length - $index)

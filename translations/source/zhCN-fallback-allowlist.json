@@ -6,12 +6,6 @@
     "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
     "units":  [
                   {
-                      "id":  "a75f3d66",
-                      "english":  ".",
-                      "occurrences":  26,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
                       "id":  "9104635e",
                       "english":  "1 Frigid Abomination Attacker",
                       "occurrences":  4,
@@ -912,78 +906,6 @@
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
                   {
-                      "id":  "9a8c3483",
-                      "english":  "loop1",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "ac91e269",
-                      "english":  "|T132888:0|t[Felcloth]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "17d93bec",
-                      "english":  "|T133434:0|t[Burning Charm]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "84784670",
-                      "english":  "|T133435:0|t[Thundering Charm]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "b609145a",
-                      "english":  "|T133438:0|t[Cresting Charm]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "5aa8ce4e",
-                      "english":  "|T134413:0|t[Liferoot]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "4acd70ad",
-                      "english":  "|T134564:0|t[Blue Pearl]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "33c5367c",
-                      "english":  "|T134800:0|t[Frost Oil]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "dd488129",
-                      "english":  "|T134815:0|t[Filled Vial Labeled #1]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "f48e1a68",
-                      "english":  "|T134822:0|t[Filled Vial Labeled #2]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "e697242e",
-                      "english":  "|T134836:0|t[Filled Vial Labeled #3]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "efe5c712",
-                      "english":  "|T134857:0|t[Filled Vial Labeled #4]",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
                       "id":  "31b30a1e",
                       "english":  "|T135434:0|t[|cRXP_LOOT_Burning Bleeding Hollow Torches|r] |cRXP_WARN_have a 5 minute duration. Focus on Burning the buildings|r",
                       "occurrences":  2,
@@ -998,12 +920,6 @@
                   {
                       "id":  "30c872da",
                       "english":  "|cRXP_ENEMY_Ambassador Infernus|r |cRXP_WARN_is on the lower level|r",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "dde34114",
-                      "english":  "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
                       "occurrences":  2,
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
@@ -1161,30 +1077,6 @@
                       "id":  "b11e075b",
                       "english":  "|cRXP_WARN_Drop down below again|r",
                       "occurrences":  1,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "26de55ef",
-                      "english":  "60-70",
-                      "occurrences":  44,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "26a80c2a",
-                      "english":  "30-50",
-                      "occurrences":  32,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "26cc3d4d",
-                      "english":  "50-60",
-                      "occurrences":  32,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "268698cb",
-                      "english":  "15-30",
-                      "occurrences":  24,
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
                   {
@@ -2184,74 +2076,14 @@
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
                   {
-                      "id":  "1e8d0967",
-                      "english":  "A_1_AT_Start",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "a4918dfe",
-                      "english":  "B_2_AT_Exodar",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "b185578b",
-                      "english":  "B_2_AT_Orgrimmar",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
                       "id":  "7b2d6fea",
                       "english":  "C_2_AT_Sen\u0027jin",
                       "occurrences":  2,
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
                   {
-                      "id":  "d04f9fa3",
-                      "english":  "C_2_AT_Stormwind",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "6d4d2608",
-                      "english":  "D_2_AT_Ironforge",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
                       "id":  "d05b5366",
                       "english":  "D_2_AT_Thunder Bluff",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "80a4a5e1",
-                      "english":  "E_2_AT_Gnomeregan",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "db63a775",
-                      "english":  "E_2_AT_Undercity",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "75808d33",
-                      "english":  "F_2_AT_Darnassus",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "ed9a4b6d",
-                      "english":  "F_2_AT_Silvermoon",
-                      "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "c1ddfd27",
-                      "english":  "H_3_AT_Champion_Daily_Quests",
                       "occurrences":  2,
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
@@ -2271,18 +2103,6 @@
                       "id":  "147f42ac",
                       "english":  "J_3.2_AT_Silver_Covenant_Daily_Quests",
                       "occurrences":  2,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "810c98f5",
-                      "english":  "MiningHerbalism16",
-                      "occurrences":  1,
-                      "reason":  "Bespoke authored prose pending a structurally safe translation."
-                  },
-                  {
-                      "id":  "810c98f6",
-                      "english":  "MiningHerbalism17",
-                      "occurrences":  1,
                       "reason":  "Bespoke authored prose pending a structurally safe translation."
                   },
                   {

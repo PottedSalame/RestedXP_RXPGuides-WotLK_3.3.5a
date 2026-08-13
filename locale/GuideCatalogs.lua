@@ -34,6 +34,7 @@ if locale == "deDE" then
         },
         verbs = {
             {"Accept", "{value} annehmen"}, {"Turn in", "{value} abgeben"},
+            {"Cast", "{value} wirken"},
             {"Talk to", "Mit {value} sprechen"}, {"Kill", "{value} töten"},
             {"Loot", "{value} plündern"}, {"Collect", "{value} sammeln"},
             {"Use", "{value} benutzen"}, {"Equip", "{value} anlegen"},
@@ -77,6 +78,7 @@ elseif locale == "esES" then
         },
         verbs = {
             {"Accept", "Acepta {value}"}, {"Turn in", "Entrega {value}"},
+            {"Cast", "Lanza {value}"},
             {"Talk to", "Habla con {value}"}, {"Kill", "Mata a {value}"},
             {"Loot", "Despoja {value}"}, {"Collect", "Recoge {value}"},
             {"Use", "Usa {value}"}, {"Equip", "Equipa {value}"},
@@ -120,6 +122,7 @@ elseif locale == "frFR" then
         },
         verbs = {
             {"Accept", "Acceptez {value}"}, {"Turn in", "Rendez {value}"},
+            {"Cast", "Lancez {value}"},
             {"Talk to", "Parlez à {value}"}, {"Kill", "Tuez {value}"},
             {"Loot", "Fouillez {value}"}, {"Collect", "Récupérez {value}"},
             {"Use", "Utilisez {value}"}, {"Equip", "Équipez {value}"},
@@ -163,6 +166,7 @@ elseif locale == "koKR" then
         },
         verbs = {
             {"Accept", "퀘스트 수락: {value}"}, {"Turn in", "퀘스트 완료: {value}"},
+            {"Cast", "시전: {value}"},
             {"Talk to", "대화: {value}"}, {"Kill", "처치: {value}"},
             {"Loot", "전리품 획득: {value}"}, {"Collect", "수집: {value}"},
             {"Use", "사용: {value}"}, {"Equip", "착용: {value}"},
@@ -206,6 +210,7 @@ elseif locale == "ruRU" then
         },
         verbs = {
             {"Accept", "Примите {value}"}, {"Turn in", "Сдайте {value}"},
+            {"Cast", "Примените {value}"},
             {"Talk to", "Поговорите с {value}"}, {"Kill", "Убейте {value}"},
             {"Loot", "Обыщите {value}"}, {"Collect", "Соберите {value}"},
             {"Use", "Используйте {value}"}, {"Equip", "Наденьте {value}"},
@@ -249,6 +254,7 @@ elseif locale == "zhCN" then
         },
         verbs = {
             {"Accept", "接受 {value}"}, {"Turn in", "交付 {value}"},
+            {"Cast", "施放 {value}"},
             {"Talk to", "与{value}交谈"}, {"Kill", "击杀 {value}"},
             {"Loot", "拾取 {value}"}, {"Collect", "收集 {value}"},
             {"Use", "使用 {value}"}, {"Equip", "装备 {value}"},
@@ -291,6 +297,7 @@ elseif locale == "zhTW" then
         },
         verbs = {
             {"Accept", "接受 {value}"}, {"Turn in", "交付 {value}"},
+            {"Cast", "施放 {value}"},
             {"Talk to", "與{value}交談"}, {"Kill", "擊殺 {value}"},
             {"Loot", "拾取 {value}"}, {"Collect", "收集 {value}"},
             {"Use", "使用 {value}"}, {"Equip", "裝備 {value}"},

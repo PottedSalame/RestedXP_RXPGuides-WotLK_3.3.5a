@@ -1,0 +1,1005 @@
+{
+    "schema":  1,
+    "sourceType":  "fallbackAllowlist",
+    "locale":  "ruRU",
+    "sourceRevision":  "706a420a",
+    "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
+    "units":  [
+                  {
+                      "id":  "12139145",
+                      "english":  "|cRXP_WARN_Wait out the RP|r",
+                      "occurrences":  45,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3239ddec",
+                      "english":  "|cRXP_WARN_Click here for video reference|r",
+                      "occurrences":  26,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d70e9b6e",
+                      "english":  "|cRXP_LOOT_OR",
+                      "occurrences":  22,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d8e3d1a3",
+                      "english":  "|cRXP_WARN_Equip your normal|r |T133127:0|t[Helmet]",
+                      "occurrences":  22,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "25cc103b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gunny|r upstairs in the Keep",
+                      "occurrences":  20,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6b19a182",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Force Commander Danath Trollbane|r upstairs in the Keep",
+                      "occurrences":  16,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fedcbceb",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Celoenus|r upstairs",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8fabdc17",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Garridel|r upstairs",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "511d3649",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ponaris|r upstairs",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2dd2619c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_T\u0027chali|r in the dirt mound",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a4cf134b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beryl|r upstairs",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ff5befb5",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Denjai|r upstairs in the inn",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "dbf5a26d",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Razelcraz|r outside Thrallmar Mine",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c952123b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r downstairs",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7f34a934",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r upstairs",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8790c800",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hegnar Swiftaxe|r downstairs",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "54d5c97b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tannaria|r upstairs",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3f543eec",
+                      "english":  "|cFFFF0000HIGH DEATH RISK WARNING:|r",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2541350e",
+                      "english":  "|cRXP_WARN_Perform a \u0027Ghetto Hearth\u0027 in Ragefire chasm|r",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "39b94c8c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Darrowshire Spirits|r that appear over their corpses",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "dcbb8cfe",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Evergrove Druid|r beside you shortly",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "343b4082",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Auctioneer Stockton|r in the Trade Quarter",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0463dece",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Sundown|r inside the mine",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fd240b8c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kebok|r up stairs on the top floor",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7e2e0a71",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Private Thorsen|r at the Rebel Camp",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "76cb0f15",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Veronia|r to fly to Manaforge Coruu",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "414bed97",
+                      "english":  "|cRXP_WARN_While disguised, enter Manaforge Coruu|r",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bd4e5481",
+                      "english":  "Defeat 10 Hyldsmeet Drakeriders",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8106f24a",
+                      "english":  "Lure 3 Drakkari Chieftains",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9391cc9a",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to an |cRXP_FRIENDLY_Auctioneer|r in a major city",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f7b07bd1",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Legion Communicator|r with your |T133133:0|t[Felsworn Gas Mask] equipped",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1586d5a5",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Akuno|r inside the Shadow Tomb",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6202a471",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Apprentice Morlann|r outside",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8b275648",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Assistant Klatu|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a8906b23",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Azj\u0027Tordin|r in Feralas",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cf80eb40",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beetix Ficklespragg|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "16c55ac5",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boots|r, |cRXP_FRIENDLY_Nether-Stalker Khay\u0027ji|r, |cRXP_FRIENDLY_Rocket-Chief Fuselage|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0ab971bd",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Catelyn the Blade|r inside the Inn",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cba034c8",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Christoph|r inside the inn",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fd0bdb51",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daestra|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de7026c2",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deeg|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a05d9e8b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elling Trias|r up stairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e0770c76",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Empoor|r again after",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d9c51856",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gracina Spiritmight|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "daa1521c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Idriana|r at the bank",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "abcf6c70",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_J.D. Collie|r inside the cave",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e36e0f10",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kebok|r on the inn\u0027s top floor",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5cdadba8",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r up stairs on the top floor",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c10488c6",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mortaim|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9134204d",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Naturalist Bite|r and |cRXP_FRIENDLY_Weeder Greenthumb|r inside the Slave Pens",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "738bcff1",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Orbaz Bloodbane|r upstairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9815e5e1",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Raleigh the Devout|r up stairs",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a41647ce",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vekax|r atop the tree platforms",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f1487995",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warp-Scryer Kryv|r upstairs in the Keep",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "55038390",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watch Commander Relthorn Netherwane|r outside the Dark Portal",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9f9b9dec",
+                      "english":  "|cRXP_WARN_Don\u0027t accept the follow up yet|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7e99de49",
+                      "english":  "|cRXP_WARN_Exit the Deathforge|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7a460a26",
+                      "english":  "|cRXP_WARN_Keep an eye out for the special |cRXP_FRIENDLY_Private Thorsen|r event. He will patrol down the road from the Rebel camp every 30 minutes|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "684bc6cc",
+                      "english":  "|cRXP_WARN_Travel to the Water Pump|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b82b2334",
+                      "english":  "/cast EMP",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bdbc4811",
+                      "english":  "1 x |T133004:0|t[Adamantite Frame]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7a573768",
+                      "english":  "1 x |T133018:0|t[Khorium Power Core]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "778b587a",
+                      "english":  "2 x |T133231:0|t[Felsteel Bar]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "662079f6",
+                      "english":  "Curse \u0026 port 6 Fizzcrank Gnomes",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8b356e2f",
+                      "english":  "Hearth to Lakeshire",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2fca80ec",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to a |cRXP_FRIENDLY_Stabled Argent Hippogryph|r outside the Argent Pavilion.",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d6f9c0fb",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Beaten Corpse|r on the ground",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a454a128",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Disciple of Naralex|r at the entrance of Wailing Caverns. Escort him safely to |cRXP_FRIENDLY_Naralex|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cdee2e42",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Dying Blood Elf|r on the ground",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ef7ac62e",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Haggard War Veteran|r, |cRXP_FRIENDLY_A\u0027dal|r and |cRXP_FRIENDLY_Khadgar|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6c6c126a",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Purple Shard|r on the ground",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "57cba864",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Argent Guard Manados|r up stairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "40fdf7e0",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Augustus|r back in the house",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2e72720c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bernie Heisten|r on the bottom floor",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "26d8c2cb",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clavicus Knavingham|r up stairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "32e2f8a9",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clerk Lendry|r upstairs in the Keep",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2d6d26a2",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Colonel Jules|r once the RP finishes",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "114878c3",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Crank|r inside the inn",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "90f69d8f",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Crank|r on the inn\u0027s ground floor",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "805bed7e",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dawnwatcher Selgorm|r up stairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3d821637",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Enith|r on the ground",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "97530875",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Razelcraz|r outside Thrallmar Mine",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d2fcccfc",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grahk|r outside the cave",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "86acadf7",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Harick Boulderdrum|r downstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e87ddc0f",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Belm|r inside",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8059b317",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Janice Felstone|r up stairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "31a79ec4",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kanaria|r upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ca59b7d1",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r and |cRXP_FRIENDLY_Kebok|r on the third floor of the inn",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "286713a8",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r upstairs on the top floor",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1fa4ac8c",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lord Jorach Ravenholdt|r upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8bbb1d9d",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r, |cRXP_FRIENDLY_Darthalia|r, the |cRXP_FRIENDLY_Wanted Poster|r, |cRXP_FRIENDLY_Krusk|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c994d349",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Aledis|r if you see him. Kill |cRXP_ENEMY_Magister Aledis|r as he becomes hostile",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b101159e",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Edien|r Sunhollow",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1d1892b7",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marlene|r inside the house",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "341d9ab6",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mulgris|r inside the house",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2f742a9b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Noggle Ficklespragg|r upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1e9e48f7",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pephredo|r downstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "114b3b03",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rokgah|r after the RP",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "90986d73",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Moonwhisper|r outside the tunnel entrance",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "63f6b67b",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thassarian|r upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "78b90657",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Torntusk|r upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7608d563",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Treshala Fallowbrook|r up stairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bad497cb",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Varnis|r on the table",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d5154f67",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vedoran|r on the table",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2b3bc231",
+                      "english":  "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wiley the Black|r inside upstairs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5250d5bd",
+                      "english":  "|cRXP_BUY_Buy a|r |T135341:0|t[Rondel] |cRXP_BUY_from her|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "17f3af5e",
+                      "english":  "|cRXP_BUY_Buy the|r [Adversarial Bloodlines] |cRXP_WARN_from him|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "81a1b565",
+                      "english":  "|cRXP_BUY_Buy the|r |T132535:0|t[Volunteer\u0027s Greaves] |cRXP_BUY_from him|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d7fa3ab5",
+                      "english":  "|cRXP_BUY_Buy two|r |T134310:0|t[Shiny Fish Scales]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b249451e",
+                      "english":  "|cRXP_ENEMY_Scarlet Mages|r |cRXP_WARN_and |cRXP_ENEMY_Scarlet Knights|r share spawns|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1c6f4d17",
+                      "english":  "|cRXP_ENEMY_Scarlet Medics|r |cRXP_WARN_and |cRXP_ENEMY_Scarlet Hunters|r share spawns|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2e37c062",
+                      "english":  "|cRXP_WARN_Drag the|r |T136103:0|t[Felsteed] |cRXP_WARN_onto your Action Bars|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4d783f96",
+                      "english":  "|cRXP_WARN_Get your old Ravager out of the stable and teach it|r |T135664:0|t[Gore Rank 9]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "470a8ebd",
+                      "english":  "|cRXP_WARN_Open the|r |T132595:0|t[Hoard of the Black Dragonflight]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cfb52de0",
+                      "english":  "|cRXP_WARN_STAND BEHIND MALORIC|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b2a003b4",
+                      "english":  "|cRXP_WARN_Travel to the Spawning Glen|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3bcbb89b",
+                      "english":  "|cRXP_WARN_Travel up the Lava Path of Fire Plume Ridge for a shortcut to the top. Follow the Arrow precisely|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f547c04a",
+                      "english":  "|cRXP_WARN_Use the|r |T133707:0|t[Shabby Arakkoa Disguise]",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0e53c149",
+                      "english":  "|cRXP_WARN_Wait out the flight to Shatter Point|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "57bf948a",
+                      "english":  "|cRXP_WARN_Enter the Havenshire Mine|r",
+                      "occurrences":  1,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "005882e4",
+                      "english":  "RXP Speedrun Guide 1-30",
+                      "occurrences":  21,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "005882c3",
+                      "english":  "RXP Speedrun Guide 1-20",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0b7c8417",
+                      "english":  "RXP Speedrun Guide 20-32",
+                      "occurrences":  11,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6588840f",
+                      "english":  "01. The Deadmines",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6b6880cc",
+                      "english":  "02. Shadowfang Keep",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "84e87b33",
+                      "english":  "03. Blackfathom Deeps",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fb68b616",
+                      "english":  "04. The Stockade",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fd08378b",
+                      "english":  "05. Gnomeregan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cefd63dd",
+                      "english":  "08. Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "04b7e64e",
+                      "english":  "0_Ogrila Unlock",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c7288a66",
+                      "english":  "0_Shatari Skyguard Unlock",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "83237880",
+                      "english":  "1-450 Mining (A)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0ceec65d",
+                      "english":  "10. Zul\u0027Farrak",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d242d61e",
+                      "english":  "103. Shadowfang Keep",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7c387311",
+                      "english":  "105 Razorfen Kraul",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "33082caf",
+                      "english":  "106 Gnomeregan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9422cadf",
+                      "english":  "107 Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8b0a231c",
+                      "english":  "11. Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "be348aa0",
+                      "english":  "110 Zul\u0027Farrak",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9729d67f",
+                      "english":  "111 Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a0b4b0f9",
+                      "english":  "116 Scholomance",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ea1cabb1",
+                      "english":  "117 Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4efde661",
+                      "english":  "123 Underbog",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9c2a0291",
+                      "english":  "126 Auchenai Crypts",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0dc89c4e",
+                      "english":  "17. Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6cc0e77e",
+                      "english":  "1_Ogrila Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a0339bd6",
+                      "english":  "1_Shatari Skyguard Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b8f693ac",
+                      "english":  "2. Netherstorm (Scryers)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "61b11fbf",
+                      "english":  "23. The Underbog",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "690e185b",
+                      "english":  "24. The Slave Pens",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "40b18886",
+                      "english":  "30-32 Duskwood/STV",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a2dcc940",
+                      "english":  "31 The Steamvault",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bbc18ace",
+                      "english":  "31. The Steamvault",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "94b84e71",
+                      "english":  "49-50 The Hinterlands",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "27923072",
+                      "english":  "49-51 The Hinterlands",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "158ee5d5",
+                      "english":  "65-67 Blade\u0027s Edge Mts",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7b2d6fea",
+                      "english":  "C_2_AT_Sen\u0027jin",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b53e3363",
+                      "english":  "Chunk o\u0027 Mammoth \u0026 Borean Leather_37a",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b53e3b61",
+                      "english":  "Chunk o\u0027 Mammoth \u0026 Borean Leather_53a",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d05b5366",
+                      "english":  "D_2_AT_Thunder Bluff",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0c52dfa0",
+                      "english":  "Firewing Signet_15a",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a9b9854c",
+                      "english":  "G_2.1_AT_The_Black Knight\u0027s_Quest_Story",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "985b52b1",
+                      "english":  "I_3.1_AT_Crusader_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de43b509",
+                      "english":  "J_3.2AT_Sunreavers_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "147f42ac",
+                      "english":  "J_3.2_AT_Silver_Covenant_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "30a4d71b",
+                      "english":  "Talbuk Venison_10a",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  }
+              ]
+}

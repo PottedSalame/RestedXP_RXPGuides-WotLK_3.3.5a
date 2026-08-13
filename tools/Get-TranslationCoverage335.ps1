@@ -19,14 +19,44 @@ function Join-RepoPath([string]$Relative) {
 $source = [IO.File]::ReadAllText([IO.Path]::GetFullPath($SourceCatalog),
     $utf8) | ConvertFrom-Json
 $status = @{ guide = @{}; ui = @{} }
+$translationRank = @{ machine = 1; reviewed = 2 }
 function Set-TranslationStatus([string]$Domain, [string]$English,
                                [string]$Value) {
     if ($Domain -notin @('guide','ui') -or
         $Value -notin @('reviewed','machine')) { return }
     $old = $status[$Domain][$English]
-    if (-not $old -or $Value -eq 'reviewed') {
+    if (-not $old -or $translationRank[$Value] -gt $translationRank[$old]) {
         $status[$Domain][$English] = $Value
     }
+}
+
+function Get-PlainSource([object]$Unit) {
+    $value = [string]$Unit.english
+    $value = [regex]::Replace($value, '\|H.*?\|h(.*?)\|h', '$1')
+    $value = [regex]::Replace($value, '\|T.*?\|t', '')
+    $value = [regex]::Replace($value, '\|cRXP_[A-Z]+_', '')
+    $value = [regex]::Replace($value, '\|c[0-9a-fA-F]{8}', '')
+    return ([regex]::Replace($value, '\|r', '')).Trim()
+}
+
+function Get-AutomaticClassification([object]$Unit, [string]$Domain) {
+    $message = [regex]::Replace([string]$Unit.message,
+        '\{[a-z_]+\}', '')
+    if ($message -notmatch '\p{L}') { return 'neutral' }
+
+    $plain = Get-PlainSource $Unit
+    if ($plain -match '^\[[^\]]+\]$') {
+        # Bracket-only item/spell/entity display is resolved from the client
+        # cache at render time. It is not authored English prose.
+        return 'official'
+    }
+    if ($plain -eq 'test' -or $plain -match '^\|cRXP_[A-Z_]+$' -or
+        $plain -match '^[A-Z]_\d+(?:_[A-Z]{2})?_[A-Za-z0-9_.-]+$' -or
+        $plain -match '^[A-Za-z]+\d+$' -or
+        $plain -match '^\d+(?:\.\d+)+(?:a)?$') {
+        return 'internal'
+    }
+    return 'fallback'
 }
 $packLocale = $null
 foreach ($path in @($TranslationCatalog)) {
@@ -73,7 +103,13 @@ if ($RepoRoot -and $Locale) {
     foreach ($text in $texts) {
         foreach ($entry in [regex]::Matches($text,
                 '\["((?:\\.|[^"\\])*)"\]\s*=\s*"((?:\\.|[^"\\])*)"')) {
-            $reviewed[$entry.Groups[1].Value] = $true
+            $english = $entry.Groups[1].Value.Replace('\"', '"').Replace('\\', '\')
+            $translated = $entry.Groups[2].Value.Replace('\"', '"').Replace('\\', '\')
+            if ($translated -ceq $english) {
+                [void]$reviewed.Remove($english)
+            } else {
+                $reviewed[$english] = $true
+            }
         }
     }
     foreach ($english in $reviewed.Keys) {
@@ -93,9 +129,11 @@ if ($RepoRoot -and $Locale) {
 $summary = @{}
 foreach ($domain in @('guide','ui')) {
     $summary[$domain] = [ordered]@{
-        total = 0; reviewed = 0; machine = 0; fallback = 0
+        total = 0; reviewed = 0; machine = 0; official = 0
+        neutral = 0; internal = 0; fallback = 0
         occurrences = [ordered]@{
-            total = 0; reviewed = 0; machine = 0; fallback = 0
+            total = 0; reviewed = 0; machine = 0; official = 0
+            neutral = 0; internal = 0; fallback = 0
         }
     }
 }
@@ -106,7 +144,9 @@ foreach ($unit in $source.units) {
     if ($unit.uiOccurrences -gt 0) { $domains += 'ui' }
     foreach ($domain in $domains) {
         $value = $status[$domain][[string]$unit.english]
-        if ($value -notin @('reviewed','machine')) { $value = 'fallback' }
+        if ($value -notin @('reviewed','machine')) {
+            $value = Get-AutomaticClassification $unit $domain
+        }
         $summary[$domain].total++
         $summary[$domain][$value]++
         $count = if ($domain -eq 'guide') {
@@ -123,6 +163,13 @@ foreach ($unit in $source.units) {
             })
         }
     }
+}
+foreach ($domain in @('guide','ui')) {
+    $total = [double]$summary[$domain].occurrences.total
+    $fallback = [double]$summary[$domain].occurrences.fallback
+    $summary[$domain].resolvedPercent = if ($total -gt 0) {
+        [math]::Round((($total - $fallback) / $total) * 100, 4)
+    } else { 100.0 }
 }
 $document = [ordered]@{
     schema = 1

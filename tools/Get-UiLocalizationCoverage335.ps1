@@ -13,55 +13,66 @@ function Join-RepoPath([string]$Relative) {
     $native = $Relative -replace '[\\/]', [IO.Path]::DirectorySeparatorChar
     return Join-Path $RepoRoot $native
 }
-$utf8 = New-Object Text.UTF8Encoding($false, $true)
+
 $temporarySource = $false
 if (-not $SourceCatalog) {
     $SourceCatalog = Join-Path ([IO.Path]::GetTempPath()) `
         ('rxp-ui-source-' + [guid]::NewGuid().ToString('N') + '.json')
     $temporarySource = $true
     & (Join-Path $PSScriptRoot 'Export-TranslationUnits335.ps1') `
-        -AddonRoot $RepoRoot -OutputPath $SourceCatalog -Scope ui
+        -AddonRoot $RepoRoot -OutputPath $SourceCatalog -Scope all
 }
 
 try {
-    $source = [IO.File]::ReadAllText($SourceCatalog, $utf8) |
-        ConvertFrom-Json
-    $reviewed = @{}
-    $localePath = Join-RepoPath "locale/$Locale.lua"
-    if (Test-Path -LiteralPath $localePath -PathType Leaf) {
-        $localeText = [IO.File]::ReadAllText($localePath, $utf8)
-        foreach ($entry in [regex]::Matches($localeText,
-                '(?m)^\s*L\["((?:\\.|[^"\\])*)"\]\s*=\s*"((?:\\.|[^"\\])*)"')) {
-            $reviewed[$entry.Groups[1].Value] = $entry.Groups[2].Value
-        }
+    $catalogs = @(Get-ChildItem (Join-RepoPath 'translations/imported') `
+        -Filter '*.json' -File -ErrorAction SilentlyContinue | Where-Object {
+            $document = Get-Content -LiteralPath $_.FullName -Raw |
+                ConvertFrom-Json
+            [string]$document.locale -eq $Locale
+        } | ForEach-Object { $_.FullName })
+    if ($catalogs.Count -lt 1) {
+        throw "No imported translation catalogs were found for $Locale."
     }
 
-    $backportPath = Join-RepoPath 'locale/Backport.lua'
-    if (Test-Path -LiteralPath $backportPath -PathType Leaf) {
-        $backport = [IO.File]::ReadAllText($backportPath, $utf8)
-        $localeBlock = [regex]::Match($backport,
-            ('(?s)\n\s*' + [regex]::Escape($Locale) +
-             '\s*=\s*\{(.*?)(?=\n\s*[a-z][a-z][A-Z][A-Z]\s*=\s*\{|\n\s*\}\s*$)'))
-        if ($localeBlock.Success) {
-            foreach ($entry in [regex]::Matches($localeBlock.Groups[1].Value,
-                    '\["((?:\\.|[^"\\])*)"\]\s*=\s*"((?:\\.|[^"\\])*)"')) {
-                $reviewed[$entry.Groups[1].Value] = $entry.Groups[2].Value
-            }
-        }
-    }
-
-    $missing = @($source.units | Where-Object {
-        -not $reviewed.ContainsKey([string]$_.english)
-    } | Sort-Object @{Expression='occurrences';Descending=$true}, english)
+    $coverageText = (& (Join-Path $PSScriptRoot `
+            'Get-TranslationCoverage335.ps1') `
+        -SourceCatalog $SourceCatalog -TranslationCatalog $catalogs `
+        -RepoRoot $RepoRoot -Locale $Locale | Out-String)
+    $coverage = $coverageText | ConvertFrom-Json
+    $summary = $coverage.summary.ui
     [pscustomobject]@{
         locale = $Locale
-        total = [int]$source.unitCount
-        reviewed = [int]$source.unitCount - $missing.Count
-        missing = $missing.Count
-        sourceRevision = [string]$source.sourceRevision
+        total = [int]$summary.total
+        reviewed = [int]$summary.reviewed
+        machine = [int]$summary.machine
+        official = [int]$summary.official
+        neutral = [int]$summary.neutral
+        internal = [int]$summary.internal
+        fallback = [int]$summary.fallback
+        resolvedPercent = [double]$summary.resolvedPercent
+        sourceRevision = [string]$coverage.sourceRevision
     }
-    if ($Top -gt 0) {
-        $missing | Select-Object -First $Top occurrences, english, message, tokens
+
+    # Completed locales intentionally have no ordinary UI fallbacks. Keep a
+    # bounded diagnostic list useful while authoring a future catalog.
+    if ($Top -gt 0 -and [int]$summary.fallback -gt 0) {
+        $source = Get-Content -LiteralPath $SourceCatalog -Raw |
+            ConvertFrom-Json
+        $covered = @{}
+        foreach ($path in $catalogs) {
+            $document = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+            foreach ($unit in @($document.units)) {
+                if ([string]$unit.domain -in @('ui','both')) {
+                    $covered[[string]$unit.english] = $true
+                }
+            }
+        }
+        $source.units | Where-Object {
+            [int]$_.uiOccurrences -gt 0 -and
+            -not $covered.ContainsKey([string]$_.english) -and
+            ([string]$_.message -replace '\{[a-z_]+\}', '') -match '\p{L}'
+        } | Sort-Object @{Expression='uiOccurrences';Descending=$true}, english |
+            Select-Object -First $Top uiOccurrences, english, message, tokens
     }
 } finally {
     if ($temporarySource -and (Test-Path -LiteralPath $SourceCatalog)) {

@@ -186,15 +186,6 @@
                       "attribution":  "Existing RXPGuides zhCN AceLocale catalog"
                   },
                   {
-                      "id":  "9050c1db",
-                      "english":  "3.3.5a",
-                      "translation":  "3.3.5a",
-                      "status":  "reviewed",
-                      "domain":  "ui",
-                      "tokenized":  false,
-                      "attribution":  "Existing RXPGuides zhCN AceLocale catalog"
-                  },
-                  {
                       "id":  "9aaa7400",
                       "english":  "A macro has been automatically built to aid in leveling. Please move %s to your action bars.",
                       "translation":  "已自动创建一个宏来辅助升级。请将 %s 移动到你的动作条。",
@@ -1558,7 +1549,7 @@
                       "english":  "Die and respawn at the graveyard",
                       "translation":  "死掉后在墓地复活",
                       "status":  "reviewed",
-                      "domain":  "ui",
+                      "domain":  "both",
                       "tokenized":  false,
                       "attribution":  "Existing RXPGuides zhCN AceLocale catalog"
                   },
@@ -4708,7 +4699,7 @@
                       "english":  "Stable your pet",
                       "translation":  "把你的宠物放入兽栏",
                       "status":  "reviewed",
-                      "domain":  "ui",
+                      "domain":  "both",
                       "tokenized":  false,
                       "attribution":  "Existing RXPGuides zhCN AceLocale catalog"
                   },

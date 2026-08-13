@@ -1,0 +1,93 @@
+{
+    "schema":  1,
+    "sourceType":  "fallbackAllowlist",
+    "locale":  "zhTW",
+    "sourceRevision":  "706a420a",
+    "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
+    "units":  [
+                  {
+                      "id":  "a53e195d",
+                      "english":  "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the eastern|r |cRXP_PICK_Kirin\u0027Var Rune|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e68b6048",
+                      "english":  "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the northeastern|r |cRXP_PICK_Kirin\u0027Var Rune|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "125adbf3",
+                      "english":  "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the western|r |cRXP_PICK_Kirin\u0027Var Rune|r",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1ab6b2c0",
+                      "english":  "Click the |cRXP_PICK_Bash\u0027ir Crystalforge|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6beb605c",
+                      "english":  "Grind to 10 at the troggs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f9091760",
+                      "english":  "Grind to 14 at the troggs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "67d22af8",
+                      "english":  "Kill and loot murlocs. Idols drop from Seers and Oracles. Knives from the melee murlocs.",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d1e7b3fd",
+                      "english":  "Once he gets to around 60% hp, you can use Levitate to kite him back to Booty Bay",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e8e86f04",
+                      "english":  "Polymorph Old Icebeard, then loot the meats",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "01a45a01",
+                      "english":  "Talk to the Squad Leader. He may not be here if someone else started the quest and has a roughly 6 minute respawn time, and respawns about 10 yards to the right of Koup",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cbed58b3",
+                      "english":  "Talk to the Squad Leader. He may not be here if someone else started the quest and has a roughly 6 minute respawn time, and respawns about 10 yards to the right of Koup. You may skip this if you don\u0027t want to wait or check later",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c6765491",
+                      "english":  "Use the emote /raise on the Abandoned Pack Mules - They look like mules with a bunch of supplies tied to them around this area",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de0feb3d",
+                      "english":  "18. Dire Maul (East)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de43b509",
+                      "english":  "J_3.2AT_Sunreavers_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  }
+              ]
+}

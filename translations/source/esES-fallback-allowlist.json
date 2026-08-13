@@ -1,0 +1,1107 @@
+{
+    "schema":  1,
+    "sourceType":  "fallbackAllowlist",
+    "locale":  "esES",
+    "sourceRevision":  "706a420a",
+    "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
+    "units":  [
+                  {
+                      "id":  "5a0431af",
+                      "english":  "Hearth to Tranquillien",
+                      "occurrences":  26,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d487dfda",
+                      "english":  "Hearth to Nesingwary Base Camp",
+                      "occurrences":  24,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d70e9b6e",
+                      "english":  "|cRXP_LOOT_OR",
+                      "occurrences":  22,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1fdfef92",
+                      "english":  "Head to Borean Tundra",
+                      "occurrences":  18,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "79b761c3",
+                      "english":  "Head to Wintergrasp",
+                      "occurrences":  18,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0f846b22",
+                      "english":  "Exit Orgrimmar",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "10288334",
+                      "english":  "Hearth to Darkshire",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "edc97ad7",
+                      "english":  "Hearth to Taunka\u0027le Village",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7136385a",
+                      "english":  "Hearth to Crossroads",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e621ba42",
+                      "english":  "Hearth to Ratchet",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2ec9b0a9",
+                      "english":  "Head to Sun Rock Retreat",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "241d94ae",
+                      "english":  "Hearth to Kharanos",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b159eba3",
+                      "english":  "Hearth to Stonebreaker Hold",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a5964e01",
+                      "english":  "Hearth to Venomspite",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5291d8d2",
+                      "english":  "Hearth to Westguard Keep",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7c2a4879",
+                      "english":  "Hearth to Wetlands",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b2e1eddd",
+                      "english":  "Exit Ironforge",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a03ca0c2",
+                      "english":  "Grind boars north-east to Kharanos",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b7e9c367",
+                      "english":  "Head to Hellfire Peninsula",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2cd0e683",
+                      "english":  "Head to Terokkar Forest",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b69bbeeb",
+                      "english":  "Head to Zangarmarsh",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "450d6371",
+                      "english":  "Hearth to Freewind Post",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bbec73f1",
+                      "english":  "Hearth to Grom\u0027gol Base Camp",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ff94cae4",
+                      "english":  "Hearth to Honor Hold",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6f5c2161",
+                      "english":  "/cast Bluff",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "694124ed",
+                      "english":  "/cast Destabilize Azure Dragonshrine",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5186e85b",
+                      "english":  "/cast Flaming Arrow",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c212dac7",
+                      "english":  "/cast Flaming Harpoon",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "48193574",
+                      "english":  "/cast Gather Lumber",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "82c8bdf4",
+                      "english":  "/cast Gather Snow",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9b1a2dbc",
+                      "english":  "/cast Hand Over Mammoth",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cf9ba18a",
+                      "english":  "/cast Hand Over Reins",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "866c7e75",
+                      "english":  "/cast Ice Shard",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d88e29ef",
+                      "english":  "/cast Land Flying Machine",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6d98294f",
+                      "english":  "Abandon Destroy Naberius!",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "92e07830",
+                      "english":  "Abandon Gahz\u0027rilla",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2d7aaef2",
+                      "english":  "Abandon Greed",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ab1a0b2b",
+                      "english":  "Abandon Report to Gryan Stoutmantle",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c45af509",
+                      "english":  "Abandon Washed Ashore",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2db00fe5",
+                      "english":  "Abandon Wildmane Totem",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e7f20684",
+                      "english":  "Beat Dashel Stonefist",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "184d349a",
+                      "english":  "Blow Up the Scourge Enclosure",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8255e86e",
+                      "english":  "Defeat Kirgaraak",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "74618edc",
+                      "english":  "Exit Durnholde Keep",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "671a19f1",
+                      "english":  "Free 3 Captive Footmen",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f54eea18",
+                      "english":  "Head to Ironforge",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0f993c41",
+                      "english":  "Hearth to Brackenwall Village",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b1087bf0",
+                      "english":  "Hearth to Conquest Hold",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "15e8772b",
+                      "english":  "Hearth to Darnassus",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a8f3f8af",
+                      "english":  "Hearth to Westfall Brigade Encampment",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "77910c2c",
+                      "english":  "Lure Malygos",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "361159f4",
+                      "english":  "Lure Veranus",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "60058767",
+                      "english":  "STAY DEAD",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4b5bd241",
+                      "english":  "Sewer Stew",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3ddca685",
+                      "english":  "Warlord Sriss\u0027tiz",
+                      "occurrences":  4,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b3921e18",
+                      "english":  "/cast Drop Off Gnome",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7e66eb54",
+                      "english":  "/cast Drop Off Soldier",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "42b8d038",
+                      "english":  "/cast Drop Off Villager",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b82b2334",
+                      "english":  "/cast EMP",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fcc8eea7",
+                      "english":  "/cast Grappling Hook",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "837ff476",
+                      "english":  "/cast Rocket Jump",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6238629e",
+                      "english":  "/cast Scavenge",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bd97ca47",
+                      "english":  "/cast Soar",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fad5e7d3",
+                      "english":  "10 Frostberries",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "582edf8a",
+                      "english":  "Abandon Anok\u0027suten",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ff6a5442",
+                      "english":  "Abandon Arcane Runes",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e1856bd8",
+                      "english":  "Abandon Broken Alliances",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ebb12c8a",
+                      "english":  "Abandon Clefthoof Mastery",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f53f0974",
+                      "english":  "Abandon Divino-matic Rod",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "250212d2",
+                      "english":  "Abandon Encrusted Tail Fins",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "51a6b0c0",
+                      "english":  "Abandon Fly to Silvermoon City",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "3a8c8bd9",
+                      "english":  "Abandon Legends of Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1dbcc5e6",
+                      "english":  "Abandon Manhunt",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f4d5b385",
+                      "english":  "Abandon Matis the Cruel",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9af9f60a",
+                      "english":  "Abandon Skymistress Gloaming",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "01e6e021",
+                      "english":  "Abandon Supervisor Fizsprocket",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "09bcd933",
+                      "english":  "Abandon Talbuk Mastery",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5d9c9edd",
+                      "english":  "Abandon Vengeful Souls",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "10b9df9b",
+                      "english":  "Abandon Wanted: Blacktalon the Savage",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "871a773e",
+                      "english":  "Attain Spiritual Insight cocnerning Indu\u0027le Village",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d0d4c09e",
+                      "english":  "Attain Spiritual Insight concerning Indu\u0027le Village",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "aeb84bf5",
+                      "english":  "Bind 6 Imperial Eagles\u0027 sight",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "364a4f30",
+                      "english":  "Bluff Lebronski",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "84f71b45",
+                      "english":  "Click Dead Caravan mob corpses",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "63f3a569",
+                      "english":  "Cross Wyrmskull Bridge",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "76164766",
+                      "english":  "Defeat Bjorn Halgurdsson",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a269597f",
+                      "english":  "Escort Bonker Togglevolt to safety",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "436cb19c",
+                      "english":  "Escort the |cRXP_FRIENDLY_Protectorate Demolitionist|r through the Staging Grounds",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "361679ee",
+                      "english":  "Escort the |cRXP_FRIENDLY_Small Bird Companion|r back to Sylvanaar",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a6584e8b",
+                      "english":  "Escort the |cRXP_FRIENDLY_The Defias Traitor|r to The Deadmines",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "96863b4b",
+                      "english":  "Exit Falconwing Square",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9405e768",
+                      "english":  "Exit Underbog",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "74b62571",
+                      "english":  "Exit Undercity into Tirisfal Glades",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6ddb5aa4",
+                      "english":  "Fully Question Torturer LeCraft",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2181e8a3",
+                      "english":  "Go Harpoon Surfing",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2e3b19a3",
+                      "english":  "Goblin Transponder",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6beb605c",
+                      "english":  "Grind to 10 at the troggs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f9091760",
+                      "english":  "Grind to 14 at the troggs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2ab08668",
+                      "english":  "Grind to level 3.",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "5d09a602",
+                      "english":  "Head into the Dwarven District",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "dee54f4b",
+                      "english":  "Head to Azure Watch",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fa4dbb18",
+                      "english":  "Head to Ratchet",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "caf4348a",
+                      "english":  "Hearth to Camp Narache",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "28d1949a",
+                      "english":  "Hearth to Fairbreeze Village",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "28788f41",
+                      "english":  "Hearth to Shadowprey Village",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7fa8b309",
+                      "english":  "Hearth to Tanaris",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ef8ae328",
+                      "english":  "Impale Gunnar Thorvardsson",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "33c69efc",
+                      "english":  "Insult Bjorn Halgurdsson",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d06a4d28",
+                      "english":  "Master Rocket Jump",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f1eace54",
+                      "english":  "Portal: Orgrimmar",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d88c8b43",
+                      "english":  "Redeem the Forgotten",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0626f8aa",
+                      "english":  "Restock on food/water",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "61840a21",
+                      "english":  "Rocket Jump to the Lower Level",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e57f6201",
+                      "english":  "Sabotage 6 Plague Wagons",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c01e3c4b",
+                      "english":  "Scuttle a Eastern Wreck",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "755c2eac",
+                      "english":  "Scuttle a Northwestern Wreck",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7f68d191",
+                      "english":  "Scuttle a Southern Wreck",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7f380f5b",
+                      "english":  "Set Hearthstone to Auberdine",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "481813c8",
+                      "english":  "Skip the follow up",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "02fd941a",
+                      "english":  "Skip the follow up quest",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cfb060f7",
+                      "english":  "Spray 10 Plagued Vrykul",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7f5fe283",
+                      "english":  "Summon Imp, rebuff",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2f90f68c",
+                      "english":  "Tame a Strigid Hunter",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d0e57fbe",
+                      "english":  "|cRXP_WARN_Skip this quest for now if there is too much competition|r",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8e6ede7d",
+                      "english":  "RestedXP TBC Guide (A)",
+                      "occurrences":  31,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8e6edf64",
+                      "english":  "RestedXP TBC Guide (H)",
+                      "occurrences":  26,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "05c8cd30",
+                      "english":  "Nagrand",
+                      "occurrences":  20,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "e2a3743a",
+                      "english":  "Borean Tundra",
+                      "occurrences":  18,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "36a6ee21",
+                      "english":  "Shadowmoon Valley",
+                      "occurrences":  18,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "41019c6b",
+                      "english":  "Wintergrasp",
+                      "occurrences":  18,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ae88352b",
+                      "english":  "Terokkar Forest",
+                      "occurrences":  16,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "29441e50",
+                      "english":  "Netherstorm",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "dbd1f439",
+                      "english":  "Zul\u0027Drak",
+                      "occurrences":  14,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "c7df5073",
+                      "english":  "Blades Edge Mountains",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4b23ae2a",
+                      "english":  "Dragonblight",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "2e336821",
+                      "english":  "RXP TBC Reputation Guide",
+                      "occurrences":  12,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "881c55db",
+                      "english":  "+RestedXP Northrend Daily Quests",
+                      "occurrences":  11,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "751996cc",
+                      "english":  "Grizzly Hills",
+                      "occurrences":  10,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b5dd5d0f",
+                      "english":  "Icecrown",
+                      "occurrences":  8,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "60ae85c1",
+                      "english":  "+Azeroth Farming",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "da787010",
+                      "english":  "Netherwing",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "618324da",
+                      "english":  "Ogri\u0027la",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f4e7dc32",
+                      "english":  "Sha\u0027tari Skyguard",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "7de5f993",
+                      "english":  "Zangarmarsh",
+                      "occurrences":  6,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "bffab97b",
+                      "english":  "RXP TBC Attunement Guide",
+                      "occurrences":  5,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a15400d5",
+                      "english":  "RestedXP WotLK Guide (A)",
+                      "occurrences":  5,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a15401bc",
+                      "english":  "RestedXP WotLK Guide (H)",
+                      "occurrences":  5,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6b6880cc",
+                      "english":  "02. Shadowfang Keep",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "84e87b33",
+                      "english":  "03. Blackfathom Deeps",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fd08378b",
+                      "english":  "05. Gnomeregan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a08f0190",
+                      "english":  "06a. Razorfen Kraul",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "cefd63dd",
+                      "english":  "08. Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ab4e842e",
+                      "english":  "09. Uldaman",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fe08b444",
+                      "english":  "1. Karazhan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "f5cd06bc",
+                      "english":  "1. Shattrath City (Scryers)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "df62222d",
+                      "english":  "1. Terokkar Forest (Aldor)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0ceec65d",
+                      "english":  "10. Zul\u0027Farrak",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "eaa0cad8",
+                      "english":  "101 Ragefire Chasm",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b9c31d25",
+                      "english":  "102 Wailing Caverns",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d242d61e",
+                      "english":  "103. Shadowfang Keep",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "9422cadf",
+                      "english":  "107 Razorfen Downs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8b0a231c",
+                      "english":  "11. Maraudon",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "ea1cabb1",
+                      "english":  "117 Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4efde661",
+                      "english":  "123 Underbog",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "aa1677db",
+                      "english":  "13. Blackrock Depths",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "4dfd8516",
+                      "english":  "16. Scholomance",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0dc89c4e",
+                      "english":  "17. Stratholme",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "90323c14",
+                      "english":  "19. Dire Maul (West)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "0dcbc373",
+                      "english":  "2. Netherstorm (Aldor)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "b8f693ac",
+                      "english":  "2. Netherstorm (Scryers)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "fcbf3b5b",
+                      "english":  "21. Hellfire Ramparts",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "94bf79b9",
+                      "english":  "25. Mana-Tombs",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "6e8de14e",
+                      "english":  "26. Auchenai Crypts",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "d3c4a7af",
+                      "english":  "27. Sethekk Halls",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "1235c57c",
+                      "english":  "28. Old Hillsbrad (Escape from Durnholde)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "79304ba5",
+                      "english":  "3. Shadowmoon Valley (Aldor)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "8f9df05e",
+                      "english":  "3. Shadowmoon Valley (Scryers)",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de2f4102",
+                      "english":  "4. Mount Hyjal",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "de43b509",
+                      "english":  "J_3.2AT_Sunreavers_Daily_Quests",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "994d5113",
+                      "english":  "Karazhan",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "872f328e",
+                      "english":  "Mount Hyjal",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "899737a3",
+                      "english":  "Ogri\u0027la Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  },
+                  {
+                      "id":  "a1d2287b",
+                      "english":  "Sha\u0027tari Skyguard Dailies",
+                      "occurrences":  2,
+                      "reason":  "Bespoke authored prose pending a structurally safe translation."
+                  }
+              ]
+}
