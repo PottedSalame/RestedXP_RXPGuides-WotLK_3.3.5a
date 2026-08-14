@@ -9,6 +9,7 @@ local _G = _G
 local format = string.format
 local floor, max = math.floor, math.max
 local tinsert = table.insert
+local toolWindows = addon.toolWindows
 
 addon.runArchive = addon.runArchive or {}
 local archive = addon.runArchive
@@ -239,42 +240,62 @@ function archive:Refresh()
         local run = runs[offset + rowIndex]
         if run then
             row.run = run
-            local status = run.finished and (self:IsPersonalBest(run) and "PB" or "done") or "active"
-            row.text:SetText(format("#%d  %s %d-%d  %sx  %s  [%s]%s",
-                run.id, run.class or "?", run.startLevel or 0,
-                run.endLevel or 0, tostring(run.xpRate or 1),
+            local status = run.finished and
+                               (self:IsPersonalBest(run) and "PB" or
+                                    L("Completed")) or L("Active")
+            row.text:SetText(format("#%s  %s %d-%d  %sx  %s  [%s]%s",
+                tostring(run.id or "?"), tostring(run.class or "?"),
+                tonumber(run.startLevel) or 0,
+                tonumber(run.endLevel) or 0, tostring(run.xpRate or 1),
                 DurationText(run.totalDuration), status,
-                run.pinned and "  *" or ""))
+                run.pinned and "  [P]" or ""))
+            if row.selectedTexture then
+                row.selectedTexture:SetShown(self.selected == run.id)
+            end
+            row.text:SetTextColor(self.selected == run.id and 1 or 0.92,
+                                  self.selected == run.id and 0.82 or 0.92,
+                                  self.selected == run.id and 0.15 or 0.92)
             row:Show()
         else
             row.run = nil
+            if row.selectedTexture then row.selectedTexture:Hide() end
             row:Hide()
         end
+    end
+    local selected = self.selected and Store().runs[self.selected]
+    if frame.compareButton then
+        if selected then frame.compareButton:Enable() else frame.compareButton:Disable() end
+    end
+    if frame.deleteButton then
+        if selected and self.selected ~= RXPCData.levelingArchiveRunId then
+            frame.deleteButton:Enable()
+        else
+            frame.deleteButton:Disable()
+        end
+    end
+    if frame.finishButton then
+        if self:GetCurrent(false) then frame.finishButton:Enable()
+        else frame.finishButton:Disable() end
     end
 end
 
 function archive:CreateWindow()
-    local frame = CreateFrame("Frame", "RXPLevelingArchives", UIParent)
-    frame:SetSize(610, 430)
-    frame:SetPoint("CENTER")
-    frame:SetFrameStrata("DIALOG")
-    frame:SetMovable(true)
-    frame:EnableMouse(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true,
-        tileSize = 32, edgeSize = 32,
-        insets = {left = 8, right = 8, top = 8, bottom = 8}})
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -18)
-    title:SetText(L("Anonymous Leveling Archives"))
+    local frame = toolWindows:Create({
+        name = "RXPLevelingArchives",
+        title = L("Anonymous Leveling Archives"),
+        width = 610,
+        height = 430,
+        minWidth = 540,
+        minHeight = 430,
+        maxHeight = 430
+    })
     local privacy = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     privacy:SetPoint("TOPLEFT", 22, -45)
+    privacy:SetPoint("TOPRIGHT", -35, -45)
+    privacy:SetJustifyH("LEFT")
+    if privacy.SetWordWrap then privacy:SetWordWrap(true) end
     privacy:SetText(L("Account-wide; character, realm and GUID information is never stored here."))
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
+    frame.privacyText = privacy
 
     frame.rows = {}
     for i = 1, ROWS do
@@ -283,7 +304,13 @@ function archive:CreateWindow()
         row:SetPoint("TOPLEFT", 22, -70 - (i - 1) * 27)
         row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         row.text:SetPoint("LEFT", 5, 0)
+        row.text:SetPoint("RIGHT", -5, 0)
         row.text:SetJustifyH("LEFT")
+        row.selectedTexture = row:CreateTexture(nil, "BACKGROUND")
+        row.selectedTexture:SetAllPoints()
+        row.selectedTexture:SetTexture("Interface\\Buttons\\WHITE8X8")
+        row.selectedTexture:SetVertexColor(0.38, 0.28, 0.02, 0.8)
+        row.selectedTexture:Hide()
         row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         row:SetScript("OnClick", function(self, button)
             if not self.run then return end
@@ -292,13 +319,21 @@ function archive:CreateWindow()
                 archive:Refresh()
             else
                 archive.selected = self.run.id
-                for _, other in ipairs(frame.rows) do
-                    other.text:SetTextColor(other.run == self.run and 1 or 1,
-                                            other.run == self.run and 0.82 or 1,
-                                            other.run == self.run and 0 or 1)
-                end
+                archive:Refresh()
             end
         end)
+        row:SetScript("OnEnter", function(self)
+            if not self.run then return end
+            _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            _G.GameTooltip:AddLine(L("Leveling archive"))
+            _G.GameTooltip:AddLine(
+                L("Left-click to select. Right-click to pin or unpin."),
+                1, 1, 1, true)
+            _G.GameTooltip:AddLine(self.run.pinned and L("Pinned") or
+                                       L("Not pinned"), 0.75, 0.75, 0.75)
+            _G.GameTooltip:Show()
+        end)
+        row:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
         row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         frame.rows[i] = row
     end
@@ -313,22 +348,27 @@ function archive:CreateWindow()
     frame.scroll = scroll
 
     local compare = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    compare:SetSize(92, 24)
+    compare:SetHeight(24)
     compare:SetPoint("BOTTOMLEFT", 20, 17)
     compare:SetText(L("Compare"))
+    toolWindows:SizeButton(compare, 92, 130)
     compare:SetScript("OnClick", function()
         local run = Store().runs[archive.selected]
         if run then archive:InstallComparison(run) end
     end)
+    frame.compareButton = compare
     local finish = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    finish:SetSize(92, 24)
+    finish:SetHeight(24)
     finish:SetPoint("LEFT", compare, "RIGHT", 7, 0)
     finish:SetText(L("Finish Run"))
+    toolWindows:SizeButton(finish, 92, 135)
     finish:SetScript("OnClick", function() archive:Finish() end)
+    frame.finishButton = finish
     local new = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    new:SetSize(92, 24)
+    new:SetHeight(24)
     new:SetPoint("LEFT", finish, "RIGHT", 7, 0)
     new:SetText(L("New Run"))
+    toolWindows:SizeButton(new, 92, 135)
     new:SetScript("OnClick", function()
         addon.comms:ConfirmChoice("RXP_ARCHIVE_NEW",
             L("Finish the current archive and start a new anonymous run?"),
@@ -338,9 +378,10 @@ function archive:CreateWindow()
             end)
     end)
     local delete = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    delete:SetSize(92, 24)
+    delete:SetHeight(24)
     delete:SetPoint("LEFT", new, "RIGHT", 7, 0)
     delete:SetText(L("Delete"))
+    toolWindows:SizeButton(delete, 92, 130)
     delete:SetScript("OnClick", function()
         local id = archive.selected
         if not id or id == RXPCData.levelingArchiveRunId then return end
@@ -351,8 +392,22 @@ function archive:CreateWindow()
                 archive:Refresh()
             end)
     end)
+    frame.deleteButton = delete
+    frame.OnToolVisuals = function(self, fontSize)
+        if not addon.SetFontSafely then return end
+        addon.SetFontSafely(self.privacyText, addon.font,
+                            max(9, fontSize - 1), "")
+        for _, row in ipairs(self.rows) do
+            addon.SetFontSafely(row.text, addon.font, fontSize, "")
+        end
+    end
+    local function UpdateRowWidths(self)
+        local width = max(470, self:GetWidth() - 65)
+        for _, row in ipairs(self.rows) do row:SetWidth(width) end
+    end
+    frame:SetScript("OnSizeChanged", UpdateRowWidths)
+    UpdateRowWidths(frame)
     frame:SetScript("OnShow", function() archive:Snapshot() end)
-    frame:Hide()
     self.frame = frame
     self:Refresh()
 end

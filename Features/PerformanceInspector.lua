@@ -5,6 +5,8 @@ local format = string.format
 local L = addon.locale.Get
 local floor, max, min = math.floor, math.max, math.min
 local tinsert = table.insert
+local unpack = unpack
+local toolWindows = addon.toolWindows
 
 addon.performanceInspector = addon.performanceInspector or {}
 local inspector = addon.performanceInspector
@@ -161,11 +163,15 @@ local function Wrap(container, key, label)
     local token = tostring(container) .. ":" .. key
     if inspector.wrapped[token] then return end
     local original = container[key]
+    local function Pack(...)
+        return {n = select("#", ...), ...}
+    end
     container[key] = function(...)
         local started = addon.PerfBegin(label)
-        local a, b, c, d, e, f, g, h = original(...)
-        if started then addon.PerfEnd(label, started) end
-        return a, b, c, d, e, f, g, h
+        if not started then return original(...) end
+        local results = Pack(original(...))
+        addon.PerfEnd(label, started)
+        return unpack(results, 1, results.n)
     end
     inspector.wrapped[token] = true
 end
@@ -182,6 +188,7 @@ function inspector:BuildText()
     local profile = addon.settings and addon.settings.profile or {}
     local effective = self:GetEffectiveUpdateFrequency(profile.updateFrequency or 75)
     local lines = {
+        L("Current status"),
         format(L("FPS: %.1f"), tonumber(self.lastFPS) or 0),
         format(L("Main update: %d ms configured / %d ms effective"),
                tonumber(profile.updateFrequency) or 75, effective),
@@ -194,30 +201,38 @@ function inspector:BuildText()
                                      max(0, self.captureUntil - _G.GetTime())) or
             L("Capture: idle"),
         "",
-        L("Measured RXPGuides work:"),
-        L("Subsystem                         calls     average       maximum       last")
+        L("Measured RXPGuides work:")
     }
     local names = {}
     for name in pairs(self.metrics or {}) do tinsert(names, name) end
     table.sort(names)
-    if #names == 0 then tinsert(lines, "  Open this window or start a capture to collect measurements.") end
+    if #names == 0 then
+        tinsert(lines, "  " .. L("Open this window or start a capture to collect measurements."))
+    end
     for _, name in ipairs(names) do
         local metric = self.metrics[name]
-        tinsert(lines, format("%-30s %6d %10.3fms %10.3fms %10.3fms",
-            name:sub(1, 30), metric.calls,
+        tinsert(lines, format("[*] %s", name))
+        tinsert(lines, format(L("    Calls: %d  Average: %.3f ms  Maximum: %.3f ms  Last: %.3f ms"),
+            metric.calls,
             metric.calls > 0 and metric.total / metric.calls or 0,
             metric.maximum, metric.last))
     end
     tinsert(lines, "")
-    tinsert(lines, "Adaptation never changes saved preferences. It only slows bounded RXP scan/update loops while sustained low FPS is observed, then restores them automatically.")
+    tinsert(lines, L("Adaptation never changes saved preferences. It only slows bounded RXP scan/update loops while sustained low FPS is observed, then restores them automatically."))
     return table.concat(lines, "\n")
 end
 
 function inspector:Refresh()
     local frame = self.frame
     if not (frame and frame:IsShown()) then return end
-    frame.text:SetText(self:BuildText())
-    frame.scrollChild:SetHeight(max(330, frame.text:GetStringHeight() + 12))
+    toolWindows:SetText(frame, self:BuildText())
+    if frame.captureButton then
+        frame.captureButton:SetText(self.captureUntil and L("Capturing...") or
+                                        L("Capture 30s"))
+        toolWindows:SizeButton(frame.captureButton, 105, 150)
+        if self.captureUntil then frame.captureButton:Disable()
+        else frame.captureButton:Enable() end
+    end
 end
 
 function inspector:Export()
@@ -244,54 +259,39 @@ function inspector:Export()
 end
 
 function inspector:CreateWindow()
-    local frame = CreateFrame("Frame", "RXPPerformanceInspector", UIParent)
-    frame:SetSize(690, 450)
-    frame:SetPoint("CENTER")
-    frame:SetFrameStrata("DIALOG")
-    frame:SetMovable(true)
-    frame:EnableMouse(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true,
-        tileSize = 32, edgeSize = 32,
-        insets = {left = 8, right = 8, top = 8, bottom = 8}})
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -18)
-    title:SetText(L("RXPGuides Performance Inspector"))
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
-    local scroll = CreateFrame("ScrollFrame", "RXPPerformanceInspectorScroll", frame,
-                               "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 22, -48)
-    scroll:SetPoint("BOTTOMRIGHT", -36, 52)
-    local child = CreateFrame("Frame", nil, scroll)
-    child:SetSize(615, 330)
-    scroll:SetScrollChild(child)
-    frame.scrollChild = child
-    frame.text = child:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    frame.text:SetPoint("TOPLEFT")
-    frame.text:SetWidth(610)
-    frame.text:SetJustifyH("LEFT")
-    frame.text:SetJustifyV("TOP")
+    local frame = toolWindows:Create({
+        name = "RXPPerformanceInspector",
+        title = L("RXPGuides Performance Inspector"),
+        width = 690,
+        height = 450,
+        minWidth = 520,
+        minHeight = 340
+    })
+    toolWindows:AddScrollingText(frame, {
+        name = "RXPPerformanceInspectorScroll",
+        top = 48,
+        bottom = 56
+    })
     local capture = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    capture:SetSize(105, 24)
+    capture:SetHeight(24)
     capture:SetPoint("BOTTOMLEFT", 20, 18)
     capture:SetText(L("Capture 30s"))
+    toolWindows:SizeButton(capture, 105, 150)
     capture:SetScript("OnClick", function() inspector:StartCapture(30) end)
+    frame.captureButton = capture
     local reset = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    reset:SetSize(92, 24)
+    reset:SetHeight(24)
     reset:SetPoint("LEFT", capture, "RIGHT", 8, 0)
     reset:SetText(L("Reset"))
+    toolWindows:SizeButton(reset, 92, 140)
     reset:SetScript("OnClick", function() inspector:ResetMetrics() end)
     local export = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    export:SetSize(92, 24)
+    export:SetHeight(24)
     export:SetPoint("LEFT", reset, "RIGHT", 8, 0)
     export:SetText(L("Export"))
+    toolWindows:SizeButton(export, 92, 140)
     export:SetScript("OnClick", function() inspector:Export() end)
     frame:SetScript("OnShow", function() inspector:Refresh() end)
-    frame:Hide()
     self.frame = frame
     self:Refresh()
 end

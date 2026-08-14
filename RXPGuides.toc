@@ -29,6 +29,7 @@ Guide\QuestAcceptState.lua
 UI\Themes.lua
 Features\Communications.lua
 Core\Addon.lua
+UI\ToolWindow.lua
 UI\GuideWindow.lua
 UI\Help.lua
 UI\Settings.lua

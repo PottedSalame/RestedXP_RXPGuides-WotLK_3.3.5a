@@ -626,6 +626,7 @@ local function GetDetailTooltip()
     if session.detailTooltip then return session.detailTooltip end
     local tooltip = CreateFrame("GameTooltip", "RXPItemUpgradeDetails", UIParent,
                                 "GameTooltipTemplate")
+    if tooltip.SetClampedToScreen then tooltip:SetClampedToScreen(true) end
     session.detailTooltip = tooltip
     return tooltip
 end
@@ -754,7 +755,13 @@ local function ShowUpgradeDetailTooltip(source)
     local tooltip = GetDetailTooltip()
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
     tooltip:ClearAllPoints()
-    tooltip:SetPoint("TOPRIGHT", source, "TOPLEFT", -8, 0)
+    local sourceX = source.GetCenter and source:GetCenter()
+    local screenMiddle = (UIParent:GetWidth() or 0) / 2
+    if sourceX and sourceX < screenMiddle then
+        tooltip:SetPoint("TOPLEFT", source, "TOPRIGHT", 8, 0)
+    else
+        tooltip:SetPoint("TOPRIGHT", source, "TOPLEFT", -8, 0)
+    end
     tooltip:ClearLines()
     tooltip:AddLine(fmt("%s - %s", addon.title, L("Detailed EP")), 1, 0.82,
                     0, true)

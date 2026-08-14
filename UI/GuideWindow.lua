@@ -126,6 +126,9 @@ function addon.RenderFrame(themeUpdate,isLoading)
             frame:UpdateVisuals(true)
         end
     end
+    if addon.toolWindows and addon.toolWindows.RefreshVisuals then
+        addon.toolWindows:RefreshVisuals()
+    end
     if not themeUpdate then
         RXPFrame.GenerateMenuTable()
     end
@@ -1518,7 +1521,7 @@ function addon.UpdateBrowseModeButton()
     if not button then return end
     local available = addon.currentGuide and not addon.currentGuide.empty
     if available then button:Enable() else button:Disable() end
-    button:SetText(addon.browseMode and "Resume" or "Browse")
+    button:SetText(addon.browseMode and L("Resume") or L("Browse"))
     local fontString = button:GetFontString()
     if fontString then
         if addon.browseMode then
@@ -1537,8 +1540,8 @@ function addon.SetBrowseMode(enabled, silent)
     addon.UpdateBrowseModeButton()
     if changed and not silent and addon.comms then
         addon.comms.PrettyPrint(enabled and
-            "Browse mode ON - progression frozen." or
-            "Browse mode OFF - progression resumed.")
+            L("Browse mode ON - progression frozen.") or
+            L("Browse mode OFF - progression resumed."))
     end
 end
 
@@ -1549,10 +1552,10 @@ end
 Footer.browse:SetScript("OnClick", addon.ToggleBrowseMode)
 Footer.browse:SetScript("OnEnter", function(self)
     _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    _G.GameTooltip:AddLine("Browse mode")
+    _G.GameTooltip:AddLine(L("Browse mode"))
     _G.GameTooltip:AddLine(addon.browseMode and
-        "Progression is frozen. Click to resume automatic step advancement." or
-        "Click to freeze automatic advancement while reviewing guide steps.",
+        L("Progression is frozen. Click to resume automatic step advancement.") or
+        L("Click to freeze automatic advancement while reviewing guide steps."),
         1, 1, 1, true)
     _G.GameTooltip:Show()
 end)
@@ -1564,7 +1567,7 @@ addon.UpdateBrowseModeButton()
 -- the stock 3.3.5 UI without relying on an icon library.
 Footer.preflight = CreateFrame("Button", nil, Footer, "UIPanelButtonTemplate")
 Footer.preflight:SetFrameLevel(Footer:GetFrameLevel() + 1)
-Footer.preflight:SetSize(19, 18)
+Footer.preflight:SetSize(25, 18)
 Footer.preflight:SetPoint("LEFT", Footer.browse, "RIGHT", 1, 0)
 Footer.preflight:SetText("?")
 if addon.gameVersion ~= 30300 then Footer.preflight:Hide() end
@@ -1574,16 +1577,17 @@ end)
 Footer.preflight:SetScript("OnEnter", function(self)
     local report = addon.routePreflight and addon.routePreflight.report
     _G.GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    _G.GameTooltip:AddLine("Route Preflight")
+    _G.GameTooltip:AddLine(L("Route Preflight"))
     if not report or report.empty then
-        _G.GameTooltip:AddLine("No guide route is currently available.", 1, 1, 1, true)
+        _G.GameTooltip:AddLine(L("No guide route is currently available."),
+                               1, 1, 1, true)
     else
-        _G.GameTooltip:AddLine(fmt("%d blocker(s), %d warning(s), %d note(s)",
+        _G.GameTooltip:AddLine(fmt(L("%d blocker(s), %d warning(s), %d note(s)"),
             report.counts.error or 0, report.counts.warning or 0,
             report.counts.info or 0), 1, 1, 1, true)
         local reserved = 0
         for _ in pairs(report.reservations or {}) do reserved = reserved + 1 end
-        _G.GameTooltip:AddLine(fmt("%d reserved item type(s). Click for details.",
+        _G.GameTooltip:AddLine(fmt(L("%d reserved item type(s). Click for details."),
                                    reserved), 0.85, 0.85, 0.85, true)
     end
     _G.GameTooltip:Show()
@@ -3411,6 +3415,16 @@ function RXPFrame:GenerateMenuTable(menu)
                     addon.performanceInspector:Toggle()
                 end
             end
+        },
+        {
+            text = L("Reset Tool Window Positions"),
+            notCheckable = 1,
+            disabled = not addon.toolWindows,
+            func = function()
+                if addon.toolWindows then
+                    addon.toolWindows:ResetPlacements()
+                end
+            end
         }
     }
     tinsert(menuList, {
@@ -3499,5 +3513,8 @@ function addon.UpdateGuideFontSize()
         CurrentStepFrame.UpdateText()
         BottomFrame.UpdateFrame()
         RXPFrame.SetStepFrameAnchor()
+    end
+    if addon.toolWindows and addon.toolWindows.RefreshVisuals then
+        addon.toolWindows:RefreshVisuals()
     end
 end

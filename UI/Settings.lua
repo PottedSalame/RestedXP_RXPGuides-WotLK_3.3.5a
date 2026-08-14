@@ -2120,6 +2120,19 @@ function addon.settings:CreateAceOptionsPanel()
                             if addon.petAssistant then addon.petAssistant:Toggle() end
                         end
                     },
+                    resetToolWindows = {
+                        name = L("Reset Tool Window Positions"),
+                        desc = L("Restores the Route Preflight, Personal-Best Archives, Hunter Pet Assistant, and Performance Inspector windows to their default size and position."),
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 3.95,
+                        hidden = addon.gameVersion ~= 30300,
+                        func = function()
+                            if addon.toolWindows then
+                                addon.toolWindows:ResetPlacements()
+                            end
+                        end
+                    },
                     questCleanupHeader = {
                         name = L("Quest Cleanup"),
                         type = "header",

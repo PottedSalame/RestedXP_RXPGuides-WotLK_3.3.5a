@@ -5,6 +5,7 @@ local _G = _G
 local format = string.format
 local floor, max, min = math.floor, math.max, math.min
 local tinsert = table.insert
+local toolWindows = addon.toolWindows
 
 addon.petAssistant = addon.petAssistant or {}
 local pet = addon.petAssistant
@@ -54,7 +55,7 @@ local function UpcomingPetStep()
     for index = current, min(type(guide) == "table" and type(guide.steps) == "table" and
                                 #guide.steps or 0, current + ahead - 1) do
         local step = guide.steps[index]
-        for _, element in ipairs(step.elements or {}) do
+        for _, element in ipairs(type(step) == "table" and step.elements or {}) do
             if element.tag == "stable" or element.tag == "tame" or
                 element.tag == "petfamily" then
                 return index, element.tag, element.text
@@ -78,69 +79,80 @@ end
 
 function pet:BuildText()
     if not IsHunter() then return L("The Hunter Pet Assistant is available to Hunters.") end
-    local lines = {}
+    local lines = {L("Pet status")}
     local hasPet = UnitExists("pet") and not UnitIsDead("pet")
     if not hasPet then
-        tinsert(lines, "[!] No active living pet.")
+        tinsert(lines, "[!] " .. L("No active living pet."))
     else
         local level = UnitLevel("pet") or 0
-    local family = UnitCreatureFamily("pet") or L("Unknown family")
+        local family = UnitCreatureFamily("pet") or L("Unknown family")
         local health, healthMax = UnitHealth("pet") or 0, UnitHealthMax("pet") or 0
         local happiness = type(_G.GetPetHappiness) == "function" and
                               _G.GetPetHappiness()
         local happinessText = HappinessText(happiness)
-        tinsert(lines, format("Pet: level %d %s", level, family))
-        tinsert(lines, format("Health: %d/%d", health, healthMax))
-        tinsert(lines, "Happiness: " .. happinessText)
+        tinsert(lines, format(L("Pet: level %d %s"), level, family))
+        tinsert(lines, format(L("Health: %d/%d"), health, healthMax))
+        tinsert(lines, L("Happiness: ") .. happinessText)
     end
 
     local food = addon.supplies and addon.supplies.GetPetFoodStatus and
                      addon.supplies:GetPetFoodStatus() or
                      {diets = {}, items = {}, total = 0}
+    food = type(food) == "table" and food or {}
+    food.diets = type(food.diets) == "table" and food.diets or {}
+    food.items = type(food.items) == "table" and food.items or {}
     tinsert(lines, "")
-    tinsert(lines, "Diet: " .. (#food.diets > 0 and table.concat(food.diets, ", ") or
-                                      "not reported by the client"))
-    tinsert(lines, format("Compatible food carried: %d", food.total or 0))
+    tinsert(lines, L("Food and ammunition"))
+    tinsert(lines, L("Diet: ") .. (#food.diets > 0 and table.concat(food.diets, ", ") or
+                                      L("not reported by the client")))
+    tinsert(lines, format(L("Compatible food carried: %d"), food.total or 0))
     for index = 1, min(#food.items, 4) do
         local item = food.items[index]
-        tinsert(lines, format("  %s x%d (%s)", item.name, item.count, item.family))
+        tinsert(lines, format("  %s x%d (%s)", tostring(item.name or L("Unknown item")),
+                              tonumber(item.count) or 0,
+                              tostring(item.family or L("Unknown family"))))
     end
     if hasPet and (food.total or 0) == 0 then
-        tinsert(lines, "[!] Carry compatible pet food before a long route.")
+        tinsert(lines, "[!] " .. L("Carry compatible pet food before a long route."))
     end
     local ammoSlot = _G.INVSLOT_AMMO or 0
     local ammoId = _G.GetInventoryItemID and _G.GetInventoryItemID("player", ammoSlot)
     if ammoId then
-        tinsert(lines, format("Ammunition: %s x%d", _G.GetItemInfo(ammoId) or
-            ("Item " .. ammoId), _G.GetItemCount(ammoId) or 0))
+        tinsert(lines, format(L("Ammunition: %s x%d"), _G.GetItemInfo(ammoId) or
+            (L("Item") .. " " .. ammoId), _G.GetItemCount(ammoId) or 0))
     elseif UnitLevel("player") >= 10 then
-        tinsert(lines, "[!] No ammunition is equipped.")
+        tinsert(lines, "[!] " .. L("No ammunition is equipped."))
     end
 
     local points, guide, tree = PetTalentStatus()
     tinsert(lines, "")
-    tinsert(lines, format("Pet talents: %s unspent; plan: %s",
-        points ~= nil and tostring(points) or "unknown",
-        guide and (guide.displayname or guide.name or "selected") or
-            (tree and "no matching plan" or "pet tree unavailable")))
+    tinsert(lines, L("Training"))
+    tinsert(lines, format(L("Pet talents: %s unspent; plan: %s"),
+        points ~= nil and tostring(points) or L("unknown"),
+        guide and (guide.displayname or guide.name or L("selected")) or
+            (tree and L("no matching plan") or L("pet tree unavailable"))))
 
     local skills = KnownPetSkills()
-    tinsert(lines, format("Known pet skills: %d", #skills))
+    tinsert(lines, format(L("Known pet skills: %d"), #skills))
     if #skills > 0 then
         local shown = {}
         for index = 1, min(#skills, 8) do shown[index] = skills[index] end
         tinsert(lines, "  " .. table.concat(shown, ", "))
-        if #skills > 8 then tinsert(lines, format("  ...and %d more", #skills - 8)) end
+        if #skills > 8 then
+            tinsert(lines, format(L("  ...and %d more"), #skills - 8))
+        end
     end
 
     local step, tag, text = UpcomingPetStep()
     tinsert(lines, "")
+    tinsert(lines, L("Upcoming guide preparation"))
     if step then
-        tinsert(lines, format("Next pet preparation: step %d (%s)%s", step, tag,
-            text and text ~= "" and (" - " .. tostring(text):gsub(
+        local displayText = text and addon.locale.GuideText(text)
+        tinsert(lines, format(L("Next pet preparation: step %d (%s)%s"), step, tag,
+            displayText and displayText ~= "" and (" - " .. tostring(displayText):gsub(
                 "|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")) or ""))
     else
-        tinsert(lines, "No stable, tame, or pet-family directive in the current look-ahead.")
+        tinsert(lines, L("No stable, tame, or pet-family directive in the current look-ahead."))
     end
 
     if addon.supplies and addon.supplies.BuildChecklist then
@@ -148,12 +160,14 @@ function pet:BuildText()
         local prep = {}
         for _, entry in ipairs(checklist or {}) do
             if entry.key == "ammunition" or entry.key == "petFood" then
-                tinsert(prep, format("%s: %d/%d", entry.name, entry.have, entry.target))
+                tinsert(prep, format("%s: %d/%d", tostring(entry.name or entry.key),
+                                     tonumber(entry.have) or 0,
+                                     tonumber(entry.target) or 0))
             end
         end
         if #prep > 0 then
             tinsert(lines, "")
-            tinsert(lines, "Hunter supplies:")
+            tinsert(lines, L("Hunter supplies:"))
             for _, value in ipairs(prep) do tinsert(lines, "  " .. value) end
         end
     end
@@ -162,76 +176,58 @@ end
 
 function pet:Refresh()
     if not (self.frame and self.frame:IsShown()) then return end
-    local text = self:BuildText()
-    self.frame.text:SetText(text)
-    self.frame.scrollChild:SetHeight(max(330, self.frame.text:GetStringHeight() + 12))
+    toolWindows:SetText(self.frame, self:BuildText())
     local step = UpcomingPetStep()
     if step then self.frame.stepButton:Enable() else self.frame.stepButton:Disable() end
 end
 
 function pet:CreateWindow()
-    local frame = CreateFrame("Frame", "RXPHunterPetAssistant", UIParent)
-    frame:SetSize(535, 430)
-    frame:SetPoint("CENTER")
-    frame:SetFrameStrata("DIALOG")
-    frame:SetMovable(true)
-    frame:EnableMouse(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true,
-        tileSize = 32, edgeSize = 32,
-        insets = {left = 8, right = 8, top = 8, bottom = 8}})
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -18)
-    title:SetText(L("Hunter Pet Assistant"))
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
-    local scroll = CreateFrame("ScrollFrame", "RXPHunterPetAssistantScroll", frame,
-                               "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 22, -48)
-    scroll:SetPoint("BOTTOMRIGHT", -36, 52)
-    local child = CreateFrame("Frame", nil, scroll)
-    child:SetSize(460, 330)
-    scroll:SetScrollChild(child)
-    frame.scrollChild = child
-    frame.text = child:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    frame.text:SetPoint("TOPLEFT")
-    frame.text:SetWidth(455)
-    frame.text:SetJustifyH("LEFT")
-    frame.text:SetJustifyV("TOP")
+    local frame = toolWindows:Create({
+        name = "RXPHunterPetAssistant",
+        title = L("Hunter Pet Assistant"),
+        width = 535,
+        height = 430,
+        minWidth = 520,
+        minHeight = 340
+    })
+    toolWindows:AddScrollingText(frame, {
+        name = "RXPHunterPetAssistantScroll",
+        top = 48,
+        bottom = 56
+    })
 
     local supplies = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    supplies:SetSize(110, 24)
+    supplies:SetHeight(24)
     supplies:SetPoint("BOTTOMLEFT", 20, 18)
     supplies:SetText(L("Supplies"))
+    toolWindows:SizeButton(supplies, 100, 145)
     supplies:SetScript("OnClick", function()
         if addon.supplies then addon.supplies:Toggle() end
     end)
     local stepButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    stepButton:SetSize(125, 24)
+    stepButton:SetHeight(24)
     stepButton:SetPoint("LEFT", supplies, "RIGHT", 8, 0)
     stepButton:SetText(L("Go to Pet Step"))
+    toolWindows:SizeButton(stepButton, 125, 175)
     stepButton:SetScript("OnClick", function()
         local step = UpcomingPetStep()
         if step and addon.GoToStep then addon.GoToStep(step) end
     end)
     frame.stepButton = stepButton
     local rescan = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    rescan:SetSize(100, 24)
+    rescan:SetHeight(24)
     rescan:SetPoint("LEFT", stepButton, "RIGHT", 8, 0)
     rescan:SetText(L("Refresh"))
+    toolWindows:SizeButton(rescan, 90, 135)
     rescan:SetScript("OnClick", function() pet:Refresh() end)
     frame:SetScript("OnShow", function() pet:Refresh() end)
-    frame:Hide()
     self.frame = frame
     self:Refresh()
 end
 
 function pet:Toggle()
     if not IsHunter() then
-        addon.comms.PrettyPrint("The Pet Assistant is available to Hunters.")
+        addon.comms.PrettyPrint(L("The Pet Assistant is available to Hunters."))
         return
     end
     if not self.frame then self:CreateWindow() end

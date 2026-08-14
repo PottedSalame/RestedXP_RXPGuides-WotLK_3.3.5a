@@ -12,6 +12,7 @@ local L = addon.locale.Get
 local tinsert = table.insert
 local GetTime = _G.GetTime
 local GetItemCount = _G.GetItemCount
+local toolWindows = addon.toolWindows
 
 addon.routePreflight = addon.routePreflight or {}
 local preflight = addon.routePreflight
@@ -250,6 +251,7 @@ function preflight:Scan(force)
     local futureRewarded = {}
     local futureAccepted = {}
     local countedTurnIn = {}
+    local countedReward = {}
     local rewardLow, rewardHigh, unknownRewards = 0, 0, 0
     local nextXPElement, nextXPStep
 
@@ -319,12 +321,22 @@ function preflight:Scan(force)
                                 countedTurnIn[id] = true
                             end
                             futureRewarded[id] = true
-                            local low, high = GetLiveQuestRewardXP(id)
-                            if not low then low, high = GetObservedQuestXP(id) end
-                            if low then
-                                rewardLow, rewardHigh = rewardLow + low, rewardHigh + high
-                            else
-                                unknownRewards = unknownRewards + 1
+                            -- Only rewards which occur before the first XP
+                            -- gate can help satisfy it. Repeated turn-in
+                            -- reminders and quests already rewarded outside
+                            -- the guide must not be counted a second time.
+                            if inXP and not nextXPElement and
+                                not countedReward[id] and
+                                not addon.IsQuestTurnedIn(id) then
+                                countedReward[id] = true
+                                local low, high = GetLiveQuestRewardXP(id)
+                                if not low then low, high = GetObservedQuestXP(id) end
+                                if low then
+                                    rewardLow = rewardLow + low
+                                    rewardHigh = rewardHigh + high
+                                else
+                                    unknownRewards = unknownRewards + 1
+                                end
                             end
                         end
                     end
@@ -443,6 +455,39 @@ function preflight:ScheduleScan(delay)
     end)
 end
 
+local function QuestObjectiveSignature(questId, requestedObjective)
+    questId = tonumber(questId)
+    if not questId then return "" end
+    local index = C_QuestLog and C_QuestLog.GetLogIndexForQuestID and
+                      C_QuestLog.GetLogIndexForQuestID(questId) or
+                      (_G.GetQuestLogIndexByID and
+                           _G.GetQuestLogIndexByID(questId))
+    index = tonumber(index)
+    if not index or index < 1 or
+        type(_G.GetQuestLogLeaderBoard) ~= "function" then
+        return ""
+    end
+    local requested = tonumber(requestedObjective)
+    if requested and requested < 1 then requested = nil end
+    local first, last = requested, requested
+    if not first then
+        first = 1
+        last = type(_G.GetNumQuestLeaderBoards) == "function" and
+                   tonumber(_G.GetNumQuestLeaderBoards(index)) or 0
+    end
+    local parts = {}
+    for objective = first, max(first, last or 0) do
+        local ok, text, kind, finished = pcall(_G.GetQuestLogLeaderBoard,
+                                               objective, index)
+        if ok then
+            tinsert(parts, tostring(text or ""))
+            tinsert(parts, tostring(kind or ""))
+            tinsert(parts, tostring(finished == true or finished == 1))
+        end
+    end
+    return table.concat(parts, "/")
+end
+
 local function BuildProgressSignature(step)
     if type(step) ~= "table" then return "none" end
     local parts = {tostring(step.completed == true)}
@@ -456,6 +501,14 @@ local function BuildProgressSignature(step)
             tinsert(parts, tostring(addon.IsOnQuest(element.questId) == true))
             tinsert(parts, tostring(addon.IsQuestComplete(element.questId) == true))
             tinsert(parts, tostring(addon.IsQuestTurnedIn(element.questId) == true))
+            tinsert(parts, QuestObjectiveSignature(element.questId,
+                                                   element.obj))
+        end
+        if type(element.activeItems) == "table" then
+            for id in pairs(element.activeItems) do
+                tinsert(parts, tostring(id))
+                tinsert(parts, tostring(GetItemCount(id) or 0))
+            end
         end
     end
     return table.concat(parts, ":")
@@ -519,6 +572,7 @@ function preflight:WatchTick()
         watched.signature = signature
         watched.elapsed = 0
         watched.warned = false
+        self:RefreshWindow()
         return
     end
     watched.elapsed = watched.elapsed + 1
@@ -589,64 +643,50 @@ function preflight:BuildText()
     end
     if self.watch then
         tinsert(lines, "")
+        local state = self:IsWatchPaused() and (" [" .. L("paused") .. "]") or ""
         tinsert(lines, format(L("Watchdog: armed for step %d (%d seconds without progress)."),
-                              self.watch.step, self.watch.elapsed or 0))
+                              self.watch.step, self.watch.elapsed or 0) .. state)
     end
     return table.concat(lines, "\n")
 end
 
 function preflight:CreateWindow()
-    local frame = CreateFrame("Frame", "RXPRoutePreflightWindow", UIParent)
-    frame:SetSize(650, 460)
-    frame:SetPoint("CENTER")
-    frame:SetFrameStrata("DIALOG")
-    frame:SetClampedToScreen(true)
-    frame:SetMovable(true)
-    frame:EnableMouse(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", tile = true,
-        tileSize = 32, edgeSize = 32,
-        insets = {left = 8, right = 8, top = 8, bottom = 8}})
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -17)
-    title:SetText(L("Route Preflight"))
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -5, -5)
-
-    local scroll = CreateFrame("ScrollFrame", "RXPRoutePreflightScroll", frame,
-                               "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 22, -48)
-    scroll:SetPoint("BOTTOMRIGHT", -36, 51)
-    local child = CreateFrame("Frame", nil, scroll)
-    child:SetSize(575, 1)
-    scroll:SetScrollChild(child)
-    local text = child:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    text:SetPoint("TOPLEFT")
-    text:SetWidth(570)
-    text:SetJustifyH("LEFT")
-    text:SetJustifyV("TOP")
-    text:SetTextColor(1, 1, 1)
-    child.text = text
-    frame.scrollChild = child
+    local frame = toolWindows:Create({
+        name = "RXPRoutePreflightWindow",
+        title = L("Route Preflight"),
+        width = 650,
+        height = 460,
+        minWidth = 540,
+        minHeight = 340
+    })
+    toolWindows:AddScrollingText(frame, {
+        name = "RXPRoutePreflightScroll",
+        top = 48,
+        bottom = 55
+    })
 
     local rescan = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    rescan:SetSize(100, 24)
+    rescan:SetHeight(24)
     rescan:SetPoint("BOTTOMLEFT", 20, 18)
     rescan:SetText(L("Rescan"))
+    toolWindows:SizeButton(rescan, 100, 150)
     rescan:SetScript("OnClick", function() preflight:Scan(true) end)
     local watch = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    watch:SetSize(145, 24)
+    watch:SetHeight(24)
     watch:SetPoint("LEFT", rescan, "RIGHT", 8, 0)
     watch:SetScript("OnClick", function() preflight:ToggleWatch() end)
+    local diagnose = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    diagnose:SetHeight(24)
+    diagnose:SetPoint("LEFT", watch, "RIGHT", 8, 0)
+    diagnose:SetText(L("Diagnose this step"))
+    toolWindows:SizeButton(diagnose, 120, 180)
+    diagnose:SetScript("OnClick", function()
+        if addon.diagnostics and addon.diagnostics.Open then
+            addon.diagnostics:Open(RXPCData and RXPCData.currentStep)
+        end
+    end)
     frame.watchButton = watch
     frame:SetScript("OnShow", function() preflight:Scan(true) end)
-    -- Newly-created frames are visible by default on the legacy client.  Keep
-    -- tool windows dormant until Toggle explicitly opens them; otherwise the
-    -- first button press merely hides the just-created window.
-    frame:Hide()
     self.frame = frame
     self:RefreshWindow()
 end
@@ -654,11 +694,9 @@ end
 function preflight:RefreshWindow()
     local frame = self.frame
     if not (frame and frame:IsShown()) then return end
-    local text = self:BuildText()
-    frame.scrollChild.text:SetText(text)
-    local height = max(360, frame.scrollChild.text:GetStringHeight() + 12)
-    frame.scrollChild:SetHeight(height)
+    toolWindows:SetText(frame, self:BuildText())
     frame.watchButton:SetText(self.watch and L("Stop Watching") or L("Watch Current Step"))
+    toolWindows:SizeButton(frame.watchButton, 145, 190)
 end
 
 function preflight:Toggle()
