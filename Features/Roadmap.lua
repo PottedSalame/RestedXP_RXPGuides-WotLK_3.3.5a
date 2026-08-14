@@ -33,6 +33,7 @@ local moduleSettingKeys = {
     ["xp assistant"] = {"showXPRemaining", "enableMobXPEstimator",
                            "adaptiveMobXP", "xpEstimatorShowStockXP",
                            "xpEstimatorShowKills", "xpEstimatorShowAdaptive",
+                           "xpEstimatorShowAdaptiveKills",
                            "xpEstimatorShowRested"}
 }
 

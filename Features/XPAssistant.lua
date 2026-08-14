@@ -652,7 +652,7 @@ local displayOptions = {
     {
         name = "RXPXPProgressKillsCheck",
         key = "xpEstimatorShowKills",
-        label = "Show Kill Counts",
+        label = "Show Stock Kills",
         description = "Shows how many kills remain at the current XP progress.",
     },
     {
@@ -662,12 +662,19 @@ local displayOptions = {
         description = "Shows estimates learned from verified kills on this server.",
     },
     {
+        name = "RXPXPProgressAdaptiveKillsCheck",
+        key = "xpEstimatorShowAdaptiveKills",
+        label = "Show Adaptive Kills",
+        description = "Shows kill counts calculated from the adaptive XP learned on this server.",
+    },
+    {
         name = "RXPXPProgressRestedCheck",
         key = "xpEstimatorShowRested",
         label = "Show Rested Projections",
         description = "Shows normal / rested values using the finite rested-XP pool.",
     },
 }
+local XP_WINDOW_LAYOUT_VERSION = 2
 
 function assistant:IsDisplayOptionEnabled(key)
     local profile = addon.settings and addon.settings.profile
@@ -692,9 +699,9 @@ function assistant:GetVisibleColumnCount()
     end
     if self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive") then
         count = count + 1
-        if self:IsDisplayOptionEnabled("xpEstimatorShowKills") then
-            count = count + 1
-        end
+    end
+    if self:IsDisplayOptionEnabled("xpEstimatorShowAdaptiveKills") then
+        count = count + 1
     end
     return count
 end
@@ -710,13 +717,17 @@ function assistant:ResizeForVisibleColumns(force)
     profile.toolWindowAppearance.RXPXPProgressWindow = appearance
 
     local count = self:GetVisibleColumnCount()
-    if not force and tonumber(appearance.xpColumnCount) == count then return end
+    if not force and tonumber(appearance.xpColumnCount) == count and
+        tonumber(appearance.xpLayoutVersion) == XP_WINDOW_LAYOUT_VERSION then
+        return
+    end
     local widths = {340, 410, 490, 570, 650}
     local width = widths[count] or 650
-    local height = count <= 2 and 440 or 390
+    local height = count <= 2 and 465 or 415
     appearance.xpColumnCount = count
+    appearance.xpLayoutVersion = XP_WINDOW_LAYOUT_VERSION
     if frame.SetMinResize then
-        frame:SetMinResize(340, count <= 2 and 425 or 375)
+        frame:SetMinResize(340, count <= 2 and 450 or 400)
     end
     frame:SetSize(width, height)
     if addon.toolWindows and addon.toolWindows.SavePlacement then
@@ -732,8 +743,7 @@ function assistant:RefreshColumnLayout()
         self:IsDisplayOptionEnabled("xpEstimatorShowStockXP"),
         self:IsDisplayOptionEnabled("xpEstimatorShowKills"),
         self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive"),
-        self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive") and
-            self:IsDisplayOptionEnabled("xpEstimatorShowKills"),
+        self:IsDisplayOptionEnabled("xpEstimatorShowAdaptiveKills"),
     }
     local count = self:GetVisibleColumnCount()
     local frameWidth = frame:GetWidth() or 650
@@ -749,8 +759,9 @@ function assistant:RefreshColumnLayout()
         check:SetHitRectInsets(0, -max(0, checkWidth - 25), 0, 0)
         check.label:SetWidth(max(90, checkWidth - 29))
     end
-    local headerTop = compact and -208 or -158
-    local rowTop = compact and -227 or -177
+    local checkRows = math.ceil(#(frame.displayChecks or {}) / checkColumns)
+    local headerTop = -108 - checkRows * 25
+    local rowTop = headerTop - 19
     local available = max(260, frameWidth - 44)
     local mobWidth = min(110, available)
     local otherWidth = count > 1 and (available - mobWidth) / (count - 1) or 0
@@ -815,9 +826,9 @@ function assistant:CreateWindow()
         name = "RXPXPProgressWindow",
         title = L("XP Progress and Yellow-Mob Estimator"),
         width = 650,
-        height = 390,
+        height = 415,
         minWidth = 340,
-        minHeight = 375,
+        minHeight = 400,
         relativeTo = "RXPFrame",
         point = "TOPLEFT",
         relativePoint = "TOPRIGHT",
@@ -956,12 +967,12 @@ function assistant:RefreshWindow()
                 rowFrame.cells[5]:SetText("-")
             elseif addon.settings.profile.adaptiveMobXP == false then
                 rowFrame.cells[4]:SetText(L("Off"))
-                rowFrame.cells[5]:SetText("-")
+                rowFrame.cells[5]:SetText(L("Off"))
             else
-                rowFrame.cells[4]:SetText(format(L("Learning %d/%d"),
-                                                 state.samples,
-                                                 REQUIRED_SAMPLES))
-                rowFrame.cells[5]:SetText("-")
+                local learning = format(L("Learning %d/%d"), state.samples,
+                                        REQUIRED_SAMPLES)
+                rowFrame.cells[4]:SetText(learning)
+                rowFrame.cells[5]:SetText(learning)
             end
             for _, cell in ipairs(rowFrame.cells) do
                 cell:SetTextColor(1, 0.86, 0.22)
@@ -980,7 +991,9 @@ function assistant:RefreshWindow()
         notes[#notes + 1] = L("Solo baseline; adaptive learning is paused inside instances with possible special modifiers.")
     end
     local showAdaptive = self:IsDisplayOptionEnabled(
-                             "xpEstimatorShowAdaptive")
+                             "xpEstimatorShowAdaptive") or
+                             self:IsDisplayOptionEnabled(
+                                 "xpEstimatorShowAdaptiveKills")
     if showAdaptive and state.lowConfidence then
         notes[#notes + 1] = L("Adaptive estimate has low confidence because recent awards vary.")
     elseif showAdaptive and state.multiplier then

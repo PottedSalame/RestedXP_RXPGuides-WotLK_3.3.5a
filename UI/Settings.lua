@@ -489,6 +489,7 @@ local settingsDBDefaults = {
         xpEstimatorShowStockXP = true,
         xpEstimatorShowKills = true,
         xpEstimatorShowAdaptive = true,
+        xpEstimatorShowAdaptiveKills = true,
         xpEstimatorShowRested = true,
     }
 }
@@ -1342,10 +1343,12 @@ function addon.settings:CreateAceOptionsPanel()
     local xpDisplaySettings = {
         {"xpEstimatorShowStockXP", "Show Stock XP",
          "Shows the canonical WotLK XP awarded by each mob level."},
-        {"xpEstimatorShowKills", "Show Kill Counts",
+        {"xpEstimatorShowKills", "Show Stock Kills",
          "Shows how many kills remain at the current XP progress."},
         {"xpEstimatorShowAdaptive", "Show Adaptive XP",
          "Shows estimates learned from verified kills on this server."},
+        {"xpEstimatorShowAdaptiveKills", "Show Adaptive Kills",
+         "Shows kill counts calculated from the adaptive XP learned on this server."},
         {"xpEstimatorShowRested", "Show Rested Projections",
          "Shows normal / rested values using the finite rested-XP pool."},
     }

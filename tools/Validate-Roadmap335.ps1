@@ -48,13 +48,18 @@ foreach ($pattern in @(
         Add-Error "Shared feature-tool appearance control is missing: $pattern"
     }
 }
+if ($toolWindowText -notmatch 'local\s+function\s+PreventEscapeClose\s*\(' -or
+    $toolWindowText -match 'RegisterEscapeFrame') {
+    Add-Error 'Shared Feature Tool windows must not close through UISpecialFrames/Escape.'
+}
 if ($settingsText -notmatch 'featureToolsSettings\s*=\s*\{' -or
     $settingsText -notmatch 'childGroups\s*=\s*"tree"') {
     Add-Error 'Feature Tools does not expose an individual settings-page tree.'
 }
 $xpText = [IO.File]::ReadAllText((Join-Path $root 'Features/XPAssistant.lua'))
 foreach ($key in @('xpEstimatorShowStockXP','xpEstimatorShowKills',
-                    'xpEstimatorShowAdaptive','xpEstimatorShowRested')) {
+                    'xpEstimatorShowAdaptive','xpEstimatorShowAdaptiveKills',
+                    'xpEstimatorShowRested')) {
     if ($settingsText -notmatch [regex]::Escape($key) -or
         $xpText -notmatch [regex]::Escape($key)) {
         Add-Error "XP estimator display option is not fully wired: $key"

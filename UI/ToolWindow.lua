@@ -10,7 +10,7 @@ local manager = addon.toolWindows
 
 local _G = _G
 local max, min = math.max, math.min
-local tinsert = table.insert
+local tremove = table.remove
 
 manager.frames = manager.frames or {}
 manager.knownNames = manager.knownNames or {
@@ -35,12 +35,13 @@ local function Clamp(value, low, high)
     return max(low, min(high, value))
 end
 
-local function RegisterEscapeFrame(name)
+local function PreventEscapeClose(name)
     if type(name) ~= "string" or not _G.UISpecialFrames then return end
-    for _, existing in ipairs(_G.UISpecialFrames) do
-        if existing == name then return end
+    for index = #_G.UISpecialFrames, 1, -1 do
+        if _G.UISpecialFrames[index] == name then
+            tremove(_G.UISpecialFrames, index)
+        end
     end
-    tinsert(_G.UISpecialFrames, name)
 end
 
 local function GetProfile()
@@ -260,7 +261,10 @@ function manager:Create(spec)
     spec = spec or {}
     local name = assert(spec.name, "tool window requires a stable name")
     local existing = _G[name]
-    if existing then return existing end
+    if existing then
+        PreventEscapeClose(name)
+        return existing
+    end
 
     spec.width = tonumber(spec.width) or 600
     spec.height = tonumber(spec.height) or 430
@@ -324,7 +328,10 @@ function manager:Create(spec)
     frame:HookScript("OnShow", function(self) manager:ApplyVisuals(self) end)
     frame:HookScript("OnHide", function(self) manager:SavePlacement(self) end)
     manager.frames[name] = frame
-    RegisterEscapeFrame(name)
+    -- Feature tools are persistent working windows.  Keep Escape available
+    -- for gameplay panels and close these only through their explicit X or
+    -- toggle command.
+    PreventEscapeClose(name)
     self:RestorePlacement(frame, spec)
     self:ApplyVisuals(frame)
     frame:Hide()
