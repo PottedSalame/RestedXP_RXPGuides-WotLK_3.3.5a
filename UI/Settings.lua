@@ -471,6 +471,9 @@ local settingsDBDefaults = {
         enableItemReservations = true,
         enablePetAssistant = true,
         enableAdaptivePerformance = false,
+        showXPRemaining = true,
+        enableMobXPEstimator = true,
+        adaptiveMobXP = true,
     }
 }
 
@@ -2081,6 +2084,85 @@ function addon.settings:CreateAceOptionsPanel()
                             if addon.routePreflight then addon.routePreflight:Toggle() end
                         end
                     },
+                    xpAssistantHeader = {
+                        name = L("XP Progress and Mob Estimates"),
+                        type = "header",
+                        width = "full",
+                        order = 3.71,
+                        hidden = addon.gameVersion ~= 30300
+                    },
+                    showXPRemaining = {
+                        name = L("Show XP remaining in the guide footer"),
+                        desc = L("Shows the exact XP still needed for the next level. Click the footer value to open the yellow-mob estimator."),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.72,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.xpAssistant then
+                                addon.xpAssistant:RefreshFooter()
+                            end
+                        end
+                    },
+                    enableMobXPEstimator = {
+                        name = L("Enable Yellow-Mob Estimator"),
+                        desc = L("Shows stock WotLK XP and kill estimates for ordinary solo mobs from two levels below to two levels above you."),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.73,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.xpAssistant then
+                                addon.xpAssistant:ApplySettings()
+                            end
+                        end
+                    },
+                    adaptiveMobXP = {
+                        name = L("Learn private-server mob XP"),
+                        desc = L("Learns a safe median XP multiplier from verified ordinary solo yellow-mob kills. Grouped, rested-uncertain, elite, rare, and instance kills are ignored."),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 3.74,
+                        hidden = addon.gameVersion ~= 30300,
+                        disabled = function()
+                            return not self.profile.enableMobXPEstimator
+                        end,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if addon.xpAssistant then
+                                addon.xpAssistant:ApplySettings()
+                            end
+                        end
+                    },
+                    openMobXPEstimator = {
+                        name = L("Open XP & Yellow-Mob Estimator"),
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 3.75,
+                        hidden = addon.gameVersion ~= 30300,
+                        disabled = function()
+                            return not self.profile.enableMobXPEstimator
+                        end,
+                        func = function()
+                            if addon.xpAssistant then addon.xpAssistant:Toggle() end
+                        end
+                    },
+                    resetMobXPSamples = {
+                        name = L("Reset learned XP samples"),
+                        desc = L("Clears the anonymous per-character calibration samples used by the adaptive estimate."),
+                        type = "execute",
+                        width = optionsWidth,
+                        order = 3.76,
+                        hidden = addon.gameVersion ~= 30300,
+                        confirm = L("Clear all learned mob XP samples for this character?"),
+                        func = function()
+                            if addon.xpAssistant then
+                                addon.xpAssistant:ResetCalibration(true)
+                            end
+                        end
+                    },
                     enablePetAssistant = {
                         name = L("Enable Hunter Pet Assistant"),
                         desc = L("Tracks pet happiness, compatible food, talents, known skills, supplies, and guide-linked stable/tame preparation."),
@@ -2122,7 +2204,7 @@ function addon.settings:CreateAceOptionsPanel()
                     },
                     resetToolWindows = {
                         name = L("Reset Tool Window Positions"),
-                        desc = L("Restores the Route Preflight, Personal-Best Archives, Hunter Pet Assistant, and Performance Inspector windows to their default size and position."),
+                        desc = L("Restores the Route Preflight, Personal-Best Archives, Hunter Pet Assistant, Performance Inspector, and XP Estimator windows to their default size and position."),
                         type = "execute",
                         width = optionsWidth,
                         order = 3.95,
@@ -4574,6 +4656,9 @@ function addon.settings:DetectXPRate(softUpdate)
     end
 
     addon.settings.profile.xprate = calculatedRate
+    if addon.xpAssistant then
+        addon.xpAssistant:ResetCalibration(false, true)
+    end
 
     -- Gold assistant, ignore reloads, silently update
     if (RXPCData and RXPCData.GA) or (addon.guide and addon.guide.farm) or softUpdate then
@@ -4617,6 +4702,7 @@ function addon.settings:RefreshProfile()
 
     -- Restore frame positions on profile change
     addon.settings:LoadFramePositions()
+    if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
 end
 
 function addon.settings:CopyProfile()
@@ -4637,6 +4723,7 @@ function addon.settings:CopyProfile()
 
     -- Restore frame positions on profile change
     addon.settings:LoadFramePositions()
+    if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
 end
 
 function addon.settings:ResetProfile()

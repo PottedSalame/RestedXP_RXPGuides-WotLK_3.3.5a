@@ -1,8 +1,9 @@
 local addonName, addon = ...
 
 local _G = _G
-local fmt, smatch, strsub, tinsert, srep, mmax, abs = string.format, string.match, string.sub, tinsert, string.rep,
-                                                      math.max, abs
+local fmt, strsub, tinsert, srep, mmax, abs = string.format, string.sub,
+                                              tinsert, string.rep, math.max,
+                                              abs
 
 local UnitLevel, GetRealZoneText, IsInGroup, tonumber, GetTime, GetServerTime, UnitXP = UnitLevel, GetRealZoneText,
                                                                                         IsInGroup, tonumber, GetTime,
@@ -376,9 +377,10 @@ end
 function addon.tracker:CHAT_MSG_COMBAT_XP_GAIN(_, text, ...)
     -- Exclude the locale's unnamed XP message used by quest turn-ins; quest XP
     -- is recorded authoritatively by QUEST_TURNED_IN instead.
-    if addon.IsUnattributedXPMessage(text) then return end
-
-    local xpGained = tonumber(smatch(text, "%d+"))
+    local parsed = addon.ParseCombatXPMessage and
+                       addon.ParseCombatXPMessage(text)
+    if not parsed or not parsed.exact or parsed.named == false then return end
+    local xpGained = parsed and tonumber(parsed.total) or nil
 
     if not xpGained or xpGained == 0 then return end
 

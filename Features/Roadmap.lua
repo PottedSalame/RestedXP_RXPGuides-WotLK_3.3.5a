@@ -29,7 +29,9 @@ local moduleSettingKeys = {
                              "reservationLookahead", "stuckWatchdogTimeout"},
     ["hunter pet assistant"] = {"enablePetAssistant"},
     ["performance inspector"] = {"enableAdaptivePerformance",
-                                    "adaptivePerformanceFPSThreshold"}
+                                    "adaptivePerformanceFPSThreshold"},
+    ["xp assistant"] = {"showXPRemaining", "enableMobXPEstimator",
+                           "adaptiveMobXP"}
 }
 
 local function CopySafe(value, depth, seen)

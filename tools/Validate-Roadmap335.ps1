@@ -12,7 +12,7 @@ $modules = @(
     'Features/ActivityPlanner.lua','Features/Accessibility.lua',
     'Features/GuideRecorder.lua','Features/PerformanceInspector.lua',
     'Features/GuideAnalysis.lua','Features/RunArchive.lua',
-    'Features/PetAssistant.lua'
+    'Features/PetAssistant.lua','Features/XPAssistant.lua'
 )
 $lastOffset = -1
 foreach ($module in $modules) {

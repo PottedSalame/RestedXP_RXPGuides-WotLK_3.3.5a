@@ -50,6 +50,134 @@ end
 _G.geterrorhandler = function() return function() end end
 
 local addon = {}
+
+-- The XP Assistant shares these pure calculations and Blizzard-format
+-- parsers with the tracker and communications modules.
+_G.COMBATLOG_XPGAIN_EXHAUSTION1 =
+    "%s dies, you gain %d experience. (%s exp %s bonus)"
+_G.COMBATLOG_XPGAIN_EXHAUSTION2 = _G.COMBATLOG_XPGAIN_EXHAUSTION1
+_G.COMBATLOG_XPGAIN_FIRSTPERSON = "%s dies, you gain %d experience."
+_G.COMBATLOG_XPGAIN_FIRSTPERSON_GROUP =
+    "%s dies, you gain %d experience. (+%d group bonus)"
+_G.COMBATLOG_XPGAIN_FIRSTPERSON_RAID =
+    "%s dies, you gain %d experience. (-%d raid penalty)"
+_G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED = "You gain %d experience."
+_G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED_GROUP =
+    "You gain %d experience. (+%d group bonus)"
+_G.COMBATLOG_XPGAIN_FIRSTPERSON_UNNAMED_RAID =
+    "You gain %d experience. (-%d raid penalty)"
+_G.COMBATLOG_XPGAIN_QUEST = "You gain %d experience."
+loadAddonFile("Core/XP.lua", addon)
+
+local fixtureChunk = assert(loadfile(
+    root .. "/tests/fixtures/player_xp_for_level_335.lua"))
+local levelXPFixture = fixtureChunk()
+check(levelXPFixture[1] == 400 and levelXPFixture[10] == 7600 and
+          levelXPFixture[60] == 290000 and
+          levelXPFixture[70] == 1523800 and
+          levelXPFixture[79] == 1670800,
+      "AzerothCore player-XP offline fixture changed")
+local progress = addon.xpFormula:GetProgress(79, 123400,
+                                              levelXPFixture[79], 50000, 80)
+check(progress.remaining == levelXPFixture[79] - 123400 and
+          progress.rested == 50000 and not progress.atMax,
+      "exact player XP remaining calculation changed")
+local cappedProgress = addon.xpFormula:GetProgress(80, 0, 1, 0, 80)
+check(cappedProgress.atMax and cappedProgress.remaining == 0,
+      "max-level XP progress was not capped")
+
+local expectedLevelTen = {67, 81, 95, 100, 105}
+for offset = -2, 2 do
+    check(addon.xpFormula:GetBaseMobXP(10, 10 + offset, "classic") ==
+              expectedLevelTen[offset + 3],
+          "level-10 Classic XP rounding changed at offset " .. offset)
+end
+local firstLevelRows = addon.xpFormula:GetYellowLevels(1)
+check(#firstLevelRows == 3 and firstLevelRows[1] == 1 and
+          firstLevelRows[3] == 3,
+      "yellow-level rows did not clamp at the lower level boundary")
+local zeroDifferenceBands = {
+    [1] = 5, [7] = 5, [8] = 6, [9] = 6, [10] = 7, [11] = 7,
+    [12] = 8, [15] = 8, [16] = 9, [19] = 9, [20] = 11,
+    [29] = 11, [30] = 12, [39] = 12, [40] = 13, [44] = 13,
+    [45] = 14, [49] = 14, [50] = 15, [54] = 15, [55] = 16,
+    [59] = 16, [60] = 17, [80] = 17,
+}
+for level, expected in pairs(zeroDifferenceBands) do
+    check(addon.xpFormula:GetZeroDifference(level) == expected,
+          "zero-difference band changed at level " .. level)
+end
+check(addon.xpFormula:GetGrayLevel(10) == 4 and
+          addon.xpFormula:GetGrayLevel(40) == 31 and
+          addon.xpFormula:GetGrayLevel(60) == 51,
+      "gray-level boundaries changed")
+check(addon.xpFormula:GetBaseMobXP(60, 60, "classic") == 345 and
+          addon.xpFormula:GetBaseMobXP(60, 60, "outland") == 535 and
+          addon.xpFormula:GetBaseMobXP(70, 70, "outland") == 585 and
+          addon.xpFormula:GetBaseMobXP(70, 70, "northrend") == 930,
+      "expansion content constants changed")
+local boundaryCurves = {
+    {58, 335, 525, 870}, {59, 340, 530, 875},
+    {60, 345, 535, 880}, {61, 350, 540, 885},
+    {70, 395, 585, 930}, {71, 400, 590, 935},
+}
+for _, values in ipairs(boundaryCurves) do
+    check(addon.xpFormula:GetBaseMobXP(values[1], values[1], "classic") ==
+              values[2] and
+          addon.xpFormula:GetBaseMobXP(values[1], values[1], "outland") ==
+              values[3] and
+          addon.xpFormula:GetBaseMobXP(values[1], values[1], "northrend") ==
+              values[4],
+          "content curve changed at boundary level " .. values[1])
+end
+check(addon.xpFormula:GetKillsRemaining(1000, 100, 0) == 10 and
+          addon.xpFormula:GetKillsRemaining(1000, 100, 250) == 8,
+      "finite rested-XP projection changed")
+local learnedMultiplier, learnedCount, lowConfidence =
+    addon.xpFormula:GetCalibration({1, 1, 1.02, 9}, 3)
+check(math.abs(learnedMultiplier - 1.01) < 0.0001 and
+          learnedCount == 4 and lowConfidence,
+      "median calibration or outlier confidence changed")
+
+local parsedXP = addon.ParseCombatXPMessage(
+    "Wolf dies, you gain 1,234 experience.")
+check(parsedXP and parsedXP.total == 1234 and parsedXP.named and
+          parsedXP.exact,
+      "localized-format XP parser lost digit separators or attribution")
+local parsedRested = addon.ParseCombatXPMessage(
+    "Wolf dies, you gain 190 experience. (95 exp Rested bonus)")
+check(parsedRested and parsedRested.total == 190 and
+          parsedRested.restedBonus == 95,
+      "rested XP bonus was not separated from the total award")
+local parsedQuest = addon.ParseCombatXPMessage("You gain 450 experience.")
+check(parsedQuest and parsedQuest.total == 450 and not parsedQuest.named,
+      "unnamed quest XP was attributed to a killed creature")
+
+local localizedXPFixtures = {
+    {"deDE", "%s stirbt. Ihr bekommt %d Erfahrung.",
+        "Wolf stirbt. Ihr bekommt 1.234 Erfahrung.", "Wolf"},
+    {"esES", "%s muere, recibes %d puntos de experiencia.",
+        "Lobo muere, recibes 1.234 puntos de experiencia.", "Lobo"},
+    {"frFR", "%s meurt, vous gagnez %d points d'expérience.",
+        "Loup meurt, vous gagnez 1 234 points d'expérience.", "Loup"},
+    {"ruRU", "%s погибает. Вы получаете %d опыта.",
+        "Волк погибает. Вы получаете 1 234 опыта.", "Волк"},
+    {"koKR", "%1$s|1이;가; 죽었습니다. %2$d의 경험치를 획득했습니다.",
+        "늑대|1이;가; 죽었습니다. 1,234의 경험치를 획득했습니다.", "늑대"},
+    {"zhCN", "%s死亡，你获得了%d点经验值。",
+        "狼死亡，你获得了1,234点经验值。", "狼"},
+    {"zhTW", "%s死亡，你獲得了%d點經驗值。",
+        "狼死亡，你獲得了1,234點經驗值。", "狼"},
+}
+for _, fixture in ipairs(localizedXPFixtures) do
+    _G.COMBATLOG_XPGAIN_FIRSTPERSON = fixture[2]
+    addon.xpFormula:RefreshCombatXPFormats()
+    local localized = addon.ParseCombatXPMessage(fixture[3])
+    check(localized and localized.total == 1234 and
+              localized.sourceName == fixture[4],
+          fixture[1] .. " combat XP format was not parsed")
+end
+
 loadAddonFile("Core/Services.lua", addon)
 loadAddonFile("Core/Scheduler.lua", addon)
 loadAddonFile("Core/Storage.lua", addon)

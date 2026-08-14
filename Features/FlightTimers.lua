@@ -22,6 +22,9 @@ local function OnHide(self)
         RXPFrame.Footer.icon:SetAlpha(1)
         RXPFrame.Footer.text:SetAlpha(1)
         RXPFrame.Footer.cog:SetAlpha(1)
+        if addon.xpAssistant then
+            addon.xpAssistant:SetFooterSuppressed(false)
+        end
     end
 end
 
@@ -104,6 +107,7 @@ function addon.HideTimers()
     RXPFrame.Footer.icon:SetAlpha(1)
     RXPFrame.Footer.text:SetAlpha(1)
     RXPFrame.Footer.cog:SetAlpha(1)
+    if addon.xpAssistant then addon.xpAssistant:SetFooterSuppressed(false) end
 end
 
 function addon.StopTimer(label)
@@ -140,6 +144,7 @@ function addon.StartTimer(duration,label,options)
     RXPFrame.Footer.icon:SetAlpha(0)
     RXPFrame.Footer.text:SetAlpha(0)
     RXPFrame.Footer.cog:SetAlpha(0)
+    if addon.xpAssistant then addon.xpAssistant:SetFooterSuppressed(true) end
 
     addon:SortTimers()
     return bar

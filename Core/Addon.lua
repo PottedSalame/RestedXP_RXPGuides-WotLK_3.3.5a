@@ -1755,6 +1755,20 @@ local function RegisterRuntimeSubsystems()
                                     "itemUpgrades")
             addon.itemUpgrades:Setup()
         end)
+    if addon.xpAssistant and addon.xpAssistant.Setup then
+        addon.runtime:Register({
+            id = "xp-assistant",
+            label = "xp assistant",
+            depends = {"settings", "guide-ui"},
+            optional = true,
+            initialize = function()
+                addon.services:Register("xp-assistant", addon.xpAssistant,
+                                        "xpAssistant")
+                addon.xpAssistant:Setup()
+            end,
+            disable = function() addon.xpAssistant:Shutdown() end
+        })
+    end
 
     if addon.roadmap and addon.roadmap.Setup then
         addon.runtime:Register({

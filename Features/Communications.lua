@@ -198,9 +198,10 @@ function addon.comms:PLAYER_LEVEL_UP(_, level)
 end
 
 function addon.comms:CHAT_MSG_COMBAT_XP_GAIN(_, text, ...)
-    if addon.IsUnattributedXPMessage(text) then return end
-
-    local xpGained = tonumber(smatch(text, "%d+"))
+    local parsed = addon.ParseCombatXPMessage and
+                       addon.ParseCombatXPMessage(text)
+    if not parsed or not parsed.exact or parsed.named == false then return end
+    local xpGained = parsed and tonumber(parsed.total) or nil
 
     if not xpGained or xpGained <= 0 then return end
 

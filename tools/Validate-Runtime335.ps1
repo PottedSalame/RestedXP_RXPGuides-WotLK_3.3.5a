@@ -409,14 +409,16 @@ foreach ($localeFile in Get-ChildItem (Join-Path $root 'locale') -File -Filter '
     }
 }
 
-# Backport.lua stores several locales in one data table instead of ordinary
-# L[...] assignments. Validate every translated entry there, including future
-# additions, so Lua 5.1-incompatible placeholder reordering cannot slip in.
-$backportLocalePath = Join-Path $root 'locale\Backport.lua'
-if (Test-Path -LiteralPath $backportLocalePath) {
-    $backportLocaleText = [IO.File]::ReadAllText($backportLocalePath)
+# Multi-locale feature files store several locales in one data table instead
+# of ordinary L[...] assignments. Validate every translated entry so Lua
+# 5.1-incompatible placeholder reordering cannot slip in.
+foreach ($multiLocaleRelative in @(
+    'locale\Backport.lua', 'locale\XPAssistant.lua')) {
+    $multiLocalePath = Join-Path $root $multiLocaleRelative
+    if (-not (Test-Path -LiteralPath $multiLocalePath)) { continue }
+    $multiLocaleText = [IO.File]::ReadAllText($multiLocalePath)
     foreach ($entry in [regex]::Matches(
-        $backportLocaleText,
+        $multiLocaleText,
         '\["(?<key>(?:\\.|[^"])*)"\]\s*=\s*"(?<value>(?:\\.|[^"])*)"')) {
         $keySignature = @([regex]::Matches(
             $entry.Groups['key'].Value,
@@ -428,7 +430,7 @@ if (Test-Path -LiteralPath $backportLocalePath) {
                 ForEach-Object { $_.Groups[1].Value }) -join ','
         if ($keySignature -cne $valueSignature) {
             Add-ValidationError (
-                "Backport.lua reorders placeholders for '$($entry.Groups['key'].Value)': " +
+                "$multiLocaleRelative reorders placeholders for '$($entry.Groups['key'].Value)': " +
                 "$valueSignature (expected $keySignature).")
         }
     }

@@ -17,7 +17,8 @@ manager.knownNames = manager.knownNames or {
     "RXPRoutePreflightWindow",
     "RXPPerformanceInspector",
     "RXPHunterPetAssistant",
-    "RXPLevelingArchives"
+    "RXPLevelingArchives",
+    "RXPXPProgressWindow"
 }
 
 local backdrop = {
@@ -98,8 +99,15 @@ function manager:RestorePlacement(frame, spec)
         end
     end
     if not restored then
+        local relative = spec.relativeTo
+        if type(relative) == "string" then
+            relative = _G[relative]
+        elseif type(relative) == "function" then
+            relative = relative()
+        end
+        relative = relative or _G.UIParent
         frame:ClearAllPoints()
-        frame:SetPoint(spec.point or "CENTER", _G.UIParent,
+        frame:SetPoint(spec.point or "CENTER", relative,
                        spec.relativePoint or spec.point or "CENTER",
                        spec.x or 0, spec.y or 0)
     end

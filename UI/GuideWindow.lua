@@ -190,11 +190,15 @@ function addon.SetupGuideWindow()
     GuideName.text:SetTextColor(unpack(addon.activeTheme.textColor))
 
     addon.SetFontSafely(Footer.text, addon.font, 9, "")
+    local releaseText
     if addon.player.beta then
-        Footer.text:SetText(fmt("%s %s", addon.title, addon.release))
+        releaseText = fmt("%s %s", addon.title, addon.release)
     else
-        Footer.text:SetText(fmt("RXP Beta %s %d/%d", addon.release, addon.minGuideVersion ,addon.maxGuideVersion))
+        releaseText = fmt("RXP Beta %s %d/%d", addon.release,
+                          addon.minGuideVersion, addon.maxGuideVersion)
     end
+    addon.guideFooterReleaseText = releaseText
+    Footer.text:SetText(releaseText)
     Footer.text:SetTextColor(unpack(addon.activeTheme.textColor))
 
     GuideName.bg:SetTexture(addon.GetTexture("rxp-banner"))
@@ -1871,11 +1875,24 @@ addon.emptyGuide = {
 }
 
 function addon.BetaVersionCheck()
+    local releaseText
     if GetCurrentRegion() < 20 then--PTR Region 72?
-        Footer.text:SetText(fmt("%s %s", addon.title, addon.release))
+        releaseText = fmt("%s %s", addon.title, addon.release)
     else
-        Footer.text:SetText(fmt("RXP Beta %s %d/%d", addon.release, addon.minGuideVersion ,addon.maxGuideVersion))
+        releaseText = fmt("RXP Beta %s %d/%d", addon.release,
+                          addon.minGuideVersion, addon.maxGuideVersion)
     end
+    addon.guideFooterReleaseText = releaseText
+    if addon.xpAssistant and addon.xpAssistant.RefreshFooter then
+        addon.xpAssistant:RefreshFooter()
+    else
+        Footer.text:SetText(releaseText)
+    end
+end
+
+function addon.GetGuideFooterReleaseText()
+    return addon.guideFooterReleaseText or
+               fmt("%s %s", addon.title or "RXP", addon.release or "")
 end
 
 function addon.ProcessGuideTable(guide)
@@ -3370,6 +3387,15 @@ function RXPFrame:GenerateMenuTable(menu)
     -- and item reservations are parts of Route Preflight, while the watchdog
     -- is deliberately a separate manual action.
     local featureTools = {
+        {
+            text = L("XP & Yellow-Mob Estimator"),
+            notCheckable = 1,
+            disabled = not addon.xpAssistant or
+                           addon.settings.profile.enableMobXPEstimator == false,
+            func = function()
+                if addon.xpAssistant then addon.xpAssistant:Toggle() end
+            end
+        },
         {
             text = L("Route Preflight, XP & Reservations"),
             notCheckable = 1,
