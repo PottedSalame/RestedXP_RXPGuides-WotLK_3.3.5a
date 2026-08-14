@@ -47,6 +47,83 @@ local function GetProfile()
     return addon.settings and addon.settings.profile
 end
 
+local appearanceLimits = {
+    fontSize = {6, 22},
+    opacity = {0.05, 1},
+    backgroundOpacity = {0, 1},
+    scale = {0.50, 2},
+}
+
+local function AppearanceStore(create)
+    local profile = GetProfile()
+    if not profile then return end
+    if type(profile.toolWindowAppearance) ~= "table" then
+        if not create then return end
+        profile.toolWindowAppearance = {}
+    end
+    return profile.toolWindowAppearance
+end
+
+local function DefaultAppearance(frameName, key)
+    local frame = manager.frames[frameName]
+    local spec = frame and frame.toolWindowSpec or {}
+    if key == "fontSize" then
+        return max(10, tonumber(spec.fontSize) or
+                       tonumber(GetProfile() and GetProfile().guideFontSize) or 9)
+    elseif key == "opacity" then
+        return tonumber(spec.opacity) or 1
+    elseif key == "backgroundOpacity" then
+        return tonumber(spec.backgroundOpacity) or 1
+    elseif key == "scale" then
+        return tonumber(spec.scale) or 1
+    end
+end
+
+function manager:GetAppearanceValue(frameName, key)
+    local limits = appearanceLimits[key]
+    if not limits then return end
+    local store = AppearanceStore(false)
+    local appearance = store and type(store[frameName]) == "table" and
+                           store[frameName] or nil
+    local value = appearance and tonumber(appearance[key]) or
+                      DefaultAppearance(frameName, key)
+    return Clamp(value, limits[1], limits[2])
+end
+
+function manager:SetAppearanceValue(frameName, key, value)
+    local limits = appearanceLimits[key]
+    if not limits or type(frameName) ~= "string" then return end
+    local store = AppearanceStore(true)
+    if not store then return end
+    store[frameName] = type(store[frameName]) == "table" and
+                           store[frameName] or {}
+    store[frameName][key] = Clamp(value, limits[1], limits[2])
+    local frame = self.frames[frameName]
+    if frame then self:ApplyVisuals(frame) end
+end
+
+function manager:ResetWindow(frameName)
+    local profile = GetProfile()
+    if profile then
+        if type(profile.toolWindowAppearance) == "table" then
+            profile.toolWindowAppearance[frameName] = nil
+        end
+        if type(profile.framePositions) == "table" then
+            profile.framePositions[frameName] = nil
+        end
+        if type(profile.frameSizes) == "table" then
+            profile.frameSizes[frameName] = nil
+        end
+    end
+    local frame = self.frames[frameName]
+    if frame and frame.toolWindowSpec then
+        self:ApplyVisuals(frame)
+        self:RestorePlacement(frame, frame.toolWindowSpec)
+        if frame.UpdateToolTextLayout then frame:UpdateToolTextLayout() end
+        if frame.OnToolReset then frame:OnToolReset() end
+    end
+end
+
 function manager:SavePlacement(frame)
     local profile = GetProfile()
     local name = frame and frame.GetName and frame:GetName()
@@ -118,13 +195,24 @@ function manager:ApplyVisuals(frame)
     local colors = addon.colors or addon.activeTheme or {}
     local background = colors.background or {0.035, 0.035, 0.07, 0.98}
     frame:SetBackdrop(backdrop)
+    local frameName = frame.GetName and frame:GetName()
+    local opacity = frameName and self:GetAppearanceValue(frameName, "opacity") or 1
+    local backgroundOpacity = frameName and
+                                  self:GetAppearanceValue(frameName,
+                                                          "backgroundOpacity") or 1
+    local scale = frameName and self:GetAppearanceValue(frameName, "scale") or 1
+    local themeAlpha = max(0.94, tonumber(background[4]) or 1)
     frame:SetBackdropColor(background[1] or 0.035, background[2] or 0.035,
-                           background[3] or 0.07, max(0.94,
-                           tonumber(background[4]) or 1))
+                           background[3] or 0.07,
+                           themeAlpha * backgroundOpacity)
     frame:SetBackdropBorderColor(0.72, 0.72, 0.72, 1)
+    frame:SetAlpha(opacity or 1)
+    frame:SetScale(scale or 1)
 
-    local fontSize = max(10, tonumber(GetProfile() and
-                              GetProfile().guideFontSize) or 9)
+    local fontSize = frameName and
+                         self:GetAppearanceValue(frameName, "fontSize") or
+                         max(10, tonumber(GetProfile() and
+                                  GetProfile().guideFontSize) or 9)
     if frame.title and addon.SetFontSafely then
         addon.SetFontSafely(frame.title, addon.font, fontSize + 4, "")
     end
@@ -136,6 +224,16 @@ end
 
 function manager:RefreshVisuals()
     for _, frame in pairs(self.frames) do self:ApplyVisuals(frame) end
+end
+
+function manager:RestoreAll()
+    for _, frame in pairs(self.frames) do
+        if frame.toolWindowSpec then
+            self:ApplyVisuals(frame)
+            self:RestorePlacement(frame, frame.toolWindowSpec)
+            if frame.UpdateToolTextLayout then frame:UpdateToolTextLayout() end
+        end
+    end
 end
 
 function manager:ResetPlacements()

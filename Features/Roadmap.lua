@@ -31,7 +31,9 @@ local moduleSettingKeys = {
     ["performance inspector"] = {"enableAdaptivePerformance",
                                     "adaptivePerformanceFPSThreshold"},
     ["xp assistant"] = {"showXPRemaining", "enableMobXPEstimator",
-                           "adaptiveMobXP"}
+                           "adaptiveMobXP", "xpEstimatorShowStockXP",
+                           "xpEstimatorShowKills", "xpEstimatorShowAdaptive",
+                           "xpEstimatorShowRested"}
 }
 
 local function CopySafe(value, depth, seen)

@@ -413,7 +413,8 @@ foreach ($localeFile in Get-ChildItem (Join-Path $root 'locale') -File -Filter '
 # of ordinary L[...] assignments. Validate every translated entry so Lua
 # 5.1-incompatible placeholder reordering cannot slip in.
 foreach ($multiLocaleRelative in @(
-    'locale\Backport.lua', 'locale\XPAssistant.lua')) {
+    'locale\Backport.lua', 'locale\FeatureTools.lua',
+    'locale\XPAssistant.lua')) {
     $multiLocalePath = Join-Path $root $multiLocaleRelative
     if (-not (Test-Path -LiteralPath $multiLocalePath)) { continue }
     $multiLocaleText = [IO.File]::ReadAllText($multiLocalePath)

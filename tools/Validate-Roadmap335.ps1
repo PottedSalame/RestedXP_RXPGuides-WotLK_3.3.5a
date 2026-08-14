@@ -38,6 +38,33 @@ foreach ($command in @('guides','diagnose','backup','supplies','gear','dailies',
     }
 }
 
+$toolWindowText = [IO.File]::ReadAllText((Join-Path $root 'UI/ToolWindow.lua'))
+foreach ($pattern in @(
+        'function\s+manager:GetAppearanceValue\s*\(',
+        'function\s+manager:SetAppearanceValue\s*\(',
+        'function\s+manager:ResetWindow\s*\(',
+        'backgroundOpacity\s*=\s*\{0,\s*1\}')) {
+    if ($toolWindowText -notmatch $pattern) {
+        Add-Error "Shared feature-tool appearance control is missing: $pattern"
+    }
+}
+if ($settingsText -notmatch 'featureToolsSettings\s*=\s*\{' -or
+    $settingsText -notmatch 'childGroups\s*=\s*"tree"') {
+    Add-Error 'Feature Tools does not expose an individual settings-page tree.'
+}
+$xpText = [IO.File]::ReadAllText((Join-Path $root 'Features/XPAssistant.lua'))
+foreach ($key in @('xpEstimatorShowStockXP','xpEstimatorShowKills',
+                    'xpEstimatorShowAdaptive','xpEstimatorShowRested')) {
+    if ($settingsText -notmatch [regex]::Escape($key) -or
+        $xpText -notmatch [regex]::Escape($key)) {
+        Add-Error "XP estimator display option is not fully wired: $key"
+    }
+}
+if ($xpText -notmatch 'function\s+assistant:ResizeForVisibleColumns\s*\(' -or
+    $xpText -notmatch 'xpColumnCount') {
+    Add-Error 'XP estimator does not adapt its saved window size to visible columns.'
+}
+
 $forbidden = @(
     '\bTargetUnit\s*\(', '\bloadstring\s*\(', '\bdofile\s*\(',
     '\bdebug\s*\.', '\bReadProcessMemory\b', '\bOpenProcess\b',

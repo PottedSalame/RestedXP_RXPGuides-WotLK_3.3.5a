@@ -642,16 +642,182 @@ local function SetCellFont(cell, size)
     end
 end
 
+local displayOptions = {
+    {
+        name = "RXPXPProgressStockCheck",
+        key = "xpEstimatorShowStockXP",
+        label = "Show Stock XP",
+        description = "Shows the canonical WotLK XP awarded by each mob level.",
+    },
+    {
+        name = "RXPXPProgressKillsCheck",
+        key = "xpEstimatorShowKills",
+        label = "Show Kill Counts",
+        description = "Shows how many kills remain at the current XP progress.",
+    },
+    {
+        name = "RXPXPProgressAdaptiveCheck",
+        key = "xpEstimatorShowAdaptive",
+        label = "Show Adaptive XP",
+        description = "Shows estimates learned from verified kills on this server.",
+    },
+    {
+        name = "RXPXPProgressRestedCheck",
+        key = "xpEstimatorShowRested",
+        label = "Show Rested Projections",
+        description = "Shows normal / rested values using the finite rested-XP pool.",
+    },
+}
+
+function assistant:IsDisplayOptionEnabled(key)
+    local profile = addon.settings and addon.settings.profile
+    return not profile or profile[key] ~= false
+end
+
+function assistant:SetDisplayOption(key, value)
+    if addon.settings and addon.settings.profile then
+        addon.settings.profile[key] = value == true
+    end
+    self:ResizeForVisibleColumns()
+    self:RefreshWindow()
+end
+
+function assistant:GetVisibleColumnCount()
+    local count = 1
+    if self:IsDisplayOptionEnabled("xpEstimatorShowStockXP") then
+        count = count + 1
+    end
+    if self:IsDisplayOptionEnabled("xpEstimatorShowKills") then
+        count = count + 1
+    end
+    if self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive") then
+        count = count + 1
+        if self:IsDisplayOptionEnabled("xpEstimatorShowKills") then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function assistant:ResizeForVisibleColumns(force)
+    local frame = self.frame
+    local profile = addon.settings and addon.settings.profile
+    if not (frame and profile) then return end
+    profile.toolWindowAppearance = type(profile.toolWindowAppearance) == "table" and
+                                       profile.toolWindowAppearance or {}
+    local appearance = profile.toolWindowAppearance.RXPXPProgressWindow
+    appearance = type(appearance) == "table" and appearance or {}
+    profile.toolWindowAppearance.RXPXPProgressWindow = appearance
+
+    local count = self:GetVisibleColumnCount()
+    if not force and tonumber(appearance.xpColumnCount) == count then return end
+    local widths = {340, 410, 490, 570, 650}
+    local width = widths[count] or 650
+    local height = count <= 2 and 440 or 390
+    appearance.xpColumnCount = count
+    if frame.SetMinResize then
+        frame:SetMinResize(340, count <= 2 and 425 or 375)
+    end
+    frame:SetSize(width, height)
+    if addon.toolWindows and addon.toolWindows.SavePlacement then
+        addon.toolWindows:SavePlacement(frame)
+    end
+end
+
+function assistant:RefreshColumnLayout()
+    local frame = self.frame
+    if not frame then return end
+    local visible = {
+        true,
+        self:IsDisplayOptionEnabled("xpEstimatorShowStockXP"),
+        self:IsDisplayOptionEnabled("xpEstimatorShowKills"),
+        self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive"),
+        self:IsDisplayOptionEnabled("xpEstimatorShowAdaptive") and
+            self:IsDisplayOptionEnabled("xpEstimatorShowKills"),
+    }
+    local count = self:GetVisibleColumnCount()
+    local frameWidth = frame:GetWidth() or 650
+    local compact = frameWidth < 470
+    local checkColumns = compact and 1 or 2
+    local checkWidth = max(120, (frameWidth - 55) / checkColumns)
+    for index, check in ipairs(frame.displayChecks or {}) do
+        local column = (index - 1) % checkColumns
+        local row = floor((index - 1) / checkColumns)
+        check:ClearAllPoints()
+        check:SetPoint("TOPLEFT", frame, "TOPLEFT", 22 + column * checkWidth,
+                       -94 - row * 25)
+        check:SetHitRectInsets(0, -max(0, checkWidth - 25), 0, 0)
+        check.label:SetWidth(max(90, checkWidth - 29))
+    end
+    local headerTop = compact and -208 or -158
+    local rowTop = compact and -227 or -177
+    local available = max(260, frameWidth - 44)
+    local mobWidth = min(110, available)
+    local otherWidth = count > 1 and (available - mobWidth) / (count - 1) or 0
+    local x = 22
+    for column, shown in ipairs(visible) do
+        local width = column == 1 and (count == 1 and available or mobWidth) or
+                          otherWidth
+        local header = frame.headers[column]
+        header:ClearAllPoints()
+        header:SetPoint("TOPLEFT", frame, "TOPLEFT", x, headerTop)
+        header:SetWidth(max(40, width - 6))
+        header:SetShown(shown)
+        for _, row in ipairs(frame.rows) do
+            local cell = row.cells[column]
+            cell:ClearAllPoints()
+            cell:SetPoint("LEFT", row, "LEFT", x - 16, 0)
+            cell:SetWidth(max(40, width - 6))
+            cell:SetShown(shown)
+        end
+        if shown then x = x + width end
+    end
+    for rowIndex, row in ipairs(frame.rows) do
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", frame, "TOPLEFT", 16,
+                     rowTop - (rowIndex - 1) * 25)
+        row:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -16,
+                     rowTop - (rowIndex - 1) * 25)
+    end
+end
+
+local function CreateDisplayCheck(frame, definition, index)
+    local check = _G.CreateFrame("CheckButton", definition.name, frame,
+                                 "UICheckButtonTemplate")
+    check:SetSize(22, 22)
+    local label = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    label:SetPoint("LEFT", check, "RIGHT", 1, 0)
+    label:SetWidth(245)
+    label:SetHeight(22)
+    label:SetJustifyH("LEFT")
+    label:SetText(L(definition.label))
+    check.label = label
+    check.optionKey = definition.key
+    check.description = definition.description
+    check:SetScript("OnClick", function(self)
+        assistant:SetDisplayOption(self.optionKey,
+                                   self:GetChecked() and true or false)
+    end)
+    check:SetScript("OnEnter", function(self)
+        _G.GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        _G.GameTooltip:AddLine(L(definition.label))
+        _G.GameTooltip:AddLine(L(self.description), 1, 1, 1, true)
+        _G.GameTooltip:Show()
+    end)
+    check:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
+    return check
+end
+
 function assistant:CreateWindow()
     if self.frame then return self.frame end
     local tools = addon.toolWindows
     local frame = tools:Create({
         name = "RXPXPProgressWindow",
         title = L("XP Progress and Yellow-Mob Estimator"),
-        width = 600,
-        height = 315,
-        minWidth = 540,
-        minHeight = 300,
+        width = 650,
+        height = 390,
+        minWidth = 340,
+        minHeight = 375,
         relativeTo = "RXPFrame",
         point = "TOPLEFT",
         relativePoint = "TOPRIGHT",
@@ -667,29 +833,33 @@ function assistant:CreateWindow()
     summary:SetHeight(48)
     frame.summary = summary
 
+    frame.displayChecks = {}
+    for index, definition in ipairs(displayOptions) do
+        frame.displayChecks[index] = CreateDisplayCheck(frame, definition,
+                                                         index)
+    end
+
     local headers = {L("Mob level"), L("Stock XP"), L("Stock kills"),
                      L("Adaptive XP"), L("Adaptive kills")}
-    local offsets = {22, 112, 208, 316, 440}
     frame.headers = {}
     for index, label in ipairs(headers) do
         local cell = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-        cell:SetPoint("TOPLEFT", offsets[index], -104)
         cell:SetText(label)
         cell:SetTextColor(1, 0.82, 0)
+        cell:SetJustifyH("LEFT")
         frame.headers[index] = cell
     end
 
     frame.rows = {}
     for rowIndex = 1, 5 do
         local row = _G.CreateFrame("Frame", nil, frame)
-        row:SetPoint("TOPLEFT", 16, -122 - (rowIndex - 1) * 25)
-        row:SetPoint("TOPRIGHT", -16, -122 - (rowIndex - 1) * 25)
+        row:SetPoint("TOPLEFT", 16, -177 - (rowIndex - 1) * 25)
+        row:SetPoint("TOPRIGHT", -16, -177 - (rowIndex - 1) * 25)
         row:SetHeight(23)
         row.cells = {}
         for column = 1, 5 do
             local cell = row:CreateFontString(nil, "ARTWORK",
                                                "GameFontHighlightSmall")
-            cell:SetPoint("LEFT", row, "LEFT", offsets[column] - 16, 0)
             cell:SetJustifyH("LEFT")
             row.cells[column] = cell
         end
@@ -702,19 +872,32 @@ function assistant:CreateWindow()
     note:SetJustifyH("LEFT")
     note:SetJustifyV("BOTTOM")
     if note.SetWordWrap then note:SetWordWrap(true) end
-    note:SetHeight(32)
+    note:SetHeight(48)
     frame.note = note
 
     frame.OnToolVisuals = function(_, fontSize)
         SetCellFont(summary, fontSize)
         SetCellFont(note, fontSize)
+        for _, check in ipairs(frame.displayChecks) do
+            SetCellFont(check.label, fontSize)
+        end
         for _, cell in ipairs(frame.headers) do SetCellFont(cell, fontSize) end
         for _, row in ipairs(frame.rows) do
             for _, cell in ipairs(row.cells) do SetCellFont(cell, fontSize) end
         end
+        assistant:RefreshColumnLayout()
     end
     frame:HookScript("OnShow", function() assistant:RefreshWindow() end)
+    frame:HookScript("OnSizeChanged", function()
+        assistant:RefreshColumnLayout()
+    end)
     self.frame = frame
+    frame.OnToolReset = function()
+        assistant:ResizeForVisibleColumns(true)
+        assistant:RefreshColumnLayout()
+    end
+    self:ResizeForVisibleColumns()
+    self:RefreshColumnLayout()
     return frame
 end
 
@@ -723,6 +906,10 @@ function assistant:RefreshWindow()
     if not (frame and frame:IsShown()) then return end
     local rows, state = self:GetRows()
     local progress = state.progress
+    for _, check in ipairs(frame.displayChecks) do
+        check:SetChecked(self:IsDisplayOptionEnabled(check.optionKey))
+    end
+    self:RefreshColumnLayout()
     if progress.atMax then
         frame.summary:SetText(L("You have reached the current level cap."))
     else
@@ -742,7 +929,8 @@ function assistant:RefreshWindow()
             local offset = row.offset == 0 and "=" or
                                format("%+d", row.offset)
             rowFrame.cells[1]:SetText(format("[=] %d (%s)", row.level, offset))
-            local hasRested = progress.rested > 0
+            local hasRested = progress.rested > 0 and
+                self:IsDisplayOptionEnabled("xpEstimatorShowRested")
             rowFrame.cells[2]:SetText(row.baseXP and
                 (hasRested and format("%d / %d", row.baseXP,
                                       row.baseXP + min(row.baseXP,
@@ -791,17 +979,21 @@ function assistant:RefreshWindow()
     elseif state.inInstance then
         notes[#notes + 1] = L("Solo baseline; adaptive learning is paused inside instances with possible special modifiers.")
     end
-    if state.lowConfidence then
+    local showAdaptive = self:IsDisplayOptionEnabled(
+                             "xpEstimatorShowAdaptive")
+    if showAdaptive and state.lowConfidence then
         notes[#notes + 1] = L("Adaptive estimate has low confidence because recent awards vary.")
-    elseif state.multiplier then
+    elseif showAdaptive and state.multiplier then
         notes[#notes + 1] = format(L("Adaptive estimate: %.2fx from %d valid kills."),
                                   state.multiplier, state.samples)
-    elseif state.content and addon.settings.profile.adaptiveMobXP ~= false and
+    elseif showAdaptive and state.content and
+        addon.settings.profile.adaptiveMobXP ~= false and
         not progress.atMax then
         notes[#notes + 1] = format(L("Learning valid solo kills: %d/%d."),
                                   state.samples, REQUIRED_SAMPLES)
     end
-    if progress.rested > 0 and not progress.atMax then
+    if self:IsDisplayOptionEnabled("xpEstimatorShowRested") and
+        progress.rested > 0 and not progress.atMax then
         notes[#notes + 1] = L("XP and kills show normal / rested projections; rested kills use the finite rested-XP pool.")
     end
     frame.note:SetText(table.concat(notes, " "))
@@ -897,6 +1089,7 @@ end
 
 function assistant:ApplySettings()
     self:UpdateEventRegistrations()
+    if self.frame then self:ResizeForVisibleColumns() end
     if addon.settings.profile.enableMobXPEstimator == false and self.frame then
         self.frame:Hide()
     end

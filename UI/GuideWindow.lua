@@ -3443,6 +3443,17 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         },
         {
+            text = L("Feature Tool Settings..."),
+            notCheckable = 1,
+            disabled = not addon.settings or
+                           not addon.settings.OpenFeatureToolSettings,
+            func = function()
+                if addon.settings and addon.settings.OpenFeatureToolSettings then
+                    addon.settings.OpenFeatureToolSettings()
+                end
+            end
+        },
+        {
             text = L("Reset Tool Window Positions"),
             notCheckable = 1,
             disabled = not addon.toolWindows,

@@ -202,6 +202,17 @@ local function NormalizeLegacyAceConfigOptions(option)
     end
 end
 
+function addon.settings.OpenFeatureToolSettings(toolPage)
+    addon.settings.OpenSettings()
+    RunOnNextFrame(function()
+        if not (AceConfigDialog and AceConfigDialog.SelectGroup) then return end
+        local selected = type(toolPage) == "string" and toolPage ~= "" and
+                             toolPage or "routePreflight"
+        pcall(AceConfigDialog.SelectGroup, AceConfigDialog, addon.title,
+              "featureToolsSettings", selected)
+    end)
+end
+
 if not addon.settings.gui then
     addon.settings.gui = {selectedDeleteGuide = "", importStatusHistory = {}}
 end
@@ -458,6 +469,7 @@ local settingsDBDefaults = {
 
         framePositions = {},
         frameSizes = {},
+        toolWindowAppearance = {},
 
         -- Grouping
         shareQuests = false,
@@ -474,6 +486,10 @@ local settingsDBDefaults = {
         showXPRemaining = true,
         enableMobXPEstimator = true,
         adaptiveMobXP = true,
+        xpEstimatorShowStockXP = true,
+        xpEstimatorShowKills = true,
+        xpEstimatorShowAdaptive = true,
+        xpEstimatorShowRested = true,
     }
 }
 
@@ -1174,6 +1190,188 @@ function addon.settings:CreateAceOptionsPanel()
 
     local optionsWidth = 1.08
     local settingsCache = {invertedOrphans = {}}
+
+    local function ToolAppearancePage(label, frameName, openFunction,
+                                      unavailable)
+        local function GetAppearance(key)
+            if addon.toolWindows and addon.toolWindows.GetAppearanceValue then
+                return addon.toolWindows:GetAppearanceValue(frameName, key)
+            end
+            if key == "fontSize" then
+                return math.max(10, tonumber(self.profile.guideFontSize) or 9)
+            end
+            return 1
+        end
+        local function SetAppearance(key, value)
+            if addon.toolWindows and addon.toolWindows.SetAppearanceValue then
+                addon.toolWindows:SetAppearanceValue(frameName, key, value)
+            end
+        end
+        return {
+            type = "group",
+            name = label,
+            args = {
+                open = {
+                    name = L("Open Tool"),
+                    desc = fmt(L("Open the %s window."), label),
+                    type = "execute",
+                    width = optionsWidth,
+                    order = 1,
+                    disabled = unavailable,
+                    func = openFunction,
+                },
+                appearanceHeader = {
+                    name = L("Window Appearance"),
+                    type = "header",
+                    width = "full",
+                    order = 10,
+                },
+                fontSize = {
+                    name = L("Window Font Size"),
+                    desc = L("Changes the text size for this tool without changing the main guide window."),
+                    type = "range",
+                    width = optionsWidth,
+                    order = 11,
+                    min = 6,
+                    max = 22,
+                    step = 1,
+                    get = function() return GetAppearance("fontSize") end,
+                    set = function(_, value)
+                        SetAppearance("fontSize", math.floor(value + 0.5))
+                    end,
+                },
+                opacity = {
+                    name = L("Window Opacity"),
+                    desc = L("Changes the opacity of this tool window and its contents."),
+                    type = "range",
+                    width = optionsWidth,
+                    order = 12,
+                    min = 0.05,
+                    max = 1,
+                    step = 0.05,
+                    isPercent = true,
+                    get = function() return GetAppearance("opacity") end,
+                    set = function(_, value) SetAppearance("opacity", value) end,
+                },
+                backgroundOpacity = {
+                    name = L("Window Background Opacity"),
+                    desc = L("Changes only the background transparency while keeping text and controls fully visible."),
+                    type = "range",
+                    width = optionsWidth,
+                    order = 13,
+                    min = 0,
+                    max = 1,
+                    step = 0.05,
+                    isPercent = true,
+                    get = function()
+                        return GetAppearance("backgroundOpacity")
+                    end,
+                    set = function(_, value)
+                        SetAppearance("backgroundOpacity", value)
+                    end,
+                },
+                scale = {
+                    name = L("Window Scale"),
+                    desc = L("Scales this tool independently from the main guide window."),
+                    type = "range",
+                    width = optionsWidth,
+                    order = 14,
+                    min = 0.50,
+                    max = 2,
+                    step = 0.05,
+                    isPercent = true,
+                    get = function() return GetAppearance("scale") end,
+                    set = function(_, value) SetAppearance("scale", value) end,
+                },
+                reset = {
+                    name = L("Reset This Tool Window"),
+                    desc = L("Restores this tool's default font, opacity, scale, size, and position."),
+                    type = "execute",
+                    width = optionsWidth,
+                    order = 20,
+                    func = function()
+                        if addon.toolWindows and addon.toolWindows.ResetWindow then
+                            addon.toolWindows:ResetWindow(frameName)
+                        end
+                        if AceConfigRegistry and AceConfigRegistry.NotifyChange then
+                            AceConfigRegistry:NotifyChange(addon.title)
+                        end
+                    end,
+                },
+            },
+        }
+    end
+
+    local preflightToolPage = ToolAppearancePage(
+        L("Route Preflight"), "RXPRoutePreflightWindow", function()
+            if addon.routePreflight then addon.routePreflight:Toggle() end
+        end, function() return not addon.routePreflight end)
+    preflightToolPage.order = 1
+    local archiveToolPage = ToolAppearancePage(
+        L("Personal-Best Archives"), "RXPLevelingArchives", function()
+            if addon.runArchive then addon.runArchive:Toggle() end
+        end, function() return not addon.runArchive end)
+    archiveToolPage.order = 2
+    local petToolPage = ToolAppearancePage(
+        L("Hunter Pet Assistant"), "RXPHunterPetAssistant", function()
+            if addon.petAssistant then addon.petAssistant:Toggle() end
+        end, function()
+            return not addon.petAssistant or not addon.player or
+                       addon.player.class ~= "HUNTER"
+        end)
+    petToolPage.order = 3
+    local performanceToolPage = ToolAppearancePage(
+        L("Performance Inspector"), "RXPPerformanceInspector", function()
+            if addon.performanceInspector then
+                addon.performanceInspector:Toggle()
+            end
+        end, function() return not addon.performanceInspector end)
+    performanceToolPage.order = 4
+    local xpToolPage = ToolAppearancePage(
+        L("XP & Yellow-Mob Estimator"), "RXPXPProgressWindow", function()
+            if addon.xpAssistant then addon.xpAssistant:Toggle() end
+        end, function()
+            return not addon.xpAssistant or
+                       self.profile.enableMobXPEstimator == false
+        end)
+    xpToolPage.order = 5
+    xpToolPage.args.displayHeader = {
+        name = L("Displayed Information"), type = "header", width = "full",
+        order = 2,
+    }
+    local xpDisplaySettings = {
+        {"xpEstimatorShowStockXP", "Show Stock XP",
+         "Shows the canonical WotLK XP awarded by each mob level."},
+        {"xpEstimatorShowKills", "Show Kill Counts",
+         "Shows how many kills remain at the current XP progress."},
+        {"xpEstimatorShowAdaptive", "Show Adaptive XP",
+         "Shows estimates learned from verified kills on this server."},
+        {"xpEstimatorShowRested", "Show Rested Projections",
+         "Shows normal / rested values using the finite rested-XP pool."},
+    }
+    local function AddXPDisplaySetting(definition, index)
+        local key, name, description = definition[1], definition[2], definition[3]
+        xpToolPage.args[key] = {
+            name = L(name),
+            desc = L(description),
+            type = "toggle",
+            width = optionsWidth,
+            order = 2 + index / 10,
+            get = function() return self.profile[key] ~= false end,
+            set = function(_, value)
+                if addon.xpAssistant and addon.xpAssistant.SetDisplayOption then
+                    addon.xpAssistant:SetDisplayOption(key, value)
+                else
+                    self.profile[key] = value == true
+                end
+            end,
+        }
+    end
+    for index, definition in ipairs(xpDisplaySettings) do
+        -- Give each Lua 5.1 closure its own key.  Capturing the loop local
+        -- directly is implementation-sensitive on older embedded runtimes.
+        AddXPDisplaySetting(definition, index)
+    end
 
     local optionsTable = {
         type = "group",
@@ -2267,6 +2465,21 @@ function addon.settings:CreateAceOptionsPanel()
                         width = optionsWidth
                     }
                 }
+            },
+            featureToolsSettings = {
+                type = "group",
+                name = L("Feature Tools"),
+                desc = L("Open and customize each optional feature window independently."),
+                order = 8,
+                childGroups = "tree",
+                hidden = addon.gameVersion ~= 30300,
+                args = {
+                    routePreflight = preflightToolPage,
+                    archives = archiveToolPage,
+                    petAssistant = petToolPage,
+                    performance = performanceToolPage,
+                    xpEstimator = xpToolPage,
+                },
             },
             targeting = {
                 type = "group",
@@ -4702,6 +4915,7 @@ function addon.settings:RefreshProfile()
 
     -- Restore frame positions on profile change
     addon.settings:LoadFramePositions()
+    if addon.toolWindows then addon.toolWindows:RestoreAll() end
     if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
 end
 
@@ -4723,6 +4937,7 @@ function addon.settings:CopyProfile()
 
     -- Restore frame positions on profile change
     addon.settings:LoadFramePositions()
+    if addon.toolWindows then addon.toolWindows:RestoreAll() end
     if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
 end
 
