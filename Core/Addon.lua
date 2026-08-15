@@ -1200,8 +1200,20 @@ end
 
 local function CompleteConfirmedQuestElement(element, event, questId)
     if type(element) ~= "table" or element.completed or
-        type(element.step) ~= "table" or not element.step.active or
-        not addon.SetElementComplete then return end
+        type(element.step) ~= "table" or not addon.SetElementComplete then
+        return
+    end
+
+    local step = element.step
+    local confirmationStepActive = step.active
+    if not confirmationStepActive and event == "QUEST_ACCEPTED" then
+        local index = tonumber(step.index)
+        local steps = addon.currentGuide and addon.currentGuide.steps
+        local previous = index and index > 1 and type(steps) == "table" and
+                             steps[index - 1]
+        confirmationStepActive = type(previous) == "table" and previous.active
+    end
+    if not confirmationStepActive then return end
 
     -- QUEST_ACCEPTED/QUEST_TURNED_IN are authoritative.  Committing the active
     -- element immediately avoids waiting for a second QUEST_LOG_UPDATE, which
@@ -1217,10 +1229,10 @@ local function CompleteConfirmedQuestElement(element, event, questId)
             addon.Call(element.tag, callback, frame, event, questId)
         end
     else
-        addon.SetElementComplete(element, true, true)
+        addon.SetElementComplete(element, true, event ~= "QUEST_ACCEPTED")
     end
     if not element.completed then
-        addon.SetElementComplete(element, true, true)
+        addon.SetElementComplete(element, true, event ~= "QUEST_ACCEPTED")
     end
     if addon.UpdateStepCompletion then addon.UpdateStepCompletion() end
 end
@@ -1300,8 +1312,13 @@ end
 
 local function SelectOrderedQuestCandidate(candidates)
     local order = addon.automationOrder
-    local candidate = order and order:Select(candidates) or candidates[1]
+    local candidate = order and order.SelectQuest and
+                          order:SelectQuest(candidates) or
+                          order and order:Select(candidates) or candidates[1]
     if not candidate then return end
+    if order and order.ReserveQuest then
+        order:ReserveQuest(candidate, GetTime())
+    end
     if candidate.kind == "turnin" then
         GossipSelectActiveQuest(candidate.selector)
     else
@@ -1312,14 +1329,42 @@ end
 
 local function SelectOrderedGreetingCandidate(candidates)
     local order = addon.automationOrder
-    local candidate = order and order:Select(candidates) or candidates[1]
+    local candidate = order and order.SelectQuest and
+                          order:SelectQuest(candidates) or
+                          order and order:Select(candidates) or candidates[1]
     if not candidate then return end
+    if order and order.ReserveQuest then
+        order:ReserveQuest(candidate, GetTime())
+    end
     if candidate.kind == "turnin" then
         SelectActiveQuest(candidate.selector)
     else
         SelectAvailableQuest(candidate.selector)
     end
     return true
+end
+
+local function IsQuestInteractionReady(element, kind)
+    if not element then return true end
+    if addon.IsQuestAutomationElementReady then
+        return addon.IsQuestAutomationElementReady(element, kind)
+    end
+    return not addon.IsAutomationElementReady or
+               addon.IsAutomationElementReady(element)
+end
+
+local function GetReservedQuestInteraction(kind)
+    local order = addon.automationOrder
+    if order and order.GetQuestReservation then
+        return order:GetQuestReservation(kind, GetTime())
+    end
+end
+
+local function ClearQuestInteraction(element, kind)
+    local order = addon.automationOrder
+    if order and order.ClearQuestReservation then
+        order:ClearQuestReservation(element, kind)
+    end
 end
 
 function addon:QuestAutomation(event, arg1, arg2, arg3)
@@ -1356,6 +1401,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             questId = pending.questId
         end
         CommitQuestAccept(questId)
+        ClearQuestInteraction(nil, "accept")
         if addon.lore then addon.lore:MarkSeen(questId) end
         return
     elseif event == "QUEST_LOG_UPDATE" then
@@ -1370,11 +1416,18 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         return
     elseif event == "QUEST_TURNED_IN" then
         if addon.lore then addon.lore:MarkSeen(arg1) end
-        local guideTurnIn = GetQuestAutomationElement(addon.questTurnIn, arg1)
+        -- The active element frame may receive this event first, advance the
+        -- guide, and wipe questTurnIn before this coordinator runs.  The menu
+        -- reservation survives that frame-order race and identifies the exact
+        -- authored turn-in which was selected.
+        local guideTurnIn = GetReservedQuestInteraction("turnin") or
+                                GetQuestAutomationElement(addon.questTurnIn,
+                                                          arg1)
         if guideTurnIn then
             questAcceptState:MarkTurnIn(GetTime())
             CompleteConfirmedQuestElement(guideTurnIn, "QUEST_TURNED_IN",
                                            arg1)
+            ClearQuestInteraction(guideTurnIn, "turnin")
             if not disabled then
                 addon.questAutoAccept = true
                 ScheduleQuestAutomationRetries()
@@ -1387,25 +1440,26 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
     if event == "GOSSIP_SHOW" then
         local nActive = GossipGetNumActiveQuests()
         local nAvailable = GossipGetNumAvailableQuests()
-        local quests, selectAvailableByQuestID, selectActiveByQuestID,
-              missingTurnIn
+        local quests, selectAvailableByQuestID, missingTurnIn
         local candidates = {}
         if not disabled then
             if C_GossipInfo.GetActiveQuests then
                 quests = C_GossipInfo.GetActiveQuests()
-                selectActiveByQuestID = true
             end
             for i = 1, nActive do
                 local title, isComplete
                 local reward,isAutoTurnIn
+                local selector = i
                 if type(quests) == "table" then
                     title = quests[i].questID
                     isComplete = quests[i].isComplete
+                    selector = addon.gameVersion == 30300 and
+                                   (quests[i].index or i) or title
                     reward,isAutoTurnIn = addon.GetStepQuestReward(title)
                     if not (isComplete or missingTurnIn) and isAutoTurnIn then
                         local objectives = addon.GetQuestObjectives(title)
                         missingTurnIn = objectives and objectives[1].generated and {
-                            selector = selectActiveByQuestID and title or i,
+                            selector = selector,
                             element = isAutoTurnIn
                         }
                     end
@@ -1415,10 +1469,18 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
                     reward,isAutoTurnIn = addon.GetStepQuestReward(title)
                 end
 
+                -- Some 3.3.5 cores report the gossip completion flag late or
+                -- at a server-specific tuple position.  The numeric quest-log
+                -- state is authoritative when the title resolved to the guide.
+                if not isComplete and isAutoTurnIn and addon.IsQuestComplete then
+                    isComplete = addon.IsQuestComplete(isAutoTurnIn.questId) and
+                                     true or false
+                end
+
                 if isComplete and isAutoTurnIn then
                     candidates[#candidates + 1] = {
                         kind = "turnin",
-                        selector = selectActiveByQuestID and title or i,
+                        selector = selector,
                         element = isAutoTurnIn
                     }
                 end
@@ -1442,23 +1504,29 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
                 if guideAccept then
                     candidates[#candidates + 1] = {
                         kind = "accept",
-                        selector = selectAvailableByQuestID and quest or i,
+                        selector = addon.gameVersion == 30300 and
+                                       (t and availableQuests[i].index or i) or
+                                       selectAvailableByQuestID and quest or i,
                         element = guideAccept
                     }
                 end
             end
         end
         if SelectOrderedQuestCandidate(candidates) then return end
-        if missingTurnIn and
-            (not addon.IsAutomationElementReady or
-                addon.IsAutomationElementReady(missingTurnIn.element)) then
+        if missingTurnIn and IsQuestInteractionReady(missingTurnIn.element,
+                                                      "turnin") then
+            local order = addon.automationOrder
+            if order and order.ReserveQuest then
+                order:ReserveQuest({kind = "turnin",
+                                    element = missingTurnIn.element}, GetTime())
+            end
             return GossipSelectActiveQuest(missingTurnIn.selector)
         end
     elseif disabled then
         return
     elseif event == "QUEST_ACCEPT_CONFIRM" and addon.QuestAutoAccept(arg2) then
         local guideAccept = GetQuestAcceptAutomationElement(arg2)
-        if guideAccept and not addon.IsAutomationElementReady(guideAccept) then
+        if guideAccept and not IsQuestInteractionReady(guideAccept, "accept") then
             return
         end
         questAcceptState:Begin(
@@ -1471,18 +1539,20 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         if addon.lore and addon.lore:ShouldPause(loreQuestId, "turnin") then
             return
         end
-        local guideTurnIn = GetTurnInAutomationElement(loreQuestId)
-        if guideTurnIn and not addon.IsAutomationElementReady(guideTurnIn) then
+        local guideTurnIn = GetReservedQuestInteraction("turnin") or
+                                GetTurnInAutomationElement(loreQuestId)
+        if guideTurnIn and not IsQuestInteractionReady(guideTurnIn, "turnin") then
             return
         end
         handleQuestComplete()
     elseif event == "QUEST_PROGRESS" then
         local id = GetQuestID()
-        local guideTurnIn = GetTurnInAutomationElement(id)
+        local guideTurnIn = GetReservedQuestInteraction("turnin") or
+                                GetTurnInAutomationElement(id)
         if id and addon.disabledQuests[id] then
             return
         elseif guideTurnIn and
-            not addon.IsAutomationElementReady(guideTurnIn) then
+            not IsQuestInteractionReady(guideTurnIn, "turnin") then
             return
         elseif IsQuestCompletable() then
             CompleteQuest()
@@ -1502,12 +1572,17 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         local lookup = addon.gameVersion == 30300 and title or
                            (GetQuestID() or title)
         local recentTurnIn = questAcceptState:WasRecentTurnIn(GetTime(), 0.5)
-        local guideAccept = GetQuestAcceptAutomationElement(lookup)
+        -- Preserve the exact element selected from the preceding gossip list.
+        -- During same-NPC chains the guide can advance before QUEST_DETAIL,
+        -- while identical or not-yet-cached localized titles may resolve to a
+        -- different element (or no element at all).
+        local guideAccept = GetReservedQuestInteraction("accept") or
+                                GetQuestAcceptAutomationElement(lookup)
         local questId = guideAccept and tonumber(guideAccept.questId)
         if questId and addon.disabledQuests and addon.disabledQuests[questId] then
             return
         elseif guideAccept and
-            not addon.IsAutomationElementReady(guideAccept) then
+            not IsQuestInteractionReady(guideAccept, "accept") then
             return
         elseif addon.lore and addon.lore:ShouldPause(questId, "accept",
                                                      guideAccept) then
@@ -1541,6 +1616,10 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         for i = 1, nActive do
             title, isComplete = GetActiveTitle(i)
             local reward,exists = addon.GetStepQuestReward(title)
+            if not isComplete and exists and addon.IsQuestComplete then
+                isComplete = addon.IsQuestComplete(exists.questId) and true or
+                                 false
+            end
             if exists and isComplete then
                 candidates[#candidates + 1] = {
                     kind = "turnin",

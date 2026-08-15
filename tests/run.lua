@@ -235,6 +235,59 @@ local selectedAction = addon.automationOrder:Select({
 check(selectedAction and selectedAction.selector == 1,
       "automation candidate selection ignored guide order")
 
+-- Quest-giver menus contain only interactions which are actually available at
+-- the current NPC.  A navigation note before them must not suppress the first
+-- authored quest, and the selection must stay pinned while the quest panel
+-- opens so a later element cannot win an event-dispatch race.
+local questStep = {active = true, index = 8, elements = {}}
+local navigation = {step = questStep, tag = "goto"}
+local wordFromSpire = {step = questStep, tag = "turnin", questId = 8890}
+local abandonedInvestigations = {
+    step = questStep,
+    tag = "turnin",
+    questId = 8891,
+}
+questStep.elements = {navigation, wordFromSpire, abandonedInvestigations}
+local selectedQuest = addon.automationOrder:SelectQuest({
+    {kind = "turnin", element = abandonedInvestigations, selector = 2},
+    {kind = "turnin", element = wordFromSpire, selector = 1},
+})
+check(selectedQuest and selectedQuest.element == wordFromSpire and
+          selectedQuest.selector == 1,
+      "quest menu did not select the earliest authored turn-in")
+addon.automationOrder:ReserveQuest(selectedQuest, 100)
+check(addon.automationOrder:GetQuestReservation("turnin", 101) ==
+          wordFromSpire and
+          addon.automationOrder:IsQuestReady(wordFromSpire, "turnin", 101) and
+          not addon.automationOrder:IsQuestReady(abandonedInvestigations,
+                                                 "turnin", 101),
+      "quest selection reservation did not prevent a same-NPC turn-in race")
+check(addon.automationOrder:IsQuestReady(abandonedInvestigations,
+                                        "turnin", 106) and
+          not addon.automationOrder:GetQuestReservation("turnin", 106),
+      "expired quest selection reservation blocked later interactions")
+addon.automationOrder:ReserveQuest(selectedQuest, 107)
+wordFromSpire.completed = true
+check(addon.automationOrder:GetQuestReservation("turnin", 108) ==
+          wordFromSpire,
+      "quest reservation was lost after an element-frame completion race")
+addon.automationOrder:ClearQuestReservation()
+
+-- Follow-up accepts from the immediately following step are registered before
+-- the delayed 3.3.5 quest-log update advances the visible guide.
+local savedCurrentGuide = addon.currentGuide
+local acceptStep = {index = 9, elements = {}}
+local followupAccept = {step = acceptStep, tag = "accept", questId = 9000}
+acceptStep.elements[1] = followupAccept
+addon.currentGuide = {steps = {[8] = questStep, [9] = acceptStep}}
+local selectedFollowup = addon.automationOrder:SelectQuest({
+    {kind = "accept", element = followupAccept, selector = 1},
+})
+check(selectedFollowup and
+          addon.automationOrder:IsQuestReady(followupAccept, "accept", 110),
+      "immediate next-step quest accept was not eligible")
+addon.currentGuide = savedCurrentGuide
+
 local laterTurnIn = {questId = "42"}
 addon.questTurnIn = {NamedQuest = laterTurnIn}
 check(addon.prerequisites:IsTurnedInLater(42),

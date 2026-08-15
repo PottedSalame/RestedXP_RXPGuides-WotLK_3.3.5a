@@ -6,6 +6,7 @@ local _, addon = ...
 -- than relying on frame registration order.
 local automationOrder = addon.automationOrder or {}
 addon.automationOrder = automationOrder
+local QUEST_SELECTION_LIFETIME = 5
 
 local function IsPending(element)
     if type(element) ~= "table" then return false end
@@ -29,6 +30,22 @@ local function GetPosition(element)
         end
     end
     return stepIndex or math.huge, elementIndex
+end
+
+local function IsInteractionStepActive(element, kind)
+    local step = type(element) == "table" and element.step
+    if type(step) ~= "table" or step.completed then return false end
+    if step.active then return true end
+    if kind ~= "accept" then return false end
+
+    -- Accept directives from the immediately following step are intentionally
+    -- registered so same-NPC and cross-guide follow-ups can be taken before a
+    -- delayed quest-log update advances the visible guide.
+    local index = tonumber(step.index)
+    local steps = addon.currentGuide and addon.currentGuide.steps
+    local previous = index and index > 1 and type(steps) == "table" and
+                         steps[index - 1]
+    return type(previous) == "table" and previous.active and true or false
 end
 
 function automationOrder:IsBefore(left, right)
@@ -75,8 +92,75 @@ function automationOrder:Select(candidates)
     return selected
 end
 
+-- Quest-giver panels are already a filtered list of interactions which the
+-- server says are available at this NPC.  Do not let an unrelated navigation,
+-- target, or text element earlier in the step block those interactions.  Pick
+-- the earliest authored quest from the visible candidates, then reserve that
+-- exact element while the legacy client changes from gossip to quest panels.
+function automationOrder:SelectQuest(candidates)
+    if type(candidates) ~= "table" then return end
+    local selected
+    for _, candidate in ipairs(candidates) do
+        local element = type(candidate) == "table" and candidate.element
+        if IsInteractionStepActive(element, candidate.kind) and
+            not element.completed and not element.skip and not element.invalid and
+            (not selected or self:IsBefore(element, selected.element)) then
+            selected = candidate
+        end
+    end
+    return selected
+end
+
+function automationOrder:ReserveQuest(candidate, now)
+    if type(candidate) ~= "table" or type(candidate.element) ~= "table" then
+        self.questReservation = nil
+        return
+    end
+    self.questReservation = {
+        element = candidate.element,
+        kind = candidate.kind,
+        time = tonumber(now) or (GetTime and GetTime()) or 0,
+    }
+end
+
+function automationOrder:GetQuestReservation(kind, now)
+    local reservation = self.questReservation
+    if not reservation then return end
+    now = tonumber(now) or (GetTime and GetTime()) or 0
+    if now - (tonumber(reservation.time) or 0) > QUEST_SELECTION_LIFETIME then
+        self.questReservation = nil
+        return
+    end
+    if kind and reservation.kind and reservation.kind ~= kind then return end
+    return reservation.element, reservation
+end
+
+function automationOrder:IsQuestReady(element, kind, now)
+    if type(element) ~= "table" then return false end
+    if not IsInteractionStepActive(element, kind) or
+        element.completed or element.skip or element.invalid then
+        return false
+    end
+
+    local reservationElement, reservation = self:GetQuestReservation(kind, now)
+    if not reservation then return true end
+    return reservationElement == element
+end
+
+function automationOrder:ClearQuestReservation(element, kind)
+    local reservation = self.questReservation
+    if not reservation then return end
+    if element and reservation.element ~= element then return end
+    if kind and reservation.kind and reservation.kind ~= kind then return end
+    self.questReservation = nil
+end
+
 function addon.IsAutomationElementReady(element)
     return automationOrder:IsReady(element)
+end
+
+function addon.IsQuestAutomationElementReady(element, kind)
+    return automationOrder:IsQuestReady(element, kind)
 end
 
 addon.services:Register("automation-order", automationOrder, "automationOrder")
