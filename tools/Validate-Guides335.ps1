@@ -9,6 +9,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $errors = New-Object 'Collections.Generic.List[string]'
 $warnings = New-Object 'Collections.Generic.List[string]'
 $guidePattern = [regex]'(?ms)RXPGuides\.RegisterGuide\(\[\[(.*?)\]\]\)\s*;?'
+$flightResolveCache = @{}
 
 function Add-Error([string]$Message) { $errors.Add($Message) }
 
@@ -43,17 +44,34 @@ function Get-FlightData([string]$Faction) {
         if (-not $base.ContainsKey($baseName)) { $base[$baseName] = $name }
         elseif ($base[$baseName] -ne $name) { $base[$baseName] = $null }
     }
-    return [pscustomobject]@{ Full = $full; Base = $base }
+    return [pscustomobject]@{ Faction = $Faction; Full = $full; Base = $base }
 }
 
 function Resolve-Flight([string]$Name, $Data) {
     $key = $Name.Trim().ToLowerInvariant()
-    if ($Data.Full.ContainsKey($key)) { return $Data.Full[$key] }
-    if ($Data.Base.ContainsKey($key) -and $Data.Base[$key]) { return $Data.Base[$key] }
-    $partial = @($Data.Full.Values | Where-Object {
-        $_.ToLowerInvariant().Contains($key)
-    } | Select-Object -Unique)
-    if ($partial.Count -eq 1) { return $partial[0] }
+    $cacheKey = "$($Data.Faction)|$key"
+    if ($flightResolveCache.ContainsKey($cacheKey)) {
+        return $flightResolveCache[$cacheKey]
+    }
+    if ($Data.Full.ContainsKey($key)) {
+        $flightResolveCache[$cacheKey] = $Data.Full[$key]
+        return $Data.Full[$key]
+    }
+    if ($Data.Base.ContainsKey($key) -and $Data.Base[$key]) {
+        $flightResolveCache[$cacheKey] = $Data.Base[$key]
+        return $Data.Base[$key]
+    }
+    $partial = $null
+    foreach ($candidate in $Data.Full.Values) {
+        if (-not $candidate.ToLowerInvariant().Contains($key)) { continue }
+        if ($null -ne $partial -and $partial -ne $candidate) {
+            $flightResolveCache[$cacheKey] = $null
+            return $null
+        }
+        $partial = $candidate
+    }
+    $flightResolveCache[$cacheKey] = $partial
+    if ($partial) { return $partial }
     return $null
 }
 
@@ -284,10 +302,11 @@ foreach ($file in $files) {
                 }
                 if ($line -match '^\.line\s+([^,]+),(.*?)(?:\s*<<|\s*>>|$)') {
                     $zone = $Matches[1].Trim()
-                    $values = @($Matches[2].Split(',') | ForEach-Object { $_.Trim() })
+                    $values = $Matches[2].Split(',')
                     if ($values.Count -lt 4 -or ($values.Count % 2) -ne 0) { Add-Error "$relative`:$lineNumber malformed .line coordinate pairs" }
                     else {
-                        foreach ($value in $values) {
+                        foreach ($rawValue in $values) {
+                            $value = $rawValue.Trim()
                             $number = 0.0
                             if (-not [double]::TryParse($value, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$number) -or $number -lt 0 -or $number -gt 100) {
                                 Add-Error "$relative`:$lineNumber malformed .line value $value"
@@ -303,11 +322,12 @@ foreach ($file in $files) {
                 if (-not $isOriginalSnapshot -and $directive -eq 'loop') {
                     if ($line -match '^\.loop\s+[+*@]?\d+(?:\.\d+)?,\s*([^,]+),(.*?)(?:\s*<<|\s*>>|$)') {
                         $loopZone = $Matches[1].Trim()
-                        $loopValues = @($Matches[2].Split(',') | ForEach-Object { $_.Trim() })
+                        $loopValues = $Matches[2].Split(',')
                         if ($loopValues.Count -lt 4 -or ($loopValues.Count % 2) -ne 0) {
                             Add-Error "$relative`:$lineNumber malformed .loop coordinate pairs"
                         } else {
-                            foreach ($value in $loopValues) {
+                            foreach ($rawValue in $loopValues) {
+                                $value = $rawValue.Trim()
                                 $number = 0.0
                                 if (-not [double]::TryParse($value, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref]$number) -or $number -lt 0 -or $number -gt 100) {
                                     Add-Error "$relative`:$lineNumber malformed .loop value '$value'"
@@ -326,9 +346,14 @@ foreach ($file in $files) {
                 if (-not $isOriginalSnapshot -and $questIds.Count -gt 0 -and $line -match '^\.(accept|turnin|complete|abandon|isOnQuest|isNotOnQuest|isQuestAvailable|isQuestComplete|isQuestNotComplete|isQuestTurnedIn|skipOnQuest|acceptmultiple)\s+([^>]+)') {
                     $questDirective = $Matches[1]
                     $questArgs = ($Matches[2] -replace '\s*--.*$', '')
-                    $numbers = @([regex]::Matches($questArgs, '(?<![.\d])\d+(?![.\d])') | ForEach-Object { [int]$_.Value })
-                    if ($questDirective -notin @('isQuestAvailable','acceptmultiple') -and $numbers.Count -gt 1) { $numbers = @($numbers[0]) }
-                    foreach ($questId in $numbers) {
+                    $numberMatches = [regex]::Matches($questArgs, '(?<![.\d])\d+(?![.\d])')
+                    $numberLimit = if ($questDirective -in @('isQuestAvailable','acceptmultiple')) {
+                        $numberMatches.Count
+                    } else {
+                        [math]::Min(1, $numberMatches.Count)
+                    }
+                    for ($numberIndex = 0; $numberIndex -lt $numberLimit; $numberIndex++) {
+                        $questId = [int]$numberMatches[$numberIndex].Value
                         if ($questId -gt 0 -and -not $questIds.ContainsKey($questId)) { Add-Error "$relative`:$lineNumber quest $questId is absent from the 3.3.5 reference" }
                     }
                 }

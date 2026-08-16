@@ -12,6 +12,7 @@ $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $errors = New-Object 'Collections.Generic.List[string]'
 $entryWarnings = @{}
 $conditionCache = @{}
+$reachabilityCache = @{}
 $guidePattern = [regex]'(?ms)RXPGuides\.RegisterGuide\(\[\[(.*?)\]\]\)\s*;?'
 
 function Normalize-Group([string]$Group) {
@@ -107,6 +108,9 @@ function Test-XpRate([string]$Expression, [double]$Rate) {
 
 function Test-ConditionReachable335([string]$Condition) {
     if ([string]::IsNullOrWhiteSpace($Condition)) { return $true }
+    if ($reachabilityCache.ContainsKey($Condition)) {
+        return [bool]$reachabilityCache[$Condition]
+    }
     foreach ($alternative in ($Condition -split '/')) {
         $positiveExpansions = @([regex]::Matches(
             $alternative,
@@ -118,13 +122,15 @@ function Test-ConditionReachable335([string]$Condition) {
         if ($positiveExpansions.Count -eq 0 -or
             $positiveExpansions -contains 'wotlk' -or
             $positiveExpansions -contains 'ac335') {
+            $reachabilityCache[$Condition] = $true
             return $true
         }
     }
+    $reachabilityCache[$Condition] = $false
     return $false
 }
 
-function Test-GuideApplies($Guide, $Profile) {
+function Test-GuideConditions($Guide, $Profile) {
     $header = $Guide.Header
     $expansionHeaders = [regex]::Matches($header, '(?m)^#(?:classic|tbc|wotlk|cata|mop|retail|df)\b')
     if ($expansionHeaders.Count -gt 0 -and $header -notmatch '(?m)^#wotlk\b') { return $false }
@@ -133,7 +139,7 @@ function Test-GuideApplies($Guide, $Profile) {
             -not (Test-Applies $Matches[1] $Profile)) { return $false }
         if ($line -match '^<<\s*(.+)$' -and -not (Test-Applies $Matches[1] $Profile)) { return $false }
     }
-    return Test-XpRate (Get-Header $Guide.Content 'xprate') $Profile.Rate
+    return $true
 }
 
 function Get-MissingPrerequisites($Specification, $TurnedIn, $Completed, $Accepted) {
@@ -308,7 +314,8 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
         $stepRate = ''
         $stepMetadata = [pscustomobject]@{ Optional = $false; Guards = @{} }
         $lineNumber = 0
-        foreach ($rawLine in ($content -split "`n")) {
+        $contentLines = $content -split "`n"
+        foreach ($rawLine in $contentLines) {
             $lineNumber++
             $line = $rawLine.Trim()
             if ($line -match '^step\b') {
@@ -348,6 +355,7 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
         $guides.Add([pscustomobject]@{
             File = $relative; Group = $group; Name = $name; Content = $content;
             Header = $header; Level = [int](([regex]::Match($name, '^(\d+)').Groups[1].Value) -as [int])
+            XpRate = Get-Header $content 'xprate'; Lines = $contentLines;
             Events = $parsedEvents
         })
     }
@@ -383,31 +391,29 @@ foreach ($combination in $combinations) {
 # or race branch; the runtime parser then filters both branch halves.
 if (-not $SkipLabelValidation) { foreach ($guide in $guides) {
     $labels = @{}
+    $references = New-Object 'Collections.Generic.List[object]'
     $stepCondition = ''
     $lineNumber = 0
-    foreach ($rawLine in ($guide.Content -split "`n")) {
+    foreach ($rawLine in $guide.Lines) {
         $lineNumber++
         $line = $rawLine.Trim()
         if ($line -match '^step\b') { $stepCondition = Get-Condition $line; continue }
+        if ($line -notmatch '^#(?:label|requires|completewith)\s+(\S+)') { continue }
+        $kind = if ($line.StartsWith('#label')) { 'label' } else { 'reference' }
+        $value = $Matches[1]
         $reachable = (Test-ConditionReachable335 $stepCondition) -and
                      (Test-ConditionReachable335 (Get-Condition $line))
-        if ($reachable -and $line -match '^#label\s+(\S+)') {
-            $labels[$Matches[1]] = $lineNumber
+        if (-not $reachable) { continue }
+        if ($kind -eq 'label') {
+            $labels[$value] = $lineNumber
+        } else {
+            $references.Add([pscustomobject]@{ Name = $value; Line = $lineNumber })
         }
     }
-    $stepCondition = ''
-    $lineNumber = 0
-    foreach ($rawLine in ($guide.Content -split "`n")) {
-        $lineNumber++
-        $line = $rawLine.Trim()
-        if ($line -match '^step\b') { $stepCondition = Get-Condition $line; continue }
-        $reachable = (Test-ConditionReachable335 $stepCondition) -and
-                     (Test-ConditionReachable335 (Get-Condition $line))
-        if ($reachable -and $line -match '^#(?:requires|completewith)\s+(\S+)') {
-            $reference = $Matches[1]
-            if ($reference -ne 'next' -and -not $labels.ContainsKey($reference)) {
-                $errors.Add("$($guide.File):$lineNumber missing label '$reference' in $($guide.Name)")
-            }
+    foreach ($reference in $references) {
+        if ($reference.Name -ne 'next' -and
+            -not $labels.ContainsKey($reference.Name)) {
+            $errors.Add("$($guide.File):$($reference.Line) missing label '$($reference.Name)' in $($guide.Name)")
         }
     }
 } }
@@ -435,25 +441,81 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
             $guideRates.Add([double]$rate)
         }
     }
+
+    # XP-rate expressions depend only on the representative rate, not on the
+    # character profile. Resolve them once per guide/rate instead of once for
+    # every class/race branch.
+    $rateData = New-Object 'Collections.Generic.List[object]'
+    foreach ($guideRate in $guideRates) {
+        $eventRateVisibility = [bool[]]::new($guide.Events.Count)
+        for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
+            $eventRateVisibility[$eventIndex] = Test-XpRate $guide.Events[$eventIndex].XpRate $guideRate
+        }
+        $rateData.Add([pscustomobject]@{
+            Rate = [double]$guideRate
+            GuideVisible = Test-XpRate $guide.XpRate $guideRate
+            EventVisible = $eventRateVisibility
+        })
+    }
+
+    # Profiles frequently produce byte-for-byte identical event streams. The
+    # prerequisite state machine is a pure function of that stream, so retain
+    # the full branch count while simulating each distinct stream once.
+    $runGroups = @{}
+    $orderedRunGroups = New-Object 'Collections.Generic.List[object]'
     foreach ($baseProfile in $profiles) {
-      foreach ($guideRate in $guideRates) {
         $profile = [pscustomobject]@{
             Faction = $baseProfile.Faction; Race = $baseProfile.Race;
-            Class = $baseProfile.Class; Rate = $guideRate;
+            Class = $baseProfile.Class; Rate = 1.0;
             Level = if ($guide.Level -gt 0) { $guide.Level } else { 1 }
         }
-        if (-not (Test-GuideApplies $guide $profile)) { continue }
-        $applicableRuns++
-        $events = New-Object 'Collections.Generic.List[object]'
-        foreach ($event in $guide.Events) {
-            if (-not $event.Metadata.Optional -and
+        if (-not (Test-GuideConditions $guide $profile)) { continue }
+
+        $conditionVisibility = [bool[]]::new($guide.Events.Count)
+        for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
+            $event = $guide.Events[$eventIndex]
+            $conditionVisibility[$eventIndex] =
+                -not $event.Metadata.Optional -and
                 (Test-Applies $event.StepCondition $profile) -and
-                (Test-Applies $event.LineCondition $profile) -and
-                (Test-XpRate $event.XpRate $profile.Rate)) {
-                $events.Add($event)
+                (Test-Applies $event.LineCondition $profile)
+        }
+
+      foreach ($currentRate in $rateData) {
+        if (-not $currentRate.GuideVisible) { continue }
+        $applicableRuns++
+        $signature = [Text.StringBuilder]::new(
+                         [math]::Max(16, $guide.Events.Count * 3))
+        for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
+            if ($conditionVisibility[$eventIndex] -and
+                $currentRate.EventVisible[$eventIndex]) {
+                if ($signature.Length -gt 0) { [void]$signature.Append(',') }
+                [void]$signature.Append($eventIndex)
             }
         }
 
+        $signatureKey = $signature.ToString()
+        if (-not $runGroups.ContainsKey($signatureKey)) {
+            $events = New-Object 'Collections.Generic.List[object]'
+            for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
+                if ($conditionVisibility[$eventIndex] -and
+                    $currentRate.EventVisible[$eventIndex]) {
+                    $events.Add($guide.Events[$eventIndex])
+                }
+            }
+            $run = [pscustomobject]@{
+                Events = $events
+                Profiles = New-Object 'Collections.Generic.List[string]'
+            }
+            $runGroups[$signatureKey] = $run
+            $orderedRunGroups.Add($run)
+        }
+        $runGroups[$signatureKey].Profiles.Add(
+            "$($profile.Race) $($profile.Class) @$($currentRate.Rate)x")
+      }
+    }
+
+    foreach ($run in $orderedRunGroups) {
+        $events = $run.Events
         $turnedIn = @{}
         $completed = @{}
         $accepted = @{}
@@ -481,18 +543,27 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
             if ($event.Directive -notin @('accept','acceptmultiple','daily')) { continue }
             $specification = $prerequisites[$event.Quest]
             $missing = @(Get-MissingPrerequisites $specification $turnedIn $completed $accepted)
-            $missing = @($missing | Where-Object {
-                -not $event.Metadata.Guards.ContainsKey($_)
-            })
+            if ($missing.Count -gt 0 -and $event.Metadata.Guards.Count -gt 0) {
+                $unguarded = New-Object 'Collections.Generic.List[int]'
+                foreach ($missingId in $missing) {
+                    if (-not $event.Metadata.Guards.ContainsKey($missingId)) {
+                        $unguarded.Add($missingId)
+                    }
+                }
+                $missing = @($unguarded)
+            }
             if ($missing.Count -gt 0) {
                 foreach ($prerequisiteId in $missing) {
                 $key = "$($guide.File)|$($guide.Name)|$($event.Line)|$($event.Quest)|$prerequisiteId"
-                $profileName = "$($profile.Race) $($profile.Class) @$($profile.Rate)x"
                 if ($priorWork[$prerequisiteId] -or [int]$futureTurnIns[$prerequisiteId] -gt 0) {
                     if (-not $internalIssues.ContainsKey($key)) {
                         $internalIssues[$key] = New-Object 'Collections.Generic.List[string]'
                     }
-                    if (-not $internalIssues[$key].Contains($profileName)) { $internalIssues[$key].Add($profileName) }
+                    foreach ($profileName in $run.Profiles) {
+                        if (-not $internalIssues[$key].Contains($profileName)) {
+                            $internalIssues[$key].Add($profileName)
+                        }
+                    }
                 } else {
                     $entryKey = "$($guide.Group)|$($guide.Name)|$prerequisiteId"
                     if (-not $entryWarnings.ContainsKey($entryKey)) { $entryWarnings[$entryKey] = $true }
@@ -505,7 +576,6 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
             }
             $priorWork[$event.Quest] = $true
         }
-      }
     }
 } }
 
