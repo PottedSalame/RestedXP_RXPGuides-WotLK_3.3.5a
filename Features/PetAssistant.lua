@@ -235,10 +235,8 @@ function pet:Toggle()
 end
 
 function pet:ScheduleRefresh()
-    self.refreshSerial = (self.refreshSerial or 0) + 1
-    local serial = self.refreshSerial
-    C_Timer.After(0.15, function()
-        if serial == pet.refreshSerial then pet:Refresh() end
+    addon.scheduler:After(self, "pet-refresh", 0.15, function()
+        pet:Refresh()
     end)
 end
 

@@ -448,10 +448,8 @@ function preflight:ScheduleScan(delay)
     if addon.performanceInspector and addon.performanceInspector.adaptiveActive then
         delay = max(tonumber(delay) or 0.15, 0.35)
     end
-    self.scanSerial = (self.scanSerial or 0) + 1
-    local serial = self.scanSerial
-    C_Timer.After(delay or 0.15, function()
-        if serial == preflight.scanSerial then preflight:Scan() end
+    addon.scheduler:After(self, "preflight-scan", delay or 0.15, function()
+        preflight:Scan()
     end)
 end
 

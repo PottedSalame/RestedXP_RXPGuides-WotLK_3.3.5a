@@ -1295,13 +1295,13 @@ if addon.gameVersion and addon.gameVersion < 40000 then
     local lineMapWatcher = CreateFrame("Frame")
     lineMapWatcher:RegisterEvent("WORLD_MAP_UPDATE")
     lineMapWatcher:SetScript("OnEvent", function()
-        lineMapWatcher.refreshGeneration =
-            (lineMapWatcher.refreshGeneration or 0) + 1
-        local generation = lineMapWatcher.refreshGeneration
+        -- WORLD_MAP_UPDATE arrives in bursts while the legacy map changes
+        -- detail textures. One next-frame refresh covers the complete burst.
+        if lineMapWatcher.refreshPending then return end
+        lineMapWatcher.refreshPending = true
         C_Timer.After(0, function()
-            if generation == lineMapWatcher.refreshGeneration then
-                DisplayLines(true)
-            end
+            lineMapWatcher.refreshPending = nil
+            DisplayLines(true)
         end)
     end)
 end

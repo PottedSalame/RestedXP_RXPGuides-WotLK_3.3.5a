@@ -85,20 +85,15 @@ function addon:QueueMessage(...)
 end
 
 function addon.ProcessMessageQueue()
-    local processed
-    local removedIndexes = {}
-    for i = 1,#messageQueue do
+    local count = math.min(#messageQueue, 10)
+    if count == 0 then return end
+    for i = 1, count do
         addon:SendEvent(unpack(messageQueue[i]))
-        tinsert(removedIndexes,i)
-        if i >= 10 then
-            break
-        end
     end
-    for i = #removedIndexes,1,-1 do
-        processed = true
-        table.remove(messageQueue,removedIndexes[i])
+    for i = count, 1, -1 do
+        table.remove(messageQueue, i)
     end
-    return processed
+    return true
 end
 
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
@@ -2359,6 +2354,7 @@ end
 addon.scheduledTasks = {}
 
 function addon.UpdateScheduledTasks()
+    if not next(addon.scheduledTasks) then return end
     local cTime = GetTime()
     local processTable = {}
     for ref, args in pairs(addon.scheduledTasks) do
@@ -2746,25 +2742,13 @@ function addon.tickers.CycleSixteen()
     if not shouldContinue then return shouldContinue end
 
     event = event .. "/inactiveQ"
-    local activeQuestUpdate = 0
-    local deletedIndexes = {}
-    local element
-
-    for i, ref in ipairs(addon.updateInactiveQuest) do
-        activeQuestUpdate = activeQuestUpdate + 1
-        if activeQuestUpdate > 3 then
-            break
-        else
-            -- print('ok',ref.element.step.index,ref.element.requestFromServer)
-            addon.UpdateQuestCompletionData(ref)
-            tinsert(deletedIndexes, i)
-        end
+    local count = math.min(#addon.updateInactiveQuest, 3)
+    for i = 1, count do
+        -- print('ok',addon.updateInactiveQuest[i].element.step.index,addon.updateInactiveQuest[i].element.requestFromServer)
+        addon.UpdateQuestCompletionData(addon.updateInactiveQuest[i])
     end
-
-    for i = #deletedIndexes, 1, -1 do
-        element = deletedIndexes[i]
-        table.remove(addon.updateInactiveQuest, element)
-        -- print('r' .. element)
+    for i = count, 1, -1 do
+        table.remove(addon.updateInactiveQuest, i)
     end
 end
 

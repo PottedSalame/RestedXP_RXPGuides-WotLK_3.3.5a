@@ -1370,7 +1370,16 @@ function addon.tracker:CreateLevelSplits()
         f.title:SetAlpha(addon.settings.profile.levelSplitsOpacity + 0.1)
     end
 
-    f:HookScript("OnUpdate", function() addon.tracker:RefreshSplitsSummary() end)
+    -- The summary changes at one-second resolution. Throttle before entering
+    -- the refresh function so a visible report does not call into it and query
+    -- the clock once per rendered frame.
+    local summaryElapsed = 0
+    f:HookScript("OnUpdate", function(_, elapsed)
+        summaryElapsed = summaryElapsed + (tonumber(elapsed) or 0)
+        if summaryElapsed < 1 then return end
+        summaryElapsed = summaryElapsed % 1
+        addon.tracker:RefreshSplitsSummary()
+    end)
 
     f:SetScript("OnShow", function(frame)
         -- The 3.3.5 world map occupies nearly the whole screen. Keep the
@@ -1441,17 +1450,8 @@ function addon.tracker:ToggleLevelSplits()
 end
 
 function addon.tracker:RefreshSplitsSummary()
-    if not self.state.lastSplitsUpdate then
-        self.state.lastSplitsUpdate = GetTime()
-        addon.tracker:UpdateLevelSplits("full")
-        return
-    end
-
-    local now = GetTime()
-    if (now - self.state.lastSplitsUpdate) > 1 then
-        self.state.lastSplitsUpdate = now
-        addon.tracker:UpdateLevelSplits()
-    end
+    self.state.lastSplitsUpdate = GetTime()
+    addon.tracker:UpdateLevelSplits()
 end
 
 function addon.tracker:CompileLevelSplits(kind)

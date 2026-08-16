@@ -76,7 +76,6 @@ local session = {
     -- Upgrade prompts are session-only. A declined item is reconsidered after it
     -- leaves the bags or the equipped comparison changes.
     promptedUpgrades = {},
-    upgradeScanSerial = 0,
     upgradePopupOpen = false,
     pendingUpgradeEquip = nil,
     upgradeQueryRetries = 0,
@@ -3398,12 +3397,9 @@ end
 
 QueueUpgradeScan = function(delay)
     if not session.isInitialized then return end
-    session.upgradeScanSerial = session.upgradeScanSerial + 1
-    local serial = session.upgradeScanSerial
-    C_Timer.After(delay or 0.25, function()
-        if serial == session.upgradeScanSerial then
-            addon.itemUpgrades:ScanBagUpgrades()
-        end
+    addon.scheduler:After(addon.itemUpgrades, "upgrade-scan", delay or 0.25,
+                          function()
+        addon.itemUpgrades:ScanBagUpgrades()
     end)
 end
 

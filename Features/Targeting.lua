@@ -103,12 +103,15 @@ local RAID_TARGET_TEXTURE = "Interface\\TargetingFrame\\UI-RaidTargetingIcons"
 -- leaving friendly plates near the raw frame's level. Keep RXP's own local
 -- marker above either case without modifying any stock/nameplate-addon region.
 local LEGACY_MARKER_FRAME_LEVEL = 1000
+local LEGACY_FALLBACK_UNITS = {"target", "mouseover"}
 local legacyScanner = {
     knownPlates = {},
     wantedByName = {},
     visibleCounts = {},
     lastChildren = -1,
     nextFullDiscovery = 0,
+    -- Child-count changes trigger discovery immediately. Retain the one-second
+    -- fallback for legacy clients that finish constructing a plate later.
     discoveryInterval = 1,
     grace = 0.75,
     wantedDirty = true,
@@ -265,9 +268,10 @@ function addon.targeting:DiscoverLegacyNameplates()
     for index = 1, #children do
         local frame = children[index]
         if frame and not legacyScanner.knownPlates[frame] and frame.GetRegions then
-            local regions = {frame:GetRegions()}
-            local firstRegion = regions[1]
-            local nameText = regions[7]
+            -- Avoid allocating a temporary region table during every fallback
+            -- discovery pass. Stock nameplates expose the identifying regions
+            -- in fixed positions on 3.3.5.
+            local firstRegion, _, _, _, _, _, nameText = frame:GetRegions()
             local firstTexture = firstRegion and firstRegion.GetObjectType and
                                      firstRegion:GetObjectType() == "Texture" and
                                      firstRegion:GetTexture()
@@ -298,12 +302,14 @@ function addon.targeting:RecordSeenTarget(name, wanted, now, source)
 
     local old = proxmityPolling.scannedTargets[name]
     local changed = not old or old.kind ~= wanted.kind
-    proxmityPolling.scannedTargets[name] = {
-        kind = wanted.kind,
-        index = wanted.index,
-        lastMatch = now,
-        source = source or "nameplate"
-    }
+    if not old then
+        old = {}
+        proxmityPolling.scannedTargets[name] = old
+    end
+    old.kind = wanted.kind
+    old.index = wanted.index
+    old.lastMatch = now
+    old.source = source or "nameplate"
     proxmityPolling.lastMatch = now
     -- Direct target/mouseover events render the Active Targets frame before the
     -- periodic scanner gets another tick. Mark the proximity state immediately
@@ -364,23 +370,29 @@ function addon.targeting:LegacyScanTick()
                 -- Hostile threat/target updates can raise their health-bar frame
                 -- repeatedly. Reassert ours every scan so the client-local raid
                 -- icon stays visible just as it does on friendly targets.
-                overlay:SetFrameLevel(mmax(frame:GetFrameLevel() + 20,
-                                           LEGACY_MARKER_FRAME_LEVEL))
-                SetRaidIconTexture(overlay.icon,
-                                   self:GetMarkerIndex(wanted.kind,
-                                                       wanted.index))
-                overlay:Show()
+                local desiredLevel = mmax(frame:GetFrameLevel() + 20,
+                                          LEGACY_MARKER_FRAME_LEVEL)
+                if overlay:GetFrameLevel() ~= desiredLevel then
+                    overlay:SetFrameLevel(desiredLevel)
+                end
+                local markerIndex = self:GetMarkerIndex(wanted.kind,
+                                                        wanted.index)
+                if overlay.rxpMarkerIndex ~= markerIndex then
+                    SetRaidIconTexture(overlay.icon, markerIndex)
+                    overlay.rxpMarkerIndex = markerIndex
+                end
+                if not overlay:IsShown() then overlay:Show() end
             elseif overlay then
-                overlay:Hide()
+                if overlay:IsShown() then overlay:Hide() end
             end
         elseif overlay then
-            overlay:Hide()
+            if overlay:IsShown() then overlay:Hide() end
         end
     end
 
     -- Target and mouseover remain useful when nameplates are disabled and also
     -- provide real unit tokens for portraits/server markers.
-    for _, unit in ipairs({"target", "mouseover"}) do
+    for _, unit in ipairs(LEGACY_FALLBACK_UNITS) do
         local name = UnitName(unit)
         local wanted = name and legacyScanner.wantedByName[name]
         if wanted then

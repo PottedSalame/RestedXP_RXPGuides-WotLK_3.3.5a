@@ -1012,12 +1012,9 @@ local function UpdateAllBags(self,name,i)
 end
 inventoryManager.UpdateAllBags = UpdateAllBags
 
-local iconRefreshSerial = 0
 function inventoryManager.RefreshJunkIcons(delay)
-    iconRefreshSerial = iconRefreshSerial + 1
-    local serial = iconRefreshSerial
-    C_Timer.After(delay or 0, function()
-        if serial == iconRefreshSerial then UpdateAllBags() end
+    addon.scheduler:After(inventoryManager, "junk-icons", delay or 0, function()
+        UpdateAllBags()
     end)
 end
 

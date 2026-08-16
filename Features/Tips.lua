@@ -46,8 +46,25 @@ local function SetTipsFont(region, size)
     end
 end
 
+function addon.tips:RefreshCheckTicker()
+    local enabled = addon.settings and addon.settings.profile and
+                        addon.settings.profile.enableTips
+    if not enabled then
+        if self.checkTicker then
+            self.checkTicker:Cancel()
+            self.checkTicker = nil
+        end
+        return
+    end
+    if self.checkTicker then return end
+    self.checkTicker = C_Timer.NewTicker(session.checkFrequency, function()
+        addon.tips.CheckEvents()
+    end)
+end
+
 function addon.tips:Setup()
     if not addon.settings.profile.enableTips then
+        self:RefreshCheckTicker()
         self:HideTipsFrame()
         self:DisableDangerWarning()
         return
@@ -55,6 +72,7 @@ function addon.tips:Setup()
 
     self:CreateTipsFrame()
     self:CreateDangerWarning()
+    self:RefreshCheckTicker()
 
     if self.setupComplete then return end
     self.setupComplete = true
@@ -72,8 +90,6 @@ function addon.tips:Setup()
     self:RegisterEvent("UPDATE_MACROS", "RefreshEmergencyActions")
     self:RegisterEvent("SPELLS_CHANGED", "RefreshEmergencyActions")
     self:RegisterEvent("LEARNED_SPELL_IN_TAB", "RefreshEmergencyActions")
-
-    WorldFrame:HookScript("OnUpdate", self.CheckEvents)
 
     if addon.dangerousMobs then
         self:LoadDangerousMobs()
@@ -255,6 +271,7 @@ end
 
 function addon.tips:ApplySettings()
     if addon.settings.profile.enableTips then self:Setup() end
+    self:RefreshCheckTicker()
     if not addon.settings.profile.enableTips or
         not addon.settings.profile.enableTipsFrame then
         self:HideTipsFrame()
@@ -317,8 +334,7 @@ end
 
 function addon.tips.CheckEvents()
     if not addon.settings.profile.enableTips then return end
-
-    if GetTime() - session.checkLast <= session.checkFrequency then return end
+    local now = GetTime()
 
     if not addon.settings.profile.enableDrowningWarning then
         session.breath = nil
@@ -328,7 +344,7 @@ function addon.tips.CheckEvents()
         if session.breath.value == 0 or (session.breath.value / session.breath.maxValue) <
             addon.settings.profile.drowningThreshold then
 
-            if GetTime() - session.lastAlert > session.alertFrequency then
+            if now - session.lastAlert > session.alertFrequency then
                 if addon.settings.profile.enableDrowningScreenFlash then
                     addon.tips:EnableDangerWarning(2)
                 end
@@ -342,14 +358,14 @@ function addon.tips.CheckEvents()
                         PlaySound(_G.SOUNDKIT.RAID_WARNING, "Master")
                     end
                 end
-                session.lastAlert = GetTime()
+                session.lastAlert = now
             end
         end
     end
 
     addon.tips:CheckEmergencyActions()
 
-    session.checkLast = GetTime()
+    session.checkLast = now
 end
 
 function addon.tips:CheckEmergencyActions()
