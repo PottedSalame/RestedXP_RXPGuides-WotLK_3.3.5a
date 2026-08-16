@@ -388,8 +388,7 @@ local function OnClick(self)
     if not addon.settings.gui.quest then
         CreatePanel()
     end
-    _G.InterfaceOptionsFrame_OpenToCategory(addon.settings.gui.quest)
-    _G.InterfaceOptionsFrame_OpenToCategory(addon.settings.gui.quest)
+    addon.settings.OpenSettings('Quest Data')
 end
 
 function addon.functions.show25quests(self,text,flags)
@@ -427,7 +426,7 @@ function CreatePanel()
                 order = 13,
                 name = "Refresh",
                 type = 'execute',
-                func = function() _G.InterfaceOptionsFrame_OpenToCategory(RXP.settings.gui.quest) end,
+                func = function() addon.settings.OpenSettings('Quest Data') end,
             },
             showAvailable = {
                 order = 14,
@@ -435,7 +434,7 @@ function CreatePanel()
                 type = 'execute',
                 func = function()
                     mode = "quests"
-                    _G.InterfaceOptionsFrame_OpenToCategory(RXP.settings.gui.quest)
+                    addon.settings.OpenSettings('Quest Data')
                 end,
             },
             showMissing = {
@@ -444,7 +443,7 @@ function CreatePanel()
                 type = 'execute',
                 func = function()
                     mode = "missing"
-                    _G.InterfaceOptionsFrame_OpenToCategory(RXP.settings.gui.quest)
+                    addon.settings.OpenSettings('Quest Data')
                 end,
             },
         }
@@ -453,8 +452,11 @@ function CreatePanel()
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.title .. "/Quest Data", questDataTable)
 
-    addon.settings.gui.quest = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-                                    addon.title .. "/Quest Data", "Quest Data", addon.title)
+    addon.settings.gui.quest = addon.settings.RegisterOptionsPanel(
+                                   "Quest Data",
+                                   addon.settings.AddToBlizzardOptions(
+                                       addon.title .. "/Quest Data",
+                                       "Quest Data", addon.title))
 
 end
 

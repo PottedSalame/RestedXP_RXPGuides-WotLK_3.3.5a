@@ -415,14 +415,22 @@ end
 -- Register once RXP's own options panel exists.
 --=========================================================================
 local function Register()
-    if not (addon.RXPOptions and addon.RXPOptions.name and _G.LibStub) then return false end
+    if not (addon.RXPOptions and addon.RXPOptions.name and addon.settings and
+        addon.settings.AddToBlizzardOptions and
+        addon.settings.RegisterOptionsPanel and _G.LibStub) then
+        return false
+    end
     local AceConfig = _G.LibStub("AceConfig-3.0", true)
     local AceConfigDialog = _G.LibStub("AceConfigDialog-3.0", true)
     if not (AceConfig and AceConfigDialog) then return false end
 
     local key = addon.RXPOptions.name .. "/Compat335"
     AceConfig:RegisterOptionsTable(key, BuildOptions())
-    AceConfigDialog:AddToBlizOptions(key, "3.3.5a", addon.RXPOptions.name)
+    addon.settings.gui.compat335 = addon.settings.RegisterOptionsPanel(
+                                       "3.3.5a",
+                                       addon.settings.AddToBlizzardOptions(
+                                           key, "3.3.5a",
+                                           addon.RXPOptions.name))
     ApplyAll()
     return true
 end

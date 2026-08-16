@@ -322,6 +322,58 @@ foreach ($prefix in $surface.addonMessagePrefixes) {
 }
 
 $settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI\Settings.lua'))
+if ($settingsText -notmatch
+    'localizedAceConfigOptions\s*=\s*setmetatable\s*\(\s*\{\s*\}\s*,\s*\{\s*__mode\s*=\s*["'']k["'']' -or
+    $settingsText -notmatch
+    '(?s)key:match\s*\(\s*["'']\^_rxp["'']\s*\).*?option\[key\]\s*=\s*nil') {
+    Add-ValidationError (
+        'Legacy AceConfig translation metadata must remain outside option ' +
+        'tables and private option fields must be stripped before registration.')
+}
+if ($settingsText -notmatch
+    'addon\.settings\.AddToBlizzardOptions\s*=\s*AddToBlizzardOptions' -or
+    $settingsText -notmatch
+    'addon\.settings\.gui\.panels\[panelName\]') {
+    Add-ValidationError (
+        'Legacy option panels must use the shared protected registration ' +
+        'adapter and named child-panel registry.')
+}
+
+# Every first-party child panel must go through Settings' protected adapter.
+# Calling AceConfigDialog:AddToBlizOptions directly can select a partial retail
+# Settings API installed by another addon and fail with a nil category on 3.3.5.
+$optionRegistrationFiles = Get-ChildItem (Join-Path $root 'Core'),
+    (Join-Path $root 'Guide'), (Join-Path $root 'UI'),
+    (Join-Path $root 'Features'), (Join-Path $root 'Compat'),
+    (Join-Path $root 'DB') -Recurse -File -Filter *.lua
+$settingsPath = [IO.Path]::GetFullPath((Join-Path $root 'UI\Settings.lua'))
+foreach ($file in $optionRegistrationFiles) {
+    if ([IO.Path]::GetFullPath($file.FullName) -ceq $settingsPath) { continue }
+    $text = [IO.File]::ReadAllText($file.FullName)
+    if ($text -match '(?<![A-Za-z])AddToBlizOptions\s*\(') {
+        $relative = $file.FullName.Substring($root.Length).TrimStart('\', '/')
+        Add-ValidationError (
+            "First-party option panel bypasses the protected adapter: $relative")
+    }
+}
+
+$compatOptionsText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\Options.lua'))
+$questDBText = [IO.File]::ReadAllText((Join-Path $root 'DB\questDB.lua'))
+$tbcQuestDBText = [IO.File]::ReadAllText((Join-Path $root 'DB\tbc\db.lua'))
+if ($compatOptionsText -notmatch
+    'RegisterOptionsPanel\s*\(\s*["'']3\.3\.5a["'']') {
+    Add-ValidationError 'The 3.3.5 compatibility panel is not registered by name.'
+}
+foreach ($entry in @(
+    @{ Name = 'WotLK quest-data'; Text = $questDBText },
+    @{ Name = 'TBC quest-data'; Text = $tbcQuestDBText }
+)) {
+    if ($entry.Text -notmatch
+        'RegisterOptionsPanel\s*\(\s*["'']Quest Data["'']') {
+        Add-ValidationError "$($entry.Name) panel is not registered by name."
+    }
+}
 $defaultsMatch = [regex]::Match(
     $settingsText,
     '(?s)local settingsDBDefaults\s*=\s*\{(.*?)function addon\.settings:InitializeDatabase')

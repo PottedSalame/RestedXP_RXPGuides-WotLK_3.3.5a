@@ -78,6 +78,11 @@ end
 
 addon.settings = addon:NewModule("Settings", "AceConsole-3.0")
 addon.settings.enabledBetaFeatures = {}
+-- All first-party option panels must pass through this adapter. On interface
+-- 30300, a partial retail Settings API supplied by another addon can otherwise
+-- make newer AceConfigDialog revisions choose an incompatible registration
+-- path and return a nil category.
+addon.settings.AddToBlizzardOptions = AddToBlizzardOptions
 
 local function RunOnNextFrame(callback)
     if _G.RunNextFrame then
@@ -150,10 +155,21 @@ end
 -- when another addon loaded a newer AceConfig first. Normalize the complete
 -- tree at the integration boundary instead of maintaining a separate legacy
 -- copy of every option.
+local localizedAceConfigOptions = setmetatable({}, {__mode = "k"})
 local function NormalizeLegacyAceConfigOptions(option)
     if addon.gameVersion ~= 30300 or type(option) ~= "table" then return end
 
-    if not option._rxpTranslationStatus and addon.locale.GetMetadataForText then
+    -- AceConfig option tables are a strict public schema. Keep translation
+    -- provenance in a side table: attaching a private field to the option made
+    -- older registries (and Duowan's bundled revision) reject the entire panel
+    -- with "unknown parameter" on localized clients.
+    for key in pairs(option) do
+        if type(key) == "string" and key:match("^_rxp") then
+            option[key] = nil
+        end
+    end
+    if not localizedAceConfigOptions[option] and
+        addon.locale.GetMetadataForText then
         local metadata = type(option.name) == "string" and
                              addon.locale.GetMetadataForText(option.name) or nil
         if (not metadata or not metadata.machine) and
@@ -174,7 +190,7 @@ local function NormalizeLegacyAceConfigOptions(option)
             else
                 option.desc = "|cff70a0ff" .. notice .. "|r"
             end
-            option._rxpTranslationStatus = "machine"
+            localizedAceConfigOptions[option] = "machine"
         end
     end
 
@@ -214,7 +230,19 @@ function addon.settings.OpenFeatureToolSettings(toolPage)
 end
 
 if not addon.settings.gui then
-    addon.settings.gui = {selectedDeleteGuide = "", importStatusHistory = {}}
+    addon.settings.gui = {
+        selectedDeleteGuide = "",
+        importStatusHistory = {},
+        panels = {}
+    }
+end
+addon.settings.gui.panels = addon.settings.gui.panels or {}
+
+function addon.settings.RegisterOptionsPanel(panelName, panel)
+    if type(panelName) == "string" and panel then
+        addon.settings.gui.panels[panelName] = panel
+    end
+    return panel
 end
 
 function addon.settings.OpenSettings(panelName)
@@ -223,8 +251,11 @@ function addon.settings.OpenSettings(panelName)
     -- into AceConfig's retail category API after legacy registration.
     if addon.gameVersion == 30300 or
         not (_G.Settings and _G.Settings.GetCategory) then
-        local panel = panelName == "Import" and addon.settings.gui.import or
-                          addon.RXPOptions
+        local panel = panelName and addon.settings.gui.panels[panelName]
+        if not panel and panelName == "Import" then
+            panel = addon.settings.gui.import
+        end
+        panel = panel or addon.RXPOptions
         if panel and _G.InterfaceOptionsFrame_OpenToCategory then
             _G.InterfaceOptionsFrame_OpenToCategory(panel)
             _G.InterfaceOptionsFrame_OpenToCategory(panel)
@@ -1056,9 +1087,10 @@ function addon.settings:CreateImportOptionsPanel()
     AceConfig:RegisterOptionsTable(addon.RXPOptions.name .. "/Import",
                                    importOptionsTable)
 
-    self.gui.import = AddToBlizzardOptions(
-                          addon.RXPOptions.name .. "/Import", L("Import"),
-                          addon.RXPOptions.name)
+    self.gui.import = self.RegisterOptionsPanel(
+                          "Import", self.AddToBlizzardOptions(
+                              addon.RXPOptions.name .. "/Import", L("Import"),
+                              addon.RXPOptions.name))
 
     -- Ace3 ConfigDialog doesn't support embedding icons in header
     -- Directly references Ace3 built frame object
@@ -4619,7 +4651,7 @@ function addon.settings:CreateAceOptionsPanel()
     -- that late subtree as well before AceConfigDialog validates it on open.
     NormalizeLegacyAceConfigOptions(optionsTable.args.profiles)
 
-    addon.RXPOptions = AddToBlizzardOptions(addon.title)
+    addon.RXPOptions = self.AddToBlizzardOptions(addon.title)
 
     -- Ace3 ConfigDialog doesn't support embedding icons in header
     -- Directly references Ace3 built frame object

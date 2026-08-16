@@ -533,8 +533,11 @@ function CreatePanel()
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addon.title .. "/Quest Data", questDataTable)
 
-    addon.settings.gui.quest = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-                                    addon.title .. "/Quest Data", "Quest Data", addon.title)
+    addon.settings.gui.quest = addon.settings.RegisterOptionsPanel(
+                                   "Quest Data",
+                                   addon.settings.AddToBlizzardOptions(
+                                       addon.title .. "/Quest Data",
+                                       "Quest Data", addon.title))
 
 end
 
