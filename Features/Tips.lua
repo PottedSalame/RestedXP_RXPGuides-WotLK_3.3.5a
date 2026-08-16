@@ -34,7 +34,8 @@ local session = {
     emergencySpells = {},
     highlights = {},
     actionBarMap = {},
-    dangerousMobs = {}
+    dangerousMobs = {},
+    lastDangerFlash = 0
 }
 
 local function SetTipsFont(region, size)
@@ -651,7 +652,13 @@ function addon.tips:CreateDangerWarning()
     return warning
 end
 
-function addon.tips:EnableDangerWarning(level)
+function addon.tips:EnableDangerWarning(level, source)
+    if source == "dangerous" then
+        if not addon.settings.profile.showDangerousMobWarning then return end
+        local now = GetTime()
+        if now - (session.lastDangerFlash or 0) < 3 then return end
+        session.lastDangerFlash = now
+    end
     local warning = self.dangerWarning or self:CreateDangerWarning()
     if not warning then return end
 
@@ -676,7 +683,10 @@ local function IsStepActive(self)
     local levelBuffer = 1000
     local profile = addon.settings.profile
     local active
-    if addon.gameVersion < 20000 then
+    if self.dangerous then
+        active = self.isUnitscan and profile.showDangerousUnitscan or
+                     profile.showDangerousMobsMap
+    elseif addon.gameVersion < 20000 then
         active = profile.showDangerousMobsMap
     else
         active = profile.showRares and self.rare or profile.showTreasures and self.treasure
@@ -706,6 +716,9 @@ function addon.tips:LoadDangerousMobs(reloadData)
     if not addon.dangerousMobs[zone] then
         addon.tips.dangerousMobs = nil
         addon.generatedSteps["dangerousMobs"] = nil
+        if addon.targeting and addon.targeting.UpdateUnitList then
+            addon.targeting:UpdateUnitList()
+        end
         return
     end
 
@@ -715,6 +728,7 @@ function addon.tips:LoadDangerousMobs(reloadData)
 
     -- dangerousMobs DB has nested objects, flatten and fake step data
     if not dangerousMobs.processed or reloadData == true then
+        local previousGuideName = addon.currentGuideName
         addon.currentGuideName = "Addon Tips"
 
         local steps = {}
@@ -729,8 +743,7 @@ function addon.tips:LoadDangerousMobs(reloadData)
                         end
                         -- added a semicolon separator in case the database entry has multiple coords
                         for line in mobData.Location:gmatch("[^\r\n;]+") do
-                            line:gsub("^%s+", "")
-                            line:gsub("%s+$", "")
+                            line = line:gsub("^%s+", ""):gsub("%s+$", "")
 
                             element = addon.ParseLine(line)
                             skip = false
@@ -742,6 +755,8 @@ function addon.tips:LoadDangerousMobs(reloadData)
                                 if element.tag == "treasure" then step.treasure = true end
 
                                 element.step = step
+                                element.dangerous = true
+                                step.dangerous = true
                                 -- element.drawCenterPoint = true--Adds an icon at the center of the lines
                                 step.isActive = IsStepActive
                                 step.levelBuffer = mobData.Classification == "Normal" and 1 or 3
@@ -789,7 +804,7 @@ function addon.tips:LoadDangerousMobs(reloadData)
             end
         end
 
-        addon.currentGuideName = nil
+        addon.currentGuideName = previousGuideName
         dangerousMobs.steps = steps
 
         addon:ScheduleTask(addon.RegisterGeneratedSteps)
@@ -798,6 +813,9 @@ function addon.tips:LoadDangerousMobs(reloadData)
     addon.generatedSteps["dangerousMobs"] = dangerousMobs.steps
     dangerousMobs.processed = true
     addon.tips.dangerousMobs = dangerousMobs
+    if addon.targeting and addon.targeting.UpdateUnitList then
+        addon.targeting:UpdateUnitList()
+    end
 end
 
 addon.tips.ZONE_CHANGED_NEW_AREA = addon.tips.LoadDangerousMobs

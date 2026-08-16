@@ -1396,6 +1396,99 @@ end
 -- ITEM_SET_NAME = "%s (%d/%d)";
 local SET_BONUS_MATCH = "(%w+)%s+%((%d+)/(%d+)%)"
 
+local function EscapeLuaPattern(value)
+    return tostring(value or ""):gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+end
+
+local function MatchLocalizedFormat(line, template)
+    if type(line) ~= "string" or type(template) ~= "string" or
+        not template:find("%%") then return end
+    local argumentOrder, usedArguments = {}, {}
+    template = template:gsub("%%(%d+)%$([sd])", function(index, kind)
+        index = tonumber(index)
+        argumentOrder[#argumentOrder + 1] = index
+        usedArguments[index] = true
+        return kind == "s" and "\001" or "\002"
+    end)
+    local implicit = 0
+    template = template:gsub("%%([sd])", function(kind)
+        repeat implicit = implicit + 1 until not usedArguments[implicit]
+        argumentOrder[#argumentOrder + 1] = implicit
+        usedArguments[implicit] = true
+        return kind == "s" and "\001" or "\002"
+    end)
+    local pattern = EscapeLuaPattern(template)
+                        :gsub("\001", "(.-)")
+                        :gsub("\002", "(%d+)")
+    local captures = {line:match("^%s*" .. pattern .. "%s*$")}
+    if #captures == 0 then return end
+    local ordered, maximum = {}, 0
+    for index, value in ipairs(captures) do
+        local argument = argumentOrder[index] or index
+        ordered[argument] = value
+        if argument > maximum then maximum = argument end
+    end
+    return unpack(ordered, 1, maximum)
+end
+
+local function ParseItemUniqueness(itemData, lines)
+    if type(itemData) ~= "table" or type(lines) ~= "table" then return end
+    local uniqueText = type(_G.ITEM_UNIQUE) == "string" and _G.ITEM_UNIQUE or
+                           "Unique"
+    local equippedText = type(_G.ITEM_UNIQUE_EQUIPPABLE) == "string" and
+                             _G.ITEM_UNIQUE_EQUIPPABLE or "Unique-Equipped"
+    local lowerUnique = strlower(uniqueText)
+    local lowerEquipped = strlower(equippedText)
+    for _, rawLine in ipairs(lines) do
+        local line = type(rawLine) == "string" and
+                         rawLine:gsub("^%s+", ""):gsub("%s+$", "") or ""
+        local lowered = strlower(line)
+        local category, limit = MatchLocalizedFormat(
+                                    line, _G.ITEM_LIMIT_CATEGORY)
+        if category and tonumber(limit) then
+            itemData.unique = {
+                kind = "category",
+                key = strlower(category:gsub("^%s+", ""):gsub("%s+$", "")),
+                limit = math.max(1, tonumber(limit))
+            }
+            return
+        end
+
+        local multiple = MatchLocalizedFormat(line, _G.ITEM_UNIQUE_MULTIPLE)
+        if multiple and tonumber(multiple) then
+            itemData.unique = {kind = "item", key = itemData.itemID,
+                               limit = math.max(1, tonumber(multiple))}
+            return
+        end
+        if lowered == lowerEquipped or lowered == lowerUnique then
+            itemData.unique = {kind = "item", key = itemData.itemID, limit = 1}
+            return
+        end
+
+        -- English is retained for private-server clients whose localized
+        -- GlobalStrings omit these Wrath-era constants.
+        local englishCategory, englishLimit =
+            line:match("^[Uu]nique%-[Ee]quipped:%s*(.-)%s*%((%d+)%)$")
+        if englishCategory and tonumber(englishLimit) then
+            itemData.unique = {kind = "category",
+                               key = strlower(englishCategory),
+                               limit = math.max(1, tonumber(englishLimit))}
+            return
+        elseif lowered == "unique" or lowered == "unique-equipped" then
+            itemData.unique = {kind = "item", key = itemData.itemID, limit = 1}
+            return
+        elseif lowered:find(lowerEquipped, 1, true) == 1 or
+            lowered:find(lowerUnique, 1, true) == 1 or
+            lowered:find("unique%-equipped") == 1 then
+            -- A line is visibly a uniqueness rule but its category/count could
+            -- not be established.  Fail closed so no automated system sells or
+            -- recommends it on incomplete information.
+            itemData.uniquenessUnknown = true
+            return
+        end
+    end
+end
+
 local function GetTooltipLines(tooltip, baseItemData)
     local textLines = {}
     -- print("GetTooltipLines, tooltip", tooltip:GetName(), tooltip:NumLines())
@@ -2361,6 +2454,7 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     if addon.gameVersion == 30300 then
         ParseLegacyTooltipStats(stats, tooltipTextLines)
     end
+    ParseItemUniqueness(itemData, tooltipTextLines)
 
     local match1, match2
 
@@ -2449,6 +2543,50 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     session.itemCache[itemLink] = itemData
 
     return itemData
+end
+
+local function IsSlotRemovedByCandidate(candidate, targetSlot, equippedSlot)
+    if equippedSlot == targetSlot then return true end
+    return candidate.itemEquipLoc == "INVTYPE_2HWEAPON" and
+               targetSlot == _G.INVSLOT_MAINHAND and
+               equippedSlot == _G.INVSLOT_OFFHAND
+end
+
+-- Validate the complete post-equip layout, not merely the compared slot.  A
+-- category-limited ring may replace the currently equipped member of that
+-- category, but may not occupy the other ring slot beside it.
+local function ValidateUniqueLayout(candidate, targetSlot)
+    if not candidate or type(targetSlot) ~= "number" then return nil end
+    if candidate.uniquenessUnknown then
+        return nil, "unique-equipped rule unavailable"
+    end
+    local restriction = candidate.unique
+    if not restriction then return true end
+
+    local count = 1
+    for equippedSlot = 1, (_G.INVSLOT_LAST_EQUIPPED or 19) do
+        if not IsSlotRemovedByCandidate(candidate, targetSlot, equippedSlot) then
+            local link = GetInventoryItemLink("player", equippedSlot)
+            if link then
+                local equipped = addon.itemUpgrades:GetItemData(link, nil)
+                if not equipped then return nil, "equipped item data unavailable" end
+                if equipped.uniquenessUnknown then
+                    return nil, "equipped unique rule unavailable"
+                end
+                if restriction.kind == "item" and
+                    equipped.itemID == restriction.key then
+                    count = count + 1
+                elseif restriction.kind == "category" and equipped.unique and
+                    equipped.unique.kind == "category" and
+                    equipped.unique.key == restriction.key then
+                    count = count + 1
+                end
+            end
+        end
+    end
+    return count <= (restriction.limit or 1),
+           count > (restriction.limit or 1) and
+               "unique-equipped conflict" or nil
 end
 
 function addon.itemUpgrades:CalculateWeaponWeight(itemData, slotComparisonId)
@@ -2633,6 +2771,9 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
     -- print("comparedData.itemEquipLoc", comparedData.itemEquipLoc)
 
     if comparedData.unusable then return nil, "unusable" end
+    if comparedData.uniquenessUnknown then
+        return nil, "unique-equipped rule unavailable", "unknown"
+    end
 
     local classUsability = IsUsableForClass(comparedData.itemSubTypeID,
                                              comparedData.itemEquipLoc,
@@ -2655,6 +2796,7 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
     local equippedWeight, comparedWeight
     local slotNamesToCompare, dpsWeights = {}, nil
     local sawUpgrade, sawDowngrade, sawNonWorse, sawUnknown
+    local uniquenessReason
 
     if type(session.equippableSlots[comparedData.itemEquipLoc]) == "table" then
         -- print("is multi-slot", comparedData.itemEquipLoc)
@@ -2696,6 +2838,15 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
 
         -- print("Stack2.2, CompareItemWeight pairs(slotNamesToCompare)", slotId or itemEquipLoc)
         equippedItemLink = GetInventoryItemLink("player", slotId or itemEquipLoc)
+
+        local uniqueAllowed, uniqueError = ValidateUniqueLayout(
+                                               comparedData,
+                                               slotId or itemEquipLoc)
+        if uniqueAllowed ~= true then
+            sawUnknown = true
+            uniquenessReason = uniquenessReason or uniqueError or
+                                   "unique-equipped conflict"
+        else
 
         if comparedData.itemEquipLoc == "INVTYPE_SHIELD" or comparedData.itemEquipLoc == "INVTYPE_HOLDABLE" then
             if equippedItemLink then
@@ -2850,6 +3001,8 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
             })
         end
 
+        end -- unique layout is valid for this replacement slot
+
     end
 
     local comparisonState
@@ -2865,7 +3018,12 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
         comparisonState = "unknown"
     end
 
-    return statComparisons, nil, comparisonState
+    -- A multi-slot item can have one illegal destination and one legal one
+    -- (most commonly a category-limited ring replacing its existing peer).
+    -- A proven legal upgrade is authoritative; otherwise retain the conflict
+    -- reason so destructive/junk callers fail closed.
+    return statComparisons, sawUpgrade and nil or uniquenessReason,
+           comparisonState
 end
 
 local function GetComparisonIncrease(comparison)
@@ -3339,7 +3497,14 @@ local ahSession = {
     itemRetries = 0,
     scanSerial = 0,
     cancelled = false,
-    maxPages = 50
+    maxPages = 50,
+    maxFindPages = 50,
+    state = "idle",
+    pendingItem = nil,
+    findPage = 0,
+    responseToken = 0,
+    responseRetries = 0,
+    maxResponseRetries = 2
 }
 
 addon.itemUpgrades.AH = addon:NewModule("ItemUpgradesAH", "AceEvent-3.0")
@@ -3353,6 +3518,7 @@ function addon.itemUpgrades.AH:Setup()
                         addon.settings.profile.enableItemUpgradesAH
     if not enabled then
         if ahSession.isInitialized then
+            self:CancelScan()
             self:UnregisterAllEvents()
             ahSession.isInitialized = false
         end
@@ -3388,6 +3554,11 @@ function addon.itemUpgrades.AH:AUCTION_HOUSE_CLOSED()
     ahSession.scanSerial = ahSession.scanSerial + 1
     ahSession.queryRetries = 0
     ahSession.itemRetries = 0
+    ahSession.responseToken = ahSession.responseToken + 1
+    ahSession.responseRetries = 0
+    ahSession.state = "idle"
+    ahSession.pendingItem = nil
+    ahSession.findPage = 0
     if ahSession.displayFrame and ahSession.displayFrame.scanButton then
         ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
         ahSession.displayFrame.scanButton:Enable()
@@ -3398,11 +3569,14 @@ function addon.itemUpgrades.AH:AUCTION_HOUSE_CLOSED()
 end
 
 function addon.itemUpgrades.AH:CancelScan(message)
+    ahSession.state = "cancelling"
     ahSession.cancelled = true
     ahSession.sentQuery = false
     ahSession.scanSerial = ahSession.scanSerial + 1
     ahSession.queryRetries = 0
     ahSession.itemRetries = 0
+    ahSession.responseToken = ahSession.responseToken + 1
+    ahSession.responseRetries = 0
     if ahSession.displayFrame and ahSession.displayFrame.scanButton then
         ahSession.displayFrame.scanButton:SetText(_G.SEARCH or "Search")
         ahSession.displayFrame.scanButton:Enable()
@@ -3411,6 +3585,78 @@ function addon.itemUpgrades.AH:CancelScan(message)
         ahSession.displayFrame.cancelButton:Disable()
     end
     if message then addon.comms.PrettyPrint(message) end
+end
+
+function addon.itemUpgrades.AH:BeginOperation(state)
+    -- Superseding an operation invalidates every queued retry/timer owned by
+    -- the previous serial. At most one server query can then be outstanding.
+    ahSession.scanSerial = ahSession.scanSerial + 1
+    ahSession.state = state
+    ahSession.cancelled = false
+    ahSession.sentQuery = false
+    ahSession.queryRetries = 0
+    ahSession.itemRetries = 0
+    ahSession.responseToken = ahSession.responseToken + 1
+    ahSession.responseRetries = 0
+end
+
+function addon.itemUpgrades.AH:FinishOperation(state)
+    ahSession.sentQuery = false
+    ahSession.state = state or "complete"
+    ahSession.pendingItem = nil
+    ahSession.queryRetries = 0
+    ahSession.responseToken = ahSession.responseToken + 1
+    ahSession.responseRetries = 0
+    if ahSession.displayFrame and ahSession.displayFrame.scanButton then
+        ahSession.displayFrame.scanButton:SetText(_G.SEARCH or "Search")
+        ahSession.displayFrame.scanButton:Enable()
+    end
+    if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
+        ahSession.displayFrame.cancelButton:Disable()
+    end
+end
+
+function addon.itemUpgrades.AH:ArmResponseTimeout()
+    ahSession.responseToken = ahSession.responseToken + 1
+    local token = ahSession.responseToken
+    local serial = ahSession.scanSerial
+    local state = ahSession.state
+    C_Timer.After(3.0, function()
+        if token ~= ahSession.responseToken or
+            serial ~= ahSession.scanSerial or ahSession.state ~= state or
+            not ahSession.sentQuery then return end
+
+        ahSession.sentQuery = false
+        ahSession.responseRetries = ahSession.responseRetries + 1
+        if ahSession.responseRetries > ahSession.maxResponseRetries then
+            addon.itemUpgrades.AH:CancelScan(
+                "Auction scan stopped because the server did not answer.")
+        elseif state == "finding" then
+            -- AuctionFrameBrowse_Search starts at the first result page. Keep
+            -- our local page counter in the same domain when retrying.
+            ahSession.findPage = 0
+            addon.itemUpgrades.AH:IssueFindQuery()
+        elseif state == "scanning" then
+            addon.itemUpgrades.AH:Scan()
+        end
+    end)
+end
+
+function addon.itemUpgrades.AH:StartScan()
+    self:BeginOperation("scanning")
+    wipe(ahSession.scanData)
+    if ahSession.legacyData then wipe(ahSession.legacyData) end
+    ahSession.scanPage = 0
+    ahSession.scanResults = 0
+    ahSession.scanType = AuctionFilterButtons["Armor"]
+    if ahSession.displayFrame and ahSession.displayFrame.scanButton then
+        ahSession.displayFrame.scanButton:Disable()
+    end
+    if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
+        ahSession.displayFrame.cancelButton:Enable()
+    end
+    if self.RefreshLegacyResults then self:RefreshLegacyResults() end
+    self:Scan()
 end
 
 -- Fired when GetItemInfo queries the server for an uncached item and the reponse has arrived.
@@ -3438,6 +3684,10 @@ function addon.itemUpgrades.AH:SearchForBuyoutItem(itemData)
 
     -- print("SearchForBuyoutItem", itemData.itemLink)
 
+    self:BeginOperation("finding")
+    ahSession.pendingItem = itemData
+    ahSession.findPage = 0
+
     if _G.BrowseResetButton then _G.BrowseResetButton:Click() end
 
     _G.BrowseName:SetText(addon.gameVersion == 30300 and itemData.Name or
@@ -3454,15 +3704,43 @@ function addon.itemUpgrades.AH:SearchForBuyoutItem(itemData)
     _G.AuctionFrameTab1:Click()
 
     -- Pre-populates UI, so let user retry if server overloaded
-    if CanSendAuctionQuery() then
-        session.sentQuery = true
-        _G.AuctionFrameBrowse_Search()
-    end
+    self:IssueFindQuery()
 
     -- Results get processed async by AUCTION_ITEM_LIST_UPDATE
 end
 
-function addon.itemUpgrades.AH:FindItemAuction(itemData, recursive)
+function addon.itemUpgrades.AH:IssueFindQuery()
+    if ahSession.state ~= "finding" or ahSession.sentQuery or
+        not ahSession.pendingItem then return end
+    if not _G.AuctionFrame or not _G.AuctionFrame:IsShown() then
+        self:CancelScan()
+        return
+    end
+    if not CanSendAuctionQuery() then
+        ahSession.queryRetries = ahSession.queryRetries + 1
+        if ahSession.queryRetries > 12 then
+            self:CancelScan("Auction item search stopped after repeated server query delays.")
+            return
+        end
+        local serial = ahSession.scanSerial
+        C_Timer.After(0.35, function()
+            if serial == ahSession.scanSerial and
+                ahSession.state == "finding" then self:IssueFindQuery() end
+        end)
+        return
+    end
+    ahSession.queryRetries = 0
+    ahSession.sentQuery = true
+    local ok = pcall(_G.AuctionFrameBrowse_Search)
+    if not ok then
+        ahSession.sentQuery = false
+        self:CancelScan("Auction item search could not be submitted.")
+        return
+    end
+    self:ArmResponseTimeout()
+end
+
+function addon.itemUpgrades.AH:FindItemAuction(itemData)
     if not itemData then
         -- print("FindItemAuction error: itemData nil")
         return
@@ -3472,8 +3750,8 @@ function addon.itemUpgrades.AH:FindItemAuction(itemData, recursive)
     local resultCount, totalAuctions = GetNumAuctionItems("list")
 
     if resultCount == 0 then
-        -- print("FindItemAuction no results, recursive =", recursive)
-        return
+        self:FinishOperation("complete")
+        return false
     end
 
     -- print("FindItemAuction", itemData.Name, resultCount)
@@ -3486,20 +3764,31 @@ function addon.itemUpgrades.AH:FindItemAuction(itemData, recursive)
 
         if itemID == itemData.ItemID and itemLink == itemData.ItemLink and buyoutPrice == itemData.BuyoutMoney then
             SetSelectedAuctionItem("list", i)
+            self:FinishOperation("complete")
             return i
         end
 
     end
 
     -- Rely on BrowseNextPageButton:IsEnabled() for easy pagination handling
-    if _G.BrowseNextPageButton:IsEnabled() then
-        -- If next button is enabled, and we're down here; then auction not found
-        -- Additionally, the next page button is disabled on final page, so no need to track count
-        _G.BrowseNextPageButton:Click()
-        return self:FindItemAuction(itemData, true)
+    if _G.BrowseNextPageButton and
+        _G.BrowseNextPageButton:IsEnabled() and
+        ahSession.findPage + 1 < ahSession.maxFindPages then
+        ahSession.findPage = ahSession.findPage + 1
+        -- Mark this outstanding before the click so even a synchronous
+        -- private-server response is attributed to the current operation.
+        ahSession.sentQuery = true
+        local ok = pcall(_G.BrowseNextPageButton.Click,
+                         _G.BrowseNextPageButton)
+        if not ok then
+            ahSession.sentQuery = false
+            self:CancelScan("Auction result pagination failed.")
+            return
+        end
+        self:ArmResponseTimeout()
+        return false
     else
-        -- If next page not enabled, and we're here; then no results at all
-        -- print("FindItemAuction no matches in", totalAuctions, "results")
+        self:FinishOperation("complete")
         return nil
     end
 end
@@ -3508,17 +3797,32 @@ end
 -- Scrolling, initial population
 -- Blizzard's standard auction house view overcomes this problem by reacting to AUCTION_ITEM_LIST_UPDATE and re-querying the items.
 function addon.itemUpgrades.AH:AUCTION_ITEM_LIST_UPDATE()
-    -- TODO prevent overwriting/blocking full scan
-    if ahSession.selectedRow and ahSession.selectedRow.nodeData then
-        self:FindItemAuction(ahSession.selectedRow.nodeData)
-    end
-
     if not ahSession.sentQuery then return end
+
+    -- Invalidate the watchdog belonging to the query that produced this
+    -- update before dispatching the response to the active operation.
+    ahSession.responseToken = ahSession.responseToken + 1
+    ahSession.responseRetries = 0
+
+    if ahSession.state == "finding" then
+        ahSession.sentQuery = false
+        local item = ahSession.pendingItem
+        if not item then
+            self:CancelScan()
+            return
+        end
+        self:FindItemAuction(item)
+        return
+    elseif ahSession.state ~= "scanning" then
+        return
+    end
 
     local resultCount, totalAuctions = GetNumAuctionItems("list")
     -- print("AUCTION_ITEM_LIST_UPDATE", resultCount, totalAuctions)
 
-    ahSession.displayFrame.scanButton:SetText(_G.SEARCHING)
+    if ahSession.displayFrame and ahSession.displayFrame.scanButton then
+        ahSession.displayFrame.scanButton:SetText(_G.SEARCHING or "Searching")
+    end
 
     if resultCount == 0 or totalAuctions == 0 then
         ahSession.sentQuery = false
@@ -3530,11 +3834,7 @@ function addon.itemUpgrades.AH:AUCTION_ITEM_LIST_UPDATE()
         else
             ahSession.scanType = AuctionFilterButtons["Armor"]
             self:Analyze()
-            ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
-            ahSession.displayFrame.scanButton:Enable()
-            if ahSession.displayFrame.cancelButton then
-                ahSession.displayFrame.cancelButton:Disable()
-            end
+            self:FinishOperation("complete")
             self:DisplayEmbeddedResults()
         end
 
@@ -3578,8 +3878,13 @@ function addon.itemUpgrades.AH:AUCTION_ITEM_LIST_UPDATE()
 end
 
 function addon.itemUpgrades.AH:Scan()
+    if ahSession.state == "idle" or ahSession.state == "complete" or
+        ahSession.state == "cancelling" then
+        return self:StartScan()
+    end
     -- Prevent double calls
-    if ahSession.sentQuery or ahSession.cancelled then return end
+    if ahSession.state ~= "scanning" or ahSession.sentQuery or
+        ahSession.cancelled then return end
     if not _G.AuctionFrame or not _G.AuctionFrame:IsShown() then return end
     if addon.gameVersion ~= 30300 and not AuctionCategories then return end -- AH frame isn't loaded yet
 
@@ -3609,13 +3914,7 @@ function addon.itemUpgrades.AH:Scan()
         else
             ahSession.scanType = AuctionFilterButtons["Armor"]
             self:Analyze()
-            if ahSession.displayFrame and ahSession.displayFrame.scanButton then
-                ahSession.displayFrame.scanButton:SetText(_G.SEARCH)
-                ahSession.displayFrame.scanButton:Enable()
-            end
-            if ahSession.displayFrame and ahSession.displayFrame.cancelButton then
-                ahSession.displayFrame.cancelButton:Disable()
-            end
+            self:FinishOperation("complete")
             self:DisplayEmbeddedResults()
         end
         return
@@ -3629,19 +3928,27 @@ function addon.itemUpgrades.AH:Scan()
 
     ahSession.sentQuery = true
 
+    local ok
     if addon.gameVersion == 30300 then
         -- 3.3.5 signature: name, minLevel, maxLevel, invType, class,
         -- subclass, page, usable, quality, getAll. Weapon and armor are the
         -- first two legacy AH class categories.
-        QueryAuctionItems("", math.max(0, maxLevel - 5), maxLevel, nil,
-                          ahSession.scanType, nil, ahSession.scanPage, true,
-                          Enum.ItemQuality.Uncommon, false)
+        ok = pcall(QueryAuctionItems, "", math.max(0, maxLevel - 5),
+                   maxLevel, nil, ahSession.scanType, nil,
+                   ahSession.scanPage, true, Enum.ItemQuality.Uncommon,
+                   false)
     else
         -- text, minLevel, maxLevel, page, usable, rarity, getAll, exactMatch, filterData
-        QueryAuctionItems("", maxLevel - 5, maxLevel, ahSession.scanPage, true,
-                          Enum.ItemQuality.Uncommon, false, false,
-                          AuctionCategories[ahSession.scanType].filters)
+        ok = pcall(QueryAuctionItems, "", maxLevel - 5, maxLevel,
+                   ahSession.scanPage, true, Enum.ItemQuality.Uncommon,
+                   false, false, AuctionCategories[ahSession.scanType].filters)
     end
+    if not ok then
+        ahSession.sentQuery = false
+        self:CancelScan("Auction upgrade query could not be submitted.")
+        return
+    end
+    self:ArmResponseTimeout()
 end
 
 local function calculate(itemLink, scanData)
@@ -4146,20 +4453,7 @@ function addon.itemUpgrades.AH:CreateLegacyEmbeddedGui()
     search:SetPoint("RIGHT", buy, "LEFT", -3, 0)
     search:SetText(_G.SEARCH or "Search")
     search:SetScript("OnClick", function(this)
-        this:Disable()
-        wipe(ahSession.scanData)
-        wipe(ahSession.legacyData)
-        ahSession.sentQuery = false
-        ahSession.scanPage = 0
-        ahSession.scanResults = 0
-        ahSession.scanType = AuctionFilterButtons["Armor"]
-        ahSession.cancelled = false
-        ahSession.queryRetries = 0
-        ahSession.itemRetries = 0
-        ahSession.scanSerial = ahSession.scanSerial + 1
-        if frame.cancelButton then frame.cancelButton:Enable() end
-        addon.itemUpgrades.AH:RefreshLegacyResults()
-        addon.itemUpgrades.AH:Scan()
+        addon.itemUpgrades.AH:StartScan()
     end)
     frame.scanButton = search
 
@@ -4260,7 +4554,7 @@ function addon.itemUpgrades.AH:CreateEmbeddedGui()
 
     ahSession.displayFrame.scanButton:SetScript("OnClick", function()
         ahSession.displayFrame.DataProvider:Flush()
-        addon.itemUpgrades.AH:Scan()
+        addon.itemUpgrades.AH:StartScan()
     end)
 
     _G.RXP_IU_AH_BuyButton:Disable()

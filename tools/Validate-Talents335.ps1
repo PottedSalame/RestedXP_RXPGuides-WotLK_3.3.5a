@@ -201,8 +201,12 @@ foreach ($path in $files) {
         if (-not [int]::TryParse($headers['maxLevel'], [ref]$maxLevel) -or $maxLevel -lt $minLevel) {
             Add-ValidationError "$relative / $name has an invalid #maxLevel."
         }
-        if ($steps.Count -ne ($maxLevel - $minLevel + 1)) {
+        $isPetPlan = $headers.ContainsKey('pet') -and -not [string]::IsNullOrWhiteSpace($headers['pet'])
+        if (-not $isPetPlan -and $steps.Count -ne ($maxLevel - $minLevel + 1)) {
             Add-ValidationError "$relative / $name has $($steps.Count) steps for levels $minLevel-$maxLevel."
+        }
+        if ($isPetPlan -and $steps.Count -ne 16 -and $steps.Count -ne 20) {
+            Add-ValidationError "$relative / $name has $($steps.Count) pet points; expected a 16- or 20-point plan."
         }
 
         $key = "$class - $name"
@@ -223,7 +227,7 @@ foreach ($path in $files) {
                 Add-ValidationError "$relative`:$($step.Line) non-optional step has $($step.Talents.Count) directives."
             }
             foreach ($talent in $step.Talents) {
-                if ($talent.Kind -ne 'talent') { continue }
+                if ($talent.Kind -ne 'talent' -and $talent.Kind -ne 'pettalent') { continue }
                 $position = "$($talent.Tab),$($talent.Tier),$($talent.Column)"
                 $expectedRank = if ($ranks.ContainsKey($position)) { $ranks[$position] + 1 } else { 1 }
                 if ($talent.Rank -ne $expectedRank) {
@@ -232,11 +236,14 @@ foreach ($path in $files) {
                 if ($null -ne $step.CommentRank -and $talent.Rank -ne $step.CommentRank) {
                     Add-ValidationError "$relative`:$($talent.Line) comment says rank $($step.CommentRank), directive uses rank $($talent.Rank)."
                 }
-                $requiredPoints = ($talent.Tier - 1) * 5
+                $requiredPoints = ($talent.Tier - 1) * 3
+                if ($talent.Kind -eq 'talent') { $requiredPoints = ($talent.Tier - 1) * 5 }
                 if ($tabPoints[$talent.Tab] -lt $requiredPoints) {
                     Add-ValidationError "$relative`:$($talent.Line) $position requires $requiredPoints prior tree points; plan has $($tabPoints[$talent.Tab])."
                 }
-                Test-ReferenceTalent $class $relative $name $position $talent.Rank $ranks
+                if ($talent.Kind -eq 'talent') {
+                    Test-ReferenceTalent $class $relative $name $position $talent.Rank $ranks
+                }
                 $ranks[$position] = $talent.Rank
                 $tabPoints[$talent.Tab]++
             }
@@ -324,6 +331,10 @@ foreach ($classPlans in ($plans | Group-Object Class)) {
             Add-ValidationError "$($classPlans.Name) has no complete plan primarily using talent tab $tab."
         }
     }
+}
+
+if ($plans.Count -ne 38) {
+    Add-ValidationError "Talent-plan baseline changed: found $($plans.Count), expected 38."
 }
 
 if ($errors.Count -gt 0) {

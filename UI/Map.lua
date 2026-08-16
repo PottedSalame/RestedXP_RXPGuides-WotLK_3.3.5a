@@ -1107,10 +1107,17 @@ local function updateArrowData()
         end
 
         if not skip and HBD then
+            local deathskipResolved = false
             if isDeathSkip then
                 local px, py, inst = HBD:GetPlayerWorldPosition("player")
-                local DB = addon.SpiritHealerWorld or SpiritHealerWorld
-                local list = (px and inst and DB) and DB[inst] or nil
+                local DB = addon.SpiritHealerWorld
+                -- HBD reports the actual instance ID. Static deathskip routing
+                -- is deliberately limited to the four outdoor world maps;
+                -- battleground, arena and dungeon graveyards must use the
+                -- authoritative corpse position supplied by the client.
+                local outdoor = inst == 0 or inst == 1 or inst == 530 or
+                                    inst == 571
+                local list = (px and outdoor and DB) and DB[inst] or nil
                 if list and #list > 0 then
                     local bestWX, bestWY, bestD2
                     for i = 1, #list do
@@ -1125,13 +1132,16 @@ local function updateArrowData()
                         corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
                         corpseWP.wx, corpseWP.wy, corpseWP.instance = bestWX, bestWY, inst
                         corpseWP.title = "Spirit Healer"
+                        deathskipResolved = true
                         if ProcessWaypoint(corpseWP) then return end
                     end
                 end
             end
 
-            -- normal corpse arrow if not deathskip
-            if not isDeathSkip then
+            -- A deathskip is still actionable when this map has no validated
+            -- healer entry: point at the real corpse rather than suppressing
+            -- navigation or guessing across maps/instances.
+            if not deathskipResolved then
                 local zone = HBD:GetPlayerZone()
                 local corpse
                 if C_DeathInfo.GetCorpseMapLocation then

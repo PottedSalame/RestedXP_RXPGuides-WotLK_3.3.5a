@@ -1,6 +1,11 @@
 local _, addon = ...
 
-if addon.game ~= "CLASSIC" then return end
+-- The routes are Classic-world data, but those same outdoor creatures and map
+-- coordinates are valid on a 3.3.5a client.  Keep later clients on their own
+-- rare databases while allowing the standalone WotLK backport to consume this
+-- curated table.
+if addon.game ~= "CLASSIC" and
+    not (addon.game == "WOTLK" and addon.gameVersion == 30300) then return end
 local dangerousMobs = {
   ["Alliance"] = {
     ["Elwynn Forest"] = {
@@ -57,7 +62,7 @@ local dangerousMobs = {
         Classification = "Normal",
         Movement = "Fast Patrol",
         Notes = "Run around lake, can easily catch you off guard",
-        Location = ".line Elwynn Forest,50.66,65.31,48.99,66.17,48.84,68.17,50.03,68.64,52.01,68.71,52.96,67.93,53.37,68.65,54.41,68.78,54.75,68.57,55.68,69.04,56.40,68.90,57.63,67.34,57.76,65.51,56.34,63.73,53.83,63.30,52.07,66.16,50.66,50.75 (fast);.mob Murloc Streamrunner"
+        Location = ".line Elwynn Forest,50.66,65.31,48.99,66.17,48.84,68.17,50.03,68.64,52.01,68.71,52.96,67.93,53.37,68.65,54.41,68.78,54.75,68.57,55.68,69.04,56.40,68.90,57.63,67.34,57.76,65.51,56.34,63.73,53.83,63.30,52.07,66.16,50.66,50.75;.mob Murloc Streamrunner"
         },
         {
         MinLevel = 6,
@@ -4565,7 +4570,7 @@ local dangerousMobs = {
         Classification = "Rare",
         Movement = "Slow Patrol",
         Notes = "Hamstrings; high parry",
-        Location = ".line The Barrens,56.60,8.82,56.57,8.76,56.50,8.62,56.37,8.18,56.24,8.22,56.21,8.38,56.29,8.72,56.20,8.80,56.31,8.74,56.19,8.36,56.13,8.31,56.06,8.36,56.02,8.51,56.15,8.60,56.24,8.65,56.30,8.54,;.mob Foreman Grills"
+        Location = ".line The Barrens,56.60,8.82,56.57,8.76,56.50,8.62,56.37,8.18,56.24,8.22,56.21,8.38,56.29,8.72,56.20,8.80,56.31,8.74,56.19,8.36,56.13,8.31,56.06,8.36,56.02,8.51,56.15,8.60,56.24,8.65,56.30,8.54;.mob Foreman Grills"
         },
       },
       ["Kuz"] = {

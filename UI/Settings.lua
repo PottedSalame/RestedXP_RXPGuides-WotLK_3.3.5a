@@ -446,7 +446,11 @@ local settingsDBDefaults = {
         enableEnemyTargeting = true,
         enableEnemyMarking = true,
         enableMobMarking = true,
-        showTargetingOnProximity = unitscanEnabled,
+        showTargetingOnProximity = addon.gameVersion ~= 30300 and
+                                       unitscanEnabled or false,
+        showDangerousMobsMap = false,
+        showDangerousUnitscan = false,
+        showDangerousMobWarning = false,
         soundOnFind = addon.gameVersion == 30300 and "MapPing" or 3175,
         soundOnFindChannel = 'Master',
         scanForRares = true,
@@ -715,11 +719,13 @@ function addon.settings:MigrateLegacySettings()
     -- As of 11.1.5 TargetUnit now fires ADDON_ACTION_FORBIDDEN at execution, rather than target matches
     -- Also applies to > 1.15.8
     -- Force disable setting, rather than gameVersion everywhere
-    if db.showTargetingOnProximity and not unitscanEnabled then
+    if db.showTargetingOnProximity and not unitscanEnabled and
+        addon.gameVersion ~= 30300 then
         db.showTargetingOnProximity = false
     end
 
-    if db.showDangerousUnitscan and not unitscanEnabled then
+    if db.showDangerousUnitscan and not unitscanEnabled and
+        addon.gameVersion ~= 30300 then
         db.showDangerousUnitscan = false
     end
 end
@@ -2618,7 +2624,7 @@ function addon.settings:CreateAceOptionsPanel()
                         disabled = function()
                             return not self.profile.enableTargetAutomation
                         end,
-                        hidden = not unitscanEnabled
+                        hidden = addon.gameVersion ~= 30300 and not unitscanEnabled
                     },
                     enableFriendlyTargeting = {
                         name = L("Scan Friendly Targets"), -- TODO locale
@@ -3284,7 +3290,10 @@ function addon.settings:CreateAceOptionsPanel()
                         end
                     },
                     dangerousMobsHeader = {
-                        name = addon.gameVersion < 20000 and L("Dangerous Mobs Tracking") or L("Rare Tracker"),
+                        name = (addon.gameVersion < 20000 or
+                                    addon.gameVersion == 30300) and
+                                   L("Dangerous Mobs Tracking") or
+                                   L("Rare Tracker"),
                         type = "header",
                         width = "full",
                         order = 4.0,
@@ -3308,7 +3317,9 @@ function addon.settings:CreateAceOptionsPanel()
                             return not self.profile.enableTips
                         end,
                         hidden = function()
-                            return not addon.dangerousMobs or addon.gameVersion > 20000
+                            return not addon.dangerousMobs or
+                                       (addon.gameVersion > 20000 and
+                                           addon.gameVersion ~= 30300)
                         end
                     },
                     showDangerousUnitscan = {
@@ -3327,7 +3338,32 @@ function addon.settings:CreateAceOptionsPanel()
                             return not self.profile.enableTips
                         end,
                         hidden = function()
-                            return not unitscanEnabled or not addon.dangerousMobs or addon.gameVersion > 20000
+                            return not addon.dangerousMobs or
+                                       (not unitscanEnabled and
+                                           addon.gameVersion ~= 30300) or
+                                       (addon.gameVersion > 20000 and
+                                           addon.gameVersion ~= 30300)
+                        end
+                    },
+                    showDangerousMobWarning = {
+                        name = L("Dangerous mob screen flash"),
+                        desc = L("Briefly flashes the screen edges when a detected dangerous mob appears"),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 4.21,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if not value and addon.tips then
+                                addon.tips:DisableDangerWarning()
+                            end
+                        end,
+                        disabled = function()
+                            return not self.profile.enableTips or
+                                       not self.profile.showDangerousUnitscan
+                        end,
+                        hidden = function()
+                            return addon.gameVersion ~= 30300 or
+                                       not addon.dangerousMobs
                         end
                     },
                     showRares = {

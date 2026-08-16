@@ -32,6 +32,35 @@ local function ItemID(value)
                tonumber(value:match("item:(%d+)")) or nil
 end
 
+local function KnownSpellIDByName(wantedName)
+    if type(wantedName) ~= "string" or wantedName == "" or
+        type(_G.GetNumSpellTabs) ~= "function" or
+        type(_G.GetSpellTabInfo) ~= "function" or
+        type(_G.GetSpellBookItemName) ~= "function" or
+        type(_G.GetSpellBookItemInfo) ~= "function" then return end
+
+    local found
+    for tab = 1, _G.GetNumSpellTabs() do
+        local _, _, offset, count = _G.GetSpellTabInfo(tab)
+        offset, count = tonumber(offset) or 0, tonumber(count) or 0
+        for slot = offset + 1, offset + count do
+            local name = _G.GetSpellBookItemName(slot,
+                                                 _G.BOOKTYPE_SPELL or "spell")
+            if name == wantedName then
+                local actionType, spellId = _G.GetSpellBookItemInfo(
+                                                slot,
+                                                _G.BOOKTYPE_SPELL or "spell")
+                spellId = tonumber(spellId)
+                if actionType == "SPELL" and spellId then
+                    if found and found ~= spellId then return end
+                    found = spellId
+                end
+            end
+        end
+    end
+    return found
+end
+
 function recorder:IsRecording()
     return RXPCData.recorderDraft and RXPCData.recorderDraft.recording == true
 end
@@ -66,6 +95,7 @@ function recorder:Record(kind, data)
     table.insert(draft.events, event)
     while #draft.events > 500 do table.remove(draft.events, 1) end
     self:Refresh()
+    return event
 end
 
 function recorder:EnsureStep()
@@ -152,6 +182,145 @@ function recorder:Clear()
         end)
 end
 
+local function SanitizedComment(text)
+    return "-- VERIFY: " .. tostring(text or "event"):gsub("[\r\n]+", " ")
+end
+
+function recorder:BuildSuggestion(event)
+    if type(event) ~= "table" then return end
+    if (event.kind == "unit-seen" or event.kind == "target-added") and
+        tonumber(event.id) and not event.suggestionComment then
+        event.suggestionComment = SanitizedComment(
+                                      "NPC entry ID " .. tostring(event.id))
+    end
+    if type(event.suggestion) == "string" and event.suggestion ~= "" then
+        return event.suggestion, event.suggestionUncertain == true
+    end
+
+    local line, uncertain
+    if event.kind == "quest-accepted" and tonumber(event.id) then
+        line = format(".accept %d", event.id)
+    elseif event.kind == "quest-turned-in" and tonumber(event.id) then
+        line = format(".turnin %d", event.id)
+    elseif event.kind == "objective-changed" and
+        tonumber(event.id) and tonumber(event.objective) then
+        line = format(".complete %d,%d", event.id, event.objective)
+    elseif (event.kind == "item-used" or
+            event.kind == "inventory-item-used") and tonumber(event.id) then
+        line = tonumber(event.id) == 6948 and ".hs" or
+                   format(".use %d", event.id)
+    elseif event.kind == "hearth-used" then
+        line = ".hs"
+    elseif event.kind == "spell-or-item-used" and tonumber(event.id) then
+        line = format(".cast %d", event.id)
+    elseif event.kind == "spell-or-item-used" then
+        line = SanitizedComment("spell used: " .. tostring(event.spell or "unknown"))
+        uncertain = true
+    elseif event.kind == "taxi-used" and
+        type(event.destination) == "string" then
+        local resolved, ambiguous = addon.ResolveLegacyFlightPath and
+            addon.ResolveLegacyFlightPath(event.destination)
+        if resolved and not ambiguous and
+            (not tonumber(event.id) or resolved == tonumber(event.id)) then
+            local faction = addon.player and addon.player.faction
+            local node = faction and addon.FPDB and addon.FPDB[faction] and
+                             addon.FPDB[faction][resolved]
+            line = ".fly " .. tostring(node and node.name or event.destination)
+        else
+            line = SanitizedComment("verify taxi destination: " .. event.destination)
+            uncertain = true
+        end
+    elseif event.kind == "hearth-bound" then
+        line = ".home >> Set your Hearthstone to " ..
+                   tostring(event.location or "the recorded inn")
+    elseif (event.kind == "item-acquired" or event.kind == "item-push") and
+        tonumber(event.id) then
+        line = format(".collect %d,%d", event.id,
+                      math.max(1, tonumber(event.count) or 1))
+        uncertain = true
+    elseif (event.kind == "unit-seen" or event.kind == "target-added") and
+        tonumber(event.id) and type(event.name) == "string" and
+        event.name ~= "" then
+        line = ".target " .. event.name
+        uncertain = true
+    elseif event.kind == "zone-changed" then
+        if tonumber(event.map) and tonumber(event.x) and tonumber(event.y) then
+            line = SanitizedComment(format("zone transition near %d,%.2f,%.2f",
+                                            event.map, event.x, event.y))
+        else
+            line = SanitizedComment("zone transition")
+        end
+        uncertain = true
+    elseif event.kind == "gossip-opened" then
+        line = SanitizedComment("gossip options: " ..
+                                    tostring(event.labels or event.options or "unknown"))
+        uncertain = true
+    end
+
+    if line then
+        event.suggestion = line
+        event.suggestionUncertain = uncertain == true
+        event.reviewed = true
+    end
+    return line, uncertain
+end
+
+function recorder:PromoteEvent(event)
+    if type(event) ~= "table" or event.promoted or event.ignored then return end
+    local line, uncertain = self:BuildSuggestion(event)
+    if not line then return end
+    local draft = self:GetDraft()
+    local function ContainsLine(wanted)
+        if type(wanted) ~= "string" then return false end
+        for _, step in ipairs(draft.steps) do
+            for _, existing in ipairs(step.lines or {}) do
+                if existing.text == wanted then return true end
+            end
+        end
+        return false
+    end
+    if event.suggestionComment and not ContainsLine(event.suggestionComment) then
+        self:AddLine(event.suggestionComment, false)
+    end
+    if ContainsLine(line) then
+        event.promoted = true
+        event.selected = false
+        return true
+    end
+    self:AddLine(line, uncertain)
+    event.promoted = true
+    event.selected = false
+    return true
+end
+
+function recorder:AddSelected()
+    local changed
+    for _, event in ipairs(self:GetDraft().events) do
+        if event.selected and self:PromoteEvent(event) then changed = true end
+    end
+    if changed then self:Refresh() end
+end
+
+function recorder:AddAllReviewed()
+    local changed
+    for _, event in ipairs(self:GetDraft().events) do
+        if self:BuildSuggestion(event) and self:PromoteEvent(event) then
+            changed = true
+        end
+    end
+    if changed then self:Refresh() end
+end
+
+function recorder:IgnoreSelected()
+    for _, event in ipairs(self:GetDraft().events) do
+        if event.selected and not event.promoted then
+            event.ignored = true
+            event.selected = false
+        end
+    end
+    self:Refresh()
+end
+
 function recorder:BuildGuide()
     local draft = self:GetDraft()
     local draftName = tostring(draft.name or "Recorded Draft")
@@ -167,7 +336,7 @@ function recorder:BuildGuide()
         if #step.lines > 0 then
             table.insert(lines, "step")
             for _, line in ipairs(step.lines) do
-                if line.uncertain then
+                if line.uncertain and line.text:sub(1, 2) ~= "--" then
                     table.insert(lines, "    -- VERIFY: inferred from an event")
                 end
                 table.insert(lines, "    " .. line.text)
@@ -275,13 +444,11 @@ function recorder:HandleEvent(event, arg1, arg2, arg3)
                        tonumber(arg2) or tonumber(arg1)
         if id then
             self:Record("quest-accepted", {id = id})
-            self:AddLine(".accept " .. id, false)
         end
     elseif event == "QUEST_TURNED_IN" then
         local id = tonumber(arg1)
         if id then
             self:Record("quest-turned-in", {id = id})
-            self:AddLine(".turnin " .. id, false)
         end
     elseif event == "PLAYER_TARGET_CHANGED" or event == "UPDATE_MOUSEOVER_UNIT" then
         local unit = event == "PLAYER_TARGET_CHANGED" and "target" or "mouseover"
@@ -302,7 +469,11 @@ function recorder:HandleEvent(event, arg1, arg2, arg3)
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and arg1 == "player" then
         local spellName = type(arg2) == "string" and arg2 or
                               (tonumber(arg3) and GetSpellInfo(arg3))
-        self:Record("spell-or-item-used", {spell = spellName})
+        local hearthName = GetSpellInfo(8690)
+        self:Record(spellName and hearthName and spellName == hearthName and
+                        "hearth-used" or "spell-or-item-used",
+                    {spell = spellName,
+                     id = tonumber(arg3) or KnownSpellIDByName(spellName)})
     elseif event == "GOSSIP_SHOW" then
         local options = C_GossipInfo and C_GossipInfo.GetOptions and
                             C_GossipInfo.GetOptions() or {}
@@ -332,6 +503,37 @@ function recorder:Refresh()
     if #preview > 3200 then preview = preview:sub(#preview - 3200) end
     self.frame.preview:SetText(preview)
     self.frame.start:SetText(self:IsRecording() and L("Stop") or L("Start"))
+    if self.frame.reviewScroll and self.frame.reviewRows then
+        local events = draft.events
+        local visible = #self.frame.reviewRows
+        FauxScrollFrame_Update(self.frame.reviewScroll, #events, visible, 22)
+        local offset = FauxScrollFrame_GetOffset(self.frame.reviewScroll)
+        for rowIndex, row in ipairs(self.frame.reviewRows) do
+            -- Most recent captures appear first without changing persisted
+            -- event ordering.
+            local eventIndex = #events - (offset + rowIndex) + 1
+            local event = events[eventIndex]
+            row.event = event
+            if event then
+                local suggestion = self:BuildSuggestion(event)
+                local state = event.promoted and "|cff40ff40+|r" or
+                                  (event.ignored and "|cff888888-|r" or
+                                      (suggestion and "|cffffd100?|r" or " "))
+                row.check:SetChecked(event.selected == true)
+                if event.promoted or event.ignored then
+                    row.check:Disable()
+                else
+                    row.check:Enable()
+                end
+                row.text:SetText(format("%s %-20s %s", state,
+                    tostring(event.kind or "event"),
+                    tostring(suggestion or L("No safe directive inferred"))))
+                row:Show()
+            else
+                row:Hide()
+            end
+        end
+    end
 end
 
 local function Button(frame, text, width, callback)
@@ -347,7 +549,7 @@ end
 
 function recorder:CreateFrame()
     local frame = CreateFrame("Frame", "RXPGuideRecorder", UIParent)
-    frame:SetSize(720, 520)
+    frame:SetSize(760, 600)
     frame:SetPoint("CENTER")
     frame:SetFrameStrata("DIALOG")
     frame:SetMovable(true)
@@ -391,8 +593,72 @@ function recorder:CreateFrame()
     local clear = Button(frame, L("Clear"), 58, function() recorder:Clear() end)
     clear:SetPoint("LEFT", export, "RIGHT", 5, 0)
 
+    local reviewLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    reviewLabel:SetPoint("TOPLEFT", 28, -108)
+    reviewLabel:SetText(L("Captured event review"))
+
+    local reviewBox = CreateFrame("Frame", nil, frame)
+    reviewBox:SetPoint("TOPLEFT", 24, -126)
+    reviewBox:SetPoint("TOPRIGHT", -24, -126)
+    reviewBox:SetHeight(184)
+    reviewBox:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8",
+                           edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+                           tile = true, tileSize = 16, edgeSize = 12,
+                           insets = {left = 3, right = 3, top = 3, bottom = 3}})
+    reviewBox:SetBackdropColor(0.02, 0.02, 0.02, 0.92)
+    local reviewScroll = CreateFrame("ScrollFrame", "RXPGuideRecorderReviewScroll",
+                                     reviewBox, "FauxScrollFrameTemplate")
+    reviewScroll:SetPoint("TOPLEFT", 8, -8)
+    reviewScroll:SetPoint("BOTTOMRIGHT", -28, 38)
+    reviewScroll:SetScript("OnVerticalScroll", function(this, offset)
+        FauxScrollFrame_OnVerticalScroll(this, offset, 22,
+                                          function() recorder:Refresh() end)
+    end)
+    frame.reviewScroll = reviewScroll
+    frame.reviewRows = {}
+    for index = 1, 6 do
+        local row = CreateFrame("Button", nil, reviewBox)
+        row:SetHeight(22)
+        row:SetPoint("TOPLEFT", 10, -8 - (index - 1) * 22)
+        row:SetPoint("RIGHT", -30, 0)
+        row.check = CreateFrame("CheckButton", nil, row,
+                                "UICheckButtonTemplate")
+        row.check:SetSize(20, 20)
+        row.check:SetPoint("LEFT")
+        row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        row.text:SetPoint("LEFT", row.check, "RIGHT", 2, 0)
+        row.text:SetPoint("RIGHT", -2, 0)
+        row.text:SetJustifyH("LEFT")
+        row.check:SetScript("OnClick", function(button)
+            if row.event and not row.event.promoted and
+                not row.event.ignored then
+                row.event.selected = button:GetChecked() == 1
+            end
+        end)
+        row:SetScript("OnClick", function()
+            if row.event and not row.event.promoted and
+                not row.event.ignored then
+                row.event.selected = not row.event.selected
+                row.check:SetChecked(row.event.selected)
+            end
+        end)
+        frame.reviewRows[index] = row
+    end
+    local addSelected = Button(reviewBox, L("Add Selected"), 105,
+                               function() recorder:AddSelected() end)
+    addSelected:SetPoint("BOTTOMLEFT", 10, 9)
+    local addReviewed = Button(reviewBox, L("Add All Reviewed"), 125,
+                               function() recorder:AddAllReviewed() end)
+    addReviewed:SetPoint("LEFT", addSelected, "RIGHT", 6, 0)
+    local ignore = Button(reviewBox, L("Ignore"), 75,
+                          function() recorder:IgnoreSelected() end)
+    ignore:SetPoint("LEFT", addReviewed, "RIGHT", 6, 0)
+    local reviewPreview = Button(reviewBox, L("Preview"), 75,
+                                 function() recorder:Preview() end)
+    reviewPreview:SetPoint("LEFT", ignore, "RIGHT", 6, 0)
+
     local previewBox = CreateFrame("Frame", nil, frame)
-    previewBox:SetPoint("TOPLEFT", 24, -105)
+    previewBox:SetPoint("TOPLEFT", 24, -322)
     previewBox:SetPoint("BOTTOMRIGHT", -24, 24)
     previewBox:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8",
                             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",

@@ -39,6 +39,8 @@ UI\Settings.lua
 # accept forward slashes, and it resolves nested-XML <Script> paths relative to
 # the XML's own folder, so DB\wotlk.xml would not work here either).
 DB\shared.lua
+DB\classic\SpiritHealerDB.lua
+DB\classic\dangerousMobs.lua
 DB\wotlk\flightData.lua
 DB\wotlk\quest.lua
 DB\wotlk\spells.lua

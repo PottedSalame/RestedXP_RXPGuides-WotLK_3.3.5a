@@ -87,6 +87,10 @@ local function HasVisibleCurrentStepTarget()
 end
 
 local rareTargets = {}
+-- Dangerous-mob records are generated from a zone database.  Keep them out of
+-- the ordinary macro/step lists: they are alerts discovered through visible
+-- stock nameplates, target, or mouseover only.
+local dangerousTargets = {}
 
 local function SetPlaceholder(texture, path)
     texture:SetTexture(path)
@@ -162,6 +166,10 @@ function addon.targeting:RebuildLegacyWanted()
     AddList(mobList, "mob", addon.settings.profile.enableEnemyTargeting)
     AddList(unitscanList, "unitscan", addon.settings.profile.enableEnemyTargeting)
     AddList(rareTargets, "rare", addon.settings.profile.scanForRares)
+    AddList(dangerousTargets, "dangerous",
+            addon.settings.profile.enableTips and
+            addon.settings.profile.enableEnemyTargeting and
+                addon.settings.profile.showDangerousUnitscan)
     for name in pairs(legacyScanner.alerted) do
         if not legacyScanner.wantedByName[name] then
             legacyScanner.alerted[name] = nil
@@ -303,7 +311,8 @@ function addon.targeting:RecordSeenTarget(name, wanted, now, source)
     proxmityPolling.match = true
 
     if changed and not legacyScanner.alerted[name] and
-        (wanted.kind == "rare" or wanted.kind == "unitscan") then
+        (wanted.kind == "rare" or wanted.kind == "unitscan" or
+            wanted.kind == "dangerous") then
         legacyScanner.alerted[name] = true
         if addon.settings.profile.flashOnFind and FlashClientIcon then
             FlashClientIcon()
@@ -312,7 +321,10 @@ function addon.targeting:RecordSeenTarget(name, wanted, now, source)
         -- escorts, named quest mobs, etc.). Treating every unitscan match as an
         -- emergency caused the full-screen low-health vignette to fire repeatedly.
         -- Reserve the red danger flash for actual rare alerts.
-        if wanted.kind == "rare" and
+        if wanted.kind == "dangerous" and
+            addon.settings.profile.showDangerousMobWarning and addon.tips then
+            addon.tips:EnableDangerWarning(2, "dangerous")
+        elseif wanted.kind == "rare" and
             addon.settings.profile.enableTargetingFlash and addon.tips then
             addon.tips:EnableDangerWarning(1)
         end
@@ -1259,11 +1271,28 @@ function addon.targeting:UpdateUnitList()
     local unitscanGenerated = {}
     local mobsGenerated = {}
     local targetsGenerated = {}
-    for _, context in pairs(addon.generatedSteps) do
+    local dangerousGenerated = {}
+    for generatedKind, context in pairs(addon.generatedSteps) do
         for _, step in ipairs(context) do
             for _, element in ipairs(step.elements or {}) do
-                AddUnits(element, unitscanGenerated, mobsGenerated, targetsGenerated)
+                if generatedKind == "dangerousMobs" then
+                    AddUnits(element, dangerousGenerated, dangerousGenerated,
+                             dangerousGenerated)
+                else
+                    AddUnits(element, unitscanGenerated, mobsGenerated,
+                             targetsGenerated)
+                end
             end
+        end
+    end
+
+    wipe(dangerousTargets)
+    local dangerousSeen = {}
+    for _, name in ipairs(dangerousGenerated) do
+        if type(name) == "string" and name ~= "" and
+            not dangerousSeen[name] then
+            dangerousSeen[name] = true
+            tinsert(dangerousTargets, name)
         end
     end
 
@@ -1490,11 +1519,20 @@ function addon.targeting:CreateTargetFrame()
         if not addon.settings.profile.enableTargetAutomation then return nil, true end
 
         if addon.settings.profile.showTargetingOnProximity then
-            return shouldTargetCheck() and
-                       (HasVisibleCurrentStepTarget() or proxmityPolling.match), true
+            local dangerousVisible =
+                addon.settings.profile.enableTips and
+                addon.settings.profile.showDangerousUnitscan and
+                    next(dangerousTargets) ~= nil and proxmityPolling.match
+            return (shouldTargetCheck() or dangerousVisible) and
+                       (HasVisibleCurrentStepTarget() or
+                           proxmityPolling.match), true
         end
 
-        return shouldTargetCheck()
+        return shouldTargetCheck() or
+                   (addon.settings.profile.enableTips and
+                       addon.settings.profile.showDangerousUnitscan and
+                       next(dangerousTargets) ~= nil and
+                       proxmityPolling.match)
     end
 
     self:RenderTargetFrameBackground()
@@ -1620,7 +1658,7 @@ function addon.targeting:GetMarkerIndex(kind, kindIndex)
         -- Use star 1, circle 2, diamond 3, and triangle 4
         -- 0 % 4 = 0 + 1, 3 % 4 = 3 + 1, 4 % 4 = 0 + 1, 5 % 4 = 1 + 1
         raidTargetIndex = (kindIndex % 4) + 1
-    elseif kind == 'unitscan' or kind == 'rare' then
+    elseif kind == 'unitscan' or kind == 'rare' or kind == 'dangerous' then
          -- Use moon 5
         raidTargetIndex = 5
     elseif kind == 'mob' then
@@ -1850,25 +1888,29 @@ function addon.targeting:UpdateTargetFrame(selector)
         if addon.settings.profile.enableEnemyTargeting then
             -- Start with guide order so the four directly bindable buttons do
             -- not change targets simply because Lua hashes were re-iterated.
-            for _, name in ipairs(unitscanList) do
-                local data = currentStepTargets[name]
-                if data and data.kind ~= "friendly" then
-                    AddEnemy(name, data.kind)
+            -- Modern clients have direct nameplate tokens; legacy proximity
+            -- mode must contain observed targets only.  Seeding it from the
+            -- current step made the option indistinguishable from persistent
+            -- placeholder mode.
+            if addon.gameVersion ~= 30300 then
+                for _, name in ipairs(unitscanList) do
+                    local data = currentStepTargets[name]
+                    if data and data.kind ~= "friendly" then
+                        AddEnemy(name, data.kind)
+                    end
                 end
-            end
-            for _, name in ipairs(mobList) do
-                local data = currentStepTargets[name]
-                if data and data.kind ~= "friendly" then
-                    AddEnemy(name, data.kind)
+                for _, name in ipairs(mobList) do
+                    local data = currentStepTargets[name]
+                    if data and data.kind ~= "friendly" then
+                        AddEnemy(name, data.kind)
+                    end
                 end
+                AddSortedMapEntries(currentStepTargets,
+                    function(name, data)
+                        return data.kind ~= "friendly" and not enemyNames[name]
+                    end,
+                    function(name, data) AddEnemy(name, data.kind) end)
             end
-
-            -- Defensive fallback for a parser/source list mismatch.
-            AddSortedMapEntries(currentStepTargets,
-                function(name, data)
-                    return data.kind ~= "friendly" and not enemyNames[name]
-                end,
-                function(name, data) AddEnemy(name, data.kind) end)
 
             for _, name in ipairs(unitscanList) do
                 local data = proxmityPolling.scannedTargets[name]
@@ -1887,6 +1929,19 @@ function addon.targeting:UpdateTargetFrame(selector)
                     return data.kind ~= "friendly" and not enemyNames[name]
                 end,
                 function(name, data) AddEnemy(name, data.kind) end)
+        end
+    end
+
+    -- Zone danger records are never persistent placeholders, even when the
+    -- ordinary Active Targets mode is persistent.
+    if addon.settings.profile.enableEnemyTargeting and
+        addon.settings.profile.enableTips and
+        addon.settings.profile.showDangerousUnitscan then
+        for _, name in ipairs(dangerousTargets) do
+            local data = proxmityPolling.scannedTargets[name]
+            if data and data.kind == "dangerous" then
+                AddEnemy(name, "dangerous")
+            end
         end
     end
 
@@ -1982,15 +2037,17 @@ function addon.targeting:UpdateTargetFrame(selector)
         if not addon.settings.profile.showTargetingOnProximity then
             for _, name in ipairs(targetList) do AddFriendly(name) end
         else
-            for _, name in ipairs(targetList) do
-                local data = currentStepTargets[name]
-                if data and data.kind == "friendly" then AddFriendly(name) end
+            if addon.gameVersion ~= 30300 then
+                for _, name in ipairs(targetList) do
+                    local data = currentStepTargets[name]
+                    if data and data.kind == "friendly" then AddFriendly(name) end
+                end
+                AddSortedMapEntries(currentStepTargets,
+                    function(name, data)
+                        return data.kind == "friendly" and not friendlyNames[name]
+                    end,
+                    function(name) AddFriendly(name) end)
             end
-            AddSortedMapEntries(currentStepTargets,
-                function(name, data)
-                    return data.kind == "friendly" and not friendlyNames[name]
-                end,
-                function(name) AddFriendly(name) end)
         end
     end
 

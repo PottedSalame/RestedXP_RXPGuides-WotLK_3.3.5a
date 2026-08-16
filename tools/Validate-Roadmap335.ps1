@@ -70,6 +70,73 @@ if ($xpText -notmatch 'function\s+assistant:ResizeForVisibleColumns\s*\(' -or
     Add-Error 'XP estimator does not adapt its saved window size to visible columns.'
 }
 
+# Remaining 3.3.5 backport completion guards. These are intentionally
+# structural: gameplay behavior is exercised in-game, while CI prevents a
+# manifest cleanup or upstream merge from silently disconnecting the feature.
+foreach ($database in @('DB\classic\SpiritHealerDB.lua',
+                         'DB\classic\dangerousMobs.lua')) {
+    if ($toc.IndexOf($database, [StringComparison]::OrdinalIgnoreCase) -lt 0) {
+        Add-Error "3.3.5 manifest does not load $database"
+    }
+}
+$mapText = [IO.File]::ReadAllText((Join-Path $root 'UI/Map.lua'))
+$healerText = [IO.File]::ReadAllText((Join-Path $root 'DB/classic/SpiritHealerDB.lua'))
+if ($mapText -notmatch 'inst\s*==\s*530' -or $mapText -notmatch 'inst\s*==\s*571' -or
+    $mapText -notmatch 'deathskipResolved') {
+    Add-Error 'Outdoor-only Outland/Northrend deathskip routing is not wired.'
+}
+if ($healerText -notmatch '(?m)^\s*\[530\]\s*=\s*\{' -or
+    $healerText -notmatch '(?m)^\s*\[571\]\s*=\s*\{') {
+    Add-Error 'Spirit Healer data does not cover Outland and Northrend.'
+}
+
+$plannerText = [IO.File]::ReadAllText((Join-Path $root 'Features/ActivityPlanner.lua'))
+if ($plannerText -match 'group:find\("Northrend Daily Quests"' -or
+    $plannerText -notmatch 'element\.tag\s*==\s*"daily"' -or
+    $plannerText -notmatch 'element\.tag\s*==\s*"dailyturnin"') {
+    Add-Error 'Daily Planner still depends on a hard-coded guide group.'
+}
+
+$targetingText = [IO.File]::ReadAllText((Join-Path $root 'Features/Targeting.lua'))
+$tipsText = [IO.File]::ReadAllText((Join-Path $root 'Features/Tips.lua'))
+foreach ($setting in @('showTargetingOnProximity','showDangerousMobsMap',
+                        'showDangerousUnitscan','showDangerousMobWarning')) {
+    if ($settingsText -notmatch [regex]::Escape($setting)) {
+        Add-Error "Missing targeting/danger setting: $setting"
+    }
+}
+if ($targetingText -notmatch 'dangerousTargets' -or
+    $targetingText -notmatch 'kind\s*==\s*"dangerous"' -or
+    $tipsText -notmatch 'element\.dangerous\s*=\s*true' -or
+    $tipsText -notmatch 'session\.lastDangerFlash') {
+    Add-Error 'Dangerous-mob observations are not isolated and cooldown-bounded.'
+}
+
+$talentManifest = [IO.File]::ReadAllText((Join-Path $root 'Talents_wotlk_335.xml'))
+$talentText = [IO.File]::ReadAllText((Join-Path $root 'Features/Talents.lua'))
+if ($talentManifest -notmatch 'wotlk-hunter-pets\.lua' -or
+    $talentText -notmatch 'GetCurrentPetTree' -or
+    $talentText -notmatch 'ProcessPetTalents') {
+    Add-Error 'Hunter pet talent plans are not loaded through the locale-safe pet path.'
+}
+
+$recorderText = [IO.File]::ReadAllText((Join-Path $root 'Features/GuideRecorder.lua'))
+foreach ($api in @('BuildSuggestion','PromoteEvent','AddSelected',
+                    'AddAllReviewed','IgnoreSelected')) {
+    if ($recorderText -notmatch ('function\s+recorder:' + $api + '\s*\(')) {
+        Add-Error "Guide Recorder review API is missing: $api"
+    }
+}
+
+$upgradeText = [IO.File]::ReadAllText((Join-Path $root 'Features/ItemUpgrades.lua'))
+foreach ($pattern in @('ParseItemUniqueness','ValidateUniqueLayout',
+                        'BeginOperation','ArmResponseTimeout',
+                        'AUCTION_ITEM_LIST_UPDATE')) {
+    if ($upgradeText -notmatch [regex]::Escape($pattern)) {
+        Add-Error "ItemUpgrades/Auction House hardening is missing: $pattern"
+    }
+}
+
 $forbidden = @(
     '\bTargetUnit\s*\(', '\bloadstring\s*\(', '\bdofile\s*\(',
     '\bdebug\s*\.', '\bReadProcessMemory\b', '\bOpenProcess\b',

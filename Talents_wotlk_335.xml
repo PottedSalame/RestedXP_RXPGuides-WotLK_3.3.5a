@@ -2,6 +2,7 @@
     <Script file="Guides\Talents\wotlk-deathknight.lua"/>
     <Script file="Guides\Talents\wotlk-druid.lua"/>
     <Script file="Guides\Talents\wotlk-hunter.lua"/>
+    <Script file="Guides\Talents\wotlk-hunter-pets.lua"/>
     <Script file="Guides\Talents\wotlk-mage.lua"/>
     <Script file="Guides\Talents\wotlk-paladin.lua"/>
     <Script file="Guides\Talents\wotlk-priest.lua"/>

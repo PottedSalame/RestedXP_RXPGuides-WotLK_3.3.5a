@@ -87,14 +87,22 @@ function planner:BuildCatalog()
     if self.catalogBuilt then return end
     self.catalogBuilt = true
     self.catalog, self.dailyQuestLookup, self.weeklyQuestLookup = {}, {}, {}
+    local cataloguedGuides = {}
     for group, list in pairs(addon.guideList or {}) do
-        if group:find("Northrend Daily Quests", 1, true) and
+        -- Daily content is identified by its directives, not by an English
+        -- display-group name.  This also discovers Argent Tournament and any
+        -- future validated daily guides while keeping the archived originals
+        -- out of the live planner.
+        if type(group) == "string" and
             not group:find("Original Guides", 1, true) then
             local realGroup = group:gsub("^[*+]", "")
             for _, name in ipairs(list.names_ or {}) do
                 local guide = addon.GetGuideTable(realGroup, name) or
                                   addon.GetGuideTable(group, name)
-                if guide and not guide.internal and not guide.chapter then
+                local guideIdentity = guide and (guide.key or
+                    (realGroup .. "\031" .. tostring(name)))
+                if guide and not cataloguedGuides[guideIdentity] and
+                    not guide.internal and not guide.chapter then
                     guide = addon:FetchGuide(guide)
                     if guide and guide.steps then
                         local questIds, seen, reputationGated = {}, {}, false
@@ -119,6 +127,7 @@ function planner:BuildCatalog()
                             end
                         end
                         if #questIds > 0 then
+                            cataloguedGuides[guideIdentity] = true
                             table.insert(self.catalog, {
                                 kind = "daily", guideKey = guide.key,
                                 guide = guide,

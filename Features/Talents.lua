@@ -72,6 +72,62 @@ addon.talents.petGuides = {
     -- ['Tenacity'] = {}
 }
 
+-- GetPetTalentTree() is localized on some 3.3.5 clients and private-server
+-- builds.  Resolve it to a stable key through localized aliases first, then
+-- through tree-specific icon signatures exposed by the stock talent API.
+local petTreeAliases = {
+    ["ferocity"] = "Ferocity", ["wildheit"] = "Ferocity",
+    ["ferocidad"] = "Ferocity", ["férocité"] = "Ferocity",
+    ["ferocite"] = "Ferocity", ["свирепость"] = "Ferocity",
+    ["Свирепость"] = "Ferocity",
+    ["야성"] = "Ferocity", ["狂野"] = "Ferocity",
+    ["cunning"] = "Cunning", ["gerissenheit"] = "Cunning",
+    ["astucia"] = "Cunning", ["ruse"] = "Cunning",
+    ["хитрость"] = "Cunning", ["Хитрость"] = "Cunning",
+    ["교활"] = "Cunning",
+    ["狡诈"] = "Cunning", ["狡詐"] = "Cunning",
+    ["tenacity"] = "Tenacity", ["hartnäckigkeit"] = "Tenacity",
+    ["hartnaeckigkeit"] = "Tenacity", ["tenacidad"] = "Tenacity",
+    ["ténacité"] = "Tenacity", ["tenacite"] = "Tenacity",
+    ["упорство"] = "Tenacity", ["Упорство"] = "Tenacity",
+    ["끈기"] = "Tenacity",
+    ["坚韧"] = "Tenacity", ["堅韌"] = "Tenacity"
+}
+
+local function CanonicalPetTree(value)
+    if type(value) == "string" then
+        local normalized = value:lower():gsub("^%s+", ""):gsub("%s+$", "")
+        if petTreeAliases[normalized] then return petTreeAliases[normalized] end
+    end
+
+    if type(_G.GetNumTalents) == "function" and
+        type(GetTalentInfo) == "function" then
+        local count = tonumber(_G.GetNumTalents(1, nil, true,
+                                                PlayerTalentFrame and
+                                                    PlayerTalentFrame.talentGroup)) or 0
+        for talentIndex = 1, count do
+            local _, icon = GetTalentInfo(1, talentIndex, nil, true,
+                                           PlayerTalentFrame and
+                                               PlayerTalentFrame.talentGroup)
+            icon = type(icon) == "string" and icon:lower() or ""
+            if icon:find("golemthunderclap", 1, true) then
+                return "Tenacity"
+            elseif icon:find("pheonixpet", 1, true) then
+                return "Ferocity"
+            elseif icon:find("racial_cannibalize", 1, true) then
+                return "Cunning"
+            end
+        end
+    end
+end
+
+local function GetCurrentPetTree()
+    if type(GetPetTalentTree) ~= "function" then return end
+    return CanonicalPetTree(GetPetTalentTree())
+end
+
+addon.talents.GetCurrentPetTree = GetCurrentPetTree
+
 local compatible = true
 local indexLookup = {['player'] = {}}
 local talentTooltips = {
@@ -168,7 +224,7 @@ local function buildTalentGuidesMenu()
                 invalidReason = nil
             end
 
-            if type(GetPetTalentTree) == "function" and guide.pet == GetPetTalentTree() then
+            if guide.pet == GetCurrentPetTree() then
                 tinsert(menu, {
                     text = guide.name,
                     tooltipTitle = fmt("%s: %s", talentText.levelRange, guide.levelRange),
@@ -445,7 +501,14 @@ function addon.talents:HookUI()
             if click == "RightButton" then
                 EasyMenu(buildTalentGuidesMenu(), self.menuFrame, self.talentsButton, 0, 0, "MENU", 1)
             else
-                if self:Audit() then self:ProcessTalents() end
+                if PlayerTalentFrame.pet then
+                    -- Pet points are applied only from this hardware click;
+                    -- opening or drawing the plan never spends them.
+                    self:ProcessPetTalents()
+                    self:DrawTalents()
+                elseif self:Audit() then
+                    self:ProcessTalents()
+                end
             end
         end)
     end
@@ -457,6 +520,7 @@ function addon.talents.RegisterGuide(text)
     if not (guide and guide.key) then return end
 
     if guide.pet then
+        guide.pet = CanonicalPetTree(guide.pet) or guide.pet
         addon.talents.petGuides[guide.pet] = guide
         return
     end
@@ -626,7 +690,8 @@ function addon.talents:ParseGuide(text)
         addon.comms.PrettyPrint("%s: Invalid level range or empty plan for %s", L("Error parsing guide"), guide.name)
         return
     end
-    if addon.game ~= "CATA" and #guide.steps ~= guide.maxLevel - guide.minLevel + 1 then
+    if addon.game ~= "CATA" and not guide.pet and
+        #guide.steps ~= guide.maxLevel - guide.minLevel + 1 then
         addon.comms.PrettyPrint("%s: %s has %d steps for levels %d-%d", L("Error parsing guide"), guide.name,
                                 #guide.steps, guide.minLevel, guide.maxLevel)
         return
@@ -696,7 +761,7 @@ end
 local function GetAllocatedTalentPoints(pet)
     local kind = 'player'
     if pet then
-        kind = type(GetPetTalentTree) == "function" and GetPetTalentTree()
+        kind = GetCurrentPetTree()
     end
     local lookup = kind and indexLookup[kind]
     if not (lookup and lookup.initialized) then return end
@@ -992,7 +1057,7 @@ function addon.talents.functions.pettalent(element, validate)
     local lookup
 
     for _, talentData in pairs(element.pettalent) do
-        local petTree = type(GetPetTalentTree) == "function" and GetPetTalentTree()
+        local petTree = GetCurrentPetTree()
         lookup = petTree and indexLookup[petTree] and indexLookup[petTree][talentData.tab]
 
         if not (lookup and lookup[talentData.tier] and lookup[talentData.tier][talentData.column]) then
@@ -1118,7 +1183,7 @@ end
 
 function addon.talents:GetCurrentGuide()
     if PlayerTalentFrame and PlayerTalentFrame.pet then
-        local petTree = type(GetPetTalentTree) == "function" and GetPetTalentTree()
+        local petTree = GetCurrentPetTree()
         return petTree and self.petGuides[petTree]
     else
         if not self.guides[RXPCData.activeTalentGuide] then
@@ -1247,7 +1312,73 @@ function addon.talents:DrawTalents()
     if not guide then return end
 
     if not PlayerTalentFrame or not PlayerTalentFrame:IsShown() then return end
-    if PlayerTalentFrame.pet then return end
+    if PlayerTalentFrame.pet then
+        self:BuildIndexLookup()
+        local kind = GetCurrentPetTree()
+        local lookup = kind and indexLookup[kind]
+        if not (lookup and lookup.initialized) then return end
+
+        wipe(activeIndices)
+        wipe(levelsForIndex)
+        wipe(talentTooltips.data)
+        local allocated = GetAllocatedTalentPoints(true) or 0
+        local remaining = tonumber(GetRemainingTalentPoints(true)) or 0
+        local visible = remaining +
+                            (tonumber(addon.settings.profile.upcomingTalentCount) or 5)
+        local lastPoint = math.min(#guide.steps, allocated + visible)
+        for point = allocated + 1, lastPoint do
+            local step = guide.steps[point]
+            for _, element in ipairs(step and step.elements or {}) do
+                for _, talentData in ipairs(element.pettalent or {}) do
+                    local tier = lookup[talentData.tab] and
+                                     lookup[talentData.tab][talentData.tier]
+                    local talentIndex = tier and tier[talentData.column]
+                    local talentFrame = talentIndex and
+                        _G["PlayerTalentFrameTalent" .. talentIndex]
+                    local talentSlot = talentIndex and
+                        _G["PlayerTalentFrameTalent" .. talentIndex .. "Slot"]
+                    if talentIndex and talentFrame and talentSlot then
+                        activeIndices[talentIndex] = talentData.tab
+                        talentTooltips.data[talentIndex] = fmt(
+                            "\n%s - %s\n%s%s: %d|r",
+                            tostring(addon.title or "RestedXP Guides"),
+                            tostring(guide.displayname or guide.name),
+                            tostring(addon.colors.tooltip or ""),
+                            L("Pet talent point"), point)
+                        if not talentTooltips.highlights[talentIndex] then
+                            local texture = talentFrame:CreateTexture(
+                                                "$parent_LevelPreview", "BORDER")
+                            texture:SetTexture(
+                                "Interface/Buttons/ButtonHilight-Square")
+                            texture:SetBlendMode("ADD")
+                            texture:SetAllPoints(talentSlot)
+                            talentTooltips.highlights[talentIndex] = texture
+                        end
+                        setHighlightColor(talentIndex,
+                                          math.max(1, point - allocated))
+                        levelsForIndex[talentIndex] =
+                            levelsForIndex[talentIndex] or {}
+                        tinsert(levelsForIndex[talentIndex], point)
+                    end
+                end
+            end
+        end
+        for talentIndex, highlight in pairs(talentTooltips.highlights) do
+            if activeIndices[talentIndex] then
+                DrawTalentLevels(talentIndex, levelsForIndex[talentIndex])
+                highlight:Show()
+                if highlight.levelHeader then
+                    highlight.levelHeader:Show()
+                end
+            else
+                highlight:Hide()
+                if highlight.levelHeader then
+                    highlight.levelHeader:Hide()
+                end
+            end
+        end
+        return
+    end
 
     -- Intialization race condition at login, silently ignore instead of spammy or retries
     if not indexLookup['player'].initialized then return end
@@ -1377,7 +1508,7 @@ function addon.talents:BuildIndexLookup()
     local kind = 'player'
     if isPet then
         if type(GetPetTalentTree) ~= "function" then return end
-        kind = GetPetTalentTree()
+        kind = GetCurrentPetTree()
         if not kind then return end
     end
 
