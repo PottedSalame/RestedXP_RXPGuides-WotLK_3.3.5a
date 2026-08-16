@@ -650,10 +650,6 @@ L["Bad"] = "差"
 L["Good"] = "好"
 L["Excellent"] = "完美"
 
--- DB\mop\rares.lua
-L["Displays Pandaria rare mobs on your map"] = "在地图上显示潘达利亚的稀有怪物"
-L["Displays Pandaria treasures on your map"] = "在地图上显示潘达利亚的宝藏"
-
 -- locale\enUS.lua
 L["Active Item Button %d"] = "当前物品按钮 %d"
 L["Active Friendly Target Button %d"] = "当前友方目标按钮 %d"

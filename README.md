@@ -19,6 +19,14 @@ This project adapts the RestedXP guide engine, interface, automation, navigation
 - Primary server target: **AzerothCore**
 - Interface number: **30300**
 
+## Repository Scope
+
+The release ships only the `RXPGuides.toc` manifest for the original 3.3.5a
+client. Cataclysm, Mists of Pandaria, Retail, and Season of Discovery content,
+newer-client manifests, and duplicate modern libraries are intentionally
+excluded. Classic, TBC, and WotLK data—as well as dormant feature sources that
+may support future backports—remain in the repository.
+
 ## Who This Is For
 
 This addon is intended for:

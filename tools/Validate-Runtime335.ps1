@@ -65,6 +65,48 @@ $tocPaths = @((Get-Item -LiteralPath $tocPath)) + @(
     Get-ChildItem -LiteralPath $root -File -Filter '*.toc' |
         Where-Object { $_.FullName -cne $tocPath } |
         Sort-Object Name)
+if ($tocPaths.Count -ne 1) {
+    $unsupported = @($tocPaths | Select-Object -Skip 1 |
+        ForEach-Object { $_.Name }) -join ', '
+    Add-ValidationError (
+        'Only the supported 3.3.5a manifest may ship. Remove unsupported ' +
+        "client manifests: $unsupported")
+}
+
+# Keep the release focused on Vanilla, TBC, and WotLK content. These paths are
+# upstream client/expansion artifacts and are neither loaded nor valid on the
+# supported 3.3.5a runtime. Pre-WotLK source data and dormant feature modules
+# are intentionally not included here because they remain useful to backports.
+$unsupportedReleasePaths = @(
+    'DB\cata', 'DB\mop', 'DB\mainline',
+    'Guides\cata', 'Guides\mop', 'Guides\Retail', 'Guides\SoD',
+    'libs\mainline', 'UI\AH',
+    'DB\cata.xml', 'DB\mainline.xml', 'DB\mop.xml',
+    'Guides\GuideList-cata.xml', 'Guides\GuideList-mainline.xml',
+    'Guides\GuideList-mop.xml', 'libs\embeds_Mainline.xml'
+)
+foreach ($relative in $unsupportedReleasePaths) {
+    if (Test-Path -LiteralPath (Join-Path $root $relative)) {
+        Add-ValidationError "Unsupported post-WotLK release path exists: $relative"
+    }
+}
+
+$obsoleteLoaderPaths = @(
+    'DB\classic.xml', 'DB\tbc.xml', 'DB\wotlk.xml',
+    'Guides\GuideList.xml', 'Guides\GuideList-classic.xml',
+    'Guides\Talents\classic.xml', 'Guides\Talents\tbc.xml',
+    'Guides\Talents\wotlk.xml', 'libs\embeds.xml', 'UI\includes.xml',
+    'libs\AceAddon-3.0', 'libs\AceComm-3.0', 'libs\AceConfig-3.0',
+    'libs\AceConsole-3.0', 'libs\AceDB-3.0', 'libs\AceDBOptions-3.0',
+    'libs\AceEvent-3.0', 'libs\AceGUI-3.0', 'libs\AceLocale-3.0',
+    'libs\AceSerializer-3.0', 'libs\CallbackHandler-1.0',
+    'libs\HereBeDragons', 'libs\LibDataBroker-1.1', 'libs\LibDBIcon-1.0'
+)
+foreach ($relative in $obsoleteLoaderPaths) {
+    if (Test-Path -LiteralPath (Join-Path $root $relative)) {
+        Add-ValidationError "Obsolete non-3.3.5 loader artifact exists: $relative"
+    }
+}
 foreach ($manifest in $tocPaths) {
     $recurseXml = $manifest.FullName -ceq $tocPath
     foreach ($rawLine in [IO.File]::ReadLines($manifest.FullName)) {
