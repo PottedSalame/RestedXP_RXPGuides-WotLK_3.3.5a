@@ -387,6 +387,24 @@ if ($directiveHandlersText -notmatch
         'Hearth steps must block through the completed teleport while retaining fallback guards.')
 }
 
+$coreAddonText = [IO.File]::ReadAllText((Join-Path $root 'Core\Addon.lua'))
+$automationOrderText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Guide\AutomationOrder.lua'))
+if ($coreAddonText -notmatch
+        'RegisterEvent\s*\(\s*"QUEST_FINISHED"\s*\)' -or
+    $coreAddonText -notmatch
+        'ReconcileSubmittedQuestInteraction\s*\(\s*disabled\s*,\s*true\s*\)' -or
+    $coreAddonText -notmatch
+        'MarkQuestSubmitted\s*\(\s*"turnin"' -or
+    $automationOrderText -notmatch
+        'function\s+automationOrder:MarkQuestSubmitted\s*\(' -or
+    $automationOrderText -notmatch
+        'GetQuestReservation\s*\(\s*nil\s*,\s*now\s*\)') {
+    Add-ValidationError (
+        'Same-NPC quest automation must reconcile submitted rewards through ' +
+        'the stock 3.3.5 QUEST_FINISHED lifecycle without cross-kind races.')
+}
+
 foreach ($module in $surface.aceModules) {
     $pattern = 'NewModule\(\s*["'']' +
         [regex]::Escape([string]$module) + '["'']'

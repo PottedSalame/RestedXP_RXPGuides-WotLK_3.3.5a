@@ -268,9 +268,18 @@ check(addon.automationOrder:IsQuestReady(abandonedInvestigations,
       "expired quest selection reservation blocked later interactions")
 addon.automationOrder:ReserveQuest(selectedQuest, 107)
 wordFromSpire.completed = true
+local acceptWhileTurningIn = {
+    step = questStep,
+    tag = "accept",
+    questId = 9001,
+}
+local submitted, submittedReservation =
+    addon.automationOrder:MarkQuestSubmitted("turnin", 8890, 107.5)
 check(addon.automationOrder:GetQuestReservation("turnin", 108) ==
-          wordFromSpire,
-      "quest reservation was lost after an element-frame completion race")
+          wordFromSpire and submitted and submittedReservation.submitted and
+          not addon.automationOrder:IsQuestReady(acceptWhileTurningIn,
+                                                  "accept", 108),
+      "submitted turn-in reservation was lost or bypassed by an accept")
 check(not addon.automationOrder:GetQuestConfirmation("turnin", 8891, 108) and
           addon.automationOrder:GetQuestConfirmation("turnin", 8890, 108) ==
               wordFromSpire,

@@ -995,6 +995,15 @@ end
 
 local questRewardRetrySerial = 0
 
+local function SubmitAutomatedQuestReward(choice, questId, numChoices)
+    local order = addon.automationOrder
+    if order and order.MarkQuestSubmitted then
+        order:MarkQuestSubmitted("turnin", questId, GetTime())
+    end
+    GetQuestReward(choice)
+    addon:SendEvent("RXP_QUEST_TURNIN", questId, numChoices, choice)
+end
+
 local function ResolveDisplayedTurnInQuestID()
     local id = GetQuestID()
     if addon.gameVersion == 30300 then
@@ -1018,8 +1027,7 @@ local function handleQuestComplete(retryAttempt)
 
     -- Automatically complete quests with no user choice
     if numChoices <= 1 then
-        GetQuestReward(1)
-        addon:SendEvent("RXP_QUEST_TURNIN", id, numChoices, 1)
+        SubmitAutomatedQuestReward(1, id, numChoices)
         return
     end
 
@@ -1031,8 +1039,7 @@ local function handleQuestComplete(retryAttempt)
     if hardCodedReward > 0 and
         addon.settings.profile.enableQuestRewardAutomation then
 
-        GetQuestReward(hardCodedReward)
-        addon:SendEvent("RXP_QUEST_TURNIN", id, numChoices, hardCodedReward)
+        SubmitAutomatedQuestReward(hardCodedReward, id, numChoices)
 
         -- Hard-coded, so exit early to keep recommendations and QuestLog portions simpler
         return
@@ -1115,12 +1122,10 @@ local function handleQuestComplete(retryAttempt)
         -- If not usable but recommended then leave the window open for user decision
         if options and options[bestRatioOption] and
             options[bestRatioOption].isUsable ~= false then
-            GetQuestReward(bestRatioOption)
-            addon:SendEvent("RXP_QUEST_TURNIN", id, numChoices, bestRatioOption)
+            SubmitAutomatedQuestReward(bestRatioOption, id, numChoices)
         end
     elseif bestSellOption > 0 then
-        GetQuestReward(bestSellOption)
-        addon:SendEvent("RXP_QUEST_TURNIN", id, numChoices, bestSellOption)
+        SubmitAutomatedQuestReward(bestSellOption, id, numChoices)
     end
 end
 
@@ -1364,6 +1369,44 @@ local function ClearQuestInteraction(element, kind)
     end
 end
 
+local function ReconcileSubmittedQuestInteraction(disabled, questFinished)
+    local element, reservation = GetReservedQuestInteraction()
+    if type(element) ~= "table" or type(reservation) ~= "table" or
+        not reservation.submitted then return false end
+
+    local kind = reservation.kind
+    local questId = tonumber(reservation.questId or element.questId)
+    if kind == "turnin" then
+        -- QUEST_FINISHED is the stock 3.3.5 completion signal after a submitted
+        -- reward. Some cores also provide QUEST_TURNED_IN; others only refresh
+        -- the quest log. In the latter case, disappearance from the log after
+        -- our own GetQuestReward call is the equivalent confirmation.
+        local removedFromLog = questId and addon.IsOnQuest and
+                                   not addon.IsOnQuest(questId)
+        if not questFinished and not removedFromLog then return false end
+
+        questAcceptState:MarkTurnIn(GetTime())
+        CompleteConfirmedQuestElement(element, "QUEST_TURNED_IN", questId)
+        ClearQuestInteraction(element, "turnin")
+        if not disabled then
+            addon.questAutoAccept = true
+            ScheduleQuestAutomationRetries()
+        end
+        return true
+    elseif kind == "accept" and questId and addon.IsOnQuest and
+        addon.IsOnQuest(questId) then
+        CommitQuestAccept(questId)
+        ClearQuestInteraction(element, "accept")
+        return true
+    end
+    return false
+end
+
+local function ReconcileQuestAutomationState(disabled)
+    ReconcilePendingAccept()
+    ReconcileSubmittedQuestInteraction(disabled, false)
+end
+
 function addon:QuestAutomation(event, arg1, arg2, arg3)
     local disabled
     if not addon.settings.profile.enableQuestAutomation or IsControlKeyDown() or addon.isHidden then
@@ -1413,9 +1456,22 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         if delay > 0 then
             addon.scheduler:After(QUEST_AUTOMATION_OWNER,
                                   "reconcile-pending-accept", delay,
-                                  ReconcilePendingAccept)
+                                  function()
+                ReconcileQuestAutomationState(disabled)
+            end)
         else
-            ReconcilePendingAccept()
+            ReconcileQuestAutomationState(disabled)
+        end
+        return
+    elseif event == "QUEST_FINISHED" then
+        if not ReconcileSubmittedQuestInteraction(disabled, true) then
+            -- Accept-state caches can lag QUEST_FINISHED by one frame. Keep a
+            -- single bounded reconciliation rather than requiring the player
+            -- to close and reopen the NPC repeatedly.
+            addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                                  "finished-reconcile", 0.10, function()
+                ReconcileQuestAutomationState(disabled)
+            end)
         end
         return
     elseif event == "QUEST_TURNED_IN" then
@@ -1442,6 +1498,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
 
     --print(event)
     if event == "GOSSIP_SHOW" then
+        -- A new gossip list after our reward submission also proves the prior
+        -- quest interaction finished, even on cores which omit QUEST_FINISHED.
+        ReconcileSubmittedQuestInteraction(disabled, true)
         local nActive = GossipGetNumActiveQuests()
         local nAvailable = GossipGetNumAvailableQuests()
         local quests, selectAvailableByQuestID, missingTurnIn
@@ -1538,6 +1597,12 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             guideAccept and guideAccept.questId or
                 (type(arg2) == "number" and arg2 or nil), nil, guideAccept,
             GetTime())
+        local order = addon.automationOrder
+        if order and order.MarkQuestSubmitted then
+            order:MarkQuestSubmitted("accept",
+                                     guideAccept and guideAccept.questId or arg2,
+                                     GetTime())
+        end
         ConfirmAcceptQuest()
     elseif event == "QUEST_COMPLETE" then
         local loreQuestId = GetQuestID and GetQuestID()
@@ -1596,6 +1661,10 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             (recentTurnIn and guideAccept and
                 (not questId or not addon.IsOnQuest(questId))) then
             questAcceptState:Begin(questId, title, guideAccept, GetTime())
+            local order = addon.automationOrder
+            if order and order.MarkQuestSubmitted then
+                order:MarkQuestSubmitted("accept", questId, GetTime())
+            end
             if _G.QuestDetailAcceptButton_OnClick then
                 -- 3.3.5a: a real Accept-button click accepts the quest AND lets the
                 -- quest frame close itself (which ZygorGuidesViewerRM relies on).
@@ -1613,6 +1682,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             addon.questAutoAccept = true
         end
     elseif event == "QUEST_GREETING" then
+        ReconcileSubmittedQuestInteraction(disabled, true)
         local nActive = GetNumActiveQuests()
         local nAvailable = GetNumAvailableQuests()
 
@@ -2085,6 +2155,7 @@ function addon:OnEnable()
     questFrame:RegisterEvent("QUEST_GREETING")
     questFrame:RegisterEvent("GOSSIP_SHOW")
     questFrame:RegisterEvent("QUEST_DETAIL")
+    questFrame:RegisterEvent("QUEST_FINISHED")
     questFrame:RegisterEvent("QUEST_TURNED_IN")
     questFrame:RegisterEvent("QUEST_AUTOCOMPLETE")
     questFrame:RegisterEvent("QUEST_ACCEPTED")

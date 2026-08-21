@@ -158,9 +158,30 @@ function automationOrder:IsQuestReady(element, kind, now)
         return false
     end
 
-    local reservationElement, reservation = self:GetQuestReservation(kind, now)
+    -- A turn-in and an accept are still competing uses of the same NPC panel.
+    -- Inspect the reservation without filtering by kind so an in-flight
+    -- turn-in cannot be bypassed by a newly opened accept detail page.
+    local reservationElement, reservation = self:GetQuestReservation(nil, now)
     if not reservation then return true end
+    if kind and reservation.kind and reservation.kind ~= kind then return false end
     return reservationElement == element
+end
+
+function automationOrder:MarkQuestSubmitted(kind, questId, now)
+    local element, reservation = self:GetQuestReservation(kind, now)
+    if not reservation then return false end
+
+    questId = tonumber(questId)
+    local reservedId = tonumber(reservation.questId or
+                                    (element and element.questId))
+    if questId and reservedId and questId ~= reservedId then return false end
+
+    now = tonumber(now) or (GetTime and GetTime()) or 0
+    reservation.questId = questId or reservedId
+    reservation.submitted = true
+    reservation.submittedAt = now
+    reservation.time = now
+    return true, reservation
 end
 
 -- Return an in-flight selection only when it can represent the confirmation
