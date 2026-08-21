@@ -43,6 +43,7 @@ L["There's a new addon version (%s) available"] = "有新的插件版本 (%s) �
 L["There's a new version (%s) available for %s"] = "有新版本 (%s) 可用于 %s"
 L["%s %s"] = "%s %s"
 L["Flying to %s ETA %s"] = "正在飞往 %s 预计到达时间于 %s"
+L["ETA"] = "预计"
 L["Describe your issue:"] = "请描述你的问题："
 L["Do not edit below this line"] = "请勿编辑此行以下内容"
 L["RestedXP Feedback Form"] = "RestedXP 反馈表单"

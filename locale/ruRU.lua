@@ -43,6 +43,7 @@ L["There's a new version (%s) available for %s"] = "Доступна новая 
 L["Completed step %d - %s"] = "Завершен шаг %d - %s"
 L["Collected step %d - %s"] = "Собран шаг %d - %s"
 L["Flying to %s ETA %s"] = "Лечу в %s, расчетное время прибытия %s"
+L["ETA"] = "Прибытие"
 L["Describe your issue:"] = "Опишите вашу проблему:"
 L["Do not edit below this line"] = "Не редактируйте ниже этой линии"
 L["RestedXP Feedback Form"] = "Форма обратной связи RestedXP"

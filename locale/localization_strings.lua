@@ -7,6 +7,7 @@ L["There's a new version (%s) available for %s"] = "There's a new version (%s) a
 L["Completed step %d - %s"] = "Completed step %d - %s"
 L["Collected step %d - %s"] = "Collected step %d - %s"
 L["Flying to %s ETA %s"] = "Flying to %s ETA %s"
+L["ETA"] = "ETA"
 L["Describe your issue:"] = "Describe your issue:"
 L["Do not edit below this line"] = "Do not edit below this line"
 L["RestedXP Feedback Form"] = "RestedXP Feedback Form"

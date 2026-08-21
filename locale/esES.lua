@@ -43,6 +43,7 @@ L["There's a new version (%s) available for %s"] = "Hay una nueva versión (%s) 
 L["Completed step %d - %s"] = "Paso completado %d - %s"
 L["Collected step %d - %s"] = "Paso recopilado %d - %s"
 L["Flying to %s ETA %s"] = "Volando a %s, tiempo estimado: %s"
+L["ETA"] = "Llegada"
 L["Describe your issue:"] = "Describe tu problema:"
 L["Do not edit below this line"] = "No edites debajo de esta línea"
 L["RestedXP Feedback Form"] = "Formulario de opinión de RestedXP"

@@ -48,6 +48,7 @@ L["There's a new version (%s) available for %s"] = "%s에 대해 새로운 버�
 L["Completed step %d - %s"] = "단계 %d - %s 완료"
 L["Collected step %d - %s"] = "단계 %d - %s 수집됨"
 L["Flying to %s ETA %s"] = "%s로 비행 중, 예상 도착 시간: %s"
+L["ETA"] = "도착"
 L["Describe your issue:"] = "문제를 설명하세요:"
 L["Do not edit below this line"] = "이 라인 아래는 수정하지 마세요"
 L["RestedXP Feedback Form"] = "RestedXP 피드백 양식"

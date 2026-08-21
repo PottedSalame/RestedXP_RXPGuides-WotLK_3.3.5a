@@ -45,6 +45,7 @@ af.text:SetJustifyV("MIDDLE")
 af.text:SetPoint("TOP", af, "BOTTOM", 0, -5)
 af.orientation = 0
 af.distance = 0
+af.etaElapsed = 0
 af.lowerbound = math.pi / 64 -- angle in radians
 af.upperbound = 2 * math.pi - af.lowerbound
 
@@ -67,7 +68,61 @@ function addon.SetupArrow()
     addon.arrowFrame:SetScript("OnUpdate", addon.DrawArrow)
 end
 
-function addon.DrawArrow(self)
+local ARROW_ETA_UPDATE_INTERVAL = 0.25
+
+local function FormatArrowETA(seconds)
+    if type(seconds) ~= "number" or seconds < 0 or seconds ~= seconds then
+        return "--:--"
+    end
+
+    seconds = math.floor(seconds + 0.5)
+    local hours = math.floor(seconds / 3600)
+    local minutes = math.floor((seconds % 3600) / 60)
+    local remaining = seconds % 60
+    if hours > 0 then
+        return string.format("%d:%02d:%02d", hours, minutes, remaining)
+    end
+    return string.format("%d:%02d", minutes, remaining)
+end
+
+local function GetArrowETA(distance)
+    if type(distance) == "number" and distance <= 1 then return "0:00" end
+    if type(_G.GetUnitSpeed) ~= "function" then return "--:--" end
+    local speed = _G.GetUnitSpeed("player")
+    if type(speed) ~= "number" or speed <= 0.05 then return "--:--" end
+    return FormatArrowETA(distance / speed)
+end
+
+local function RenderArrowText(self, element, distance, eta)
+    local etaLine = string.format("(%s %s)", addon.locale.Get("ETA"), eta)
+    local step = element.step
+    local title = step and (step.arrowtext or step.title or step.index and
+        string.format(addon.locale.Get("Step %d"), step.index))
+    if element.title then
+        local elementTitle = addon.locale.GuideText(element.title, element,
+                                                    "title")
+        for RXP_ in string.gmatch(elementTitle, "RXP_[A-Z]+_") do
+            elementTitle = elementTitle:gsub(RXP_,
+                addon.guideTextColors[RXP_] or
+                    addon.guideTextColors.default["error"])
+        end
+        self.text:SetText(string.format("%s\n(%dyd)\n%s", elementTitle,
+                                        distance, etaLine))
+    elseif title then
+        local field = step and step.arrowtext and "arrowtext" or "title"
+        title = addon.locale.GuideText(title, step or element, field)
+        for RXP_ in string.gmatch(title, "RXP_[A-Z]+_") do
+            title = title:gsub(RXP_, addon.guideTextColors[RXP_] or
+                                      addon.guideTextColors.default["error"])
+        end
+        self.text:SetText(string.format("%s\n(%dyd)\n%s", title, distance,
+                                        etaLine))
+    else
+        self.text:SetText(string.format("(%dyd)\n%s", distance, etaLine))
+    end
+end
+
+function addon.DrawArrow(self, elapsed)
     self = self or addon.arrowFrame
 
     if addon.settings.profile.disableArrow or not self then return end
@@ -82,6 +137,7 @@ function addon.DrawArrow(self)
         addon.hideArrow = true
         self.texture:SetRotation(0)
         self.text:SetText("~")
+        self.distance, self.etaText = nil, nil
         return
     end
 
@@ -106,6 +162,7 @@ function addon.DrawArrow(self)
 
     local orientation = angle - facing
     local diff = math.abs(orientation - self.orientation)
+    local exactDistance = dist
     dist = math.floor(dist)
 
     if diff > self.lowerbound and diff < self.upperbound or self.forceUpdate then
@@ -114,29 +171,21 @@ function addon.DrawArrow(self)
         self.forceUpdate = false
     end
 
-    if dist ~= self.distance then
+    self.etaElapsed = (self.etaElapsed or 0) + (tonumber(elapsed) or
+                                                   ARROW_ETA_UPDATE_INTERVAL)
+    local updateETA = self.etaText == nil or
+                          self.etaElapsed >= ARROW_ETA_UPDATE_INTERVAL
+    local etaChanged = false
+    if updateETA then
+        self.etaElapsed = 0
+        local eta = GetArrowETA(exactDistance)
+        etaChanged = eta ~= self.etaText
+        if etaChanged then self.etaText = eta end
+    end
+
+    if dist ~= self.distance or etaChanged then
         self.distance = dist
-        local step = element.step
-        local title = step and (step.arrowtext or step.title or step.index and
-            string.format(addon.locale.Get("Step %d"), step.index))
-        if element.title then
-            local elementTitle = addon.locale.GuideText(element.title, element,
-                                                        "title")
-            for RXP_ in string.gmatch(elementTitle, "RXP_[A-Z]+_") do
-                elementTitle = elementTitle:gsub(RXP_, addon.guideTextColors[RXP_] or
-                                                  addon.guideTextColors.default["error"])
-            end
-            self.text:SetText(string.format("%s\n(%dyd)", elementTitle, dist))
-        elseif title then
-            local field = step and step.arrowtext and "arrowtext" or "title"
-            title = addon.locale.GuideText(title, step or element, field)
-            for RXP_ in string.gmatch(title, "RXP_[A-Z]+_") do
-                title = title:gsub(RXP_, addon.guideTextColors[RXP_] or addon.guideTextColors.default["error"])
-            end
-            self.text:SetText(string.format("%s\n(%dyd)", title, dist))
-        else
-            self.text:SetText(string.format("(%dyd)", dist))
-        end
+        RenderArrowText(self, element, dist, self.etaText or "--:--")
     end
 
 end
