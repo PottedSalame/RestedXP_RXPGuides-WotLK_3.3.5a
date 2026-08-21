@@ -271,7 +271,26 @@ wordFromSpire.completed = true
 check(addon.automationOrder:GetQuestReservation("turnin", 108) ==
           wordFromSpire,
       "quest reservation was lost after an element-frame completion race")
+check(not addon.automationOrder:GetQuestConfirmation("turnin", 8891, 108) and
+          addon.automationOrder:GetQuestConfirmation("turnin", 8890, 108) ==
+              wordFromSpire,
+      "quest confirmation was attributed to a different reserved quest")
+local selectionWhilePending = addon.automationOrder:SelectQuest({
+    {kind = "turnin", element = abandonedInvestigations, selector = 1},
+})
+check(not selectionWhilePending and
+          addon.automationOrder:ReserveQuest({
+              kind = "turnin",
+              element = abandonedInvestigations,
+          }, 108) == false and
+          addon.automationOrder:GetQuestReservation("turnin", 108) ==
+              wordFromSpire,
+      "refreshed gossip replaced an in-flight quest reservation")
 addon.automationOrder:ClearQuestReservation()
+check(addon.automationOrder:SelectQuest({
+          {kind = "turnin", element = abandonedInvestigations, selector = 1},
+      }).element == abandonedInvestigations,
+      "next same-NPC quest did not unlock after confirmation")
 
 -- Follow-up accepts from the immediately following step are registered before
 -- the delayed 3.3.5 quest-log update advances the visible guide.
@@ -357,9 +376,14 @@ check(not addon.questAcceptState:GetPending(26, 5),
       "expired pending quest acceptance was retained")
 check(addon.questAcceptState:WasRecentTurnIn(10.4, 0.5),
       "same-NPC turn-in window was lost")
+addon.automationOrder:ReserveQuest({
+    kind = "turnin",
+    element = abandonedInvestigations,
+}, 10)
 addon.questAutomation:ResetTransient()
 check(not addon.questAutomation:GetPendingAccept() and
-          addon.questAutomation.state.turnInTimer == 0,
+          addon.questAutomation.state.turnInTimer == 0 and
+          not addon.automationOrder:GetQuestReservation(nil, 10),
       "quest automation transient state did not reset")
 
 local service = {}

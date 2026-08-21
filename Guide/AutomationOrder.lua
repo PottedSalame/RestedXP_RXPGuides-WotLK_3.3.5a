@@ -99,6 +99,15 @@ end
 -- exact element while the legacy client changes from gossip to quest panels.
 function automationOrder:SelectQuest(candidates)
     if type(candidates) ~= "table" then return end
+
+    -- Selecting a quest changes the legacy gossip panel asynchronously.  Some
+    -- 3.3.5 servers send the refreshed GOSSIP_SHOW before the authoritative
+    -- QUEST_ACCEPTED/QUEST_TURNED_IN event.  Do not replace the in-flight
+    -- reservation in that window: doing so can attribute the confirmation for
+    -- quest A to quest B and leave one interaction at a multi-quest NPC behind.
+    local _, reservation = self:GetQuestReservation(nil)
+    if reservation then return end
+
     local selected
     for _, candidate in ipairs(candidates) do
         local element = type(candidate) == "table" and candidate.element
@@ -113,14 +122,21 @@ end
 
 function automationOrder:ReserveQuest(candidate, now)
     if type(candidate) ~= "table" or type(candidate.element) ~= "table" then
-        self.questReservation = nil
-        return
+        return false
+    end
+
+    now = tonumber(now) or (GetTime and GetTime()) or 0
+    local reservedElement, reservation = self:GetQuestReservation(nil, now)
+    if reservation and reservedElement ~= candidate.element then
+        return false
     end
     self.questReservation = {
         element = candidate.element,
         kind = candidate.kind,
-        time = tonumber(now) or (GetTime and GetTime()) or 0,
+        questId = tonumber(candidate.questId or candidate.element.questId),
+        time = now,
     }
+    return true
 end
 
 function automationOrder:GetQuestReservation(kind, now)
@@ -145,6 +161,20 @@ function automationOrder:IsQuestReady(element, kind, now)
     local reservationElement, reservation = self:GetQuestReservation(kind, now)
     if not reservation then return true end
     return reservationElement == element
+end
+
+-- Return an in-flight selection only when it can represent the confirmation
+-- being processed.  QUEST_TURNED_IN normally supplies a numeric ID, while a
+-- few private-server builds omit it; the latter safely falls back to the one
+-- reservation which is prevented from being overwritten above.
+function automationOrder:GetQuestConfirmation(kind, questId, now)
+    local element, reservation = self:GetQuestReservation(kind, now)
+    if not reservation then return end
+    questId = tonumber(questId)
+    local reservedId = tonumber(reservation.questId or
+                                    (element and element.questId))
+    if questId and reservedId and questId ~= reservedId then return end
+    return element, reservation
 end
 
 function automationOrder:ClearQuestReservation(element, kind)

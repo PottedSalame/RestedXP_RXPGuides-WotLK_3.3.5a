@@ -43,6 +43,9 @@ end
 
 function automation:ResetTransient()
     self.acceptState:Reset()
+    if addon.automationOrder and addon.automationOrder.ClearQuestReservation then
+        addon.automationOrder:ClearQuestReservation()
+    end
     for index = 1, 3 do
         addon.scheduler:Cancel("quest-engine", "automation-retry-" .. index)
     end

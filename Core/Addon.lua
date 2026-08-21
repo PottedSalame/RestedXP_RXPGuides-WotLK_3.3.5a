@@ -1312,7 +1312,7 @@ local function SelectOrderedQuestCandidate(candidates)
                           order and order:Select(candidates) or candidates[1]
     if not candidate then return end
     if order and order.ReserveQuest then
-        order:ReserveQuest(candidate, GetTime())
+        if order:ReserveQuest(candidate, GetTime()) == false then return end
     end
     if candidate.kind == "turnin" then
         GossipSelectActiveQuest(candidate.selector)
@@ -1329,7 +1329,7 @@ local function SelectOrderedGreetingCandidate(candidates)
                           order and order:Select(candidates) or candidates[1]
     if not candidate then return end
     if order and order.ReserveQuest then
-        order:ReserveQuest(candidate, GetTime())
+        if order:ReserveQuest(candidate, GetTime()) == false then return end
     end
     if candidate.kind == "turnin" then
         SelectActiveQuest(candidate.selector)
@@ -1348,9 +1348,11 @@ local function IsQuestInteractionReady(element, kind)
                addon.IsAutomationElementReady(element)
 end
 
-local function GetReservedQuestInteraction(kind)
+local function GetReservedQuestInteraction(kind, questId)
     local order = addon.automationOrder
-    if order and order.GetQuestReservation then
+    if questId and order and order.GetQuestConfirmation then
+        return order:GetQuestConfirmation(kind, questId, GetTime())
+    elseif order and order.GetQuestReservation then
         return order:GetQuestReservation(kind, GetTime())
     end
 end
@@ -1395,8 +1397,15 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         if not questId and pending then
             questId = pending.questId
         end
+        local reservedAccept = GetReservedQuestInteraction("accept", questId)
         CommitQuestAccept(questId)
-        ClearQuestInteraction(nil, "accept")
+        -- Clear only the interaction which this event can confirm. A refreshed
+        -- gossip list may already be visible on fast private-server cores.
+        if reservedAccept then
+            ClearQuestInteraction(reservedAccept, "accept")
+        elseif not questId then
+            ClearQuestInteraction(nil, "accept")
+        end
         if addon.lore then addon.lore:MarkSeen(questId) end
         return
     elseif event == "QUEST_LOG_UPDATE" then
@@ -1415,9 +1424,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         -- guide, and wipe questTurnIn before this coordinator runs.  The menu
         -- reservation survives that frame-order race and identifies the exact
         -- authored turn-in which was selected.
-        local guideTurnIn = GetReservedQuestInteraction("turnin") or
-                                GetQuestAutomationElement(addon.questTurnIn,
-                                                          arg1)
+        local guideTurnIn = GetQuestAutomationElement(addon.questTurnIn,
+                                                       arg1) or
+                                GetReservedQuestInteraction("turnin", arg1)
         if guideTurnIn then
             questAcceptState:MarkTurnIn(GetTime())
             CompleteConfirmedQuestElement(guideTurnIn, "QUEST_TURNED_IN",
@@ -1512,8 +1521,9 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
                                                       "turnin") then
             local order = addon.automationOrder
             if order and order.ReserveQuest then
-                order:ReserveQuest({kind = "turnin",
-                                    element = missingTurnIn.element}, GetTime())
+                if order:ReserveQuest({kind = "turnin",
+                                      element = missingTurnIn.element},
+                                     GetTime()) == false then return end
             end
             return GossipSelectActiveQuest(missingTurnIn.selector)
         end

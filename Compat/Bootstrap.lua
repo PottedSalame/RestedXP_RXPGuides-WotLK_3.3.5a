@@ -1823,22 +1823,27 @@ do
     end)
 
     -- 3.3.5a's GetGossip*Quests() returns a flat, variable-stride list and
-    -- exposes NO quest IDs.  RXPGuides drives its automation off quest IDs, but
-    -- its lookup tables (questTurnIn / questAccept) are keyed by *title* as well
-    -- (addon.questTurnIn[747] == addon.questTurnIn["The Hunt Begins"]), and so
-    -- are GetStepQuestReward / QuestAutoAccept.  So we expose the quest *title*
-    -- in the .questID field: RXP then matches by title and hands the title back
-    -- to Select*Quest below, which maps it to a gossip index (the only thing
-    -- 3.3.5a's SelectGossip*Quest accepts).
+    -- exposes NO quest IDs. RXPGuides' lookup tables are keyed by both numeric
+    -- ID and title. Active quests are matched to the quest log to recover the
+    -- numeric ID when possible; available quests and older private clients use
+    -- the title fallback. Select*Quest still receives the explicit legacy
+    -- gossip index, the only selector accepted by the 3.3.5 client.
     local floor = math.floor
 
     -- Split a flat gossip return into per-quest groups without assuming a fixed
     -- stride: the true stride is (#data / numQuests), computed at call time.
+    local function packReturns(...)
+        return {n = select("#", ...), ...}
+    end
+
     local function gossipGroups(getFn, numFn)
-        local data = { getFn() }
+        -- `#data` is undefined when a private-server client leaves a nil field
+        -- inside or at the end of a gossip tuple. Preserve the exact return
+        -- count so one such field cannot shift every quest after the first.
+        local data = packReturns(getFn())
         local num = numFn and numFn() or 0
         local stride = 1
-        if num > 0 then stride = floor(#data / num + 0.5) end
+        if num > 0 then stride = floor(data.n / num + 0.5) end
         if stride < 1 then stride = 1 end
         return data, num, stride
     end
@@ -1846,14 +1851,14 @@ do
     -- Authoritative completion check: match the gossip title to the quest log
     -- (GetQuestLogTitle's isComplete is reliable; the gossip flag position is
     -- not, given the variable stride).
-    local function questLogComplete(title)
+    local function questLogMatch(title)
         if not title then return false end
         local getTitle = _G.RXPCompatGetQuestLogTitle or _G.GetQuestLogTitle
         local n = _G.GetNumQuestLogEntries and _G.GetNumQuestLogEntries() or 0
         for i = 1, n do
-            local t, _, _, isHeader, _, isComplete = getTitle(i)
+            local t, _, _, isHeader, _, isComplete, _, questID = getTitle(i)
             if not legacyTrue(isHeader) and t == title then
-                return legacyTrue(isComplete)
+                return legacyTrue(isComplete), tonumber(questID)
             end
         end
         return false
@@ -1876,13 +1881,18 @@ do
         for g = 0, num - 1 do
             local i = g * stride + 1
             local title = data[i]
+            local isComplete, questID = questLogMatch(title)
             quests[g + 1] = {
                 title = title,
                 questLevel = data[i + 1],
                 isTrivial = data[i + 2],
                 frequency = 1,
-                isComplete = questLogComplete(title),
-                questID = title, -- title stands in for the (absent) quest ID
+                isComplete = isComplete,
+                -- Active quests can be matched back to the quest log, whose
+                -- backported return includes the numeric ID. This avoids title
+                -- collisions and locale-cache races at multi-quest NPCs. Fall
+                -- back to the title for clients which omit that field.
+                questID = questID or title,
                 index = g + 1,
             }
         end
