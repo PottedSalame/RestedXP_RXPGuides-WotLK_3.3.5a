@@ -21,6 +21,9 @@ L["seconds"] = "seconds"
 
 --functions.lua
 L["Error parsing guide"] = "Error parsing guide"
+L["Learn dual spec"] = "Learn dual spec"
+L["Show Lua Errors"] = "Show Lua Errors"
+L["Toggles the stock client display of Lua errors."] = "Toggles the stock client display of Lua errors."
 L["Objective Complete"] = "Objective Complete"
 L["Missing pre-requisites"] = "Missing pre-requisites"
 L["Retrieving quest data"] = "Retrieving quest data"

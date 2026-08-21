@@ -26580,6 +26580,7 @@ step
 .goto Blade's Edge Mountains,60.53,68.97
 .target +Toshley
 .turnin 10557 >> Turn in Test Flight: The Zephyrium Capacitorium
+.accept 10710 >> Accept Test Flight: The Singing Ridge
 .goto Blade's Edge Mountains,60.28,68.39
 .target +Tally Zapnabber
 .accept 10609 >> Accept What Came First, the Drake or the Egg?
@@ -26626,7 +26627,6 @@ step
 step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Toshley|r and |cRXP_FRIENDLY_Dizzy Dina|r
 .turnin 10584 >> Turn in Picking Up Some Power Converters
-.accept 10710 >> Accept Test Flight: The Singing Ridge
 .goto Blade's Edge Mountains,60.53,68.97
 .target +Toshley
 .accept 10620 >> Accept Ridgespine Menace

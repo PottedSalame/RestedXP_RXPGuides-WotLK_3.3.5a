@@ -18,6 +18,8 @@
 
     <Script file="Guides\Deathknight.lua"/>
 
+    <Script file="Guides\Classic-Endgame335.lua"/>
+
     <Script file="Guides\TBC\Alliance-Leveling.lua"/>
     <Script file="Guides\TBC\Horde-Leveling.lua"/>
     <Script file="Guides\TBC\Alliance-Dungeons.lua"/>

@@ -401,6 +401,13 @@ if ($guideKeyHash -cne [string]$surface.guideKeyHash) {
         "Guide-key compatibility surface changed: $guideKeyHash. " +
         'Update tests/runtime-surface.json only for an intentional key migration.')
 }
+if ($files.Count -ne [int]$surface.guideFileCount -or
+    $guideCount -ne [int]$surface.guideCount -or
+    $stepCount -ne [int]$surface.guideStepCount) {
+    Add-Error (
+        "Guide baseline changed: $($files.Count) files, $guideCount guides, $stepCount steps. " +
+        'Update tests/runtime-surface.json only for an intentional content integration.')
+}
 
 $guideIndex = @{}
 foreach ($guide in $guides) {
@@ -423,6 +430,35 @@ foreach ($guide in $guides) {
             if ($candidate -match '^(.*?)\\(.+)$') { $targetGroup = Normalize-Group $Matches[1]; $targetName = $Matches[2].Trim() }
             else { $targetGroup = $guide.Group; $targetName = $candidate }
             if (-not $guideIndex.ContainsKey("$targetGroup|$targetName")) { Add-Error "$($guide.File) dangling #next from $($guide.Name) to $targetGroup / $targetName" }
+        }
+    }
+}
+
+# The playable Horde level-30 route contains recurring collection objectives.
+# Each occurrence needs explicit target metadata; otherwise the objective can
+# progress while Active Targets remains empty until a later duplicate step.
+$hordeLevelingPath = Join-Path $root 'Guides\TBC\Horde-Leveling.lua'
+if ([IO.File]::Exists($hordeLevelingPath)) {
+    $hordeLevelingText = "`n" + [IO.File]::ReadAllText($hordeLevelingPath)
+    $objectiveTargetFixtures = @(
+        @{ Quest = 546; Objective = 1 },
+        @{ Quest = 556; Objective = 1 },
+        @{ Quest = 621; Objective = 1 }
+    )
+    $stepBlocks = [regex]::Matches(
+        $hordeLevelingText,
+        '(?ms)\nstep\s*\n(?<body>.*?)(?=\nstep\s*\n|\z)')
+    foreach ($fixture in $objectiveTargetFixtures) {
+        $objectivePattern = '(?m)^\.complete\s+' + $fixture.Quest + ',' +
+            $fixture.Objective + '(?:\D|$)'
+        foreach ($stepBlock in $stepBlocks) {
+            $body = $stepBlock.Groups['body'].Value
+            if ($body -notmatch $objectivePattern) { continue }
+            if ($body -notmatch '(?m)^\.(?:mob|unitscan|target)\s+\S') {
+                Add-Error (
+                    "Horde 30-45 objective $($fixture.Quest),$($fixture.Objective) " +
+                    'has no Active Targets metadata.')
+            }
         }
     }
 }

@@ -48,6 +48,7 @@ function Clean-Name([string]$name) {
     $name = $name -replace '^\s*(?:the\s+)?(?:\d+\s+)?',''
     $name = $name -replace '^(?i:Collect|Buy|Use|Loot|Get)\s+',''
     $name = $name -replace '\s*\(x?\d+\)\s*$',''
+    $name = $name -replace '\s+(?:x\d+|\d+/\d+)\s*$',''
     $name = $name.Trim(' ', "`t", '.', ':')
     if (-not $name -or $name.Length -gt 100) { return $null }
     return $name

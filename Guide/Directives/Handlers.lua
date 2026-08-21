@@ -91,6 +91,10 @@ addon.functions.events = events
 events.collect = {"BAG_UPDATE_DELAYED", "QUEST_LOG_UPDATE","MERCHANT_SHOW"}
 events.destroy = events.collect
 events.buy = events.collect
+events.buyAll = events.buy
+events.buyUntilBroke = events.buy
+events.dualspec = {"PLAYER_ENTERING_WORLD", "PLAYER_TALENT_UPDATE",
+                   "ACTIVE_TALENT_GROUP_CHANGED"}
 events.accept = {"QUEST_ACCEPTED", "QUEST_LOG_UPDATE", "QUEST_TURNED_IN", "QUEST_REMOVED"}
 events.turnin = {"QUEST_TURNED_IN","QUEST_LOG_UPDATE"}
 if C_EventUtils and C_EventUtils.IsEventValid("STOP_MOVIE") then
@@ -939,6 +943,8 @@ function addon.GetItemName(id)
     return name
 end
 
+local refreshObjectiveTargets
+
 function addon.SetElementComplete(self, disable, skipIfInactive)
     local element
     if not self.element and self.tag then
@@ -956,10 +962,12 @@ function addon.SetElementComplete(self, disable, skipIfInactive)
         addon.StartTimer(element.timer,element.timerText)
     end
     element.completed = true
+    if not element.manualSkip then element.autoSkip = true end
     element.skip = true
     if addon.elementState then addon.elementState:Sync(element) end
     addon.updateSteps = true
     addon.UpdateMap()
+    if refreshObjectiveTargets then refreshObjectiveTargets(element) end
     if not wasCompleted and active and
         GetTime() - addon.lastStepUpdate > 1 then
         addon:QueueMessage("RXP_OBJECTIVE_COMPLETE",element,addon.currentGuide)
@@ -978,14 +986,21 @@ function addon.SetElementComplete(self, disable, skipIfInactive)
 end
 
 function addon.SetElementIncomplete(self)
-    if self.element.completed and not self.element.textOnly then
-        self.element.completed = false
-        if addon.elementState then addon.elementState:Sync(self.element) end
+    local element = self and self.element
+    if not element then return end
+    if element.completed and not element.textOnly then
+        element.completed = false
+        if element.autoSkip and not element.manualSkip then
+            element.skip = nil
+            element.autoSkip = nil
+        end
+        if addon.elementState then addon.elementState:Sync(element) end
         addon.UpdateMap()
+        if refreshObjectiveTargets then refreshObjectiveTargets(element) end
     end
     if self.button then
         self.button:Enable()
-        if not self.element.skip then self.button:SetChecked(false) end
+        if not element.skip then self.button:SetChecked(false) end
     end
 end
 
@@ -1619,11 +1634,52 @@ end
 addon.functions.acceptmultiple = addon.functions.daily
 addon.functions.turninmultiple = addon.functions.dailyturnin
 
-local questMonster = string.gsub(_G.QUEST_MONSTERS_KILLED, "%d+%$", "")
+local questMonsterFormat = type(_G.QUEST_MONSTERS_KILLED) == "string" and
+                               _G.QUEST_MONSTERS_KILLED or "%s: %d/%d"
+questMonsterFormat = string.gsub(questMonsterFormat, "%d+%$", "")
+local questMonster = questMonsterFormat
 questMonster = questMonster:gsub("%%s", "%.%*"):gsub("%%d", "%%d%+")
 local questItem = string.gsub(_G.QUEST_ITEMS_NEEDED, "%%s", "%(%.%*%)"):gsub(
                       "%%d", "%%d%+")
 local retrievingQuestData = L("Retrieving quest data") .. "..."
+
+-- Convert Blizzard's localized kill-counter format into a capture pattern for
+-- the creature name. This is display/target metadata only: the quest ID and
+-- objective completion logic remain the canonical English guide data.
+local function BuildMonsterNamePattern(formatText)
+    local stringToken, numberToken = "\001", "\002"
+    local pattern = formatText:gsub("%%s", stringToken):gsub("%%d", numberToken)
+    pattern = pattern:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
+    pattern = pattern:gsub(stringToken, "(.-)"):gsub(numberToken, "%%d+")
+    return "^" .. pattern .. "$"
+end
+
+local questMonsterNamePattern = BuildMonsterNamePattern(questMonsterFormat)
+
+local function ExtractObjectiveMobName(objective)
+    if type(objective) ~= "table" or objective.type ~= "monster" or
+        type(objective.text) ~= "string" then return nil end
+
+    local name
+    if objective.questie then
+        name = objective.text
+    else
+        name = objective.text:match(questMonsterNamePattern)
+    end
+    name = name and name:match("^%s*(.-)%s*$")
+    if not name or name == "" or name:find("%d+%s*/%s*%d+") then return nil end
+    return name
+end
+
+local function SetInferredObjectiveMob(element, name)
+    if element.inferredMobName == name then return end
+    element.inferredMobName = name
+    element.mobs = name and {name} or nil
+    if element.step and element.step.active and addon.targeting and
+        addon.targeting.UpdateUnitList then
+        addon:ScheduleTask(addon.targeting.UpdateUnitList)
+    end
+end
 
 function addon.UpdateQuestCompletionData(self)
     -- addon.activeObjectives[self] = addon.UpdateQuestCompletionData
@@ -1669,6 +1725,7 @@ function addon.UpdateQuestCompletionData(self)
     local isQuestComplete = IsQuestTurnedIn(id) or IsQuestComplete(id)
     local objtext = " "
     local completed
+    local inferredMobName
 
     if element.obj and element.obj <= #objectives then
         local obj = objectives[element.obj]
@@ -1691,8 +1748,11 @@ function addon.UpdateQuestCompletionData(self)
         end
         if obj.type == "item" then
             icon = addon.icons.collect
-        elseif obj.type == "monster" and (t:find(questMonster) or obj.questie) then
-            icon = addon.icons.combat
+        elseif obj.type == "monster" then
+            inferredMobName = ExtractObjectiveMobName(obj)
+            if inferredMobName or t:find(questMonster) or obj.questie then
+                icon = addon.icons.combat
+            end
         end
         if element.rawtext then
             t = fmt(element.rawtext, obj.numFulfilled,
@@ -1801,6 +1861,7 @@ function addon.UpdateQuestCompletionData(self)
     end
 
     completed = completed or isQuestComplete
+    SetInferredObjectiveMob(element, not completed and inferredMobName or nil)
 
     if element.flags % 2 == 0 then
         element.tooltipText = icon .. objtext:gsub("\n", "\n   " .. icon)
@@ -5351,6 +5412,60 @@ function addon.functions.bronzetube(self, text, rev)
     end
 end
 
+-- Buys the requested quantity without subtracting items already owned.
+function addon.functions.buyAll(self, ...)
+    if type(self) == "string" then
+        local element = addon.functions.buy(self, ...)
+        if type(element) == "table" then element.ignoreCurrent = true end
+        return element
+    end
+    return addon.functions.buy(self, ...)
+end
+
+-- Target directives are child elements of the objective immediately above
+-- them. Refresh their live lists whenever that objective changes state; mob
+-- directives do not listen to QUEST_LOG_UPDATE on 3.3.5, so waiting for their
+-- own callback could leave a completed target visible or an incomplete target
+-- absent until the player changed targets.
+refreshObjectiveTargets = function(parent)
+    local step = parent and parent.step
+    if not (step and type(step.elements) == "table") then return end
+
+    local changed
+    local hidden = parent.completed or parent.skip
+    for _, child in ipairs(step.elements) do
+        if child.parent == parent and child.unitlist then
+            local field = child.tag == "mob" and "mobs" or
+                              child.tag == "unitscan" and "unitscan" or
+                              child.tag == "target" and "targets" or nil
+            if field then
+                local value = hidden and nil or child.unitlist
+                if child[field] ~= value then
+                    child[field] = value
+                    changed = true
+                end
+            end
+        end
+    end
+
+    if changed and step.active and addon.targeting and
+        addon.targeting.UpdateUnitList then
+        addon:ScheduleTask(addon.targeting.UpdateUnitList)
+    end
+end
+addon.RefreshObjectiveTargets = refreshObjectiveTargets
+
+-- Caps the requested quantity to what the character can currently afford.
+-- The normal merchant and bag safeguards remain owned by .buy.
+function addon.functions.buyUntilBroke(self, ...)
+    if type(self) == "string" then
+        local element = addon.functions.buy(self, ...)
+        if type(element) == "table" then element.buyUntilBroke = true end
+        return element
+    end
+    return addon.functions.buy(self, ...)
+end
+
 function addon.functions.buy(self, ...)
     if type(self) == "string" then -- on parse
         local element = {}
@@ -5378,7 +5493,8 @@ function addon.functions.buy(self, ...)
 
     local id = element.id
     local count = GetItemCount(id)
-    local total = element.qty - count
+    local total = element.qty
+    if not element.ignoreCurrent then total = total - count end
     local objIndex = element.objIndex
     local questId = element.questId
 
@@ -5396,9 +5512,20 @@ function addon.functions.buy(self, ...)
             local link = GetMerchantItemLink(i)
             local itemID = link and tonumber(link:match("item:(%d+)"))
             if itemID then
-                local name, _, _, quantity = GetMerchantItemInfo(i)
+                local name, _, cost, quantity, numAvailable =
+                    GetMerchantItemInfo(i)
 
                 if itemID == id or name == id then
+                    quantity = math.max(tonumber(quantity) or 1, 1)
+                    total = math.max(math.floor(tonumber(total) or 0), 0)
+                    if numAvailable and numAvailable >= 0 then
+                        total = math.min(total, math.floor(numAvailable))
+                    end
+                    if element.buyUntilBroke and cost and cost > 0 then
+                        local affordableBundles = math.floor(GetMoney() / cost)
+                        total = math.min(total, affordableBundles * quantity)
+                    end
+                    if total <= 0 then return end
                     addon.comms.PrettyPrint("Buying " .. name .. " x" .. total) -- ok
                     if quantity and quantity > 1 then
                         for n = 1, math.ceil(total / quantity) do
@@ -8115,5 +8242,26 @@ function addon.functions.totalbagslots(self,text,arg1)
     if total < element.maxslots == element.operator then
         step.completed = true
         addon.updateSteps = true
+    end
+end
+
+function addon.functions.dualspec(self, text)
+    if type(self) == "string" then
+        return {
+            icon = addon.icons.trainer,
+            text = text and text ~= "" and text or L("Learn dual spec")
+        }
+    end
+
+    local element = self.element
+    local step = element and element.step
+    if not step or element.completed or not step.active then return end
+
+    addon:ScheduleTask(element.frame or self)
+    if addon.isHidden or type(_G.GetNumTalentGroups) ~= "function" then return end
+
+    local ok, groups = pcall(_G.GetNumTalentGroups)
+    if ok and tonumber(groups) and groups > 1 then
+        addon.SetElementComplete(self, true)
     end
 end

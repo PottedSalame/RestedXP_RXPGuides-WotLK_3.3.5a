@@ -50,7 +50,7 @@ local function CountQuestLogEntries()
     local count = 0
     for index = 1, entries do
         local _, _, _, _, isHeader = _G.GetQuestLogTitle(index)
-        if not isHeader then count = count + 1 end
+        if isHeader ~= true and isHeader ~= 1 then count = count + 1 end
     end
     return count
 end
@@ -143,7 +143,8 @@ local function GetLiveQuestRewardXP(questId)
     local index = C_QuestLog and C_QuestLog.GetLogIndexForQuestID and
                       C_QuestLog.GetLogIndexForQuestID(questId) or
                       (_G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questId))
-    if not index then return end
+    index = tonumber(index)
+    if not index or index < 1 then return end
     local previous = _G.GetQuestLogSelection and _G.GetQuestLogSelection()
     _G.SelectQuestLogEntry(index)
     local ok, reward = pcall(_G.GetQuestLogRewardXP)

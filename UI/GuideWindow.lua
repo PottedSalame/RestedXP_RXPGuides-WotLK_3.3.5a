@@ -547,6 +547,8 @@ local function ClearFrameData()
                 end
                 frame.element.frame = nil
                 frame.element.skip = nil
+                frame.element.autoSkip = nil
+                frame.element.manualSkip = nil
             end
             frame.step = nil
             frame.index = nil
@@ -1016,7 +1018,12 @@ function addon.SetStep(n, n2, loopback)
                         if element.OnComplete and skip and not element.skip then
                             element.OnComplete(element)
                         end
+                        element.manualSkip = skip and true or nil
+                        element.autoSkip = nil
                         element.skip = skip
+                        if addon.RefreshObjectiveTargets then
+                            addon.RefreshObjectiveTargets(element)
+                        end
 
                     end
                     addon.updateSteps = true

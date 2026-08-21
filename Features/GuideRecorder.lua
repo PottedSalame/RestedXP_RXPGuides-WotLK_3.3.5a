@@ -351,7 +351,7 @@ function recorder:SnapshotObjectives()
     local nextSnapshot = {}
     for logIndex = 1, GetNumQuestLogEntries() do
         local _, _, _, _, isHeader = GetQuestLogTitle(logIndex)
-        if not isHeader then
+        if isHeader ~= true and isHeader ~= 1 then
             local questId = C_QuestLog.GetQuestIDForLogIndex(logIndex)
             if questId and questId > 0 then
                 for objective = 1, GetNumQuestLeaderBoards(logIndex) do

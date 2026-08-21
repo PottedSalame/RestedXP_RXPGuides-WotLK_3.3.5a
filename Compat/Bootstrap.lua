@@ -39,6 +39,13 @@ local function def(t, key, fn)
     if t[key] == nil then t[key] = fn end
 end
 
+-- Stock 3.3.5 APIs normally use 1/nil for boolean return values. Some private
+-- server clients return 0 instead of nil, which is still truthy in Lua. Keep
+-- that representation from leaking into modern boolean facades.
+local function legacyTrue(value)
+    return value == true or value == 1
+end
+
 --=========================================================================
 -- Missing globals / constants
 --=========================================================================
@@ -624,8 +631,9 @@ _G.RXPCompatGetQuestLogTitle = function(index)
           isComplete, isDaily, questID = _G.GetQuestLogTitle(index)
     -- If the client didn't provide the backported questID at #9, fall back to it
     -- being absent (callers already tolerate nil).
-    return title, level, suggestedGroup, isHeader, isCollapsed, isComplete,
-           (isDaily and 2 or 1), questID
+    return title, level, suggestedGroup, legacyTrue(isHeader),
+           legacyTrue(isCollapsed), legacyTrue(isComplete),
+           (legacyTrue(isDaily) and 2 or 1), questID
 end
 
 -- HaveQuestData / HaveQuestRewardData (added ~6.x): on 3.3.5a all quest data is
@@ -648,7 +656,7 @@ def(_G, "GetQuestID", function()
     local n = _G.GetNumQuestLogEntries and _G.GetNumQuestLogEntries() or 0
     for i = 1, n do
         local t, _, _, _, isHeader = _G.GetQuestLogTitle(i)
-        if not isHeader and t == title then
+        if not legacyTrue(isHeader) and t == title then
             local id = select(9, _G.GetQuestLogTitle(i))
             if type(id) == "number" and id > 0 then return id end
         end
@@ -1560,15 +1568,48 @@ do
         local numEntries = _G.GetNumQuestLogEntries()
         for i = 1, numEntries do
             local _, _, _, _, isHeader, _, isComplete = _G.GetQuestLogTitle(i)
-            if not isHeader then
+            if not legacyTrue(isHeader) then
                 local qid = questIDFromIndex(i)
                 if qid then
                     logIndexByQuestID[qid] = i
                     onQuest[qid] = true
-                    if isComplete == 1 then completeByQuestID[qid] = true end
+                    if legacyTrue(isComplete) then
+                        completeByQuestID[qid] = true
+                    end
                 end
             end
         end
+    end
+
+    -- GetQuestLogIndexByID returns 0 for a missing quest on many 3.3.5
+    -- clients. Since 0 is truthy in Lua, callers must never use that return
+    -- value as a boolean. Also verify that a positive index still identifies
+    -- the requested quest before admitting it into the cache.
+    local function validatedLogIndex(questID)
+        questID = tonumber(questID)
+        if not questID or questID <= 0 then return nil end
+
+        local index = tonumber(logIndexByQuestID[questID])
+        if index and index > 0 and questIDFromIndex(index) == questID then
+            return index
+        end
+        logIndexByQuestID[questID] = nil
+        onQuest[questID] = nil
+
+        if _G.GetQuestLogIndexByID then
+            index = tonumber(_G.GetQuestLogIndexByID(questID))
+            if index and index > 0 and questIDFromIndex(index) == questID then
+                logIndexByQuestID[questID] = index
+                onQuest[questID] = true
+                return index
+            end
+            -- A numeric zero is an authoritative "not in the quest log".
+            if index ~= nil then return nil end
+        end
+
+        rebuildLog()
+        index = tonumber(logIndexByQuestID[questID])
+        return index and index > 0 and index or nil
     end
 
     local function rebuildCompleted()
@@ -1590,14 +1631,15 @@ do
         elseif event == "QUEST_QUERY_COMPLETE" then
             rebuildCompleted()
         elseif event == "QUEST_ACCEPTED" then
-            local index = arg1
-            local qid = arg2 or (index and questIDFromIndex(index))
+            local index = tonumber(arg1)
+            local qid = tonumber(arg2) or
+                            (index and questIDFromIndex(index))
             if qid then
                 logIndexByQuestID[qid] = index
                 onQuest[qid] = true
             end
         elseif event == "QUEST_TURNED_IN" then
-            local qid = arg1
+            local qid = tonumber(arg1)
             if qid then
                 logIndexByQuestID[qid] = nil
                 onQuest[qid] = nil
@@ -1617,7 +1659,8 @@ do
         local title, level, questTag, suggestedGroup, isHeader, isCollapsed,
               isComplete, isDaily = _G.GetQuestLogTitle(questLogIndex)
         if title == nil then return nil end
-        local questID = not isHeader and questIDFromIndex(questLogIndex) or nil
+        local header = legacyTrue(isHeader)
+        local questID = not header and questIDFromIndex(questLogIndex) or nil
         return {
             title = title,
             questLogIndex = questLogIndex,
@@ -1626,10 +1669,10 @@ do
             level = level,
             difficultyLevel = level,
             suggestedGroup = suggestedGroup,
-            frequency = isDaily and 1 or 0,
-            isHeader = isHeader,
-            isCollapsed = isCollapsed,
-            isComplete = (isComplete == 1) or nil,
+            frequency = legacyTrue(isDaily) and 1 or 0,
+            isHeader = header,
+            isCollapsed = legacyTrue(isCollapsed),
+            isComplete = legacyTrue(isComplete) or nil,
             isOnMap = nil,
             hasLocalPOI = nil,
             isTask = false,
@@ -1641,22 +1684,31 @@ do
     end)
 
     def(C_QuestLog, "GetLogIndexForQuestID", function(questID)
-        return logIndexByQuestID[questID]
+        return validatedLogIndex(questID)
     end)
     def(C_QuestLog, "IsOnQuest", function(questID)
-        if onQuest[questID] then return true end
-        -- Fallback in case the cache has not been built yet this session.
-        return _G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questID) and true or false
+        questID = tonumber(questID)
+        if not questID then return false end
+        if onQuest[questID] and validatedLogIndex(questID) then return true end
+        return validatedLogIndex(questID) ~= nil
     end)
     def(C_QuestLog, "IsComplete", function(questID)
-        return completeByQuestID[questID] == true
+        questID = tonumber(questID)
+        if not questID then return false end
+        if completeByQuestID[questID] == true then return true end
+        local index = validatedLogIndex(questID)
+        if not index then return false end
+        local complete = legacyTrue(select(7, _G.GetQuestLogTitle(index)))
+        if complete then completeByQuestID[questID] = true end
+        return complete
     end)
     def(C_QuestLog, "IsQuestFlaggedCompleted", function(questID)
-        if completedCache[questID] then return true end
-        return false
+        questID = tonumber(questID)
+        return questID and legacyTrue(completedCache[questID]) or false
     end)
     def(C_QuestLog, "IsQuestFlaggedCompletedOnAccount", function(questID)
-        return completedCache[questID] == true
+        questID = tonumber(questID)
+        return questID and legacyTrue(completedCache[questID]) or false
     end)
     def(C_QuestLog, "GetAllCompletedQuestIDs", function()
         rebuildCompleted()
@@ -1666,11 +1718,7 @@ do
     end)
     def(C_QuestLog, "RequestLoadQuestByID", function() end) -- data is local on 3.3.5a
     C_QuestLog.IsPushableQuest = function(questID)
-        local index = logIndexByQuestID[tonumber(questID)]
-        if not index then
-            rebuildLog()
-            index = logIndexByQuestID[tonumber(questID)]
-        end
+        local index = validatedLogIndex(questID)
         if not (index and _G.SelectQuestLogEntry and _G.GetQuestLogPushable) then
             return false
         end
@@ -1686,7 +1734,7 @@ do
     end
 
     def(C_QuestLog, "GetTitleForQuestID", function(questID)
-        local idx = logIndexByQuestID[questID]
+        local idx = validatedLogIndex(questID)
         if idx then return (_G.GetQuestLogTitle(idx)) end
         return nil
     end)
@@ -1695,7 +1743,7 @@ do
     end)
 
     def(C_QuestLog, "GetQuestObjectives", function(questID)
-        local idx = logIndexByQuestID[questID]
+        local idx = validatedLogIndex(questID)
         if not idx then return {} end
         local objectives = {}
         local num = _G.GetNumQuestLeaderBoards(idx) or 0
@@ -1708,9 +1756,10 @@ do
                 local have, need = text:match("(%d+)%s*/%s*(%d+)")
                 numFulfilled, numRequired = tonumber(have), tonumber(need)
             end
+            local isFinished = legacyTrue(finished)
             objectives[i] = {
-                text = text, type = objType, finished = finished and true or false,
-                numFulfilled = numFulfilled or (finished and 1 or 0),
+                text = text, type = objType, finished = isFinished,
+                numFulfilled = numFulfilled or (isFinished and 1 or 0),
                 numRequired = numRequired or 1,
             }
         end
@@ -1718,13 +1767,15 @@ do
     end)
 
     def(C_QuestLog, "SetSelectedQuest", function(questID)
-        local idx = logIndexByQuestID[questID]
+        local idx = validatedLogIndex(questID)
         if idx then _G.SelectQuestLogEntry(idx) end
     end)
     def(C_QuestLog, "SetAbandonQuest", function() return _G.SetAbandonQuest() end)
     def(C_QuestLog, "AbandonQuest", function() return _G.AbandonQuest() end)
     def(C_QuestLog, "GetQuestIDForLogIndex", function(index) return questIDFromIndex(index) end)
-    def(C_QuestLog, "ReadyForTurnIn", function(questID) return completeByQuestID[questID] == true end)
+    def(C_QuestLog, "ReadyForTurnIn", function(questID)
+        return C_QuestLog.IsComplete(questID)
+    end)
 end
 
 --=========================================================================
@@ -1801,8 +1852,8 @@ do
         local n = _G.GetNumQuestLogEntries and _G.GetNumQuestLogEntries() or 0
         for i = 1, n do
             local t, _, _, isHeader, _, isComplete = getTitle(i)
-            if not isHeader and t == title then
-                return isComplete and isComplete ~= 0 and true or false
+            if not legacyTrue(isHeader) and t == title then
+                return legacyTrue(isComplete)
             end
         end
         return false

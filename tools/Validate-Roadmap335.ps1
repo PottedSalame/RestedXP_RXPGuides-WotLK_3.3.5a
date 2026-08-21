@@ -26,8 +26,8 @@ foreach ($module in $modules) {
 }
 
 $coreText = [IO.File]::ReadAllText((Join-Path $root 'Core/Addon.lua'))
-if ($coreText -notmatch 'local cacheVersion\s*=\s*32\b') {
-    Add-Error 'Guide metadata cache version must be 32 for the roadmap migration.'
+if ($coreText -notmatch 'local cacheVersion\s*=\s*33\b') {
+    Add-Error 'Guide metadata cache version must be 33 after the verified endgame-guide integration.'
 }
 
 $settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI/Settings.lua'))
@@ -74,10 +74,17 @@ if ($xpText -notmatch 'function\s+assistant:ResizeForVisibleColumns\s*\(' -or
 # structural: gameplay behavior is exercised in-game, while CI prevents a
 # manifest cleanup or upstream merge from silently disconnecting the feature.
 foreach ($database in @('DB\classic\SpiritHealerDB.lua',
-                         'DB\classic\dangerousMobs.lua')) {
+                         'DB\classic\dangerousMobs.lua',
+                         'DB\tbc\dangerousMobs.lua')) {
     if ($toc.IndexOf($database, [StringComparison]::OrdinalIgnoreCase) -lt 0) {
         Add-Error "3.3.5 manifest does not load $database"
     }
+}
+$outlandDangerText = [IO.File]::ReadAllText((Join-Path $root 'DB/tbc/dangerousMobs.lua'))
+if (([regex]::Matches($outlandDangerText, 'MinLevel\s*=')).Count -ne 172 -or
+    ([regex]::Matches($outlandDangerText, '(?m)^\s{4}\["(?:Blade''s Edge Mountains|Hellfire Peninsula|Zangarmarsh|Terokkar Forest|Nagrand|Netherstorm|Shadowmoon Valley)"\]\s*=\s*\{')).Count -ne 14 -or
+    $outlandDangerText -notmatch 'outlandDangerousMobs\[_G\.UnitFactionGroup\("player"\)\]') {
+    Add-Error 'Outland dangerous-mob data must retain 86 faction-scoped records across all seven zones.'
 }
 $mapText = [IO.File]::ReadAllText((Join-Path $root 'UI/Map.lua'))
 $healerText = [IO.File]::ReadAllText((Join-Path $root 'DB/classic/SpiritHealerDB.lua'))

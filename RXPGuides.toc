@@ -41,6 +41,7 @@ UI\Settings.lua
 DB\shared.lua
 DB\classic\SpiritHealerDB.lua
 DB\classic\dangerousMobs.lua
+DB\tbc\dangerousMobs.lua
 DB\wotlk\flightData.lua
 DB\wotlk\quest.lua
 DB\wotlk\spells.lua

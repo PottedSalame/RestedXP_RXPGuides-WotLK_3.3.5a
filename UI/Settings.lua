@@ -4368,6 +4368,37 @@ function addon.settings:CreateAceOptionsPanel()
                         width = optionsWidth,
                         order = 1.1
                     },
+                    luaErrors = {
+                        name = tostring(_G.SHOW_LUA_ERRORS or
+                                            L("Show Lua Errors") or
+                                            "Show Lua Errors"),
+                        desc = L("Toggles the stock client display of Lua errors."),
+                        type = "toggle",
+                        width = optionsWidth,
+                        order = 1.2,
+                        hidden = type(_G.SetCVar) ~= "function" or
+                                     (type(_G.GetCVarBool) ~= "function" and
+                                         type(_G.GetCVar) ~= "function"),
+                        get = function()
+                            if type(_G.GetCVarBool) == "function" then
+                                local ok, value = pcall(_G.GetCVarBool,
+                                                        "scriptErrors")
+                                if ok then return value and true or false end
+                            end
+                            if type(_G.GetCVar) == "function" then
+                                local ok, value = pcall(_G.GetCVar,
+                                                        "scriptErrors")
+                                if ok then return tostring(value) == "1" end
+                            end
+                            return false
+                        end,
+                        set = function(_, value)
+                            if type(_G.SetCVar) == "function" then
+                                pcall(_G.SetCVar, "scriptErrors",
+                                      value and "1" or "0")
+                            end
+                        end
+                    },
                     enableHSbatch = {
                         name = L("Hearthstone batching"),
                         desc = L(

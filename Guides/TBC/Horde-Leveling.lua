@@ -564,6 +564,7 @@ step
 #completewith Hacket
 >>Kill |cRXP_ENEMY_Hillsbrad|r mobs. Loot them for their |cRXP_LOOT_Skulls|r
 .complete 546,1 
+.mob Hillsbrad Miner::2269
 .isOnQuest 546
 step
 #completewith next
@@ -611,6 +612,7 @@ step
 .goto Hillsbrad Foothills,31.15,54.73,15,0
 >>Finish killing |cRXP_ENEMY_Hillsbrad|r mobs. Loot them for their |cRXP_LOOT_Skulls|r
 .complete 546,1 
+.mob Hillsbrad Miner::2269
 .isQuestTurnedIn 528
 step
 #loop
@@ -632,6 +634,10 @@ step
 >>Kill all |cRXP_ENEMY_Dalaran Humanoids|r. Loot them for their |cRXP_LOOT_Worn Stone Tokens|r
 >>|cRXP_WARN_Be careful of|r |cRXP_ENEMY_Dalaran Shield Guards'|r |cRXP_WARN_glowing|r |T136173:0|t[Violet Shield Effect] |cRXP_WARN_ buff. It lasts eight seconds and returns 85 damage upon being struck in melee|r << !Mage !Priest !Warlock
 .complete 556,1 
+.mob Dalaran Shield Guard::2271
+.mob Dalaran Theurgist::2272
+.mob Dalaran Worker::2628
+.mob Dalaran Summoner::2358
 step
 >>Kill |cRXP_ENEMY_Ricter|r, |cRXP_ENEMY_Alina|r and |cRXP_ENEMY_Dermot|r. Loot them for their |cRXP_LOOT_Bloodstones|r
 .complete 544,2 
@@ -666,10 +672,10 @@ step
 >>Finish killing the |cRXP_ENEMY_Dalaran Humanoids|r. Loot them for their |cRXP_LOOT_Worn Stone Tokens|r
 >>|cRXP_WARN_Be careful of |cRXP_ENEMY_Dalaran Shield Guards'|r |cRXP_WARN_glowing|r |T136173:0|t[Violet Shield Effect] |cRXP_WARN_ buff. It lasts eight seconds and returns 85 damage upon being struck in melee|r << !Mage !Priest !Warlock
 .complete 556,1 
-.mob Dalaran Shield Guard
-.mob Dalaran Theurgist
-.mob Dalaran Worker
-.mob Dalaran Summoner
+.mob Dalaran Shield Guard::2271
+.mob Dalaran Theurgist::2272
+.mob Dalaran Worker::2628
+.mob Dalaran Summoner::2358
 step
 #softcore
 #completewith Frostmaw
@@ -7434,6 +7440,10 @@ step
 >>Kill |cRXP_ENEMY_Zanzil Undeads|r. Loot them for their |cRXP_LOOT_Mixture|r
 >>|cRXP_WARN_Do NOT pull or attack|r |cRXP_ENEMY_Zanzil the Outcast|r
 .complete 621,1 
+.mob Zanzil Zombie::1488
+.mob Zanzil Hunter::1489
+.mob Zanzil Witch Doctor::1490
+.mob Zanzil Naga::1491
 step
 .goto Stranglethorn Vale,40.00,58.24
 >>Kill |cRXP_ENEMY_Chucky|r. Loot him for his |cRXP_LOOT_Ring|r
@@ -7452,11 +7462,19 @@ step
 |cRXP_WARN_Try to get at least 8 |cRXP_LOOT_Mixtures|r as there are limited |cRXP_ENEMY_Zanzil|r mobs in the next camp|r
 >>|cRXP_WARN_Do NOT pull or attack|r |cRXP_ENEMY_Zanzil the Outcast|r
 .complete 621,1,8 
+.mob Zanzil Zombie::1488
+.mob Zanzil Hunter::1489
+.mob Zanzil Witch Doctor::1490
+.mob Zanzil Naga::1491
 step
 #optional
 #completewith Maury
 >>Kill |cRXP_ENEMY_Zanzil Undeads|r. Loot them for their |cRXP_LOOT_Mixture|r
 .complete 621,1 
+.mob Zanzil Zombie::1488
+.mob Zanzil Hunter::1489
+.mob Zanzil Witch Doctor::1490
+.mob Zanzil Naga::1491
 step
 .goto Stranglethorn Vale,34.92,51.84
 >>Kill |cRXP_ENEMY_Jon-Jon|r. Loot him for his |cRXP_LOOT_Spyglass|r
@@ -7476,10 +7494,10 @@ step
 >>Kill |cRXP_ENEMY_Zanzil Undeads|r. Loot them for their |cRXP_LOOT_Mixture|r
 >>|cRXP_WARN_Return to the previous camp to find more |cRXP_ENEMY_Zanzil Undeads|r if needed|r
 .complete 621,1 
-.mob Zanzil Zombie
-.mob Zanzil Hunter
-.mob Zanzil Witch Doctor
-.mob Zanzil Naga
+.mob Zanzil Zombie::1488
+.mob Zanzil Hunter::1489
+.mob Zanzil Witch Doctor::1490
+.mob Zanzil Naga::1491
 step
 #completewith HolyWater
 .goto Stranglethorn Vale,27.07,59.30,40,0
@@ -10316,7 +10334,7 @@ step << Hunter
 .train 17267,3
 .zoneskip The Hinterlands,1
 step
-#completewith next
+#completewith Gammerita
 >>Loot the |cRXP_PICK_Pupellyverbos Port Bottles|r along the shore
 .complete 580,1 
 step
@@ -10830,6 +10848,7 @@ step
 .accept 7816 >>Accept Gammerita, Mon!
 .target Katoom the Angler
 step
+#label Gammerita
 #loop
 .goto The Hinterlands,78.83,76.26,0
 .goto The Hinterlands,81.87,49.36,70,0

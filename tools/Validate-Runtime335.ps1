@@ -337,6 +337,44 @@ $runtimeText = ($runtimeFiles | ForEach-Object {
     [IO.File]::ReadAllText($_.FullName)
 }) -join [Environment]::NewLine
 
+# Legacy quest-log APIs may return numeric zero for false. A raw truthiness
+# check makes every missing quest look active on those clients and can skip
+# item/objective elements before their targets are rendered.
+$compatBootstrapText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\Bootstrap.lua'))
+if ($compatBootstrapText -match
+    'GetQuestLogIndexByID\s*\([^)]*\)\s*and\s*true') {
+    Add-ValidationError (
+        'The legacy quest-log index is used as a boolean; index zero must be rejected.')
+}
+if ($compatBootstrapText -notmatch
+        'local function validatedLogIndex\s*\(' -or
+    $compatBootstrapText -notmatch
+        'index\s+and\s+index\s*>\s*0\s+and\s+questIDFromIndex\(index\)\s*==\s*questID' -or
+    $compatBootstrapText -notmatch
+        'local function legacyTrue\s*\(') {
+    Add-ValidationError (
+        'The 3.3.5 quest facade must validate positive quest-log indices and numeric booleans.')
+}
+
+$directiveHandlersText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Guide\Directives\Handlers.lua'))
+$guideWindowText = [IO.File]::ReadAllText(
+    (Join-Path $root 'UI\GuideWindow.lua'))
+if ($directiveHandlersText -notmatch 'element\.autoSkip\s*=\s*true' -or
+    $directiveHandlersText -notmatch
+        'element\.autoSkip\s+and\s+not\s+element\.manualSkip' -or
+    $directiveHandlersText -notmatch
+        'addon\.RefreshObjectiveTargets\s*=\s*refreshObjectiveTargets' -or
+    $directiveHandlersText -notmatch
+        'local function ExtractObjectiveMobName\s*\(' -or
+    $directiveHandlersText -notmatch
+        'SetInferredObjectiveMob\(element,\s*not completed and inferredMobName or nil\)' -or
+    $guideWindowText -notmatch 'element\.manualSkip\s*=') {
+    Add-ValidationError (
+        'Automatic objective skips must be reversible without clearing manual skips.')
+}
+
 foreach ($module in $surface.aceModules) {
     $pattern = 'NewModule\(\s*["'']' +
         [regex]::Escape([string]$module) + '["'']'

@@ -416,8 +416,47 @@ local translations = {
     },
 }
 
+local supplemental = {
+    deDE = {
+        ["Learn dual spec"] = "Duale Spezialisierung erlernen",
+        ["Show Lua Errors"] = "Lua-Fehler anzeigen",
+        ["Toggles the stock client display of Lua errors."] = "Schaltet die Anzeige von Lua-Fehlern des Spielclients um."
+    },
+    esES = {
+        ["Learn dual spec"] = "Aprender doble especialización",
+        ["Show Lua Errors"] = "Mostrar errores de Lua",
+        ["Toggles the stock client display of Lua errors."] = "Activa o desactiva los errores Lua del cliente."
+    },
+    frFR = {
+        ["Learn dual spec"] = "Apprendre la double spécialisation",
+        ["Show Lua Errors"] = "Afficher les erreurs Lua",
+        ["Toggles the stock client display of Lua errors."] = "Active ou désactive l’affichage des erreurs Lua du client."
+    },
+    koKR = {
+        ["Learn dual spec"] = "이중 특성 배우기",
+        ["Show Lua Errors"] = "Lua 오류 표시",
+        ["Toggles the stock client display of Lua errors."] = "게임 클라이언트의 Lua 오류 표시를 켜거나 끕니다."
+    },
+    ruRU = {
+        ["Learn dual spec"] = "Изучить двойную специализацию",
+        ["Show Lua Errors"] = "Показывать ошибки Lua",
+        ["Toggles the stock client display of Lua errors."] = "Включает или отключает показ ошибок Lua клиентом."
+    },
+    zhCN = {
+        ["Learn dual spec"] = "学习双天赋",
+        ["Show Lua Errors"] = "显示 Lua 错误",
+        ["Toggles the stock client display of Lua errors."] = "切换游戏客户端的 Lua 错误显示。"
+    },
+    zhTW = {
+        ["Learn dual spec"] = "學習雙天賦",
+        ["Show Lua Errors"] = "顯示 Lua 錯誤",
+        ["Toggles the stock client display of Lua errors."] = "切換遊戲用戶端的 Lua 錯誤顯示。"
+    }
+}
+
 local values = translations[locale]
 if not values then return end
+for key, value in pairs(supplemental[locale] or {}) do values[key] = value end
 local L = LibStub("AceLocale-3.0"):NewLocale(addonName, locale, false)
 if not L then return end
 for key, value in pairs(values) do L[key] = value end
