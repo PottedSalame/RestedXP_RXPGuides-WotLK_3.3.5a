@@ -549,6 +549,9 @@ local function ClearFrameData()
                 frame.element.skip = nil
                 frame.element.autoSkip = nil
                 frame.element.manualSkip = nil
+                frame.element.hearthPending = nil
+                frame.element.hearthSucceeded = nil
+                frame.element.hearthArrivalSeen = nil
             end
             frame.step = nil
             frame.index = nil
@@ -677,7 +680,17 @@ function addon.UpdateStepCompletion()
 
     for i, step in ipairs(activeSteps) do
         local completed = true
-        if not (step.completed or step.tip) then
+        local waitingForHearth
+        if step.waitForHearth then
+            for _, element in ipairs(step.elements or {}) do
+                if (element.tag == "hs" or element.tag == "hsbatching") and
+                    element.hearthPending and not element.completed then
+                    waitingForHearth = true
+                    break
+                end
+            end
+        end
+        if not ((step.completed and not waitingForHearth) or step.tip) then
             for j, element in ipairs(step.elements) do
                 if not (element.completed or element.skip or element.textOnly) then
                     completed = false
@@ -2411,7 +2424,22 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
             step.optional = true
         end
         --BottomFrame.stepList[n] = n
-        if step.completewith and not step.tip then step.sticky = true end
+        local waitForHearth
+        for _, element in ipairs(step.elements or {}) do
+            if element.tag == "hs" or element.tag == "hsbatching" then
+                waitForHearth = true
+                break
+            end
+        end
+        step.waitForHearth = waitForHearth or nil
+        if step.completewith and not step.tip and not waitForHearth then
+            step.sticky = true
+        elseif waitForHearth then
+            -- Hearth travel is a blocking action. Existing .cooldown,
+            -- .zoneskip and .subzoneskip elements can still skip it when the
+            -- hearth is unavailable or the character has already arrived.
+            step.sticky = nil
+        end
         if step.requires then
             local requirement = guide.labels[step.requires]
             if requirement then

@@ -375,6 +375,18 @@ if ($directiveHandlersText -notmatch 'element\.autoSkip\s*=\s*true' -or
         'Automatic objective skips must be reversible without clearing manual skips.')
 }
 
+if ($directiveHandlersText -notmatch
+        'element\.hearthPending\s*=\s*true' -or
+    $directiveHandlersText -notmatch
+        'event\s*==\s*"PLAYER_ENTERING_WORLD"' -or
+    $guideWindowText -notmatch
+        'step\.waitForHearth\s*=\s*waitForHearth\s+or\s+nil' -or
+    $guideWindowText -notmatch
+        'step\.completed\s+and\s+not\s+waitingForHearth') {
+    Add-ValidationError (
+        'Hearth steps must block through the completed teleport while retaining fallback guards.')
+}
+
 foreach ($module in $surface.aceModules) {
     $pattern = 'NewModule\(\s*["'']' +
         [regex]::Escape([string]$module) + '["'']'

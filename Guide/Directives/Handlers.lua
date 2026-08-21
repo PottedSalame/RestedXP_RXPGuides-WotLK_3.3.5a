@@ -103,7 +103,11 @@ else
     events.complete = {"QUEST_LOG_UPDATE", "CINEMATIC_STOP"}
 end
 events.fp = {"UI_INFO_MESSAGE", "UI_ERROR_MESSAGE", "TAXIMAP_OPENED", "GOSSIP_SHOW", "TAXIMAP_CLOSED"}
-events.hs = "UNIT_SPELLCAST_SUCCEEDED"
+events.hs = {
+    "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_SUCCEEDED",
+    "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED",
+    "PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED",
+}
 events.home = {"HEARTHSTONE_BOUND","CONFIRM_BINDER","GOSSIP_SHOW"}
 events.bindlocation = events.home
 events.fly = {"PLAYER_CONTROL_LOST", "TAXIMAP_OPENED", "ZONE_CHANGED", "GOSSIP_SHOW"}
@@ -2619,20 +2623,59 @@ function addon.functions.hs(self, ...)
         step.activeItems[6948] = true
         step.activeItems[184871] = true
     end
-    if event == "UNIT_SPELLCAST_SUCCEEDED" and unit == "player" then
-        if UnitSpellcastMatches(spellId, spellName, 8690) or
-            UnitSpellcastMatches(spellId, spellName, 556) or
-            UnitSpellcastMatches(spellId, spellName, 348699) or
-            UnitSpellcastMatches(spellId, spellName, 184871) then
-            addon.SetElementComplete(self)
-        elseif WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-            for _,v in pairs(addon.hearthstoneSpellIds) do
-                if UnitSpellcastMatches(spellId, spellName, v) then
-                    addon.SetElementComplete(self)
-                    return
-                end
+    local isHearthCast = UnitSpellcastMatches(spellId, spellName, 8690) or
+                             UnitSpellcastMatches(spellId, spellName, 556) or
+                             UnitSpellcastMatches(spellId, spellName, 348699) or
+                             UnitSpellcastMatches(spellId, spellName, 184871)
+    if not isHearthCast and WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and
+        type(addon.hearthstoneSpellIds) == "table" then
+        for _, v in pairs(addon.hearthstoneSpellIds) do
+            if UnitSpellcastMatches(spellId, spellName, v) then
+                isHearthCast = true
+                break
             end
         end
+    end
+
+    if unit == "player" and isHearthCast and
+        (event == "UNIT_SPELLCAST_START" or
+            event == "UNIT_SPELLCAST_SUCCEEDED") then
+        element.hearthPending = true
+        if event == "UNIT_SPELLCAST_SUCCEEDED" then
+            element.hearthSucceeded = true
+            if element.hearthArrivalSeen then
+                element.hearthPending = nil
+                element.hearthSucceeded = nil
+                element.hearthArrivalSeen = nil
+                addon.SetElementComplete(self)
+                return
+            end
+        end
+        -- Cooldown and zone guards set step.completed directly. Once a real
+        -- hearth cast starts they must not advance the guide before arrival.
+        step.completed = false
+        addon.updateSteps = true
+        return
+    elseif unit == "player" and element.hearthPending and
+        (event == "UNIT_SPELLCAST_FAILED" or
+            event == "UNIT_SPELLCAST_INTERRUPTED") then
+        element.hearthPending = nil
+        element.hearthSucceeded = nil
+        element.hearthArrivalSeen = nil
+        step.completed = false
+        addon.updateSteps = true
+        return
+    end
+
+    if element.hearthPending and
+        (event == "PLAYER_ENTERING_WORLD" or
+            event == "ZONE_CHANGED_NEW_AREA" or event == "ZONE_CHANGED") then
+        element.hearthArrivalSeen = true
+        if not element.hearthSucceeded then return end
+        element.hearthPending = nil
+        element.hearthSucceeded = nil
+        element.hearthArrivalSeen = nil
+        addon.SetElementComplete(self)
     end
 end
 

@@ -252,6 +252,13 @@ foreach ($file in $files) {
                     # server has not cached the name before acceptance.
                     Add-Error "$relative`:$lineNumber .accept requires authored quest-title text on 3.3.5"
                 }
+                if (-not $isOriginalSnapshot -and
+                    $directive -in @('hs','hsbatching') -and
+                    $line -notmatch '>>\s*\S') {
+                    Add-Error (
+                        "$relative`:$lineNumber .$directive requires authored " +
+                        'hearth destination text on 3.3.5')
+                }
                 if (-not $isOriginalSnapshot -and $directive -eq 'accept' -and $line -match '^\.accept\s+(\d+)\b.*?>>\s*(.*?)(?:\s*<<.*)?(?:\s*--.*)?\s*$') {
                     $acceptQuestId = [int]$Matches[1]
                     $authoredTitle = ($Matches[2].Trim() -replace '^Accept\s+', '')
