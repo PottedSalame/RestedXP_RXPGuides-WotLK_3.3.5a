@@ -1047,6 +1047,70 @@ end
 
 local corpseWP = { title = "Corpse", generated = 1, wpHash = 0 }
 
+local spiritHealerCoordinateCache = setmetatable({}, { __mode = "k" })
+local spiritHealerDBKeys = {
+    [1] = { 1, 530 },   -- Kalimdor plus transformed Draenei graveyards
+    [2] = { 0, 530 },   -- Eastern Kingdoms plus transformed Blood Elf graveyards
+    [3] = { 530 },      -- Outland
+    [4] = { 571 },      -- Northrend
+}
+local MAX_SPIRIT_HEALER_SPAWN_DISTANCE = 800
+
+local function GetLegacySpiritHealerPosition(HBD, healer, dbInstance)
+    local cached = spiritHealerCoordinateCache[healer]
+    if cached and cached.dbInstance == dbInstance then
+        return cached.x, cached.y, cached.instance
+    end
+    if type(HBD.GetWorldCoordinatesFromLegacyPosition) ~= "function" then
+        return nil, nil, nil
+    end
+
+    local x, y, instance =
+        HBD:GetWorldCoordinatesFromLegacyPosition(healer.wx, healer.wy,
+                                                   dbInstance)
+    if x and y and instance then
+        spiritHealerCoordinateCache[healer] = {
+            x = x, y = y, instance = instance, dbInstance = dbInstance,
+        }
+    end
+    return x, y, instance
+end
+
+local function FindNearestSpiritHealer(HBD, DB, px, py, instance)
+    local keys = spiritHealerDBKeys[instance]
+    if not keys then return nil end
+
+    local best, bestX, bestY, bestDistance
+    for k = 1, #keys do
+        local dbInstance = keys[k]
+        local list = DB[dbInstance]
+        if list then
+            for i = 1, #list do
+                local healer = list[i]
+                local x, y, healerInstance =
+                    GetLegacySpiritHealerPosition(HBD, healer, dbInstance)
+                if x and healerInstance == instance then
+                    local distance = HBD:GetWorldDistance(instance, px, py,
+                                                           x, y)
+                    if distance and (not bestDistance or
+                            distance < bestDistance) then
+                        best, bestX, bestY, bestDistance = healer, x, y,
+                                                               distance
+                    end
+                end
+            end
+        end
+    end
+
+    -- Releasing spirit places the player at the assigned graveyard.  A
+    -- database entry farther away than this is stale, from another faction,
+    -- or from a custom server layout; falling back to the corpse is safer than
+    -- pointing at a plausible-but-wrong healer.
+    if best and bestDistance <= MAX_SPIRIT_HEALER_SPAWN_DISTANCE then
+        return bestX, bestY, best, bestDistance
+    end
+end
+
 local function IsDeathSkip()
     if not addon.SpiritHealerWorld then return false end
     for _, step in pairs(addon.RXPFrame.activeSteps) do
@@ -1111,30 +1175,17 @@ local function updateArrowData()
             if isDeathSkip then
                 local px, py, inst = HBD:GetPlayerWorldPosition("player")
                 local DB = addon.SpiritHealerWorld
-                -- HBD reports the actual instance ID. Static deathskip routing
-                -- is deliberately limited to the four outdoor world maps;
-                -- battleground, arena and dungeon graveyards must use the
-                -- authoritative corpse position supplied by the client.
-                local outdoor = inst == 0 or inst == 1 or inst == 530 or
-                                    inst == 571
-                local list = (px and outdoor and DB) and DB[inst] or nil
-                if list and #list > 0 then
-                    local bestWX, bestWY, bestD2
-                    for i = 1, #list do
-                        local n = list[i]
-                        local dx, dy = px - n.wy, py - n.wx
-                        local d2 = dx*dx + dy*dy
-                        if not bestD2 or d2 < bestD2 then
-                            bestD2, bestWX, bestWY = d2, n.wy, n.wx
-                        end
-                    end
-                    if bestWX then
-                        corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
-                        corpseWP.wx, corpseWP.wy, corpseWP.instance = bestWX, bestWY, inst
-                        corpseWP.title = "Spirit Healer"
-                        deathskipResolved = true
-                        if ProcessWaypoint(corpseWP) then return end
-                    end
+                local bestWX, bestWY
+                if px and DB then
+                    bestWX, bestWY =
+                        FindNearestSpiritHealer(HBD, DB, px, py, inst)
+                end
+                if bestWX then
+                    corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
+                    corpseWP.wx, corpseWP.wy, corpseWP.instance = bestWX, bestWY, inst
+                    corpseWP.title = "Spirit Healer"
+                    deathskipResolved = true
+                    if ProcessWaypoint(corpseWP) then return end
                 end
             end
 

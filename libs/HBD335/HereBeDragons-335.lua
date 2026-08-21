@@ -207,6 +207,75 @@ local function currentPlayerUiMapID()
                mapId[_G.GetRealZoneText()]
 end
 
+-- WorldSafeLocs.dbc stores graveyards in the legacy server coordinate frame,
+-- while this 3.3.5 bridge exposes continent-normalized Astrolabe coordinates.
+-- Keep the conversion here so callers never compare those incompatible
+-- coordinate systems directly.  The Azeroth frames are the WotLK world-map
+-- bounds used by HereBeDragons; Outland is its own world and therefore uses
+-- its continent bounds directly.
+local legacyWorldFrames = {
+    [0] = { continent = 2, width = 48033.24, height = 32020.80,
+            left = 36867.97, top = 14848.84, azeroth = true },
+    [1] = { continent = 1, width = 47908.72, height = 31935.28,
+            left = 8552.61, top = 18467.83, azeroth = true },
+    [530] = { continent = 3, width = 17463.987300595,
+              height = 11642.355227091, left = 12996.67,
+              top = 5829.17 },
+    [571] = { continent = 4, width = 47662.70, height = 31772.19,
+              left = 25198.53, top = 11072.07, azeroth = true },
+}
+
+local function transformLegacyExpansionPosition(x, y, instance)
+    -- HereBeDragons uses the inverse axis order of WorldSafeLocs: its world X
+    -- is the server Y coordinate and its world Y is the server X coordinate.
+    x, y = y, x
+
+    -- Blood Elf and Draenei zones live in map 530 in the 3.3.5 data files but
+    -- are rendered on the Eastern Kingdoms and Kalimdor continent maps.  These
+    -- are the same WotLK transforms used by HereBeDragons proper.
+    if instance == 530 then
+        if x >= -10133.3 and x <= -2666.67 and
+                y >= 4800 and y <= 16000 then
+            return x + 2662.8, y - 2400, 0
+        elseif x >= -16000 and x <= -8000 and
+                y >= -6933.33 and y <= 533.33 then
+            return x + 17600, y + 10339.7, 1
+        end
+    end
+    return x, y, instance
+end
+
+local function legacyPositionToAstrolabe(x, y, instance)
+    if type(x) ~= "number" or type(y) ~= "number" or
+            type(instance) ~= "number" then
+        return nil, nil, nil
+    end
+
+    x, y, instance = transformLegacyExpansionPosition(x, y, instance)
+    local frame = legacyWorldFrames[instance]
+    local maps = _G.WorldMapSize
+    local continent = frame and maps and maps[frame.continent]
+    if not frame or not continent or not continent.width or
+            not continent.height then
+        return nil, nil, nil
+    end
+
+    local nx = (frame.left - x) / frame.width
+    local ny = (frame.top - y) / frame.height
+    if frame.azeroth then
+        local world = maps[0]
+        if not world or not world.width or not world.height then
+            return nil, nil, nil
+        end
+        nx = (nx * world.width - (continent.xOffset or 0)) /
+                 continent.width
+        ny = (ny * world.height - (continent.yOffset or 0)) /
+                 continent.height
+    end
+
+    return nx, ny, frame.continent
+end
+
 --=========================================================================
 -- C_Map  (fill the table created by Compat335.lua)
 --=========================================================================
@@ -653,6 +722,14 @@ end
 if HBD then
     HBD.transforms = HBD.transforms or {}
     HBD.mapData    = HBD.mapData or {}
+
+    -- Internal 3.3.5 extension used by static server-coordinate databases
+    -- (currently Spirit Healers).  Returned values deliberately use this
+    -- shim's normal continent-coordinate domain and can therefore be passed
+    -- to GetWorldDistance/GetWorldVector without special handling.
+    function HBD:GetWorldCoordinatesFromLegacyPosition(x, y, instance)
+        return legacyPositionToAstrolabe(x, y, instance)
+    end
 
     -- Convert local (0-1) zone coordinates to world (continent-normalized) coords.
     -- @return worldX, worldY, instance(continent)

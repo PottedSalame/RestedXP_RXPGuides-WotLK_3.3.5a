@@ -88,8 +88,13 @@ if (([regex]::Matches($outlandDangerText, 'MinLevel\s*=')).Count -ne 172 -or
 }
 $mapText = [IO.File]::ReadAllText((Join-Path $root 'UI/Map.lua'))
 $healerText = [IO.File]::ReadAllText((Join-Path $root 'DB/classic/SpiritHealerDB.lua'))
-if ($mapText -notmatch 'inst\s*==\s*530' -or $mapText -notmatch 'inst\s*==\s*571' -or
-    $mapText -notmatch 'deathskipResolved') {
+$hbdText = [IO.File]::ReadAllText((Join-Path $root 'libs/HBD335/HereBeDragons-335.lua'))
+if ($mapText -notmatch 'FindNearestSpiritHealer' -or
+    $mapText -notmatch '(?s)spiritHealerDBKeys\s*=.*\[3\]\s*=\s*\{\s*530\s*\}.*\[4\]\s*=\s*\{\s*571\s*\}' -or
+    $mapText -notmatch 'deathskipResolved' -or
+    $mapText -notmatch 'MAX_SPIRIT_HEALER_SPAWN_DISTANCE' -or
+    $mapText -match 'px\s*-\s*n\.wy' -or
+    $hbdText -notmatch 'GetWorldCoordinatesFromLegacyPosition') {
     Add-Error 'Outdoor-only Outland/Northrend deathskip routing is not wired.'
 }
 if ($healerText -notmatch '(?m)^\s*\[530\]\s*=\s*\{' -or
