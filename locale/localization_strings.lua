@@ -476,6 +476,16 @@ L["Too high for %s"] = "Too high for %s"
 L["Reached maximum level for guide"] = "Reached maximum level for guide"
 L["Loaded next guide, %s"] = "Loaded next guide, %s"
 
+-- LevelingTracker.lua
+L["Split"] = "Split"
+L["Record missed level split"] = "Record missed level split"
+L["Requests /played and records the previous level if its automatic split was missed."] = "Requests /played and records the previous level if its automatic split was missed."
+L["No previous level split is available."] = "No previous level split is available."
+L["That level split is already recorded."] = "That level split is already recorded."
+L["Unable to reconstruct that level split from played time."] = "Unable to reconstruct that level split from played time."
+L["Played time is still loading. Try again in a moment."] = "Played time is still loading. Try again in a moment."
+L["Level %d split recorded manually."] = "Level %d split recorded manually."
+
 --Targeting.lua
 L["Targeting macro updated with:%s"] = "Targeting macro updated with:%s"
 L["current step has no configured targets"] = "current step has no configured targets"

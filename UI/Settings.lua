@@ -301,6 +301,8 @@ function addon.settings.ChatCommand(input)
         addon.settings.profile.debug = not addon.settings.profile.debug
     elseif input == "splits" then
         addon.tracker:ToggleLevelSplits()
+    elseif input == "split" then
+        addon.tracker:ManualLevelSplit()
     elseif input == "show" or input == "hide" or input == "toggle" then
         addon.settings.ToggleActive()
     elseif input == "bug" or input == "feedback" then

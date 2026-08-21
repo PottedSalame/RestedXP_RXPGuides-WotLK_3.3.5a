@@ -412,6 +412,12 @@ function addon.tracker:TIME_PLAYED_MSG(_, totalTimePlayed, timePlayedThisLevel)
                              self.playerLevel)
     end
 
+    if data and data.event == 'MANUAL_LEVEL_SPLIT' then
+        self:CommitManualLevelSplit(data, totalTimePlayed,
+                                    timePlayedThisLevel)
+        return
+    end
+
     if data and data.event == 'PLAYER_ENTERING_WORLD' then
         local current = self.db.profile.levels[self.playerLevel]
         if current and current.timestamp and
@@ -425,43 +431,176 @@ function addon.tracker:TIME_PLAYED_MSG(_, totalTimePlayed, timePlayedThisLevel)
     end
 end
 
-function addon.tracker:PLAYER_LEVEL_UP(_, level)
-    addon.tracker:GenerateDBLevel(level)
+-- Commit one completed level through the same data path for both the normal
+-- PLAYER_LEVEL_UP event and the manual missed-event recovery control. Keeping
+-- this in one place makes reports and comparisons treat both identically.
+function addon.tracker:CommitLevelSplit(completedLevel, newLevel, duration,
+                                        finishedTotal, date)
+    completedLevel = tonumber(completedLevel)
+    newLevel = tonumber(newLevel)
+    duration = tonumber(duration)
+    finishedTotal = tonumber(finishedTotal)
+    if not completedLevel or not newLevel or not duration or
+        not finishedTotal or duration <= 0 then
+        return false
+    end
 
+    completedLevel = math.floor(completedLevel)
+    newLevel = math.floor(newLevel)
+    self:GenerateDBLevel(completedLevel)
+    self:GenerateDBLevel(newLevel)
+
+    local levels = self.db.profile.levels
+    local previous = levels[completedLevel]
+    local current = levels[newLevel]
+    if not previous or not previous.timestamp or not current or
+        not current.timestamp then return false end
+
+    previous.timestamp.duration = math.max(1, math.floor(duration + 0.5))
+    previous.timestamp.finished = math.floor(finishedTotal + 0.5)
+    previous.timestamp.started = previous.timestamp.finished -
+                                     previous.timestamp.duration
+    previous.timestamp.dateFinished = date
+
+    current.timestamp.started = previous.timestamp.finished
+    current.timestamp.finished = nil
+    current.timestamp.duration = nil
+    current.timestamp.dateStarted = date
+    return previous.timestamp.duration
+end
+
+function addon.tracker:RefreshCommittedLevelSplit(level, levelTime, totalTime,
+                                                  duration)
+    self.playerLevel = level
+    self:AdoptPlayedTime(totalTime, levelTime, level)
+    for _, ui in pairs(self.ui or {}) do
+        if ui then ui.reportLevelMenu = nil end
+    end
+
+    self.reportData[level - 1] = self:CompileLevelData(level - 1)
+    self.reportData[level] = self:CompileLevelData(level)
+    self:UpdateLevelSplits("full")
+    if duration then
+        addon:SendEvent("RXP_LEVEL_TIME_RECORDED", level, duration)
+    end
+end
+
+-- Recover the most recent transition from authoritative /played totals. This
+-- never invents the next level and never overwrites a valid automatic split.
+function addon.tracker:CommitManualLevelSplit(request, totalTime,
+                                              currentLevelTime)
+    request = type(request) == "table" and request or {level = request}
+    local level = math.floor(tonumber(UnitLevel("player")) or 0)
+    if level < 2 or level ~= math.floor(tonumber(request.level) or -1) then
+        addon.comms.PrettyPrint(L("No previous level split is available."))
+        return false
+    end
+
+    local completedLevel = level - 1
+    local previous = self.db.profile.levels[completedLevel]
+    if self:GetLevelDuration(completedLevel, previous) then
+        addon.comms.PrettyPrint(L("That level split is already recorded."))
+        return false
+    end
+
+    totalTime = tonumber(totalTime)
+    currentLevelTime = tonumber(currentLevelTime)
+    local started = previous and previous.timestamp and
+                        tonumber(previous.timestamp.started)
+    if not totalTime or not currentLevelTime then
+        addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
+        return false
+    end
+
+    local finishedTotal = math.max(0,
+        math.floor(totalTime - currentLevelTime + 0.5))
+    local duration
+    if started then
+        duration = finishedTotal - started
+    elseif tonumber(request.trackedLevel) == completedLevel and
+        tonumber(request.observedLevelTime) then
+        -- If tracking was enabled partway through the completed level, its
+        -- stored timestamp may not have a start.  The stale live level timer
+        -- still spans the transition, so subtract the new level's /played
+        -- value and include the short request round trip.
+        local requestElapsed = math.max(0, GetTime() -
+            (tonumber(request.requestedAt) or GetTime()))
+        duration = math.floor(tonumber(request.observedLevelTime) +
+                                  requestElapsed - currentLevelTime + 0.5)
+    end
+    if not duration then
+        addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
+        return false
+    end
+    if duration <= 0 or duration >= MAX_LEVEL_DURATION then
+        addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
+        return false
+    end
+    local date = C_DateAndTime.GetCurrentCalendarTime()
+    duration = self:CommitLevelSplit(completedLevel, level, duration,
+                                     finishedTotal, date)
+    if not duration then
+        addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
+        return false
+    end
+
+    self:RefreshCommittedLevelSplit(level, currentLevelTime, totalTime,
+                                    duration)
+    addon.comms.PrettyPrint(L("Level %d split recorded manually."), level)
+    return true
+end
+
+function addon.tracker:ManualLevelSplit()
+    if not self.enabled or not self.db or not self.db.profile then return end
+
+    local level = math.floor(tonumber(UnitLevel("player")) or 0)
+    if level < 2 then
+        addon.comms.PrettyPrint(L("No previous level split is available."))
+        return
+    end
+
+    local previous = self.db.profile.levels[level - 1]
+    if self:GetLevelDuration(level - 1, previous) then
+        addon.comms.PrettyPrint(L("That level split is already recorded."))
+        return
+    end
+
+    if self.waitingForTimePlayed then
+        addon.comms.PrettyPrint(L("Played time is still loading. Try again in a moment."))
+        return
+    end
+
+    local observedLevelTime = self:GetElapsedTimes()
+    local request = {
+        event = 'MANUAL_LEVEL_SPLIT',
+        level = level,
+        trackedLevel = self.playerLevel,
+        observedLevelTime = observedLevelTime,
+        requestedAt = GetTime()
+    }
+    self.waitingForTimePlayed = request
+    RequestTimePlayed()
+    C_Timer.After(5, function()
+        if self.waitingForTimePlayed ~= request then return end
+        self.waitingForTimePlayed = false
+        addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
+    end)
+end
+
+function addon.tracker:PLAYER_LEVEL_UP(_, level)
     -- Capture the completed level from one played-time clock. GetTime supplies
     -- the live-session delta while /played (or the persisted fallback) supplies
     -- the baseline, so offline time is never included.
     local levelTime, totalTime = addon.tracker:GetElapsedTimes()
     local duration = mmax(1, math.floor(levelTime + 0.5))
     totalTime = mmax(duration, math.floor(totalTime + 0.5))
-    local levels = addon.tracker.db.profile.levels
     local date = C_DateAndTime.GetCurrentCalendarTime()
-
-    local prev = levels[level - 1]
-    if prev and prev.timestamp then
-        prev.timestamp.duration = duration
-        prev.timestamp.started = totalTime - duration
-        prev.timestamp.finished = totalTime
-        prev.timestamp.dateFinished = date
-    end
-
-    local cur = levels[level] -- created by GenerateDBLevel above
-    cur.timestamp.started = totalTime
-    cur.timestamp.finished = nil
-    cur.timestamp.duration = nil
-    cur.timestamp.dateStarted = date
-
-    addon.tracker.playerLevel = level
-    addon.tracker:AdoptPlayedTime(totalTime, 0, level)
-    for _, ui in pairs(addon.tracker.ui or {}) do
-        if ui then ui.reportLevelMenu = nil end
-    end
-
-    addon.tracker.reportData[level - 1] = addon.tracker:CompileLevelData(level - 1)
-    addon.tracker.reportData[level] = addon.tracker:CompileLevelData(level)
-
-    addon.tracker:UpdateLevelSplits("full")
-    addon:SendEvent("RXP_LEVEL_TIME_RECORDED", level, duration)
+    local committed = addon.tracker:CommitLevelSplit(level - 1, level,
+                                                      duration, totalTime,
+                                                      date)
+    if not committed then return end
+    duration = addon.tracker:GetLevelDuration(level - 1)
+    addon.tracker:RefreshCommittedLevelSplit(level, 0, totalTime, duration)
 
     -- A response refines the new level's total/current baseline but cannot race or
     -- overwrite the completed level's explicit duration.
@@ -1145,6 +1284,16 @@ function addon.tracker:UpdateSplitsMenu(menuFrame, button)
 
     local menu = {
         {
+            text = L("Record missed level split"),
+            tooltipTitle = L("Requests /played and records the previous level if its automatic split was missed."),
+            tooltipOnButton = true,
+            notCheckable = 1,
+            func = function()
+                addon.tracker:ManualLevelSplit()
+                _G.CloseDropDownMenus()
+            end
+        },
+        {
             text = _G.SHARE_QUEST_ABBREV,
             notCheckable = 1,
             func = function()
@@ -1326,6 +1475,23 @@ function addon.tracker:CreateLevelSplits()
 
     f.title.cog:SetScript("OnClick", function() addon.tracker:UpdateSplitsMenu(f.title.splitsMenuFrame, f.title.cog) end)
 
+    f.title.split = CreateFrame("Button", "$parentManualSplit", f.title,
+                                "UIPanelButtonTemplate")
+    f.title.split:SetSize(52, 16)
+    f.title.split:SetPoint("RIGHT", f.title, "RIGHT", -1, 0)
+    f.title.split:SetText(L("Split"))
+    f.title.split:SetScript("OnClick", function()
+        addon.tracker:ManualLevelSplit()
+    end)
+    f.title.split:SetScript("OnEnter", function(button)
+        GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+        GameTooltip:SetText(L("Record missed level split"))
+        GameTooltip:AddLine(L("Requests /played and records the previous level if its automatic split was missed."),
+                            1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    f.title.split:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
     f.title.text = f.title:CreateFontString(nil, "OVERLAY")
     f.title.text:ClearAllPoints()
     f.title.text:SetJustifyH("CENTER")
@@ -1333,7 +1499,7 @@ function addon.tracker:CreateLevelSplits()
     f.title.text:SetTextColor(unpack(addon.activeTheme.textColor))
     f.title.text:SetFont(addon.font, 9, "")
     f.title.text:SetText(L("Level splits"))
-    f.title.text:SetPoint("CENTER", f.title, 0, 1)
+    f.title.text:SetPoint("CENTER", f.title, -14, 1)
 
     f.history = AceGUI:Create("Label")
     f.history:SetFont(self.fonts.splits, addon.settings.profile.levelSplitsFontSize, "")
@@ -1647,6 +1813,7 @@ function addon.tracker:UpdateLevelSplits(kind)
 
     local width =
         max(f.current.label:GetStringWidth(), f.history.label:GetStringWidth(), f.total.label:GetStringWidth())
+    width = max(width, 140)
 
     -- Frame heights plus offsets plus borders
     local height = f.current.label:GetStringHeight() + f.history.label:GetStringHeight() +

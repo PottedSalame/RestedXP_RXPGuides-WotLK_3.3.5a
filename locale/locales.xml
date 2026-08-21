@@ -9,6 +9,7 @@
     <Script file="ruRU.lua"/>
     <Script file="FeatureTools.lua"/>
     <Script file="XPAssistant.lua"/>
+    <Script file="LevelSplits.lua"/>
     <Script file="Backport.lua"/>
     <Script file="NPCnames.lua"/>
 </Ui>

@@ -23,6 +23,7 @@ H["What are command the line options?"] = [[
 |cff909090/rxp import|r - Open Import Guide interface
 |cff909090/rxp debug|r - enable debugging output
 |cff909090/rxp splits|r - Toggle Level Splits on or off, if enabled
+|cff909090/rxp split|r - Recover a missed automatic level split from /played
 |cff909090/rxp show||hide||toggle|r - Toggle all enabled frames on or off
 |cff909090/rxp bug||feedback|r - Open Feedback Form
 |cff909090/rxp guides|r - Open the searchable Guide Hub
