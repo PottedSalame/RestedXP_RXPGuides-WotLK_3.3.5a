@@ -540,6 +540,16 @@ check(collectOutput == "收集 Relic\n2/5",
       "live objective progress was frozen into the translation lookup")
 addon.guideLocalization:IndexEnglishGuideSource(
     ".complete 834,1 --Sack of Supplies (5)")
+addon.guideLocalization:IndexEnglishGuideSource([[
+step
+.goto Borean Tundra,54.4,69.6
+>>Kill Crypt Crawlers near the sinkhole
+.complete 11797,1
+.mob Crypt Crawler
+]])
+check(addon.guideLocalization:GetEnglishObjective(11797, 1) ==
+          "Kill Crypt Crawlers near the sinkhole",
+      "the closest actionable step text was not indexed for an unlabeled objective")
 local uiOutput, uiMetadata =
     addon.guideLocalization:UIWithMetadata("Compact label")
 check(uiOutput == "紧凑标签" and uiMetadata.machine,
@@ -557,6 +567,15 @@ local englishObjective = addon.guideLocalization:Render(
     })
 check(englishObjective == "Sack of Supplies\n2/5",
       "Original English mode discarded the indexed objective name")
+
+local generatedObjective = addon.guideLocalization:Render(
+    "Kill Crypt Crawlers near the sinkhole: 0/1", {
+        tag = "complete", questId = 11797, obj = 1,
+        sourceAuthored = false, generatedObjectiveFallback = true,
+        objectiveFallbackText = "Kill Crypt Crawlers near the sinkhole",
+    })
+check(generatedObjective == "Kill Crypt Crawlers near the sinkhole\n0/1",
+      "generated quest placeholders did not use the indexed step action")
 
 -- English clients must retain the exact live quest-log objective instead of
 -- replacing it with a synthetic "Complete objective N" sentence.

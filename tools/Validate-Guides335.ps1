@@ -389,6 +389,48 @@ foreach ($file in $files) {
     }
 }
 
+# The 3.3.5 quest API occasionally reports a temporary, unnamed event
+# objective. The runtime can replace that placeholder with authored context
+# from any occurrence of the same quest/objective pair, so require every
+# playable objective pair to have at least one useful source description.
+$objectiveContext = @{}
+$objectiveReferences = @{}
+foreach ($guide in $guides) {
+    if ($guide.RawGroup.TrimStart('+', '*').StartsWith('Original Guides - ')) {
+        continue
+    }
+    $stepMatches = [regex]::Matches(
+        $guide.Content,
+        '(?ms)(?:^|\n)step(?<condition>[^\r\n]*)\r?\n(?<body>.*?)(?=\r?\nstep(?:\s|$)|\z)')
+    foreach ($stepMatch in $stepMatches) {
+        if (Test-ExcludedOn335 $stepMatch.Groups['condition'].Value) { continue }
+        $body = $stepMatch.Groups['body'].Value
+        $stepHasContext =
+            $body -match '(?m)>>\s*\S' -or
+            $body -match '(?m)^\s*\.(?:mob|unitscan|target)\s+\+?\S'
+        foreach ($completeMatch in [regex]::Matches(
+            $body,
+            '(?m)^\s*\.complete\s+-?(?<quest>\d+)\s*,\s*(?<objective>\d+)(?<tail>[^\r\n]*)$')) {
+            $tail = $completeMatch.Groups['tail'].Value
+            if (Test-ExcludedOn335 (Get-GuideCondition $tail)) { continue }
+            $key = "$([int]$completeMatch.Groups['quest'].Value),$([int]$completeMatch.Groups['objective'].Value)"
+            if (-not $objectiveReferences.ContainsKey($key)) {
+                $objectiveReferences[$key] = "$($guide.File): $($guide.Name)"
+            }
+            if ($stepHasContext -or $tail -match '--\s*\S') {
+                $objectiveContext[$key] = $true
+            }
+        }
+    }
+}
+foreach ($key in $objectiveReferences.Keys) {
+    if (-not $objectiveContext.ContainsKey($key)) {
+        Add-Error (
+            "$($objectiveReferences[$key]) .complete $key has no authored " +
+            'objective context for the 3.3.5 placeholder fallback.')
+    }
+}
+
 # Guide group/name/condition signatures are part of the saved-progress
 # compatibility surface. Structural counts alone would not catch a renamed key
 # that silently orphaned an existing character checkpoint.

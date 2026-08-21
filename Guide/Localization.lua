@@ -16,6 +16,8 @@ service.englishNames = {
     factions = {},
 }
 service.englishObjectives = {}
+service.englishObjectiveScores = {}
+service.indexedSourceSignatures = {}
 
 local locale = GetLocale()
 local supported = {
@@ -177,9 +179,135 @@ local function EnglishNameFromText(tag, text)
     return text:match("%[([^%]]+)%]")
 end
 
+local function IndexEnglishObjective(self, questId, objective, text, score)
+    questId, objective = tonumber(questId), tonumber(objective)
+    if not questId or not objective or type(text) ~= "string" or text == "" then
+        return
+    end
+    local scores = self.englishObjectiveScores[questId]
+    local previous = scores and scores[objective]
+    if previous and previous <= score then return end
+    local objectives = self.englishObjectives[questId]
+    if not objectives then
+        objectives = {}
+        self.englishObjectives[questId] = objectives
+    end
+    if not scores then
+        scores = {}
+        self.englishObjectiveScores[questId] = scores
+    end
+    objectives[objective] = text
+    scores[objective] = score
+end
+
 function service:IndexEnglishGuideSource(source)
     if type(source) ~= "string" then return end
+    local sourceSignature = HashSource(source) .. ":" .. tostring(#source)
+    if self.indexedSourceSignatures[sourceSignature] then return end
+    self.indexedSourceSignatures[sourceSignature] = true
+    local stepEntries = {}
+    local sourceLine = 0
+
+    local function CleanStepText(value)
+        value = StripMarkup((value or ""):gsub("%s*<<.*$", ""))
+        return value ~= "" and value or nil
+    end
+
+    local function StartsWithAny(value, prefixes)
+        for _, prefix in ipairs(prefixes) do
+            if value:sub(1, #prefix) == prefix then return true end
+        end
+        return false
+    end
+    local actionablePrefixes = {
+        "kill", "loot", "collect", "use", "click", "defeat", "destroy",
+        "plant", "place", "explore", "find", "rescue", "protect", "free",
+        "burn", "slay", "capture", "heal", "speak", "investigate", "search",
+        "obtain", "gather", "activate", "wait", "follow", "escort",
+    }
+    local questDialogPrefixes = {"accept", "turn in"}
+    local travelPrefixes = {"travel", "go to", "head to", "fly", "hearth"}
+
+    local function FlushStepEntries()
+        if #stepEntries == 0 then return end
+        local instructions, objectives, units = {}, {}, {}
+        for _, entry in ipairs(stepEntries) do
+            local line = entry.text
+            local visible = line:match(">>%s*(.-)%s*$")
+            visible = visible and CleanStepText(visible)
+            if visible then
+                local lower = visible:lower()
+                local score = 25
+                if StartsWithAny(lower, actionablePrefixes) then
+                    score = 0
+                elseif StartsWithAny(lower, questDialogPrefixes) then
+                    score = 80
+                elseif StartsWithAny(lower, travelPrefixes) then
+                    score = 45
+                end
+                if line:find("|cRXP_WARN_", 1, true) then score = score + 10 end
+                instructions[#instructions + 1] = {
+                    text = visible, line = entry.line, score = score,
+                }
+            end
+
+            local questId, objective = line:match(
+                "^%s*%.complete%s+%-?(%d+)%s*,%s*(%d+)")
+            if questId and objective then
+                objectives[#objectives + 1] = {
+                    questId = tonumber(questId), objective = tonumber(objective),
+                    line = entry.line,
+                }
+            end
+
+            local unitTag, unitName = line:match(
+                "^%s*%.([%a]+)%s+([^<>]+)")
+            if unitTag ~= "mob" and unitTag ~= "unitscan" and
+                unitTag ~= "target" then unitName = nil end
+            unitName = unitName and CleanStepText(
+                unitName:gsub("^%s*%+", ""):gsub("%s+$", ""))
+            if unitName then
+                units[#units + 1] = {
+                    text = (unitTag == "target" and "Interact with " or "Kill ") ..
+                               unitName,
+                    line = entry.line,
+                    score = unitTag == "mob" and 5 or
+                                unitTag == "unitscan" and 10 or 30,
+                }
+            end
+        end
+
+        for _, objective in ipairs(objectives) do
+            local best, bestScore
+            for _, candidate in ipairs(instructions) do
+                local score = candidate.score +
+                                  math.abs(candidate.line - objective.line)
+                if not bestScore or score < bestScore then
+                    best, bestScore = candidate.text, score
+                end
+            end
+            for _, candidate in ipairs(units) do
+                local score = candidate.score +
+                                  math.abs(candidate.line - objective.line)
+                if not bestScore or score < bestScore then
+                    best, bestScore = candidate.text, score
+                end
+            end
+            if best then
+                IndexEnglishObjective(self, objective.questId,
+                                      objective.objective, best, bestScore)
+            end
+        end
+        stepEntries = {}
+    end
+
     for line in source:gmatch("[^\r\n]+") do
+        sourceLine = sourceLine + 1
+        if line:match("^%s*step%s") or line:match("^%s*step$") then
+            FlushStepEntries()
+        else
+            stepEntries[#stepEntries + 1] = {text = line, line = sourceLine}
+        end
         -- Guide comments are deliberately removed before directive parsing,
         -- but many `.complete` comments contain the authored English
         -- objective name. Capture that display-only metadata first so
@@ -194,12 +322,8 @@ function service:IndexEnglishGuideSource(source)
             objectiveName = StripMarkup(
                 objectiveName:gsub("%s*<<.*$", ""):gsub("%s*%(%d+%)%s*$", ""))
             if questId and objective and objectiveName ~= "" then
-                local objectives = self.englishObjectives[questId]
-                if not objectives then
-                    objectives = {}
-                    self.englishObjectives[questId] = objectives
-                end
-                objectives[objective] = objectives[objective] or objectiveName
+                IndexEnglishObjective(self, questId, objective,
+                                      objectiveName, -100)
             end
         end
         local dailyTag, dailyIds, dailyText = line:match(
@@ -234,6 +358,19 @@ function service:IndexEnglishGuideSource(source)
             end
         end
     end
+    FlushStepEntries()
+end
+
+function service:GetEnglishObjective(questId, objective)
+    local objectives = self.englishObjectives[tonumber(questId)]
+    local text = objectives and objectives[tonumber(objective) or 1]
+    if type(text) ~= "string" or text == "" then return nil end
+    return text:gsub("%s*%(%d+%)%s*$", "")
+end
+
+function service:GetEnglishQuestName(questId)
+    local text = self.englishNames.quests[tonumber(questId)]
+    return type(text) == "string" and text ~= "" and text or nil
 end
 
 local function HasDisplayText(value)
@@ -1021,7 +1158,8 @@ local function GeneratedEnglish(element, current)
         local questId, objective = tonumber(element.questId),
                                        tonumber(element.obj) or 1
         local indexed = questId and service.englishObjectives[questId]
-        local objectiveText = indexed and indexed[objective]
+        local objectiveText = element.objectiveFallbackText or
+                                  indexed and indexed[objective]
         objectiveText = objectiveText or
                             (type(element.sourceLine) == "string" and
                                  element.sourceLine:match("%-%-%s*(.-)%s*$"))
@@ -1100,6 +1238,7 @@ local function SourceFor(text, element, field, localized)
     -- behavior for generated/dynamic elements instead of replacing it with a
     -- synthetic catalog sentence.
     if not localized and englishClient and not element.sourceAuthored and
+       not element.generatedObjectiveFallback and
        type(text) == "string" and Trim(text) ~= "" and Trim(text) ~= " " then
         return text, true, nil
     end
@@ -1107,6 +1246,7 @@ local function SourceFor(text, element, field, localized)
     -- localized. Preserve those live counters/descriptions in translated mode;
     -- English mode uses the stable quest/objective formatter below.
     if localized and element.tag == "complete" and
+       not element.generatedObjectiveFallback and
        type(text) == "string" and Trim(text) ~= "" and Trim(text) ~= " " then
         return text, true, nil
     end

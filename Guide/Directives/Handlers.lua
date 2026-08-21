@@ -525,13 +525,32 @@ function addon.ClearQuestCache()
     return true
 end
 
+local function IsGeneratedObjective(objective)
+    return type(objective) == "table" and
+               (objective.generated or
+                   (objective.type == "event" and
+                       objective.text == L("Objective Complete")))
+end
+
+local function ObjectivesAreGenerated(data)
+    if type(data) ~= "table" or #data == 0 then return false end
+    for _, objective in ipairs(data) do
+        if not IsGeneratedObjective(objective) then return false end
+    end
+    return true
+end
+
 local function CacheQuest(id,data,remove)
     local questObjectivesCache = RXPCData.questObjectivesCache
     if not id or id == 0 then
         return
-    elseif data and not (remove or questObjectivesCache[id]) then
+    elseif data and not remove and
+        (not questObjectivesCache[id] or
+            ObjectivesAreGenerated(questObjectivesCache[id])) then
         data.finished = false
-        questObjectivesCache[0] = questObjectivesCache[0] + 1
+        if not questObjectivesCache[id] then
+            questObjectivesCache[0] = questObjectivesCache[0] + 1
+        end
         questObjectivesCache[id] = data
     elseif remove and questObjectivesCache[id] then
         questObjectivesCache[0] = questObjectivesCache[0] - 1
@@ -1685,6 +1704,21 @@ local function SetInferredObjectiveMob(element, name)
     end
 end
 
+local function GetObjectiveFallbackText(questId, objectiveIndex)
+    local localization = addon.guideLocalization
+    local text = localization and localization.GetEnglishObjective and
+                     localization:GetEnglishObjective(questId, objectiveIndex)
+    if type(text) == "string" and text ~= "" then return text end
+
+    local questName = localization and localization.GetEnglishQuestName and
+                          localization:GetEnglishQuestName(questId) or
+                          addon.GetQuestName(questId)
+    if type(questName) == "string" and questName ~= "" then
+        return "Complete " .. questName
+    end
+    return "Complete quest objective " .. tostring(objectiveIndex or 1)
+end
+
 function addon.UpdateQuestCompletionData(self)
     -- addon.activeObjectives[self] = addon.UpdateQuestCompletionData
     local element = self.element
@@ -1730,9 +1764,11 @@ function addon.UpdateQuestCompletionData(self)
     local objtext = " "
     local completed
     local inferredMobName
+    local generatedObjective
 
     if element.obj and element.obj <= #objectives then
         local obj = objectives[element.obj]
+        local isGenerated = IsGeneratedObjective(obj)
 
         obj.numFulfilled = obj.numFulfilled or 0
         obj.numRequired = obj.numRequired or 0xff
@@ -1745,7 +1781,14 @@ function addon.UpdateQuestCompletionData(self)
 
         local t = obj.text or " "
 
-        if t:find("[%a\194-\234]") then
+        if isGenerated then
+            generatedObjective = true
+            -- A zero-objective response can be either a genuine scripted
+            -- event or a transient 3.3.5 quest-log race. Keep requesting the
+            -- authoritative objective instead of treating the English word
+            -- "Objective" as proof that server data finished loading.
+            element.requestFromServer = true
+        elseif t:find("[%a\194-\234]") then
             element.requestFromServer = false
         else
             element.requestFromServer = true
@@ -1762,6 +1805,16 @@ function addon.UpdateQuestCompletionData(self)
             t = fmt(element.rawtext, obj.numFulfilled,
                                             obj.numRequired)
         else
+
+            if isGenerated then
+                local fallback = GetObjectiveFallbackText(id, element.obj)
+                element.generatedObjectiveFallback = true
+                element.objectiveFallbackText = fallback
+                t = fallback
+            else
+                element.generatedObjectiveFallback = nil
+                element.objectiveFallbackText = nil
+            end
 
             if not obj.questie then
                 if obj.type == "event" then
@@ -1858,7 +1911,8 @@ function addon.UpdateQuestCompletionData(self)
         prefix = objtext:sub(1, 1)
     end
 
-    if not quest or prefix == " " or prefix == ":" or useCache then
+    if generatedObjective or not quest or prefix == " " or prefix == ":" or
+        useCache then
         element.requestFromServer = true
     elseif quest then
         element.requestFromServer = nil
