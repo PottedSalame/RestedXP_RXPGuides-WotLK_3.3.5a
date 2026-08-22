@@ -657,57 +657,94 @@ _G["BINDING_NAME_CLICK RXPInventory_DeleteJunk:LeftButton"] =
     L("Delete Cheapest Junk Item")
 _G.BINDING_NAME_RXP_MOUSEOVER_CORPSE_LOOT = L("Loot Mouseover Corpse")
 
-local function IsDeadCreatureUnit(unit)
-    if not (_G.UnitExists and _G.UnitExists(unit)) or
-        (_G.UnitIsPlayer and _G.UnitIsPlayer(unit)) then
-        return false
-    end
+local CORPSE_LOOT_COMMAND = "INTERACTMOUSEOVER"
+local LEGACY_CORPSE_LOOT_COMMAND = "RXP_MOUSEOVER_CORPSE_LOOT"
+local corpseLootBindingOwner = CreateFrame("Frame", nil, UIParent)
+local corpseLootBindingPending
 
-    if _G.UnitIsDeadOrGhost then
-        return _G.UnitIsDeadOrGhost(unit) and true or false
+local function GetCommandKeys(command)
+    if type(_G.GetBindingKey) == "function" then
+        return _G.GetBindingKey(command)
     end
-    return _G.UnitIsDead and _G.UnitIsDead(unit) and true or false
+    if type(_G.GetNumBindings) ~= "function" or
+        type(_G.GetBinding) ~= "function" then
+        return
+    end
+    for index = 1, _G.GetNumBindings() do
+        local binding, _, key1, key2 = _G.GetBinding(index)
+        if binding == command then return key1, key2 end
+    end
 end
 
--- Interacting with a world unit is hardware protected on 3.3.5. Bindings.xml
--- invokes this function once from an actual key press; UPDATE_MOUSEOVER_UNIT
--- and timers must never call it. The corpse checks prevent the binding from
--- targeting, attacking, or talking to a living unit.
-function addon.RXPGuides.MouseoverCorpseLoot()
-    local profile = addon.settings and addon.settings.profile
+-- InteractUnit is a protected Blizzard action. Calling it through addon Lua is
+-- rejected by some otherwise stock-compatible 3.3.5 clients, even from an
+-- addon binding. Bind the configured key directly to Blizzard's signed
+-- INTERACTMOUSEOVER command instead. The override is reversible and leaves the
+-- player's original binding intact whenever this feature is disabled.
+function inventoryManager.RefreshMouseoverCorpseLootBinding()
     if addon.gameVersion ~= 30300 or
-        not (profile and profile.enableMouseoverCorpseLoot) or
-        type(_G.InteractUnit) ~= "function" then
+        type(_G.ClearOverrideBindings) ~= "function" or
+        type(_G.SetOverrideBinding) ~= "function" then
+        return false
+    end
+    if _G.InCombatLockdown and _G.InCombatLockdown() then
+        corpseLootBindingPending = true
+        corpseLootBindingOwner:RegisterEvent("PLAYER_REGEN_ENABLED")
         return false
     end
 
-    local unit
-    if IsDeadCreatureUnit("mouseover") then
-        unit = "mouseover"
-    elseif IsDeadCreatureUnit("target") then
-        -- Match Blizzard's INTERACTMOUSEOVER binding: a selected corpse is a
-        -- useful fallback on clients that stop exposing a mouseover unit token
-        -- as soon as the creature dies.
-        unit = "target"
-    else
-        return false
-    end
+    _G.ClearOverrideBindings(corpseLootBindingOwner)
+    corpseLootBindingPending = nil
+    corpseLootBindingOwner:UnregisterEvent("PLAYER_REGEN_ENABLED")
 
-    -- This feature promises an auto-loot interaction. Keep Blizzard's ordinary
-    -- Auto Loot CVar enabled rather than trying to call LootSlot from a delayed
-    -- event, which would lose the initiating hardware-event context.
-    if _G.GetCVar and _G.SetCVar and
-        tostring(_G.GetCVar("autoLootDefault")) ~= "1" then
-        pcall(_G.SetCVar, "autoLootDefault", 1)
+    local profile = addon.settings and addon.settings.profile
+    local key = profile and profile.mouseoverCorpseLootKey
+    if profile and profile.enableMouseoverCorpseLoot and
+        type(key) == "string" and key ~= "" then
+        _G.SetOverrideBinding(
+            corpseLootBindingOwner, false, key, CORPSE_LOOT_COMMAND)
     end
-
-    local interacted = _G.InteractUnit(unit)
-    if not interacted and unit == "mouseover" and
-        IsDeadCreatureUnit("target") then
-        interacted = _G.InteractUnit("target")
-    end
-    return interacted and true or false
+    return true
 end
+
+local function MigrateLegacyCorpseLootBinding()
+    if _G.InCombatLockdown and _G.InCombatLockdown() then
+        corpseLootBindingPending = "migrate"
+        corpseLootBindingOwner:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+    local profile = addon.settings and addon.settings.profile
+    if not profile then return end
+
+    local key1, key2 = GetCommandKeys(LEGACY_CORPSE_LOOT_COMMAND)
+    if not profile.mouseoverCorpseLootKey then
+        profile.mouseoverCorpseLootKey = key1 or key2
+    end
+
+    local changed
+    if type(_G.SetBinding) == "function" then
+        if key1 then _G.SetBinding(key1); changed = true end
+        if key2 then _G.SetBinding(key2); changed = true end
+    end
+    if changed and type(_G.SaveBindings) == "function" and
+        type(_G.GetCurrentBindingSet) == "function" then
+        _G.SaveBindings(_G.GetCurrentBindingSet())
+    end
+    inventoryManager.RefreshMouseoverCorpseLootBinding()
+end
+
+corpseLootBindingOwner:RegisterEvent("PLAYER_ENTERING_WORLD")
+corpseLootBindingOwner:SetScript("OnEvent", function(_, event)
+    if event == "PLAYER_REGEN_ENABLED" then
+        if corpseLootBindingPending == "migrate" then
+            MigrateLegacyCorpseLootBinding()
+        elseif corpseLootBindingPending then
+            inventoryManager.RefreshMouseoverCorpseLootBinding()
+        end
+        return
+    end
+    MigrateLegacyCorpseLootBinding()
+end)
 
 local function IsEventSupported(event)
     return not (C_EventUtils and C_EventUtils.IsEventValid) or

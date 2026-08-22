@@ -1795,6 +1795,10 @@ function addon.settings:CreateAceOptionsPanel()
                                 tostring(_G.GetCVar("autoLootDefault")) ~= "1" then
                                 pcall(_G.SetCVar, "autoLootDefault", 1)
                             end
+                            if addon.inventoryManager and
+                                addon.inventoryManager.RefreshMouseoverCorpseLootBinding then
+                                addon.inventoryManager.RefreshMouseoverCorpseLootBinding()
+                            end
                         end
                     },
                     mouseoverCorpseLootKeybind = {
@@ -1808,25 +1812,14 @@ function addon.settings:CreateAceOptionsPanel()
                             return not self.profile.enableMouseoverCorpseLoot
                         end,
                         get = function()
-                            local wanted = "RXP_MOUSEOVER_CORPSE_LOOT"
-                            for index = 1, GetNumBindings() do
-                                local command, _, key1 = GetBinding(index)
-                                if command == wanted then return key1 end
-                            end
+                            return self.profile.mouseoverCorpseLootKey
                         end,
                         set = function(_, key)
-                            local wanted = "RXP_MOUSEOVER_CORPSE_LOOT"
-                            for index = 1, GetNumBindings() do
-                                local command, _, key1, key2 = GetBinding(index)
-                                if command == wanted then
-                                    if key1 then SetBinding(key1) end
-                                    if key2 then SetBinding(key2) end
-                                    break
-                                end
-                            end
-                            if key and key ~= "" then SetBinding(key, wanted) end
-                            if _G.SaveBindings and _G.GetCurrentBindingSet then
-                                _G.SaveBindings(_G.GetCurrentBindingSet())
+                            self.profile.mouseoverCorpseLootKey =
+                                key and key ~= "" and key or nil
+                            if addon.inventoryManager and
+                                addon.inventoryManager.RefreshMouseoverCorpseLootBinding then
+                                addon.inventoryManager.RefreshMouseoverCorpseLootBinding()
                             end
                         end
                     },

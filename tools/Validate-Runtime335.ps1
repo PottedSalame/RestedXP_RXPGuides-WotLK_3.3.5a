@@ -569,8 +569,9 @@ foreach ($frame in $surface.bindingFrames) {
     }
 }
 if ($bindingsText -notmatch 'name="RXP_MOUSEOVER_CORPSE_LOOT"' -or
-    $bindingsText -notmatch 'RXPGuides\.MouseoverCorpseLoot\(\)') {
-    Add-ValidationError 'The hardware-gated mouseover corpse-loot binding is missing.'
+    $bindingsText -notmatch
+        'name="RXP_MOUSEOVER_CORPSE_LOOT"[^>]*hidden="true"') {
+    Add-ValidationError 'The hidden legacy corpse-loot migration binding is missing.'
 }
 $corpseBinding = [regex]::Match(
     $bindingsText,
@@ -584,14 +585,16 @@ if ($corpseBinding.Success -and
 $inventoryText = [IO.File]::ReadAllText(
     (Join-Path $root 'Features\InventoryManager.lua'))
 if ($inventoryText -notmatch
-        'function\s+addon\.RXPGuides\.MouseoverCorpseLoot\(\)' -or
-    $inventoryText -notmatch 'IsDeadCreatureUnit\("mouseover"\)' -or
-    $inventoryText -notmatch 'IsDeadCreatureUnit\("target"\)' -or
+        'function\s+inventoryManager\.RefreshMouseoverCorpseLootBinding\(\)' -or
+    $inventoryText -notmatch 'CORPSE_LOOT_COMMAND\s*=\s*"INTERACTMOUSEOVER"' -or
+    $inventoryText -notmatch 'SetOverrideBinding\(' -or
+    $inventoryText -match '\bInteractUnit\(' -or
+    $inventoryText -match '\bTargetUnit\(' -or
     $inventoryText -match
         'RegisterEvent\("UPDATE_MOUSEOVER_UNIT"\)[\s\S]{0,600}InteractUnit') {
     Add-ValidationError (
-        'Mouseover corpse looting must remain corpse-only and callable only ' +
-        'through a hardware binding.')
+        'Mouseover corpse looting must use Blizzard''s protected stock binding ' +
+        'and must not call protected interaction or targeting APIs from Lua.')
 }
 foreach ($name in $surface.globals) {
     if ($runtimeText -notmatch ('\b' + [regex]::Escape([string]$name) + '\b')) {

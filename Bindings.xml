@@ -8,10 +8,8 @@
         -- Delete the cheapest junk item
     </Binding>
     <Binding name="RXP_MOUSEOVER_CORPSE_LOOT"
-             header="RXPGUIDES">
-        if RXPGuides and RXPGuides.MouseoverCorpseLoot then
-            RXPGuides.MouseoverCorpseLoot();
-        end
+             header="RXPGUIDES" hidden="true">
+        -- Legacy binding retained only so existing saved keys can be migrated
     </Binding>
     <Binding name="CLICK RXPItemFrameButton1:LeftButton" header="RXPGUIDES" runOnUp="true" />
     <Binding name="CLICK RXPItemFrameButton2:LeftButton" header="RXPGUIDES" runOnUp="true" />
