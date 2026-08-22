@@ -127,6 +127,12 @@ if ($targetingText -notmatch 'dangerousTargets' -or
     $tipsText -notmatch 'session\.lastDangerFlash') {
     Add-Error 'Dangerous-mob observations are not isolated and cooldown-bounded.'
 }
+if ($tipsText -notmatch
+        'local\s+FlashClientIcon\s*=\s*_G\.FlashClientIcon' -or
+    $tipsText -notmatch
+        'if\s+FlashClientIcon\s+then\s+FlashClientIcon\(\)\s+end') {
+    Add-Error 'Drowning warnings must guard the post-WotLK FlashClientIcon API.'
+}
 
 $talentManifest = [IO.File]::ReadAllText((Join-Path $root 'Talents_wotlk_335.xml'))
 $talentText = [IO.File]::ReadAllText((Join-Path $root 'Features/Talents.lua'))

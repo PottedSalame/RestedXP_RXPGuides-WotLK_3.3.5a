@@ -10,6 +10,7 @@ local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
 local IsSpellKnown = C_Spell and C_Spell.IsSpellKnown or _G.IsSpellKnown
 local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
 local GetTime, GetMirrorTimerProgress = _G.GetTime, _G.GetMirrorTimerProgress
+local FlashClientIcon = _G.FlashClientIcon
 local UnitHealth, UnitHealthMax, UnitIsDead = _G.UnitHealth, _G.UnitHealthMax, _G.UnitIsDead
 local GetInventoryItemID, IsPlayerSpell = GetInventoryItemID, IsPlayerSpell
 local HasAction, GetActionInfo, GetMacroSpell = HasAction, GetActionInfo, GetMacroSpell
@@ -348,7 +349,9 @@ function addon.tips.CheckEvents()
                 if addon.settings.profile.enableDrowningScreenFlash then
                     addon.tips:EnableDangerWarning(2)
                 end
-                FlashClientIcon()
+                -- FlashClientIcon was added after 3.3.5. The bounded screen
+                -- warning above remains the legacy visual alert.
+                if FlashClientIcon then FlashClientIcon() end
                 UIErrorsFrame:AddMessage(STRING_ENVIRONMENTAL_DAMAGE_DROWNING, 1.0, 0.1, 0.1, session.alertFrequency);
 
                 if addon.settings.profile.enableDrowningWarningSound then
