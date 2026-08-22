@@ -655,6 +655,35 @@ BINDING_HEADER_RXPInventory = addon.title
 
 _G["BINDING_NAME_CLICK RXPInventory_DeleteJunk:LeftButton"] =
     L("Delete Cheapest Junk Item")
+_G.BINDING_NAME_RXP_MOUSEOVER_CORPSE_LOOT = L("Loot Mouseover Corpse")
+
+-- Interacting with a world unit is hardware protected on 3.3.5. Bindings.xml
+-- invokes this function from an actual key press; UPDATE_MOUSEOVER_UNIT and
+-- timers must never call it. The explicit corpse checks prevent the binding
+-- from targeting, attacking, or talking to whatever happens to be under the
+-- cursor when there is nothing to loot.
+function addon.RXPGuides.MouseoverCorpseLoot()
+    local profile = addon.settings and addon.settings.profile
+    if addon.gameVersion ~= 30300 or
+        not (profile and profile.enableMouseoverCorpseLoot) or
+        not (_G.UnitExists and _G.UnitExists("mouseover")) or
+        not (_G.UnitIsDead and _G.UnitIsDead("mouseover")) or
+        (_G.UnitIsPlayer and _G.UnitIsPlayer("mouseover")) then
+        return false
+    end
+
+    -- This feature promises an auto-loot interaction. Keep Blizzard's ordinary
+    -- Auto Loot CVar enabled rather than trying to call LootSlot from a delayed
+    -- event, which would lose the initiating hardware-event context.
+    if _G.GetCVar and _G.SetCVar and
+        tostring(_G.GetCVar("autoLootDefault")) ~= "1" then
+        pcall(_G.SetCVar, "autoLootDefault", 1)
+    end
+
+    if type(_G.InteractUnit) ~= "function" then return false end
+    local ok, interacted = pcall(_G.InteractUnit, "mouseover")
+    return ok and interacted ~= false
+end
 
 local function IsEventSupported(event)
     return not (C_EventUtils and C_EventUtils.IsEventValid) or
@@ -722,6 +751,11 @@ end
 
 f:SetScript("OnEvent",function(self)
     inventoryManager.bagUpdated = true
+    if addon.settings and addon.settings.profile and
+        addon.settings.profile.enableMouseoverCorpseLoot and _G.GetCVar and
+        _G.SetCVar and tostring(_G.GetCVar("autoLootDefault")) ~= "1" then
+        pcall(_G.SetCVar, "autoLootDefault", 1)
+    end
     self:RegisterEvent(bagEvent)
     local lootEvent = C_EventUtils and C_EventUtils.IsEventValid and
         C_EventUtils.IsEventValid("LOOT_READY") and "LOOT_READY" or "LOOT_OPENED"

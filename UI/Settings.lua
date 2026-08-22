@@ -412,6 +412,7 @@ local settingsDBDefaults = {
         enableAutomaticXpRate = true,
         showFlightTimers = true,
         showJunkIcon = true,
+        enableMouseoverCorpseLoot = false,
 
         -- Sliders
         arrowScale = 1,
@@ -1779,6 +1780,54 @@ function addon.settings:CreateAceOptionsPanel()
                                 addon.inventoryManager.bagHook and
                                 addon.player.class == "WARLOCK" and
                                 addon.gameVersion == 30300)
+                        end
+                    },
+                    enableMouseoverCorpseLoot = {
+                        name = L("Enable Mouseover Corpse Loot"),
+                        desc = L("While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."),
+                        type = "toggle",
+                        width = optionsWidth * 1.5,
+                        order = 4.866,
+                        hidden = addon.gameVersion ~= 30300,
+                        set = function(info, value)
+                            SetProfileOption(info, value)
+                            if value and _G.GetCVar and _G.SetCVar and
+                                tostring(_G.GetCVar("autoLootDefault")) ~= "1" then
+                                pcall(_G.SetCVar, "autoLootDefault", 1)
+                            end
+                        end
+                    },
+                    mouseoverCorpseLootKeybind = {
+                        name = L("Mouseover Corpse Loot Keybind"),
+                        desc = L("Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."),
+                        type = "keybinding",
+                        width = optionsWidth * 1.25,
+                        order = 4.867,
+                        hidden = addon.gameVersion ~= 30300,
+                        disabled = function()
+                            return not self.profile.enableMouseoverCorpseLoot
+                        end,
+                        get = function()
+                            local wanted = "RXP_MOUSEOVER_CORPSE_LOOT"
+                            for index = 1, GetNumBindings() do
+                                local command, _, key1 = GetBinding(index)
+                                if command == wanted then return key1 end
+                            end
+                        end,
+                        set = function(_, key)
+                            local wanted = "RXP_MOUSEOVER_CORPSE_LOOT"
+                            for index = 1, GetNumBindings() do
+                                local command, _, key1, key2 = GetBinding(index)
+                                if command == wanted then
+                                    if key1 then SetBinding(key1) end
+                                    if key2 then SetBinding(key2) end
+                                    break
+                                end
+                            end
+                            if key and key ~= "" then SetBinding(key, wanted) end
+                            if _G.SaveBindings and _G.GetCurrentBindingSet then
+                                _G.SaveBindings(_G.GetCurrentBindingSet())
+                            end
                         end
                     },
                     sellKeybind = {

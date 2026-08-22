@@ -107,6 +107,11 @@ L["|c%sSet %s as junk|r"] = "|c%sSet %s as junk|r"
 L["|c%sDeleting %sx%s|r"] = "|c%sDeleting %sx%s|r"
 L["|c%sInventory is full, deleting %sx%s|r"] = "|c%sInventory is full, deleting %sx%s|r"
 L["Delete Cheapest Junk Item"] = "Delete Cheapest Junk Item"
+L["Loot Mouseover Corpse"] = "Loot Mouseover Corpse"
+L["Enable Mouseover Corpse Loot"] = "Enable Mouseover Corpse Loot"
+L["Mouseover Corpse Loot Keybind"] = "Mouseover Corpse Loot Keybind"
+L["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."
+L["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."
 L["|c%sSold junk items for|r %s"] = "|c%sSold junk items for|r %s"
 
 --LevelingTracker.lua

@@ -558,6 +558,21 @@ foreach ($frame in $surface.bindingFrames) {
         Add-ValidationError "Secure binding frame is missing: $frame"
     }
 }
+if ($bindingsText -notmatch 'name="RXP_MOUSEOVER_CORPSE_LOOT"' -or
+    $bindingsText -notmatch 'RXPGuides\.MouseoverCorpseLoot\(\)') {
+    Add-ValidationError 'The hardware-gated mouseover corpse-loot binding is missing.'
+}
+$inventoryText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Features\InventoryManager.lua'))
+if ($inventoryText -notmatch
+        'function\s+addon\.RXPGuides\.MouseoverCorpseLoot\(\)' -or
+    $inventoryText -notmatch 'UnitIsDead\("mouseover"\)' -or
+    $inventoryText -match
+        'RegisterEvent\("UPDATE_MOUSEOVER_UNIT"\)[\s\S]{0,600}InteractUnit') {
+    Add-ValidationError (
+        'Mouseover corpse looting must remain corpse-only and callable only ' +
+        'through a hardware binding.')
+}
 foreach ($name in $surface.globals) {
     if ($runtimeText -notmatch ('\b' + [regex]::Escape([string]$name) + '\b')) {
         Add-ValidationError "Public global compatibility name is missing: $name"

@@ -420,37 +420,72 @@ local supplemental = {
     deDE = {
         ["Learn dual spec"] = "Duale Spezialisierung erlernen",
         ["Show Lua Errors"] = "Lua-Fehler anzeigen",
-        ["Toggles the stock client display of Lua errors."] = "Schaltet die Anzeige von Lua-Fehlern des Spielclients um."
+        ["Toggles the stock client display of Lua errors."] = "Schaltet die Anzeige von Lua-Fehlern des Spielclients um.",
+        ["Loot Mouseover Corpse"] = "Leiche unter Mauszeiger plündern",
+        ["Enable Mouseover Corpse Loot"] = "Plündern von Leichen per Mauszeiger aktivieren",
+        ["Mouseover Corpse Loot Keybind"] = "Tastenbelegung: Leiche unter Mauszeiger plündern",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "Halte den Mauszeiger über eine tote Nichtspieler-Kreatur und drücke die zugewiesene Taste, um sie automatisch zu plündern. WoW erfordert einen Tastendruck; bloßes Darüberfahren kann diese geschützte Aktion nicht ausführen. Dies aktiviert außerdem die normale Auto-Plündern-Einstellung des Clients.",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "Belege eine Taste oder Mausradaktion, halte den Mauszeiger über eine plünderbare Leiche und drücke sie. Verwende dafür nicht die Auto-Plündern-Modifikatortaste des Clients."
     },
     esES = {
         ["Learn dual spec"] = "Aprender doble especialización",
         ["Show Lua Errors"] = "Mostrar errores de Lua",
-        ["Toggles the stock client display of Lua errors."] = "Activa o desactiva los errores Lua del cliente."
+        ["Toggles the stock client display of Lua errors."] = "Activa o desactiva los errores Lua del cliente.",
+        ["Loot Mouseover Corpse"] = "Saquear cadáver bajo el cursor",
+        ["Enable Mouseover Corpse Loot"] = "Activar saqueo de cadáver bajo el cursor",
+        ["Mouseover Corpse Loot Keybind"] = "Atajo para saquear cadáver bajo el cursor",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "Pasa el cursor sobre una criatura no jugadora muerta y pulsa la tecla asignada para saquearla automáticamente. WoW requiere una pulsación; pasar el cursor por sí solo no puede realizar esta acción protegida. También se activa el saqueo automático normal del cliente.",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "Asigna una tecla o acción de la rueda, pasa el cursor sobre un cadáver saqueable y púlsala. Evita usar la tecla modificadora de saqueo automático del cliente."
     },
     frFR = {
         ["Learn dual spec"] = "Apprendre la double spécialisation",
         ["Show Lua Errors"] = "Afficher les erreurs Lua",
-        ["Toggles the stock client display of Lua errors."] = "Active ou désactive l’affichage des erreurs Lua du client."
+        ["Toggles the stock client display of Lua errors."] = "Active ou désactive l’affichage des erreurs Lua du client.",
+        ["Loot Mouseover Corpse"] = "Fouiller le cadavre survolé",
+        ["Enable Mouseover Corpse Loot"] = "Activer le pillage du cadavre survolé",
+        ["Mouseover Corpse Loot Keybind"] = "Raccourci de pillage du cadavre survolé",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "Survolez une créature non-joueur morte et appuyez sur la touche assignée pour la fouiller automatiquement. WoW exige une pression de touche ; le survol seul ne peut pas effectuer cette action protégée. Cela active aussi le butin automatique standard du client.",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "Assignez une touche ou la molette, survolez un cadavre pouvant être fouillé, puis appuyez dessus. Évitez la touche de modification du butin automatique du client."
     },
     koKR = {
         ["Learn dual spec"] = "이중 특성 배우기",
         ["Show Lua Errors"] = "Lua 오류 표시",
-        ["Toggles the stock client display of Lua errors."] = "게임 클라이언트의 Lua 오류 표시를 켜거나 끕니다."
+        ["Toggles the stock client display of Lua errors."] = "게임 클라이언트의 Lua 오류 표시를 켜거나 끕니다.",
+        ["Loot Mouseover Corpse"] = "마우스오버 시체 전리품 획득",
+        ["Enable Mouseover Corpse Loot"] = "마우스오버 시체 전리품 획득 사용",
+        ["Mouseover Corpse Loot Keybind"] = "마우스오버 시체 전리품 단축키",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "죽은 비플레이어 생명체에 마우스를 올리고 지정한 키를 눌러 자동으로 전리품을 획득합니다. WoW의 보호된 동작에는 키 입력이 필요하므로 마우스를 올리는 것만으로는 실행되지 않습니다. 클라이언트의 기본 자동 전리품 획득 설정도 켜집니다.",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "키 또는 마우스 휠 동작을 지정하고 전리품이 있는 시체에 마우스를 올린 뒤 누르세요. 클라이언트의 자동 전리품 획득 보조키는 사용하지 마세요."
     },
     ruRU = {
         ["Learn dual spec"] = "Изучить двойную специализацию",
         ["Show Lua Errors"] = "Показывать ошибки Lua",
-        ["Toggles the stock client display of Lua errors."] = "Включает или отключает показ ошибок Lua клиентом."
+        ["Toggles the stock client display of Lua errors."] = "Включает или отключает показ ошибок Lua клиентом.",
+        ["Loot Mouseover Corpse"] = "Обобрать труп под курсором",
+        ["Enable Mouseover Corpse Loot"] = "Включить сбор добычи с трупа под курсором",
+        ["Mouseover Corpse Loot Keybind"] = "Клавиша сбора добычи с трупа под курсором",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "Наведите курсор на мёртвое существо и нажмите назначенную клавишу, чтобы автоматически собрать добычу. WoW требует нажатия клавиши: одно наведение не может выполнить это защищённое действие. Также включается стандартный автосбор добычи клиента.",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "Назначьте клавишу или действие колеса мыши, наведите курсор на доступный для сбора труп и нажмите её. Не используйте клавишу-модификатор автосбора добычи клиента."
     },
     zhCN = {
         ["Learn dual spec"] = "学习双天赋",
         ["Show Lua Errors"] = "显示 Lua 错误",
-        ["Toggles the stock client display of Lua errors."] = "切换游戏客户端的 Lua 错误显示。"
+        ["Toggles the stock client display of Lua errors."] = "切换游戏客户端的 Lua 错误显示。",
+        ["Loot Mouseover Corpse"] = "拾取鼠标悬停尸体",
+        ["Enable Mouseover Corpse Loot"] = "启用鼠标悬停尸体拾取",
+        ["Mouseover Corpse Loot Keybind"] = "鼠标悬停尸体拾取按键",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "将鼠标悬停在死亡的非玩家生物上并按下指定按键，即可自动拾取。WoW 要求真实按键操作；仅悬停无法执行此受保护操作。启用后也会开启客户端的标准自动拾取设置。",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "绑定按键或鼠标滚轮操作，将鼠标悬停在可拾取的尸体上并按下。请勿将客户端的自动拾取修饰键用于此绑定。"
     },
     zhTW = {
         ["Learn dual spec"] = "學習雙天賦",
         ["Show Lua Errors"] = "顯示 Lua 錯誤",
-        ["Toggles the stock client display of Lua errors."] = "切換遊戲用戶端的 Lua 錯誤顯示。"
+        ["Toggles the stock client display of Lua errors."] = "切換遊戲用戶端的 Lua 錯誤顯示。",
+        ["Loot Mouseover Corpse"] = "拾取滑鼠懸停屍體",
+        ["Enable Mouseover Corpse Loot"] = "啟用滑鼠懸停屍體拾取",
+        ["Mouseover Corpse Loot Keybind"] = "滑鼠懸停屍體拾取按鍵",
+        ["While hovering a dead non-player creature, press the assigned key to interact and auto-loot it. WoW requires a key press; hovering alone cannot perform this protected action. Enabling this also enables the client's standard Auto Loot setting."] = "將滑鼠懸停在死亡的非玩家生物上並按下指定按鍵，即可自動拾取。WoW 需要真實按鍵操作；僅懸停無法執行此受保護操作。啟用後也會開啟用戶端的標準自動拾取設定。",
+        ["Bind a key or mouse-wheel action, hover a lootable corpse, and press it. Avoid using the client's Auto Loot modifier key for this binding."] = "綁定按鍵或滑鼠滾輪操作，將滑鼠懸停在可拾取的屍體上並按下。請勿將用戶端的自動拾取輔助鍵用於此綁定。"
     }
 }
 
