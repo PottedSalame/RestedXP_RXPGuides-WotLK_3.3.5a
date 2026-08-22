@@ -128,7 +128,8 @@ foreach ($manifest in $tocPaths) {
 
 $tocText = [IO.File]::ReadAllText($tocPath)
 $orderedPaths = @(
-    'Compat\Bootstrap.lua', 'libs\embeds_335.xml', 'Core\Locale.lua',
+    'Compat\Bootstrap.lua', 'Compat\InventoryCount335.lua',
+    'libs\embeds_335.xml', 'Core\Locale.lua',
     'Core\Services.lua', 'Core\Scheduler.lua', 'Core\Storage.lua',
     'Core\Runtime.lua', 'Core\Facade.lua', 'Guide\QuestAcceptState.lua',
     'Core\Addon.lua',
@@ -361,6 +362,22 @@ $directiveHandlersText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\Directives\Handlers.lua'))
 $guideWindowText = [IO.File]::ReadAllText(
     (Join-Path $root 'UI\GuideWindow.lua'))
+$inventoryCountPath = Join-Path $root 'Compat\InventoryCount335.lua'
+$inventoryCountText = [IO.File]::ReadAllText($inventoryCountPath)
+if ($inventoryCountText -notmatch
+        'KEYRING_CONTAINER\s*=\s*_G\.KEYRING_CONTAINER\s+or\s+-2' -or
+    $inventoryCountText -notmatch
+        'explicitCarried\s*=\s*CountOrdinaryCarried\(wantedID\)\s*\+\s*keyringCount' -or
+    $inventoryCountText -notmatch
+        'requestedCount\s*\+\s*missingFromLegacyAPI' -or
+    $directiveHandlersText -notmatch
+        'events\.itemcount\s*=\s*events\.collect' -or
+    $directiveHandlersText -notmatch
+        'gameVersion\s*==\s*30300\s+and\s+"BAG_UPDATE"') {
+    Add-ValidationError (
+        'Legacy guide item validation must count keyring container -2 and ' +
+        'refresh collect/itemcount elements from BAG_UPDATE on 3.3.5.')
+}
 if ($directiveHandlersText -notmatch 'element\.autoSkip\s*=\s*true' -or
     $directiveHandlersText -notmatch
         'element\.autoSkip\s+and\s+not\s+element\.manualSkip' -or

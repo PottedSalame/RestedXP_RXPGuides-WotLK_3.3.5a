@@ -66,7 +66,8 @@ if not (UnitAura and UnitBuff and UnitDebuff) then
     addon.UnitBuff = UnitBuff
 end
 
-local GetItemCount = C_Item and C_Item.GetItemCount or _G.GetItemCount
+local GetItemCount = addon.GetItemCount or
+                         (C_Item and C_Item.GetItemCount) or _G.GetItemCount
 
 local function LoremasterEnabled()
     local loremaster
@@ -88,7 +89,12 @@ addon.separators = {}
 local events = {}
 addon.stepUpdateList = {}
 addon.functions.events = events
-events.collect = {"BAG_UPDATE_DELAYED", "QUEST_LOG_UPDATE","MERCHANT_SHOW"}
+-- BAG_UPDATE_DELAYED is not available on every stock/private 3.3.5 client.
+-- The legacy BAG_UPDATE event also fires for the keyring container (-2), which
+-- lets newly looted keys immediately re-evaluate .collect/.itemcount steps.
+local bagUpdateEvent = gameVersion == 30300 and "BAG_UPDATE" or
+                           "BAG_UPDATE_DELAYED"
+events.collect = {bagUpdateEvent, "QUEST_LOG_UPDATE","MERCHANT_SHOW"}
 events.destroy = events.collect
 events.buy = events.collect
 events.buyAll = events.buy
@@ -129,7 +135,7 @@ events.zone = zoneEvents
 events.zoneskip = zoneEvents
 events.subzone = zoneEvents
 events.subzoneskip = zoneEvents
-events.bankdeposit = {"BANKFRAME_OPENED", "BAG_UPDATE_DELAYED"}
+events.bankdeposit = {"BANKFRAME_OPENED", bagUpdateEvent}
 
 if C_EventUtils and C_EventUtils.IsEventValid("ZONE_CHANGED_INDOORS") then
    tinsert(zoneEvents,"ZONE_CHANGED_INDOORS")
@@ -3267,7 +3273,8 @@ if objFlags is omitted or set to 0, element will complete if you have the quest 
             step.activeItems = step.activeItems or {}
             if not event then
                 step.activeItems[id] = true
-            elseif event ~= "BAG_UPDATE_DELAYED" and event ~= "WindowUpdate" and addon.activeItems then
+            elseif event ~= bagUpdateEvent and event ~= "WindowUpdate" and
+                addon.activeItems then
                 local isItemActive = not IsOnQuest(questId)
                 step.activeItems[id] = isItemActive
                 addon.activeItems[id] = isItemActive
@@ -5150,6 +5157,7 @@ function addon.functions.blastedLands(self)
 end
 
 events.questitemcount = events.collect
+events.itemcount = events.collect
 function addon.functions.questitemcount(self,text,itemId,qty,...)
 
     if type(self) == "string" then -- on parse
@@ -5595,7 +5603,7 @@ function addon.functions.buy(self, ...)
     local objIndex = element.objIndex
     local questId = element.questId
 
-    if event ~= "BAG_UPDATE_DELAYED" and event ~= "WindowUpdate" then
+    if event ~= bagUpdateEvent and event ~= "WindowUpdate" then
         if addon.IsQuestComplete(questId) or addon.IsQuestTurnedIn(questId) then
             element.isQuestComplete = true
         elseif objIndex and event then
@@ -5642,7 +5650,7 @@ function addon.functions.buy(self, ...)
                 end
             end
         end
-    elseif event == "BAG_UPDATE_DELAYED" and element.closeWindow then
+    elseif event == bagUpdateEvent and element.closeWindow then
         HideUIPanel(_G.MerchantFrame)
         element.closeWindow = false
     end

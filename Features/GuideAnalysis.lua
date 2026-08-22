@@ -11,7 +11,8 @@ local floor, max, min = math.floor, math.max, math.min
 local L = addon.locale.Get
 local tinsert = table.insert
 local GetTime = _G.GetTime
-local GetItemCount = _G.GetItemCount
+local GetItemCount = addon.GetItemCount or
+                         (C_Item and C_Item.GetItemCount) or _G.GetItemCount
 local toolWindows = addon.toolWindows
 
 addon.routePreflight = addon.routePreflight or {}

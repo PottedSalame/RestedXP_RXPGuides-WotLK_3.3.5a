@@ -10,6 +10,7 @@
 
 # --- Compatibility prelude: MUST load before libraries and runtime files. ---
 Compat\Bootstrap.lua
+Compat\InventoryCount335.lua
 
 libs\embeds_335.xml
 locale\locales.xml

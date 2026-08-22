@@ -51,6 +51,65 @@ _G.geterrorhandler = function() return function() end end
 
 local addon = {}
 
+-- Legacy keyring item counting must reconcile clients whose GetItemCount omits
+-- container -2, without double-counting clients that already include it.
+local savedGetItemCount = _G.GetItemCount
+local savedGetContainerNumSlots = _G.GetContainerNumSlots
+local savedGetContainerItemID = _G.GetContainerItemID
+local savedGetContainerItemInfo = _G.GetContainerItemInfo
+local savedGetContainerItemLink = _G.GetContainerItemLink
+local savedGetInventoryItemID = _G.GetInventoryItemID
+local savedGetInventoryItemCount = _G.GetInventoryItemCount
+local savedCItem = _G.C_Item
+local rawIncludesKeyring = false
+local inventory = {
+    [0] = {{id = 100, count = 2}},
+    [-2] = {{id = 100, count = 1}, {id = 200, count = 1}},
+}
+_G.GetItemCount = function(id, includeBank)
+    if id == 100 then
+        local count = includeBank and 7 or 2
+        return rawIncludesKeyring and count + 1 or count
+    elseif id == 300 then
+        return 4
+    end
+    return 0
+end
+_G.GetContainerNumSlots = function(bag)
+    return inventory[bag] and #inventory[bag] or 0
+end
+_G.GetContainerItemID = function(bag, slot)
+    return inventory[bag] and inventory[bag][slot] and
+               inventory[bag][slot].id
+end
+_G.GetContainerItemInfo = function(bag, slot)
+    local item = inventory[bag] and inventory[bag][slot]
+    if item then return "texture", item.count end
+end
+_G.GetContainerItemLink = function() return nil end
+_G.GetInventoryItemID = function() return nil end
+_G.GetInventoryItemCount = function() return nil end
+_G.C_Item = {}
+local inventoryAddon = {}
+loadAddonFile("Compat/InventoryCount335.lua", inventoryAddon)
+check(inventoryAddon.GetItemCount(100) == 3 and
+          inventoryAddon.GetItemCount(100, true) == 8 and
+          inventoryAddon.GetItemCount(200) == 1 and
+          inventoryAddon.GetItemCount(300) == 4,
+      "legacy carried-item count did not include keyring items")
+rawIncludesKeyring = true
+check(inventoryAddon.GetItemCount(100) == 3 and
+          inventoryAddon.GetItemCount(100, true) == 8,
+      "legacy carried-item count double-counted the keyring")
+_G.GetItemCount = savedGetItemCount
+_G.GetContainerNumSlots = savedGetContainerNumSlots
+_G.GetContainerItemID = savedGetContainerItemID
+_G.GetContainerItemInfo = savedGetContainerItemInfo
+_G.GetContainerItemLink = savedGetContainerItemLink
+_G.GetInventoryItemID = savedGetInventoryItemID
+_G.GetInventoryItemCount = savedGetInventoryItemCount
+_G.C_Item = savedCItem
+
 -- The XP Assistant shares these pure calculations and Blizzard-format
 -- parsers with the tracker and communications modules.
 _G.COMBATLOG_XPGAIN_EXHAUSTION1 =
