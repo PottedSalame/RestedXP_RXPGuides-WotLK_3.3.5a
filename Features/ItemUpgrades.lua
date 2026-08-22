@@ -12,6 +12,7 @@ local fmt, tinsert, ipairs, pairs, next, type, wipe, tonumber, strlower, smatch 
 local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
 local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
 local NativeIsEquippedItem = C_Item and C_Item.IsEquippedItem or _G.IsEquippedItem
+local NativeIsUsableItem = C_Item and C_Item.IsUsableItem or _G.IsUsableItem
 local GetItemStats = C_Item and C_Item.GetItemStats or _G.GetItemStats
 local UnitLevel = _G.UnitLevel
 local GetInventoryItemLink = _G.GetInventoryItemLink
@@ -1788,6 +1789,29 @@ local ARMOR_PROFICIENCY_SPELL = {
     [ItemArmorSubclass.Plate] = 750
 }
 
+-- Several 3.3.5 private cores apply the Mail/Plate proficiency mask correctly
+-- but omit its hidden passive from IsSpellKnown and the visible spellbook. The
+-- stock per-item result is therefore a useful secondary signal, but only after
+-- the class/level armor map has independently allowed the subtype. It must not
+-- be shared with weapons or shields, whose client usability hints are known to
+-- be over-broad on legacy cores.
+local function GetClientArmorWearability(itemLink, explicitUsable)
+    if not itemLink then return nil end
+
+    local itemName, _, _, _, minimumLevel = GetItemInfo(itemLink)
+    if not itemName then return nil end
+    minimumLevel = tonumber(minimumLevel) or 0
+    if minimumLevel > (tonumber(UnitLevel("player")) or 0) then return false end
+    if explicitUsable == true or explicitUsable == 1 then return true end
+    if type(NativeIsUsableItem) ~= "function" then return nil end
+
+    local ok, usable = pcall(NativeIsUsableItem, itemLink)
+    if not ok then return nil end
+    if usable == true or usable == 1 then return true end
+    if usable == false or usable == 0 then return false end
+    return nil
+end
+
 local function IsKnownProficiencySpell(spellID)
     local checked
     if type(_G.IsPlayerSpell) == "function" then
@@ -1847,6 +1871,24 @@ local function LookupSubclassName(map, name)
     if type(name) ~= "string" then return nil end
     return map[name] or map[strlower(name)] or
                map[NormalizeSubclassName(name)]
+end
+
+local function HasEquippedArmorSubclass(wantedSubclass)
+    if type(wantedSubclass) ~= "number" then return false end
+    local firstSlot = tonumber(_G.INVSLOT_FIRST_EQUIPPED) or 1
+    local lastSlot = tonumber(_G.INVSLOT_LAST_EQUIPPED) or 19
+    for slot = firstSlot, lastSlot do
+        local link = GetInventoryItemLink("player", slot)
+        if link then
+            local _, _, _, _, _, _, subtype, _, equipLoc = GetItemInfo(link)
+            if not IsWeaponSlot(equipLoc) and
+                LookupSubclassName(ARMOR_SUBCLASS_BY_NAME, subtype) ==
+                    wantedSubclass then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 local function ScanLegacyWeaponSkills()
@@ -1967,8 +2009,13 @@ RefreshWeaponProficiencies = function()
 
     if addon.gameVersion == 30300 then
         for subclassID, spellID in pairs(ARMOR_PROFICIENCY_SPELL) do
-            session.trainedArmor[subclassID] =
-                IsKnownProficiencySpell(spellID)
+            local trained = IsKnownProficiencySpell(spellID)
+            -- Successfully wearing the armor is definitive evidence even when
+            -- a private core does not expose its hidden proficiency passive.
+            if trained ~= true and HasEquippedArmorSubclass(subclassID) then
+                trained = true
+            end
+            session.trainedArmor[subclassID] = trained
         end
     end
 
@@ -2007,7 +2054,8 @@ function addon.itemUpgrades.SubclassNameToID(subclassName, itemEquipLoc)
     return LookupSubclassName(ARMOR_SUBCLASS_BY_NAME, subclassName)
 end
 
-local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
+local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink,
+                                clientUsable)
     if type(itemEquipLoc) ~= "string" then return true end
 
     -- INVTYPE_SHIELD is sufficient to make this decision even when a localized
@@ -2082,11 +2130,14 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
         if not session.equippableArmor[itemSubTypeID] then return false end
         local proficiencySpell = ARMOR_PROFICIENCY_SPELL[itemSubTypeID]
         if addon.gameVersion == 30300 and proficiencySpell then
-            -- The level-gated class map means only "trainable now". Mail and
-            -- Plate become usable solely after the learned passive is present;
-            -- nil is deliberately unknown instead of an implicit level-based
-            -- success.
+            -- The level-gated class map means only "trainable now". Prefer the
+            -- learned passive, then accept a positive result for this exact
+            -- armor item on cores which omit that hidden passive. Nil remains
+            -- unknown instead of becoming an implicit level-based success.
             if session.trainedArmor[itemSubTypeID] == true then return true end
+            if GetClientArmorWearability(itemLink, clientUsable) == true then
+                return true
+            end
             if session.trainedArmor[itemSubTypeID] == false then return false end
             return nil
         end
@@ -2276,22 +2327,27 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     local clientSaysUsable = clientUsable == true or clientUsable == 1 or
                                  currentlyEquipped
     if session.itemCache[itemLink] then
+        local cached = session.itemCache[itemLink]
+        local clientConfirmedArmor = cached.unusable and
+            type(cached.itemSubTypeID) == "number" and
+            ARMOR_PROFICIENCY_SPELL[cached.itemSubTypeID] ~= nil and
+            session.equippableArmor[cached.itemSubTypeID] and
+            GetClientArmorWearability(itemLink, clientUsable) == true
         -- Re-evaluate only an old/uncertain subtype false-negative. Recognized
         -- class restrictions remain data objects so every caller (tooltips,
         -- rewards, junk, and auto-equip) receives the same unusable result.
-        if session.itemCache[itemLink].unusable and currentlyEquipped then
+        if cached.unusable and (currentlyEquipped or clientConfirmedArmor) then
             session.itemCache[itemLink] = nil
-        elseif session.itemCache[itemLink].unusable and clientSaysUsable and
-            not session.itemCache[itemLink].classRestricted and
-            not session.itemCache[itemLink].proficiencyUnknown then
+        elseif cached.unusable and clientSaysUsable and
+            not cached.classRestricted and not cached.proficiencyUnknown then
             session.itemCache[itemLink] = nil
-        elseif session.itemCache[itemLink].unusable then
-            return session.itemCache[itemLink]
+        elseif cached.unusable then
+            return cached
         else
             if clientSaysUsable then
-                session.itemCache[itemLink].clientUsable = true
+                cached.clientUsable = true
             end
-            return session.itemCache[itemLink]
+            return cached
         end
     end
 
@@ -2312,7 +2368,7 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     local itemData
 
     local classUsability = IsUsableForClass(itemSubTypeID, itemEquipLoc,
-                                             itemLink)
+                                             itemLink, clientUsable)
     -- The equipped slots are authoritative for every item type, including
     -- off-hand frills granted by custom/private-server class rules. Restricting
     -- this bypass to weapons could leave an actually equipped off hand with no
@@ -2759,7 +2815,8 @@ function addon.itemUpgrades:CompareItemWeight(itemLink, tooltip,
 
     local classUsability = IsUsableForClass(comparedData.itemSubTypeID,
                                              comparedData.itemEquipLoc,
-                                             comparedData.itemLink)
+                                             comparedData.itemLink,
+                                             comparedData.clientUsable)
     if addon.gameVersion == 30300 and
         IsWeaponSlot(comparedData.itemEquipLoc) and classUsability ~= true then
         return nil, "unusable"
@@ -3394,8 +3451,11 @@ end
 function addon.itemUpgrades:UPGRADE_EQUIPMENT_CHANGED()
     InvalidateUpgradeDetailTooltip()
     -- Let the legacy inventory API settle before recording the old -> new hand
-    -- transition and rescanning the displaced bag item.
+    -- transition and rescanning the displaced bag item. Refreshing proficiency
+    -- evidence here lets a successfully equipped Mail/Plate item correct a
+    -- private core which omitted the corresponding hidden passive.
     C_Timer.After(0, function()
+        RefreshWeaponProficiencies()
         RefreshHandReplacementState()
         wipe(session.promptedUpgrades)
         QueueUpgradeScan(0.25)

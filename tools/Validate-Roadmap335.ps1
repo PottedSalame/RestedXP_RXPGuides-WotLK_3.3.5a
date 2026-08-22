@@ -161,14 +161,22 @@ foreach ($pattern in @('ParseItemUniqueness','ValidateUniqueLayout',
 if ($upgradeText -notmatch
         'session\.trainedArmor\[itemSubTypeID\]\s*==\s*true\s+then\s+return\s+true' -or
     $upgradeText -notmatch
+        'local\s+function\s+GetClientArmorWearability\s*\(' -or
+    $upgradeText -notmatch
+        'HasEquippedArmorSubclass\(subclassID\)' -or
+    $upgradeText -notmatch
+        'function\s+addon\.itemUpgrades:UPGRADE_EQUIPMENT_CHANGED\s*\(\)[\s\S]{0,500}RefreshWeaponProficiencies\(\)' -or
+    $upgradeText -notmatch
+        'GetClientArmorWearability\(itemLink,\s*clientUsable\)\s*==\s*true' -or
+    $upgradeText -notmatch
         'local\s+requiresVerifiedProficiency\s*=\s*IsWeaponSlot\(itemEquipLoc\)' -or
     $upgradeText -notmatch
         'ARMOR_PROFICIENCY_SPELL\[itemSubTypeID\]\s*~=\s*nil' -or
     $upgradeText -match
         'fall back to the stock class map instead of the\s*\r?\n\s*-- reward UI hint') {
     Add-Error (
-        '3.3.5 armor recommendations must require a positively learned ' +
-        'proficiency instead of treating class/level eligibility as training.')
+        '3.3.5 armor recommendations must require learned, equipped, or ' +
+        'per-item client-confirmed proficiency after class/level eligibility.')
 }
 if ($upgradeText -notmatch
         'if\s+trained\s*==\s*true\s+then[\s\S]*?elseif\s+trained\s*==\s*false\s+then[\s\S]*?return\s+false[\s\S]*?else[\s\S]*?return\s+nil' -or
