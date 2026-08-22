@@ -572,11 +572,21 @@ if ($bindingsText -notmatch 'name="RXP_MOUSEOVER_CORPSE_LOOT"' -or
     $bindingsText -notmatch 'RXPGuides\.MouseoverCorpseLoot\(\)') {
     Add-ValidationError 'The hardware-gated mouseover corpse-loot binding is missing.'
 }
+$corpseBinding = [regex]::Match(
+    $bindingsText,
+    '<Binding\s+name="RXP_MOUSEOVER_CORPSE_LOOT"(?<attrs>[^>]*)>')
+if ($corpseBinding.Success -and
+    $corpseBinding.Groups['attrs'].Value -match 'runOnUp\s*=') {
+    Add-ValidationError (
+        'The corpse-loot binding must fire once per key press; runOnUp causes ' +
+        'a second interaction when the key is released.')
+}
 $inventoryText = [IO.File]::ReadAllText(
     (Join-Path $root 'Features\InventoryManager.lua'))
 if ($inventoryText -notmatch
         'function\s+addon\.RXPGuides\.MouseoverCorpseLoot\(\)' -or
-    $inventoryText -notmatch 'UnitIsDead\("mouseover"\)' -or
+    $inventoryText -notmatch 'IsDeadCreatureUnit\("mouseover"\)' -or
+    $inventoryText -notmatch 'IsDeadCreatureUnit\("target"\)' -or
     $inventoryText -match
         'RegisterEvent\("UPDATE_MOUSEOVER_UNIT"\)[\s\S]{0,600}InteractUnit') {
     Add-ValidationError (

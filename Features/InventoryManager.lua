@@ -657,18 +657,39 @@ _G["BINDING_NAME_CLICK RXPInventory_DeleteJunk:LeftButton"] =
     L("Delete Cheapest Junk Item")
 _G.BINDING_NAME_RXP_MOUSEOVER_CORPSE_LOOT = L("Loot Mouseover Corpse")
 
+local function IsDeadCreatureUnit(unit)
+    if not (_G.UnitExists and _G.UnitExists(unit)) or
+        (_G.UnitIsPlayer and _G.UnitIsPlayer(unit)) then
+        return false
+    end
+
+    if _G.UnitIsDeadOrGhost then
+        return _G.UnitIsDeadOrGhost(unit) and true or false
+    end
+    return _G.UnitIsDead and _G.UnitIsDead(unit) and true or false
+end
+
 -- Interacting with a world unit is hardware protected on 3.3.5. Bindings.xml
--- invokes this function from an actual key press; UPDATE_MOUSEOVER_UNIT and
--- timers must never call it. The explicit corpse checks prevent the binding
--- from targeting, attacking, or talking to whatever happens to be under the
--- cursor when there is nothing to loot.
+-- invokes this function once from an actual key press; UPDATE_MOUSEOVER_UNIT
+-- and timers must never call it. The corpse checks prevent the binding from
+-- targeting, attacking, or talking to a living unit.
 function addon.RXPGuides.MouseoverCorpseLoot()
     local profile = addon.settings and addon.settings.profile
     if addon.gameVersion ~= 30300 or
         not (profile and profile.enableMouseoverCorpseLoot) or
-        not (_G.UnitExists and _G.UnitExists("mouseover")) or
-        not (_G.UnitIsDead and _G.UnitIsDead("mouseover")) or
-        (_G.UnitIsPlayer and _G.UnitIsPlayer("mouseover")) then
+        type(_G.InteractUnit) ~= "function" then
+        return false
+    end
+
+    local unit
+    if IsDeadCreatureUnit("mouseover") then
+        unit = "mouseover"
+    elseif IsDeadCreatureUnit("target") then
+        -- Match Blizzard's INTERACTMOUSEOVER binding: a selected corpse is a
+        -- useful fallback on clients that stop exposing a mouseover unit token
+        -- as soon as the creature dies.
+        unit = "target"
+    else
         return false
     end
 
@@ -680,9 +701,12 @@ function addon.RXPGuides.MouseoverCorpseLoot()
         pcall(_G.SetCVar, "autoLootDefault", 1)
     end
 
-    if type(_G.InteractUnit) ~= "function" then return false end
-    local ok, interacted = pcall(_G.InteractUnit, "mouseover")
-    return ok and interacted ~= false
+    local interacted = _G.InteractUnit(unit)
+    if not interacted and unit == "mouseover" and
+        IsDeadCreatureUnit("target") then
+        interacted = _G.InteractUnit("target")
+    end
+    return interacted and true or false
 end
 
 local function IsEventSupported(event)

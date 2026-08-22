@@ -8,7 +8,7 @@
         -- Delete the cheapest junk item
     </Binding>
     <Binding name="RXP_MOUSEOVER_CORPSE_LOOT"
-             header="RXPGUIDES" runOnUp="true">
+             header="RXPGUIDES">
         if RXPGuides and RXPGuides.MouseoverCorpseLoot then
             RXPGuides.MouseoverCorpseLoot();
         end
