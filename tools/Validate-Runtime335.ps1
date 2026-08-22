@@ -393,6 +393,16 @@ if ($directiveHandlersText -notmatch 'element\.autoSkip\s*=\s*true' -or
 }
 
 if ($directiveHandlersText -notmatch
+        'local function FormatObjectiveRawText\s*\(' -or
+    $directiveHandlersText -match
+        'fmt\s*\(\s*element\.rawtext\s*,' -or
+    $directiveHandlersText -match
+        'fmt\s*\(\s*t\s*\.\.\s*["'']:\s*%d/%d') {
+    Add-ValidationError (
+        'Quest objective display text must not be passed directly to Lua string.format.')
+}
+
+if ($directiveHandlersText -notmatch
         'element\.hearthPending\s*=\s*true' -or
     $directiveHandlersText -notmatch
         'event\s*==\s*"PLAYER_ENTERING_WORLD"' -or

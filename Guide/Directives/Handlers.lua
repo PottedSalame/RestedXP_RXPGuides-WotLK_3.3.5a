@@ -1725,6 +1725,30 @@ local function GetObjectiveFallbackText(questId, objectiveIndex)
     return "Complete quest objective " .. tostring(objectiveIndex or 1)
 end
 
+-- Objective text is display data, not a trusted format string. In particular,
+-- localized/private-server objective text and authored guide prose can contain
+-- literal percentages such as "below 30%". Passing those strings directly to
+-- string.format makes Lua 5.1 interpret the following character as a format
+-- option and can raise "invalid option in 'format'". Preserve the legacy %d/%s
+-- counter placeholders without exposing any other percent sequence to fmt.
+local function FormatObjectiveRawText(text, fulfilled, required)
+    text = type(text) == "string" and text or tostring(text or "")
+    local values = {fulfilled, required}
+    local index = 0
+
+    return (text:gsub("%%([ds])", function(kind)
+        index = index + 1
+        local value = values[index]
+        if value == nil then return "%" .. kind end
+        if kind == "d" then
+            value = tonumber(value)
+            if not value then return "%d" end
+            return tostring(math.floor(value))
+        end
+        return tostring(value)
+    end))
+end
+
 function addon.UpdateQuestCompletionData(self)
     -- addon.activeObjectives[self] = addon.UpdateQuestCompletionData
     local element = self.element
@@ -1808,8 +1832,8 @@ function addon.UpdateQuestCompletionData(self)
             end
         end
         if element.rawtext then
-            t = fmt(element.rawtext, obj.numFulfilled,
-                                            obj.numRequired)
+            t = FormatObjectiveRawText(element.rawtext, obj.numFulfilled,
+                                       obj.numRequired)
         else
 
             if isGenerated then
@@ -1824,12 +1848,15 @@ function addon.UpdateQuestCompletionData(self)
 
             if not obj.questie then
                 if obj.type == "event" then
+                    local required = tonumber(obj.numRequired) or 0
+                    local fulfilled = isQuestComplete and required or
+                                          (tonumber(obj.numFulfilled) or 0)
                     if isQuestComplete then
-                        t = fmt(t .. ": %d/%d", obj.numRequired,
-                                            obj.numRequired)
+                        t = fmt("%s: %d/%d", tostring(t or " "), fulfilled,
+                                required)
                     else
-                        t = fmt(t .. ": %d/%d", obj.numFulfilled,
-                                            obj.numRequired)
+                        t = fmt("%s: %d/%d", tostring(t or " "), fulfilled,
+                                required)
                     end
                 elseif isQuestComplete then
                     t = t:gsub(": %d+/(%d+)", ": %1/%1")
