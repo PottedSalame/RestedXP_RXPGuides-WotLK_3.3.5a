@@ -158,6 +158,27 @@ foreach ($pattern in @('ParseItemUniqueness','ValidateUniqueLayout',
         Add-Error "ItemUpgrades/Auction House hardening is missing: $pattern"
     }
 }
+if ($upgradeText -notmatch
+        'session\.trainedArmor\[itemSubTypeID\]\s*==\s*true\s+then\s+return\s+true' -or
+    $upgradeText -notmatch
+        'local\s+requiresVerifiedProficiency\s*=\s*IsWeaponSlot\(itemEquipLoc\)' -or
+    $upgradeText -notmatch
+        'ARMOR_PROFICIENCY_SPELL\[itemSubTypeID\]\s*~=\s*nil' -or
+    $upgradeText -match
+        'fall back to the stock class map instead of the\s*\r?\n\s*-- reward UI hint') {
+    Add-Error (
+        '3.3.5 armor recommendations must require a positively learned ' +
+        'proficiency instead of treating class/level eligibility as training.')
+}
+if ($upgradeText -notmatch
+        'if\s+trained\s*==\s*true\s+then[\s\S]*?elseif\s+trained\s*==\s*false\s+then[\s\S]*?return\s+false[\s\S]*?else[\s\S]*?return\s+nil' -or
+    $upgradeText -match 'local\s+function\s+IsClientItemUsable' -or
+    $upgradeText -match
+        'session\.equippableWeapons\[itemSubTypeID\][\s\S]{0,160}IsClientItemUsable') {
+    Add-Error (
+        '3.3.5 weapon recommendations must require a positively learned ' +
+        'skill instead of trusting class eligibility or IsUsableItem hints.')
+}
 
 $forbidden = @(
     '\bTargetUnit\s*\(', '\bloadstring\s*\(', '\bdofile\s*\(',

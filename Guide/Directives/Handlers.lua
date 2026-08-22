@@ -2944,8 +2944,19 @@ function addon.functions.fp(self, ...)
             event = "GOSSIP_SHOW"
         end
     end
+    -- Modern clients provide (messageType, message), while 3.3.5 provides only
+    -- the localized UI_INFO_MESSAGE text.
+    local infoMessage = event == "UI_INFO_MESSAGE" and
+                            (type(arg2) == "string" and arg2 or arg1)
     --print('v',element.fpId,RXPCData.flightPaths[element.fpId])
     if self.element.step.active then
+        -- AceEvent and the per-element frame have no guaranteed dispatch order.
+        -- Refresh the legacy taxi-slot cache here before checking discovery, so
+        -- the .fp element does not have to wait for another event or for the
+        -- player to close and reopen the flight-master window.
+        if event == "TAXIMAP_OPENED" and addon.TAXIMAP_OPENED then
+            addon:TAXIMAP_OPENED()
+        end
         --print(element.fpId,'-',RXPCData.flightPaths[element.fpId])
         local fpDiscovered = fpId and RXPCData.flightPaths[fpId]
         if element.textOnly and fpDiscovered and not element.text then
@@ -2954,7 +2965,9 @@ function addon.functions.fp(self, ...)
         elseif fpDiscovered or fpId and (addon.flightInfo.lastFlightSrc == fpId or
                                   addon.flightInfo.lastFlightDest == fpId) then
             addon.SetElementComplete(self)
-        elseif event == "UI_INFO_MESSAGE" and (arg2 == _G.ERR_NEWTAXIPATH or arg2 == _G.ERR_TAXINOPATHS) then
+        elseif event == "UI_INFO_MESSAGE" and
+            (infoMessage == _G.ERR_NEWTAXIPATH or
+             infoMessage == _G.ERR_TAXINOPATHS) then
             local currentMap = C_Map.GetBestMapForUnit("player")
             local validFP = false
             if addon.FPbyZone then

@@ -404,6 +404,17 @@ if ($directiveHandlersText -notmatch
         'Hearth steps must block through the completed teleport while retaining fallback guards.')
 }
 
+if ($directiveHandlersText -notmatch
+        'event\s*==\s*"TAXIMAP_OPENED"\s+and\s+addon\.TAXIMAP_OPENED' -or
+    $directiveHandlersText -notmatch
+        'addon:TAXIMAP_OPENED\(\)' -or
+    $directiveHandlersText -notmatch
+        'type\(arg2\)\s*==\s*"string"\s+and\s+arg2\s+or\s+arg1') {
+    Add-ValidationError (
+        'Flight-path steps must refresh the legacy taxi cache before checking ' +
+        'discovery and normalize the 3.3.5 UI_INFO_MESSAGE payload.')
+}
+
 $coreAddonText = [IO.File]::ReadAllText((Join-Path $root 'Core\Addon.lua'))
 $automationOrderText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\AutomationOrder.lua'))

@@ -12,7 +12,6 @@ local fmt, tinsert, ipairs, pairs, next, type, wipe, tonumber, strlower, smatch 
 local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
 local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
 local NativeIsEquippedItem = C_Item and C_Item.IsEquippedItem or _G.IsEquippedItem
-local NativeIsUsableItem = C_Item and C_Item.IsUsableItem or _G.IsUsableItem
 local GetItemStats = C_Item and C_Item.GetItemStats or _G.GetItemStats
 local UnitLevel = _G.UnitLevel
 local GetInventoryItemLink = _G.GetInventoryItemLink
@@ -703,7 +702,10 @@ local function ExplainUnavailableComparison(itemLink, itemData)
 
     if itemData and itemData.unusable then
         if itemData.proficiencyUnknown then
-            return L("Weapon proficiency could not be verified; this item is kept safe but is not scored.")
+            if IsWeaponSlot(itemEquipLoc or itemData.itemEquipLoc) then
+                return L("Weapon proficiency could not be verified; this item is kept safe but is not scored.")
+            end
+            return L("Armor proficiency could not be verified; this item is kept safe but is not scored.")
         end
         if IsWeaponSlot(itemEquipLoc or itemData.itemEquipLoc) then
             return fmt(L("%s proficiency is not trained; this weapon is kept safe but is not scored."),
@@ -848,13 +850,6 @@ local function QueueUpgradeDetailRefresh(tooltip, itemLink)
         local _, currentLink = source:GetItem()
         if currentLink == expectedLink then ShowUpgradeDetailTooltip(source) end
     end)
-end
-
-local function IsClientItemUsable(itemLink)
-    if not (itemLink and type(NativeIsUsableItem) == "function") then return nil end
-    local ok, usable = pcall(NativeIsUsableItem, itemLink)
-    if not ok then return nil end
-    return usable == true or usable == 1
 end
 
 local function AddUnavailableComparisonLine(tooltip, message)
@@ -2022,24 +2017,17 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
     if addon.gameVersion == 30300 and itemEquipLoc == "INVTYPE_SHIELD" then
         if session.trainedShield == true then return true end
         if session.trainedShield == false then return false end
-        -- INVTYPE_SHIELD is itself unambiguous. If a core exposes no spellbook
-        -- proficiency query, fall back to the stock class map instead of the
-        -- reward UI hint (which is known to ignore armor proficiency).
-        return session.equippableSlots["INVTYPE_SHIELD"] and
-                   session.equippableArmor[ItemArmorSubclass.Shield] and true or
-                   false
+        -- A class table says only that the character may train Shields; it is
+        -- not evidence that this particular character already has. Keep an
+        -- unverifiable shield safe, but never score or recommend it.
+        return nil
     end
 
     -- Preserve an explicit unknown result when a private core supplies neither a
-    -- numeric subclass nor a localized name we can map. Legacy weapon callers
-    -- keep this conservative and refuse to score the item; other equipment may
-    -- still use the client's hint. A hint must never override a recognized
-    -- class, level, or proficiency restriction.
+    -- numeric subclass nor a localized name we can map. A broad IsUsableItem or
+    -- quest-reward hint is not evidence that the character learned the weapon
+    -- skill, so unknown legacy weapons remain protected but unscored.
     if type(itemSubTypeID) ~= "number" then
-        if addon.gameVersion == 30300 and IsWeaponSlot(itemEquipLoc) and
-            IsClientItemUsable(itemLink) then
-            return true
-        end
         return nil
     end
 
@@ -2047,8 +2035,6 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
         local proficiencySpell = WEAPON_PROFICIENCY_SPELL[itemSubTypeID]
         local trained = proficiencySpell and
                             session.trainedWeapons[itemSubTypeID] or nil
-        local proficiencySource = proficiencySpell and
-                                      session.trainedWeaponSources[itemSubTypeID]
         -- On 3.3.5 the learned proficiency is authoritative. This both rejects
         -- trainable-but-unlearned weapons and permits WotLK/custom-core weapon
         -- training which may be absent from the static class fallback map.
@@ -2057,24 +2043,13 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
             -- result. "Unknown" stays distinct from "untrained" so inventory
             -- cleanup can protect uncertain items, but neither may be scored,
             -- recommended, or auto-equipped as an upgrade.
-            if proficiencySpell then
-                if trained ~= true then
-                    -- Once the Skills panel contains recognizable weapon data,
-                    -- it is the authoritative record of what this character has
-                    -- actually trained. In particular, a Tauren Druid may be
-                    -- allowed to learn two-handed maces but cannot equip one
-                    -- until the weapon-master step has added that skill.
-                    if proficiencySource == "skill" then return false end
-                    -- IsUsableItem is the stock per-item check and is more
-                    -- precise than a localized spellbook fallback on cores
-                    -- whose Skills API is unavailable. Restrict this escape
-                    -- hatch to weapon types the stock class can train; an
-                    -- over-broad private-server result must not grant a Druid
-                    -- swords or a Hunter an untrained class-incompatible type.
-                    if session.equippableWeapons[itemSubTypeID] and
-                        IsClientItemUsable(itemLink) then return true end
-                    return trained
-                end
+            if not proficiencySpell then return nil end
+            if trained == true then
+                -- Continue into the independent slot checks below. In
+                -- particular, knowing a one-handed weapon skill does not imply
+                -- that Dual Wield has also been learned.
+            elseif trained == false then
+                return false
             else
                 return nil
             end
@@ -2106,9 +2081,14 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink)
     else
         if not session.equippableArmor[itemSubTypeID] then return false end
         local proficiencySpell = ARMOR_PROFICIENCY_SPELL[itemSubTypeID]
-        if addon.gameVersion == 30300 and proficiencySpell and
-            session.trainedArmor[itemSubTypeID] == false then
-            return false
+        if addon.gameVersion == 30300 and proficiencySpell then
+            -- The level-gated class map means only "trainable now". Mail and
+            -- Plate become usable solely after the learned passive is present;
+            -- nil is deliberately unknown instead of an implicit level-based
+            -- success.
+            if session.trainedArmor[itemSubTypeID] == true then return true end
+            if session.trainedArmor[itemSubTypeID] == false then return false end
+            return nil
         end
     end
     return true
@@ -2367,7 +2347,10 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     -- the bags, but it must not pass through to EP scoring based on the legacy
     -- reward window's unreliable "usable" flag. Skill/spell events clear this
     -- cache and retry immediately when the character learns a weapon skill.
-    if addon.gameVersion == 30300 and IsWeaponSlot(itemEquipLoc) and
+    local requiresVerifiedProficiency = IsWeaponSlot(itemEquipLoc) or
+        itemEquipLoc == "INVTYPE_SHIELD" or
+        ARMOR_PROFICIENCY_SPELL[itemSubTypeID] ~= nil
+    if addon.gameVersion == 30300 and requiresVerifiedProficiency and
         classUsability ~= true then
         itemData = {
             unusable = true,
