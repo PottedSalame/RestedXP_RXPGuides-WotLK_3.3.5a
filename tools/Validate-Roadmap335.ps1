@@ -92,6 +92,10 @@ $hbdText = [IO.File]::ReadAllText((Join-Path $root 'libs/HBD335/HereBeDragons-33
 if ($mapText -notmatch 'FindNearestSpiritHealer' -or
     $mapText -notmatch '(?s)spiritHealerDBKeys\s*=.*\[3\]\s*=\s*\{\s*530\s*\}.*\[4\]\s*=\s*\{\s*571\s*\}' -or
     $mapText -notmatch 'deathskipResolved' -or
+    $mapText -notmatch 'ShouldFollowGuideWhileGhost' -or
+    $mapText -notmatch 'needsDeathWaypoint' -or
+    $mapText -notmatch 'ClearCorpseWaypoint' -or
+    $mapText -match 'guideName\s*==\s*"41-43 Badlands"' -or
     $mapText -notmatch 'MAX_SPIRIT_HEALER_SPAWN_DISTANCE' -or
     $mapText -match 'px\s*-\s*n\.wy' -or
     $hbdText -notmatch 'GetWorldCoordinatesFromLegacyPosition') {

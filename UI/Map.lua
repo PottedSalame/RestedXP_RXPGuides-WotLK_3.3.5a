@@ -1095,6 +1095,7 @@ local function addMiniMapPins(pins)
 end
 
 local corpseWP = { title = "Corpse", generated = 1, wpHash = 0 }
+local pendingCorpseWP = { generated = 1, wpHash = 0 }
 
 local spiritHealerCoordinateCache = setmetatable({}, { __mode = "k" })
 local spiritHealerDBKeys = {
@@ -1161,8 +1162,8 @@ local function FindNearestSpiritHealer(HBD, DB, px, py, instance)
 end
 
 local function IsDeathSkip()
-    if not addon.SpiritHealerWorld then return false end
-    for _, step in pairs(addon.RXPFrame.activeSteps) do
+    local activeSteps = addon.RXPFrame and addon.RXPFrame.activeSteps or {}
+    for _, step in pairs(activeSteps) do
         if step.elements then
             for _, element in pairs(step.elements) do
                 if element.tag == "deathskip" then
@@ -1173,10 +1174,73 @@ local function IsDeathSkip()
     end
 end
 
+local function ShouldFollowGuideWhileGhost()
+    local guide = addon.currentGuide
+    local currentStep = guide and guide.steps and
+                            guide.steps[RXPCData.currentStep]
+    local activeSteps = addon.RXPFrame and addon.RXPFrame.activeSteps or {}
+    local steps, seen = {}, {}
+    if currentStep then
+        steps[#steps + 1] = currentStep
+        seen[currentStep] = true
+    end
+    for _, step in pairs(activeSteps) do
+        if not seen[step] then
+            steps[#steps + 1] = step
+            seen[step] = true
+        end
+    end
+
+    -- Some older bundled guides predate #ignorecorpse and express an
+    -- intentional ghost run only in their authored English instruction. Read
+    -- the immutable source text (never localized display text) so those routes
+    -- keep working without inserting lines that would change stable step IDs.
+    for _, step in ipairs(steps) do
+        if step.active and step.ignorecorpse then return true end
+        if step.active then
+            for _, element in ipairs(step.elements or {}) do
+                if element.tag ~= "deathskip" then
+                    local text = element.sourceText or element.text
+                    text = type(text) == "string" and text:lower() or ""
+                    if text:find("die on purpose", 1, true) or
+                        text:find("die intentionally", 1, true) or
+                        text:find("die and respawn at", 1, true) or
+                        text:find("die inside the instance", 1, true) or
+                        text:find("respawn at the spirit healer", 1, true) then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+
+    -- These quests deliberately require travelling as a ghost. Keep their
+    -- authored route instead of treating the state as an accidental death.
+    return addon.QuestAutoAccept(3912) or addon.QuestAutoAccept(3913)
+end
+
+local function GetDeathNavigationMode()
+    if IsDeathSkip() then return "deathskip" end
+    if ShouldFollowGuideWhileGhost() then return "guide" end
+    return "corpse"
+end
+
+local function ClearCorpseWaypoint()
+    corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
+    corpseWP.wx, corpseWP.wy, corpseWP.instance = nil, nil, nil
+end
+
+local function SetCorpseWaypoint(wx, wy, instance, title)
+    ClearCorpseWaypoint()
+    corpseWP.wx, corpseWP.wy, corpseWP.instance = wx, wy, instance
+    corpseWP.title = addon.locale.Get(title)
+end
+
 local function updateArrowData()
     local lowPrioWPs
     local loop = {}
-    local isDeathSkip = IsDeathSkip()
+    local isGhost = UnitIsGhost("player")
+    local deathNavigationMode = isGhost and GetDeathNavigationMode()
     local HBD = LibStub("HereBeDragons-2.0")
 
     local function ProcessWaypoint(element, lowPrio, isComplete)
@@ -1208,20 +1272,22 @@ local function updateArrowData()
         end
     end
 
-    -- 1) Ghost logic: corpse or Spirit Healer (deathskip)
-    if UnitIsGhost("player") and not (addon.QuestAutoAccept(3912) or addon.QuestAutoAccept(3913)) then
-        local aw = addon.activeWaypoints or {}
-        local guideName = addon.currentGuide and addon.currentGuide.name
-        local skip
-        for _, e in pairs(aw) do
-            skip = skip
-                or (e.step and e.step.ignorecorpse)
-                or (not e.textOnly and guideName == "41-43 Badlands")
+    -- 1) Death-state routing is exclusive. An intentional deathskip points to
+    -- the assigned Spirit Healer, an explicitly authored ghost route keeps its
+    -- guide waypoint, and every other death points only to the real corpse.
+    -- Never fall through to the active quest waypoint while corpse discovery
+    -- is still waiting on the legacy map API.
+    if isGhost then
+        local followGuide = deathNavigationMode == "guide"
+        if not followGuide then
+            -- hideArrow may have been set by an unreachable guide waypoint or
+            -- by a step with no pins. Death recovery has its own priority and
+            -- must remain visible unless the arrow feature itself is disabled.
+            addon.hideArrow = false
         end
-
-        if not skip and HBD then
+        if not followGuide and HBD then
             local deathskipResolved = false
-            if isDeathSkip then
+            if deathNavigationMode == "deathskip" then
                 local px, py, inst = HBD:GetPlayerWorldPosition("player")
                 local DB = addon.SpiritHealerWorld
                 local bestWX, bestWY
@@ -1230,9 +1296,7 @@ local function updateArrowData()
                         FindNearestSpiritHealer(HBD, DB, px, py, inst)
                 end
                 if bestWX then
-                    corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
-                    corpseWP.wx, corpseWP.wy, corpseWP.instance = bestWX, bestWY, inst
-                    corpseWP.title = "Spirit Healer"
+                    SetCorpseWaypoint(bestWX, bestWY, inst, "Spirit Healer")
                     deathskipResolved = true
                     if ProcessWaypoint(corpseWP) then return end
                 end
@@ -1256,13 +1320,23 @@ local function updateArrowData()
                 if corpse and corpse.x then
                     local wx, wy, inst = HBD:GetWorldCoordinatesFromZone(corpse.x, corpse.y, zone)
                     if wx and inst then
-                        corpseWP.x, corpseWP.y, corpseWP.zone, corpseWP.mapID = nil, nil, nil, nil
-                        corpseWP.wx, corpseWP.wy, corpseWP.instance = wx, wy, inst
-                        corpseWP.title = "Corpse"
+                        SetCorpseWaypoint(wx, wy, inst, "Corpse")
                         if ProcessWaypoint(corpseWP) then return end
                     end
                 end
             end
+        end
+
+        if not followGuide then
+            -- Corpse coordinates can be briefly unavailable just after spirit
+            -- release or a zone transition. Hide the stale guide arrow and
+            -- use a non-rendered sentinel so UpdateGotoSteps keeps retrying;
+            -- the active quest route must never be shown in this interval.
+            ClearCorpseWaypoint()
+            af.element = pendingCorpseWP
+            af.distance, af.etaText = nil, nil
+            af:Hide()
+            return
         end
     end
 
@@ -1302,6 +1376,33 @@ local function updateArrowData()
     end
     af:Hide()
 end
+
+-- Refresh death routing immediately on the legacy lifecycle events instead of
+-- waiting for a map/step change. PLAYER_ALIVE fires both after releasing the
+-- spirit and after resurrection on 3.3.5, so the same callback enters corpse
+-- mode and later restores the authored guide route.
+local deathNavigationWatcher = CreateFrame("Frame")
+for _, eventName in ipairs({
+    "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST",
+    "ZONE_CHANGED_NEW_AREA", "PLAYER_ENTERING_WORLD",
+}) do
+    deathNavigationWatcher:RegisterEvent(eventName)
+end
+deathNavigationWatcher:SetScript("OnEvent", function(self, eventName)
+    if eventName == "PLAYER_DEAD" then
+        ClearCorpseWaypoint()
+        af.element = pendingCorpseWP
+        af.distance, af.etaText = nil, nil
+        af:Hide()
+        return
+    end
+    if self.refreshPending then return end
+    self.refreshPending = true
+    C_Timer.After(0, function()
+        self.refreshPending = nil
+        if addon.currentGuide then updateArrowData() end
+    end)
+end)
 
 
 function addon.ResetArrowPosition()
@@ -1425,7 +1526,23 @@ end
 
 function addon.UpdateGotoSteps()
     local hideArrow = false
-    local forceArrowUpdate = UnitIsGhost("player") == (af.element ~= corpseWP)
+    local isGhost = UnitIsGhost("player")
+    if not isGhost and UnitIsDeadOrGhost and
+        UnitIsDeadOrGhost("player") then
+        af.element = pendingCorpseWP
+        af.distance, af.etaText = nil, nil
+        af:Hide()
+        return
+    end
+    local needsDeathWaypoint = isGhost and
+                                   GetDeathNavigationMode() ~= "guide"
+    local forceArrowUpdate
+    if needsDeathWaypoint then
+        forceArrowUpdate = af.element ~= corpseWP
+    else
+        forceArrowUpdate = af.element == corpseWP or
+                               af.element == pendingCorpseWP
+    end
     DisplayLines()
     if #addon.activeWaypoints == 0 and not forceArrowUpdate then
         addon.hideArrow = true
