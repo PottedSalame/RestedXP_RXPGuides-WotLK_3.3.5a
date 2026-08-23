@@ -398,7 +398,7 @@ local function IsOnQuest(id)
     local recent = addon.recentAccept[id]
     if quest then
         addon.recentAccept[id] = nil
-    elseif recent and GetTime()-recent < 2 then
+    elseif recent and GetTime()-recent < 5 then
         return true
     end
     return quest
@@ -5012,16 +5012,20 @@ local function CheckNpcIds(element,t)
     for i,v in ipairs(t) do
         local name,id = v:match("(.+)::(%d+)$")
         id = tonumber(id) or tonumber(v)
-        if name and addon.player.lang == "en" then
-            t[i] = name
+        if id then
+            element.unitIds = element.unitIds or {}
+            element.unitIds[i] = id
+        end
+        if name then
+            -- Keep an immediately targetable authored/localized fallback while
+            -- the legacy tooltip cache resolves the official NPC name. The old
+            -- path replaced Name::ID with the numeric ID on non-English clients,
+            -- causing /targetexact to search for strings such as "2269".
+            t[i] = addon.GetCreatureName(name) or name
+            if addon.player.lang ~= "en" then element.update = true end
         elseif id then
-            local name --= addon.GetNpcName(id)
-            if name then
-                t[i] = name
-            else
-                t[i] = tostring(id)
-                element.update = true
-            end
+            t[i] = tostring(id)
+            element.update = true
         end
     end
 end
@@ -5037,8 +5041,8 @@ local function UpdateNpcNames(element)
             return
         end
 
-        for i,id in ipairs(t) do
-            local id = tonumber(id)
+        for i,value in ipairs(t) do
+            local id = element.unitIds and element.unitIds[i] or tonumber(value)
             if id then
                 local name = addon.GetNpcName(id,element)
                 if name then

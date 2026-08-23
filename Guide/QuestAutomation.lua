@@ -51,6 +51,10 @@ function automation:ResetTransient()
     end
     addon.scheduler:Cancel("quest-engine", "reconcile-pending-accept")
     addon.scheduler:Cancel("quest-engine", "finished-reconcile")
+    for index = 1, 3 do
+        addon.scheduler:Cancel("quest-engine",
+                               "guide-quest-state-refresh-" .. index)
+    end
 end
 
 addon.services:Register("quest-automation", automation, "questAutomation")

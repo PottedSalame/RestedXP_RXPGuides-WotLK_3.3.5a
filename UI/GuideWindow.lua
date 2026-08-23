@@ -1280,6 +1280,40 @@ function CurrentStepFrame.EventHandler(self, event, ...)
     end
 end
 
+local function ElementHandlesEvent(element, wantedEvent)
+    if not (element and element.tag) then return false end
+    local registered = element.event or addon.functions.events[element.tag]
+    if type(registered) == "string" then return registered == wantedEvent end
+    if type(registered) ~= "table" then return false end
+    for _, event in ipairs(registered) do
+        if event == wantedEvent then return true end
+    end
+    return false
+end
+
+-- Event delivery order between the compatibility quest-cache frame and the
+-- individual guide element frames is not guaranteed on legacy clients. Run one
+-- debounced second evaluation after the cache has settled so an accept or live
+-- objective cannot remain stale until the next unrelated quest-log event.
+function RXPFrame.RefreshQuestState(event)
+    event = event or "QUEST_LOG_UPDATE"
+    local refreshed
+    for _, step in ipairs(activeSteps) do
+        if step.active then
+            for _, element in ipairs(step.elements or {}) do
+                local frame = element.frame
+                local callback = frame and frame.callback
+                if type(callback) == "function" and
+                    ElementHandlesEvent(element, event) then
+                    addon.Call(element.tag, callback, frame, event)
+                    refreshed = true
+                end
+            end
+        end
+    end
+    if refreshed then addon.updateStepText = true end
+end
+
 function CurrentStepFrame.UpdateText(languageRefresh)
     if not languageRefresh then addon.updateStepText = false end
     local guide = addon.currentGuide

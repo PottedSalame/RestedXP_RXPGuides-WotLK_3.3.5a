@@ -1272,6 +1272,9 @@ local function CommitQuestAccept(questId)
     if not committed then return end
     local alreadyCommitted = committed.alreadyCommitted
     addon.recentAccept[questId] = now
+    if C_QuestLog and C_QuestLog.MarkQuestAccepted then
+        C_QuestLog.MarkQuestAccepted(questId)
+    end
 
     local guideAccept = GetQuestAutomationElement(addon.questAccept, questId)
     guideAccept = guideAccept or committed.element
@@ -1407,6 +1410,24 @@ local function ReconcileQuestAutomationState(disabled)
     ReconcileSubmittedQuestInteraction(disabled, false)
 end
 
+local function ScheduleQuestStateRefresh(disabled)
+    local packDelay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
+    for index, delay in ipairs({0.05, 0.20, 0.50}) do
+        addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                              "guide-quest-state-refresh-" .. index,
+                              delay + packDelay, function()
+            if C_QuestLog and C_QuestLog.RefreshLegacyCache then
+                C_QuestLog.RefreshLegacyCache()
+            end
+            ReconcileQuestAutomationState(disabled)
+            local frame = addon.RXPFrame
+            if frame and frame.RefreshQuestState then
+                frame.RefreshQuestState("QUEST_LOG_UPDATE")
+            end
+        end)
+    end
+end
+
 function addon:QuestAutomation(event, arg1, arg2, arg3)
     local disabled
     if not addon.settings.profile.enableQuestAutomation or IsControlKeyDown() or addon.isHidden then
@@ -1442,6 +1463,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         end
         local reservedAccept = GetReservedQuestInteraction("accept", questId)
         CommitQuestAccept(questId)
+        ScheduleQuestStateRefresh(disabled)
         -- Clear only the interaction which this event can confirm. A refreshed
         -- gossip list may already be visible on fast private-server cores.
         if reservedAccept then
@@ -1452,6 +1474,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         if addon.lore then addon.lore:MarkSeen(questId) end
         return
     elseif event == "QUEST_LOG_UPDATE" then
+        ScheduleQuestStateRefresh(disabled)
         local delay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
         if delay > 0 then
             addon.scheduler:After(QUEST_AUTOMATION_OWNER,
@@ -1493,6 +1516,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
                 ScheduleQuestAutomationRetries()
             end
         end
+        ScheduleQuestStateRefresh(disabled)
         return
     end
 

@@ -1549,6 +1549,8 @@ do
     local onQuest           = {}   -- questID -> true
     local completeByQuestID = {}   -- questID -> true (ready to turn in)
     local completedCache    = {}   -- questID -> true (finished, account/char)
+    local recentlyAccepted  = {}   -- questID -> acceptance time while log settles
+    local ACCEPTED_GRACE = 5
 
     local function questIDFromIndex(index)
         -- AzerothCore's 3.3.5a client returns the questID as the 9th value of
@@ -1573,6 +1575,7 @@ do
                 if qid then
                     logIndexByQuestID[qid] = i
                     onQuest[qid] = true
+                    recentlyAccepted[qid] = nil
                     if legacyTrue(isComplete) then
                         completeByQuestID[qid] = true
                     end
@@ -1619,6 +1622,22 @@ do
         end
     end
 
+    local function markQuestAccepted(questID, index)
+        questID = tonumber(questID)
+        index = tonumber(index)
+        if not questID or questID <= 0 then return false end
+
+        -- QUEST_ACCEPTED is authoritative even when a private server populates
+        -- the quest-log row one event or frame later. Keep a bounded positive
+        -- shadow so acceptance and objective elements cannot miss that change.
+        onQuest[questID] = true
+        recentlyAccepted[questID] = _G.GetTime and _G.GetTime() or 0
+        if index and index > 0 and questIDFromIndex(index) == questID then
+            logIndexByQuestID[questID] = index
+        end
+        return true
+    end
+
     local questFrame = CreateFrame("Frame", "RXPCompat335QuestFrame")
     questFrame:RegisterEvent("QUEST_LOG_UPDATE")
     questFrame:RegisterEvent("QUEST_QUERY_COMPLETE")
@@ -1634,16 +1653,14 @@ do
             local index = tonumber(arg1)
             local qid = tonumber(arg2) or
                             (index and questIDFromIndex(index))
-            if qid then
-                logIndexByQuestID[qid] = index
-                onQuest[qid] = true
-            end
+            if qid then markQuestAccepted(qid, index) end
         elseif event == "QUEST_TURNED_IN" then
             local qid = tonumber(arg1)
             if qid then
                 logIndexByQuestID[qid] = nil
                 onQuest[qid] = nil
                 completeByQuestID[qid] = nil
+                recentlyAccepted[qid] = nil
                 completedCache[qid] = true
             end
         elseif event == "PLAYER_ENTERING_WORLD" then
@@ -1686,11 +1703,22 @@ do
     def(C_QuestLog, "GetLogIndexForQuestID", function(questID)
         return validatedLogIndex(questID)
     end)
+    def(C_QuestLog, "RefreshLegacyCache", rebuildLog)
+    def(C_QuestLog, "MarkQuestAccepted", markQuestAccepted)
     def(C_QuestLog, "IsOnQuest", function(questID)
         questID = tonumber(questID)
         if not questID then return false end
-        if onQuest[questID] and validatedLogIndex(questID) then return true end
-        return validatedLogIndex(questID) ~= nil
+        if validatedLogIndex(questID) then
+            recentlyAccepted[questID] = nil
+            return true
+        end
+        local acceptedAt = recentlyAccepted[questID]
+        if acceptedAt and (_G.GetTime and _G.GetTime() or 0) - acceptedAt <=
+            ACCEPTED_GRACE then
+            return true
+        end
+        recentlyAccepted[questID] = nil
+        return false
     end)
     def(C_QuestLog, "IsComplete", function(questID)
         questID = tonumber(questID)

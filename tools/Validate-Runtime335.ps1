@@ -357,11 +357,31 @@ if ($compatBootstrapText -notmatch
     Add-ValidationError (
         'The 3.3.5 quest facade must validate positive quest-log indices and numeric booleans.')
 }
+if ($compatBootstrapText -notmatch
+        'local\s+recentlyAccepted\s*=\s*\{\}' -or
+    $compatBootstrapText -notmatch
+        'def\(C_QuestLog,\s*"RefreshLegacyCache",\s*rebuildLog\)' -or
+    $compatBootstrapText -notmatch
+        'def\(C_QuestLog,\s*"MarkQuestAccepted",\s*markQuestAccepted\)') {
+    Add-ValidationError (
+        'The legacy quest cache must retain authoritative accepts while the ' +
+        'quest-log row and event frames settle.')
+}
 
 $directiveHandlersText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\Directives\Handlers.lua'))
 $guideWindowText = [IO.File]::ReadAllText(
     (Join-Path $root 'UI\GuideWindow.lua'))
+$coreAddonText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Core\Addon.lua'))
+if ($guideWindowText -notmatch
+        'function\s+RXPFrame\.RefreshQuestState\s*\(' -or
+    $coreAddonText -notmatch 'guide-quest-state-refresh' -or
+    $coreAddonText -notmatch 'C_QuestLog\.RefreshLegacyCache\(\)') {
+    Add-ValidationError (
+        'Quest-log changes must receive a deferred active-step reevaluation ' +
+        'after the 3.3.5 cache settles.')
+}
 $inventoryCountPath = Join-Path $root 'Compat\InventoryCount335.lua'
 $inventoryCountText = [IO.File]::ReadAllText($inventoryCountPath)
 if ($inventoryCountText -notmatch
@@ -425,7 +445,6 @@ if ($directiveHandlersText -notmatch
         'discovery and normalize the 3.3.5 UI_INFO_MESSAGE payload.')
 }
 
-$coreAddonText = [IO.File]::ReadAllText((Join-Path $root 'Core\Addon.lua'))
 $automationOrderText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\AutomationOrder.lua'))
 if ($coreAddonText -notmatch

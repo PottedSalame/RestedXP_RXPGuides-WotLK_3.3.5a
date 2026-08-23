@@ -127,6 +127,20 @@ if ($targetingText -notmatch 'dangerousTargets' -or
     $tipsText -notmatch 'session\.lastDangerFlash') {
     Add-Error 'Dangerous-mob observations are not isolated and cooldown-bounded.'
 }
+if ($targetingText -notmatch 'nearby-target-macro' -or
+    $targetingText -notmatch 'proxmityPolling\.scannedTargets\[t\]' -or
+    $targetingText -notmatch
+        'for\s+_,\s*t\s+in\s+ipairs\(observedTargets\)\s+do\s+tinsert\(executionTargets,\s*t\)') {
+    Add-Error 'The 3.3.5 target macro does not prioritize observed nearby targets.'
+}
+$handlerText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Guide/Directives/Handlers.lua'))
+if ($handlerText -notmatch 'element\.unitIds\[i\]\s*=\s*id' -or
+    $handlerText -notmatch
+        'element\.unitIds\s+and\s+element\.unitIds\[i\]\s+or\s+tonumber\(value\)' -or
+    $handlerText -notmatch 'addon\.GetCreatureName\(name\)\s+or\s+name') {
+    Add-Error 'Name::NPCID targets can degrade into numeric macro targets before cache resolution.'
+}
 if ($tipsText -notmatch
         'local\s+FlashClientIcon\s*=\s*_G\.FlashClientIcon' -or
     $tipsText -notmatch

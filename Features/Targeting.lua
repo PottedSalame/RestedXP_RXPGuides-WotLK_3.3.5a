@@ -316,6 +316,17 @@ function addon.targeting:RecordSeenTarget(name, wanted, now, source)
     -- so that render is not hidden again at the end of UpdateTargetFrame.
     proxmityPolling.match = true
 
+    -- The secure macro contains every target required by the step. When more
+    -- than one of those names is targetable, the final successful /targetexact
+    -- command wins. Rebuild its ordering when a stock nameplate, target, or
+    -- mouseover first confirms a nearby unit so the observed unit is attempted
+    -- last instead of being overwritten by an unobserved step target.
+    if changed and addon.scheduler then
+        addon.scheduler:After(self, "nearby-target-macro", 0.05, function()
+            self:UpdateMacro()
+        end)
+    end
+
     if changed and not legacyScanner.alerted[name] and
         (wanted.kind == "rare" or wanted.kind == "unitscan" or
             wanted.kind == "dangerous") then
@@ -428,6 +439,10 @@ function addon.targeting:LegacyScanTick()
 
     proxmityPolling.match = next(proxmityPolling.scannedTargets) ~= nil
     if membershipChanged or legacyScanner.frameDirty then
+        if membershipChanged and addon.scheduler then
+            addon.scheduler:After(self, "nearby-target-macro", 0.05,
+                                  function() self:UpdateMacro() end)
+        end
         legacyScanner.frameDirty = false
         if InCombatLockdown() then
             legacyScanner.frameDirty = true
@@ -807,13 +822,23 @@ function addon.targeting:UpdateMacro(queuedTargets)
     -- the last/highest-priority visible target wins.
     local npcNames = {}
     local executionTargets = {}
+    local observedTargets = {}
     for i = #targets, 1, -1 do
         local t = targets[i]
         if t and t ~= "" and not npcNames[t] then
             npcNames[t] = true
-            tinsert(executionTargets, t)
+            if addon.gameVersion == 30300 and
+                proxmityPolling.scannedTargets[t] then
+                tinsert(observedTargets, t)
+            else
+                tinsert(executionTargets, t)
+            end
         end
     end
+    -- Nearby names execute last. This preserves the guide's relative priority
+    -- inside both groups while ensuring a visibly rendered step target wins over
+    -- another target which happens to be reachable by /targetexact farther away.
+    for _, t in ipairs(observedTargets) do tinsert(executionTargets, t) end
 
     local targetText = ""
     for _, t in ipairs(executionTargets) do
