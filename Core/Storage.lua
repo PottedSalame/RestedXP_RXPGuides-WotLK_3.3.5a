@@ -4,7 +4,7 @@ local storage = addon.storage or {}
 addon.storage = storage
 
 local migrations = {}
-local CURRENT_SCHEMA = 1
+local CURRENT_SCHEMA = 2
 
 local function RequireTable(value, label)
     if type(value) ~= "table" then
@@ -50,6 +50,30 @@ end
 -- are deliberately not reshaped at this behavior-preserving refactor gate.
 storage:RegisterMigration(1, function() end)
 
+-- Schema two reserves bounded, anonymous speedrun stores.  The migration is
+-- intentionally additive and does not fabricate historical step timings.
+storage:RegisterMigration(2, function(self)
+    local account = self:Account()
+    local character = self:Character()
+    account.speedrun = type(account.speedrun) == "table" and account.speedrun or {}
+    account.speedrun.practice = type(account.speedrun.practice) == "table" and
+                                    account.speedrun.practice or
+                                    {definitions = {}, attempts = {}}
+    account.speedrun.practice.definitions =
+        type(account.speedrun.practice.definitions) == "table" and
+            account.speedrun.practice.definitions or {}
+    account.speedrun.practice.attempts =
+        type(account.speedrun.practice.attempts) == "table" and
+            account.speedrun.practice.attempts or {}
+    account.speedrun.branchObservations =
+        type(account.speedrun.branchObservations) == "table" and
+            account.speedrun.branchObservations or {}
+    account.speedrun.rulesets = type(account.speedrun.rulesets) == "table" and
+                                    account.speedrun.rulesets or {}
+    character.speedrunSession = type(character.speedrunSession) == "table" and
+                                    character.speedrunSession or {}
+end)
+
 function storage:Migrate()
     local account = self:Account()
     local version = math.max(0, math.floor(tonumber(
@@ -74,4 +98,3 @@ function storage:GetSchemaVersion()
 end
 
 addon.services:Register("storage", storage, "storage")
-

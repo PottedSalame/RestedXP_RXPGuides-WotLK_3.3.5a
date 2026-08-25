@@ -498,7 +498,9 @@ local profile = {enabled = true}
 addon.storage:Bind(account, character, profile)
 local migrated, migrationError = addon.storage:Migrate()
 check(migrated, "storage migration failed: " .. tostring(migrationError))
-check(account.runtimeSchemaVersion == 1 and account.preserved,
+check(account.runtimeSchemaVersion == 2 and account.preserved and
+          type(account.speedrun) == "table" and
+          type(character.speedrunSession) == "table",
       "storage migration changed existing account data")
 check(addon.storage:Character().step == 12 and addon.storage:Profile().enabled,
       "storage accessors returned the wrong tables")

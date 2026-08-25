@@ -12,7 +12,9 @@ $modules = @(
     'Features/ActivityPlanner.lua','Features/Accessibility.lua',
     'Features/GuideRecorder.lua','Features/PerformanceInspector.lua',
     'Features/GuideAnalysis.lua','Features/RunArchive.lua',
-    'Features/PetAssistant.lua','Features/XPAssistant.lua'
+    'Features/PetAssistant.lua','Features/XPAssistant.lua',
+    'Features/SpeedrunCore.lua','Features/SpeedrunAdvisors.lua',
+    'Features/SpeedrunPractice.lua'
 )
 $lastOffset = -1
 foreach ($module in $modules) {
@@ -32,9 +34,58 @@ if ($coreText -notmatch 'local cacheVersion\s*=\s*33\b') {
 
 $settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI/Settings.lua'))
 foreach ($command in @('guides','diagnose','backup','supplies','gear','dailies','record',
-        'preflight','watch','archives','pet','perf')) {
+        'preflight','watch','archives','pet','perf','coach','grind','pitstop',
+        'deathwarp','practice','audio','rules')) {
     if ($settingsText -notmatch ('input\s*==\s*"' + [regex]::Escape($command) + '"')) {
         Add-Error "Missing /rxp $command command routing."
+    }
+}
+
+$speedrunCoreText = [IO.File]::ReadAllText((Join-Path $root 'Features/SpeedrunCore.lua'))
+$speedrunAdvisorText = [IO.File]::ReadAllText((Join-Path $root 'Features/SpeedrunAdvisors.lua'))
+$speedrunPracticeText = [IO.File]::ReadAllText((Join-Path $root 'Features/SpeedrunPractice.lua'))
+foreach ($setting in @('enableSpeedrunSuite','enableSpeedrunCoach',
+        'enableSpeedrunGrind','enableSpeedrunPitStop','enableSpeedrunRoute',
+        'enableSpeedrunDeathwarp','enableSpeedrunPractice',
+        'enableSpeedrunAudio','enableSpeedrunRules')) {
+    if ($settingsText -notmatch [regex]::Escape($setting)) {
+        Add-Error "Speedrunning Suite setting is missing: $setting"
+    }
+}
+foreach ($pattern in @('function\s+speedrun:StartSegment\s*\(',
+        'function\s+speedrun:GetComparison\s*\(',
+        'loading/offline','MAX_DETAILED_RUNS\s*=\s*10')) {
+    if ($speedrunCoreText -notmatch $pattern) {
+        Add-Error "Speedrun timing foundation is missing: $pattern"
+    }
+}
+foreach ($api in @('grind:Scan','pitstop:Scan','strategist:Scan','deathwarp:Scan')) {
+    if ($speedrunAdvisorText -notmatch ('function\s+' + [regex]::Escape($api) + '\s*\(')) {
+        Add-Error "Speedrun advisor API is missing: $api"
+    }
+}
+foreach ($api in @('Start','Pause','Split','Finish','Abort')) {
+    if ($speedrunPracticeText -notmatch ('function\s+practice:' + $api + '\s*\(')) {
+        Add-Error "Speedrun Practice API is missing: $api"
+    }
+}
+if ($speedrunPracticeText -match 'addon\.SetStep\s*\(' -or
+    $speedrunPracticeText -match 'addon\.GoToStep\s*\(') {
+    Add-Error 'Practice mode must not mutate the real guide step.'
+}
+$speedrunMultiReturnHazards = @(
+    'tonumber\s*\(\s*GetContainerNumFreeSlots\s*\(',
+    'tonumber\s*\(\s*GetRepairAllCost\s*\(',
+    'tonumber\s*\(\s*addon\.tracker:GetElapsedTimes\s*\(',
+    'tonumber\s*\(\s*select\s*\(\s*3\s*,\s*GetItemInfo\s*\('
+)
+foreach ($pattern in $speedrunMultiReturnHazards) {
+    if ($speedrunCoreText -match $pattern -or
+        $speedrunAdvisorText -match $pattern -or
+        $speedrunPracticeText -match $pattern) {
+        Add-Error (
+            'Speedrun code passes a multi-return API directly to tonumber: ' +
+            $pattern)
     }
 }
 
@@ -51,6 +102,13 @@ foreach ($pattern in @(
 if ($toolWindowText -notmatch 'local\s+function\s+PreventEscapeClose\s*\(' -or
     $toolWindowText -match 'RegisterEscapeFrame') {
     Add-Error 'Shared Feature Tool windows must not close through UISpecialFrames/Escape.'
+}
+if ($toolWindowText -notmatch
+        'local\s+scrollName\s*=\s*spec\.name\s+or' -or
+    $toolWindowText -notmatch
+        'CreateFrame\("ScrollFrame",\s*scrollName,\s*frame') {
+    Add-Error (
+        'Legacy UIPanelScrollFrameTemplate instances must have stable names.')
 }
 if ($settingsText -notmatch 'featureToolsSettings\s*=\s*\{' -or
     $settingsText -notmatch 'childGroups\s*=\s*"tree"') {

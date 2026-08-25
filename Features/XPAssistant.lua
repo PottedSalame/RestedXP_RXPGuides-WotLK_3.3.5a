@@ -634,6 +634,7 @@ function assistant:CreateFooterButton()
     button:SetScript("OnLeave", function() _G.GameTooltip:Hide() end)
     footer.xpStatus = button
     self.footerButton = button
+    if addon.UpdateFooterStatusAnchor then addon.UpdateFooterStatusAnchor() end
 end
 
 local function SetCellFont(cell, size)

@@ -684,7 +684,7 @@ end
 
 local lsh = bit.lshift
 local function GetPinHash(x,y,instance,element,step)
-    local n = step and step.index or 0
+    local n = tonumber(step and (step.pinIndex or step.index)) or 0
     return ((instance + n) % 256) + lsh(math.floor(x*128),8) +
             lsh(math.floor(y*1024),15) + lsh((element % 128),25)
 end
@@ -713,6 +713,12 @@ local function generatePins(steps, numPins, startingIndex, isMiniMap)
         end
     end
 
+    -- A user-approved speedrun grind objective temporarily takes arrow
+    -- priority without being inserted into the real guide or its checkpoint.
+    -- It is deliberately handled outside generatedSteps so cancelling it can
+    -- restore the canonical route with one map refresh.
+    local speedrunStep = not isMiniMap and addon.speedrunTemporaryWaypointStep
+    if speedrunStep then GetNumPins(speedrunStep) end
     for _, step in pairs(activeSteps) do GetNumPins(step) end
 
     for i = RXPCData.currentStep + 1, RXPCData.currentStep + numPins do
@@ -757,7 +763,8 @@ local function generatePins(steps, numPins, startingIndex, isMiniMap)
                 element.wpHash = GetPinHash(element.x,element.y,element.zone,n,step)
                 n = n + 1
             end
-            if not isMiniMap and step.active and not skipWp then
+            if not isMiniMap and step.active and not step.speedrunTemporary and
+                not skipWp then
                 local wpList = RXPCData.completedWaypoints[step.index or "tip"] or {}
                 skipWp = wpList[element.wpHash] or element.skip
                 wpList[element.wpHash] = skipWp
@@ -811,6 +818,7 @@ local function generatePins(steps, numPins, startingIndex, isMiniMap)
         end
     end
 
+    if speedrunStep then ProcessMapPin(speedrunStep, true) end
     for _, step in pairs(activeSteps) do ProcessMapPin(step) end
 
     if not isMiniMap then
@@ -1158,6 +1166,42 @@ local function FindNearestSpiritHealer(HBD, DB, px, py, instance)
     -- pointing at a plausible-but-wrong healer.
     if best and bestDistance <= MAX_SPIRIT_HEALER_SPAWN_DISTANCE then
         return bestX, bestY, best, bestDistance
+    end
+end
+
+-- Read-only advisory facade.  It intentionally shares the exact continent
+-- scoping, legacy-coordinate conversion, and 800-yard safety cap used by the
+-- real deathskip arrow instead of duplicating graveyard assumptions.
+function addon.FindNearestSpiritHealer(px, py, instance)
+    if not (px and py and instance and addon.SpiritHealerWorld) then return end
+    return FindNearestSpiritHealer(HBD, addon.SpiritHealerWorld,
+                                   px, py, instance)
+end
+
+-- Read-only corpse position for advisory tools. The cached waypoint is only
+-- exposed while dead/ghosted, preventing a stale position from influencing
+-- ordinary route decisions after resurrection.
+function addon.GetCorpseWorldPosition()
+    if not (UnitIsDeadOrGhost and UnitIsDeadOrGhost("player")) then return end
+    if corpseWP.wx and corpseWP.wy and corpseWP.instance then
+        return corpseWP.wx, corpseWP.wy, corpseWP.instance, corpseWP.zone
+    end
+    local HBD = LibStub("HereBeDragons-2.0")
+    if not HBD then return end
+    local zone = HBD:GetPlayerZone()
+    local corpse
+    if C_DeathInfo and C_DeathInfo.GetCorpseMapLocation then
+        local corpseZone, position = C_DeathInfo.GetCorpseMapLocation()
+        if position then zone, corpse = corpseZone, position end
+    end
+    if not corpse and type(zone) == "number" and C_DeathInfo and
+        C_DeathInfo.GetCorpseMapPosition then
+        corpse = C_DeathInfo.GetCorpseMapPosition(zone)
+    end
+    if corpse and corpse.x and corpse.y and type(zone) == "number" then
+        local wx, wy, instance =
+            HBD:GetWorldCoordinatesFromZone(corpse.x, corpse.y, zone)
+        if wx and wy and instance then return wx, wy, instance, zone end
     end
 end
 

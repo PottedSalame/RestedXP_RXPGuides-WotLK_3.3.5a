@@ -1430,7 +1430,8 @@ end
 
 function addon:QuestAutomation(event, arg1, arg2, arg3)
     local disabled
-    if not addon.settings.profile.enableQuestAutomation or IsControlKeyDown() or addon.isHidden then
+    if not addon.settings.profile.enableQuestAutomation or IsControlKeyDown() or
+        addon.isHidden or addon.speedrunPracticeActive then
         disabled = true
     end
 

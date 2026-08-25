@@ -34,8 +34,16 @@ H["What are command the line options?"] = [[
 |cff909090/rxp archives|r - Open anonymous account-wide personal-best archives
 |cff909090/rxp pet|r - Open the Hunter Pet Assistant
 |cff909090/rxp perf|r - Open the Performance Inspector
+|cff909090/rxp coach|r - Open the Live Speedrun Coach
+|cff909090/rxp grind|r - Open the Dynamic Grind Optimizer
+|cff909090/rxp pitstop|r - Open the Pit Stop Planner
+|cff909090/rxp route|r - Open the Adaptive Route Strategist when enabled
+|cff909090/rxp deathwarp|r - Open the Deathwarp Decision Assistant
+|cff909090/rxp practice|r - Open the Segment Practice Lab
+|cff909090/rxp audio|r - Open the Speedrun Audio Director
+|cff909090/rxp rules|r - Open run rules and integrity details
 |cff909090/rxp catchup|r - Preview a safe starting step
-|cff909090/rxp route|r - Plan a conservative return route
+|cff909090/rxp recover|r - Plan a conservative return route
 |cff909090/rxp supplies|r - Open the class supplies checklist
 |cff909090/rxp gear|r - Open the Gear Advisor
 |cff909090/rxp gold|r - Open the current Gold Assistant farming report

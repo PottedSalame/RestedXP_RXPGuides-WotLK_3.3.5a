@@ -111,6 +111,8 @@ The following actions can be assigned under the game's **Key Bindings** menu:
 - Use Active Item buttons 1–4.
 - Target Friendly Target buttons 1–4.
 - Target Enemy Target buttons 1–4.
+- Start, pause, or resume Segment Practice.
+- Record a manual Segment Practice split.
 
 Targeting actions use secure buttons and still require a physical key or mouse press, as required by the 3.3.5a client.
 
@@ -143,6 +145,15 @@ Roadmap tools are also available directly:
 - `/rxp archives` opens anonymous account-wide personal-best archives.
 - `/rxp pet` opens the Hunter Pet Assistant.
 - `/rxp perf` opens the Performance Inspector and sanitized capture tools.
+- `/rxp coach` opens the Live Speedrun Coach.
+- `/rxp grind` opens the Dynamic Grind Optimizer.
+- `/rxp pitstop` opens the Pit Stop Planner.
+- `/rxp route` opens the Adaptive Route Strategist when it is enabled;
+  `/rxp recover` always opens the conservative return-route planner.
+- `/rxp deathwarp` opens the Deathwarp Decision Assistant.
+- `/rxp practice` opens the Segment Practice Lab.
+- `/rxp audio` opens the Speedrun Audio Director.
+- `/rxp rules` opens the active run ruleset and integrity report.
 
 The aliases `/rxpg` and `/rxpguides` are also registered. See
 [FEATURES_335.md](FEATURES_335.md) for the roadmap services, privacy boundaries,

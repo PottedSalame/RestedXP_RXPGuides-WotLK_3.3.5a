@@ -18,7 +18,15 @@ manager.knownNames = manager.knownNames or {
     "RXPPerformanceInspector",
     "RXPHunterPetAssistant",
     "RXPLevelingArchives",
-    "RXPXPProgressWindow"
+    "RXPXPProgressWindow",
+    "RXPSpeedrunCoachWindow",
+    "RXPSpeedrunGrindWindow",
+    "RXPSpeedrunPitStopWindow",
+    "RXPSpeedrunRouteWindow",
+    "RXPSpeedrunDeathwarpWindow",
+    "RXPSpeedrunPracticeWindow",
+    "RXPSpeedrunAudioWindow",
+    "RXPSpeedrunRulesWindow"
 }
 
 local backdrop = {
@@ -340,7 +348,19 @@ end
 
 function manager:AddScrollingText(frame, spec)
     spec = spec or {}
-    local scroll = CreateFrame("ScrollFrame", spec.name, frame,
+    if frame.scroll and frame.scrollChild and frame.bodyText then
+        return frame.scroll, frame.scrollChild, frame.bodyText
+    end
+    -- The 3.3.5 UIPanelScrollFrameTemplate concatenates GetName() while its
+    -- OnLoad script creates the scrollbar.  Unlike newer clients, an anonymous
+    -- template instance therefore throws before CreateFrame returns.
+    local parentName = frame.GetName and frame:GetName()
+    local scrollName = spec.name or (parentName and (parentName .. "Scroll"))
+    if not scrollName then
+        manager.scrollSerial = (manager.scrollSerial or 0) + 1
+        scrollName = "RXPToolWindowScroll" .. manager.scrollSerial
+    end
+    local scroll = CreateFrame("ScrollFrame", scrollName, frame,
                                "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", spec.left or 22, -(spec.top or 48))
     scroll:SetPoint("BOTTOMRIGHT", -(spec.right or 36), spec.bottom or 52)

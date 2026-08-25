@@ -209,6 +209,11 @@ local function ResolveBindMap()
     end
 end
 
+
+function travel:GetBindMap()
+    return ResolveBindMap()
+end
+
 function travel:FindManualRoute(source, destination)
     source, destination = tonumber(source), tonumber(destination)
     if not source or not destination then return nil, "Current or destination map is unknown." end

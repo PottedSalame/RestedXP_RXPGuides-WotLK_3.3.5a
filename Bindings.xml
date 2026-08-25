@@ -23,4 +23,14 @@
     <Binding name="CLICK RXPTargetFrame_EnemyButton2:LeftButton" header="RXPGUIDES" runOnUp="true" />
     <Binding name="CLICK RXPTargetFrame_EnemyButton3:LeftButton" header="RXPGUIDES" runOnUp="true" />
     <Binding name="CLICK RXPTargetFrame_EnemyButton4:LeftButton" header="RXPGUIDES" runOnUp="true" />
+    <Binding name="RXP_SPEEDRUN_PRACTICE_TOGGLE" header="RXPGUIDES" runOnUp="true">
+        if RXPGuides and RXPGuides.ToggleSpeedrunPractice then
+            RXPGuides.ToggleSpeedrunPractice()
+        end
+    </Binding>
+    <Binding name="RXP_SPEEDRUN_PRACTICE_SPLIT" header="RXPGUIDES" runOnUp="true">
+        if RXPGuides and RXPGuides.SplitSpeedrunPractice then
+            RXPGuides.SplitSpeedrunPractice()
+        end
+    </Binding>
 </Bindings>

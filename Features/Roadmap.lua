@@ -3,10 +3,11 @@ local _, addon = ...
 local _G = _G
 local format = string.format
 local time = _G.time
+local tinsert = table.insert
 local L = addon.locale.Get
-local SCHEMA_VERSION = 2
+local SCHEMA_VERSION = 3
 local BACKUP_PREFIX = "RXPBACKUP1"
-local MAX_BACKUP_SIZE = 1024 * 1024
+local MAX_BACKUP_SIZE = 16 * 1024 * 1024
 
 addon.roadmap = addon.roadmap or {}
 addon.guideState = addon.guideState or {}
@@ -34,7 +35,15 @@ local moduleSettingKeys = {
                            "adaptiveMobXP", "xpEstimatorShowStockXP",
                            "xpEstimatorShowKills", "xpEstimatorShowAdaptive",
                            "xpEstimatorShowAdaptiveKills",
-                           "xpEstimatorShowRested"}
+                           "xpEstimatorShowRested"},
+    ["speedrunning suite"] = {"enableSpeedrunSuite", "enableSpeedrunCoach",
+        "enableSpeedrunGrind", "enableSpeedrunPitStop", "enableSpeedrunRoute",
+        "enableSpeedrunDeathwarp", "enableSpeedrunPractice",
+        "enableSpeedrunAudio", "enableSpeedrunRules", "speedrunDisplayClock",
+        "speedrunComparison", "speedrunPaceThreshold", "speedrunGrindLookahead",
+        "speedrunPitStopLookahead", "speedrunRuleset", "speedrunCustomRules",
+        "speedrunAudioMuteCombat", "speedrunAudioLeadSteps",
+        "speedrunAudioCategories"}
 }
 
 local function CopySafe(value, depth, seen)
@@ -76,7 +85,7 @@ local function ValidateTree(value, depth, count)
             return false, count
         end
         count = count + 1
-        if count > 30000 then return false, count end
+        if count > 750000 then return false, count end
         local valid
         valid, count = ValidateTree(child, depth + 1, count)
         if not valid then return false, count end
@@ -86,13 +95,14 @@ end
 
 local function ValidateBackupPayload(payload)
     if type(payload) ~= "table" or
-        (payload.schema ~= 1 and payload.schema ~= 2) or
+        (payload.schema ~= 1 and payload.schema ~= 2 and payload.schema ~= 3) or
         type(payload.settings) ~= "table" or
         type(payload.character) ~= "table" or
         type(payload.favorites) ~= "table" then return false end
     local rootFields = {
         schema = true, addon = true, created = true, settings = true,
-        character = true, favorites = true, levelingArchives = true
+        character = true, favorites = true, levelingArchives = true,
+        speedrun = true
     }
     for key in pairs(payload) do if not rootFields[key] then return false end end
     local characterFields = {
@@ -100,7 +110,7 @@ local function ValidateBackupPayload(payload)
         currentGuideName = true, currentStep = true, currentStepId = true,
         stepSkip = true, completedWaypoints = true, discardPile = true,
         manualJunkOverrides = true, activeTalentGuide = true,
-        levelingArchiveRunId = true
+        levelingArchiveRunId = true, speedrunSession = true
     }
     for key in pairs(payload.character) do
         if not characterFields[key] then return false end
@@ -125,6 +135,9 @@ local function ValidateBackupPayload(payload)
     end
     if payload.character.levelingArchiveRunId ~= nil and
         type(payload.character.levelingArchiveRunId) ~= "number" then return false end
+    if payload.character.speedrunSession ~= nil and
+        type(payload.character.speedrunSession) ~= "table" then return false end
+    if payload.speedrun ~= nil and type(payload.speedrun) ~= "table" then return false end
     if payload.levelingArchives ~= nil then
         if type(payload.levelingArchives) ~= "table" or
             type(payload.levelingArchives.runs) ~= "table" then return false end
@@ -137,6 +150,18 @@ local function ValidateBackupPayload(payload)
             updatedAt = true, finishedAt = true, levels = true, route = true,
             finished = true, pinned = true, totalDuration = true,
             currentLevelElapsed = true}
+        runFields.timingVersion = true
+        runFields.segments = true
+        runFields.deviations = true
+        runFields.speedrunFingerprint = true
+        runFields.speedrunRuleset = true
+        runFields.speedrunWallStartedAt = true
+        runFields.speedrunActiveDuration = true
+        runFields.speedrunWallDuration = true
+        runFields.segmentSummaryOnly = true
+        runFields.timeLossReport = true
+        runFields.speedrunRouteFingerprint = true
+        runFields.speedrunIntegrityFingerprint = true
         for id, run in pairs(payload.levelingArchives.runs) do
             if type(id) ~= "number" or type(run) ~= "table" then return false end
             for key in pairs(run) do if not runFields[key] then return false end end
@@ -182,6 +207,23 @@ function roadmap:InitializeSavedData()
     RXPData.levelingArchives =
         type(RXPData.levelingArchives) == "table" and
             RXPData.levelingArchives or {nextId = 1, runs = {}}
+    RXPData.speedrun = type(RXPData.speedrun) == "table" and RXPData.speedrun or {}
+    RXPData.speedrun.practice = type(RXPData.speedrun.practice) == "table" and
+                                    RXPData.speedrun.practice or
+                                    {definitions = {}, attempts = {}}
+    RXPData.speedrun.practice.definitions =
+        type(RXPData.speedrun.practice.definitions) == "table" and
+            RXPData.speedrun.practice.definitions or {}
+    RXPData.speedrun.practice.attempts =
+        type(RXPData.speedrun.practice.attempts) == "table" and
+            RXPData.speedrun.practice.attempts or {}
+    RXPData.speedrun.branchObservations =
+        type(RXPData.speedrun.branchObservations) == "table" and
+            RXPData.speedrun.branchObservations or {}
+    RXPData.speedrun.rulesets = type(RXPData.speedrun.rulesets) == "table" and
+                                    RXPData.speedrun.rulesets or {}
+    RXPCData.speedrunSession = type(RXPCData.speedrunSession) == "table" and
+                                   RXPCData.speedrunSession or {}
 
     -- Seed the sparse checkpoint store from the legacy active-guide fields.
     if RXPData.featureSchemaVersion < 1 and
@@ -430,8 +472,13 @@ function roadmap:BuildBackup()
     if addon.runArchive and addon.runArchive.Snapshot then
         addon.runArchive:Snapshot()
     end
+    local speedrunSession = CopySafe(RXPCData.speedrunSession or {}, 0)
+    -- A practice rollback snapshot is local crash/reload recovery state, not
+    -- portable run history. Importing it on another character could restore a
+    -- guide unexpectedly, so it is deliberately excluded from backups.
+    speedrunSession.practiceRestore = nil
     local payload = {
-        schema = 2,
+        schema = 3,
         addon = addon.release,
         created = time(),
         settings = CopySafe(addon.settings and addon.settings.profile or {}, 0),
@@ -448,11 +495,13 @@ function roadmap:BuildBackup()
             manualJunkOverrides =
                 CopySafe(RXPCData.manualJunkOverrides or {}, 0),
             activeTalentGuide = RXPCData.activeTalentGuide,
-            levelingArchiveRunId = RXPCData.levelingArchiveRunId
+            levelingArchiveRunId = RXPCData.levelingArchiveRunId,
+            speedrunSession = speedrunSession
         },
         favorites = CopySafe(RXPData.guideHub.favorites or {}, 0),
         levelingArchives = CopySafe(RXPData.levelingArchives or
-                                        {nextId = 1, runs = {}}, 0)
+                                        {nextId = 1, runs = {}}, 0),
+        speedrun = self:BuildSanitizedSpeedrunBackup()
     }
     local serializer = LibStub("AceSerializer-3.0")
     local deflate = LibStub("LibDeflate")
@@ -461,6 +510,55 @@ function roadmap:BuildBackup()
     local compressed = deflate:CompressDeflate(serialized)
     return format("%s:%u:%s", BACKUP_PREFIX, checksum,
                   deflate:EncodeForPrint(compressed))
+end
+
+function roadmap:BuildSanitizedSpeedrunBackup()
+    local source = type(RXPData.speedrun) == "table" and RXPData.speedrun or {}
+    local result = {
+        version = tonumber(source.version) or 1,
+        branchObservations = CopySafe(source.branchObservations or {}, 0),
+        mobObservations = CopySafe(source.mobObservations or {}, 0),
+        rulesets = {},
+        practice = {definitions = {}, attempts = {}}
+    }
+    local practice = type(source.practice) == "table" and source.practice or {}
+    for id, rule in pairs(type(source.rulesets) == "table" and source.rulesets or {}) do
+        if (id == "solo-any" or id == "solo-deathless" or id == "custom") and
+            type(rule) == "table" then
+            result.rulesets[id] = {id = id, solo = rule.solo == true,
+                deathless = rule.deathless == true, builtIn = rule.builtIn == true}
+        end
+    end
+    for _, definition in ipairs(type(practice.definitions) == "table" and
+                                     practice.definitions or {}) do
+        tinsert(result.practice.definitions, {
+            id = definition.id, guideKey = definition.guideKey,
+            startId = definition.startId, startIndex = definition.startIndex,
+            endId = definition.endId, endIndex = definition.endIndex,
+            updatedAt = definition.updatedAt
+        })
+    end
+    for id, attempts in pairs(type(practice.attempts) == "table" and
+                                   practice.attempts or {}) do
+        if type(id) == "string" and type(attempts) == "table" then
+            local clean = {}
+            for _, attempt in ipairs(attempts) do
+                local splits = {}
+                for _, split in ipairs(type(attempt.splits) == "table" and
+                                            attempt.splits or {}) do
+                    tinsert(splits, {elapsed = tonumber(split.elapsed) or 0,
+                                     duration = tonumber(split.duration) or 0})
+                end
+                tinsert(clean, {duration = tonumber(attempt.duration) or 0,
+                                splits = splits,
+                                finishedAt = tonumber(attempt.finishedAt) or 0})
+            end
+            result.practice.attempts[id] = clean
+        end
+    end
+    -- Custom ruleset labels/notes are deliberately excluded. Only anonymous
+    -- built-in identifiers and aggregate numeric observations are portable.
+    return result
 end
 
 function roadmap:DecodeBackup(text)
@@ -528,7 +626,8 @@ function roadmap:ApplyBackup(payload, replace)
         settings = CopySafe(addon.settings.profile, 0),
         character = CopySafe(RXPCData, 0),
         guideHub = CopySafe(RXPData.guideHub, 0),
-        levelingArchives = CopySafe(RXPData.levelingArchives, 0)
+        levelingArchives = CopySafe(RXPData.levelingArchives, 0),
+        speedrun = CopySafe(RXPData.speedrun, 0)
     }
     if replace then
         for key in pairs(addon.settings.profile) do addon.settings.profile[key] = nil end
@@ -546,6 +645,7 @@ function roadmap:ApplyBackup(payload, replace)
                            "currentStep", "currentStepId", "stepSkip",
                            "completedWaypoints", "discardPile",
                            "manualJunkOverrides", "activeTalentGuide"}
+    table.insert(replaceFields, "speedrunSession")
     if replace then
         for _, key in ipairs(replaceFields) do RXPCData[key] = nil end
     end
@@ -577,6 +677,17 @@ function roadmap:ApplyBackup(payload, replace)
     elseif replace then
         RXPCData.levelingArchiveRunId = nil
     end
+    if payload.speedrun then
+        if replace then
+            RXPData.speedrun = CopySafe(payload.speedrun, 0)
+        else
+            RXPData.speedrun = type(RXPData.speedrun) == "table" and
+                                   RXPData.speedrun or {}
+            MergeInto(RXPData.speedrun, payload.speedrun)
+        end
+    elseif replace then
+        RXPData.speedrun = {}
+    end
     if addon.runArchive then
         addon.runArchive.current = nil
         if addon.runArchive.Prune then addon.runArchive:Prune() end
@@ -603,6 +714,7 @@ function roadmap:RollbackBackup()
     RXPData.guideHub = CopySafe(rollback.guideHub or {}, 0)
     RXPData.levelingArchives =
         CopySafe(rollback.levelingArchives or {nextId = 1, runs = {}}, 0)
+    RXPData.speedrun = CopySafe(rollback.speedrun or {}, 0)
     if addon.runArchive then
         addon.runArchive.current = nil
         if addon.runArchive.Refresh then addon.runArchive:Refresh() end
@@ -746,6 +858,17 @@ function roadmap:Setup()
     if addon.runArchive and addon.runArchive.Setup then
         self:RunOptional("personal-best archives",
             function() addon.runArchive:Setup() end)
+    end
+    if addon.speedrun and addon.speedrun.Setup then
+        self:RunOptional("speedrunning suite", function()
+            addon.speedrun:Setup()
+            if addon.speedrunAdvisors then addon.speedrunAdvisors:Setup() end
+            if addon.speedrunPractice then addon.speedrunPractice:Setup() end
+        end, function()
+            if addon.speedrun then addon.speedrun:Shutdown() end
+            if addon.speedrunAdvisors then addon.speedrunAdvisors:Shutdown() end
+            if addon.speedrunPractice then addon.speedrunPractice:Shutdown() end
+        end)
     end
     if addon.petAssistant and addon.petAssistant.Setup and
         addon.settings.profile.enablePetAssistant then

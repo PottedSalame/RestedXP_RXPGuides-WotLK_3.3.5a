@@ -323,9 +323,30 @@ function addon.settings.ChatCommand(input)
         if addon.petAssistant then addon.petAssistant:Toggle() end
     elseif input == "perf" or input == "performance" then
         if addon.performanceInspector then addon.performanceInspector:Toggle() end
+    elseif input == "coach" then
+        if addon.speedrunCoach then addon.speedrunCoach:Toggle() end
+    elseif input == "grind" then
+        if addon.speedrunGrind then addon.speedrunGrind:Toggle() end
+    elseif input == "pitstop" or input == "pit" then
+        if addon.speedrunPitStop then addon.speedrunPitStop:Toggle() end
+    elseif input == "deathwarp" then
+        if addon.speedrunDeathwarp then addon.speedrunDeathwarp:Toggle() end
+    elseif input == "practice" then
+        if addon.speedrunPractice then addon.speedrunPractice:Toggle() end
+    elseif input == "audio" then
+        if addon.speedrunAudio then addon.speedrunAudio:Toggle() end
+    elseif input == "rules" then
+        if addon.speedrunRules then addon.speedrunRules:Toggle() end
     elseif input == "catchup" then
         if addon.catchUp then addon.catchUp:Preview() end
     elseif input == "route" then
+        if addon.speedrunRoute and self.profile.enableSpeedrunSuite ~= false and
+            self.profile.enableSpeedrunRoute then
+            addon.speedrunRoute:Toggle()
+        elseif addon.travel then
+            addon.travel:OpenCurrentRoute()
+        end
+    elseif input == "recover" then
         if addon.travel then addon.travel:OpenCurrentRoute() end
     elseif input:match("^lore%s") then
         local mode = input:match("^lore%s+(%S+)")
@@ -529,6 +550,36 @@ local settingsDBDefaults = {
         xpEstimatorShowAdaptive = true,
         xpEstimatorShowAdaptiveKills = true,
         xpEstimatorShowRested = true,
+
+        -- Speedrunning Suite. The coach records lightweight step splits by
+        -- default, while every advisor and active cue remains opt-in.
+        enableSpeedrunSuite = true,
+        enableSpeedrunCoach = true,
+        enableSpeedrunGrind = false,
+        enableSpeedrunPitStop = false,
+        enableSpeedrunRoute = false,
+        enableSpeedrunDeathwarp = false,
+        enableSpeedrunPractice = false,
+        enableSpeedrunAudio = false,
+        enableSpeedrunRules = false,
+        speedrunDisplayClock = "active",
+        speedrunComparison = "pb",
+        speedrunPaceThreshold = 15,
+        speedrunGrindLookahead = 20,
+        speedrunPitStopLookahead = 20,
+        speedrunRuleset = "solo-any",
+        speedrunCustomRules = {
+            allowDeaths = false,
+            allowGrouping = false,
+            allowRestedXP = false,
+            allowHeirlooms = false,
+            allowXPRateChanges = false,
+            allowGuideChanges = false,
+            allowManualSkips = false,
+        },
+        speedrunAudioMuteCombat = true,
+        speedrunAudioLeadSteps = 1,
+        speedrunAudioCategories = {},
     }
 }
 
@@ -557,6 +608,10 @@ function addon.settings:InitializeDatabase()
         math.floor(tonumber(self.profile.stuckWatchdogTimeout) or 120)))
     self.profile.adaptivePerformanceFPSThreshold = math.max(15, math.min(60,
         math.floor(tonumber(self.profile.adaptivePerformanceFPSThreshold) or 25)))
+    self.profile.speedrunGrindLookahead = math.max(1, math.min(100,
+        math.floor(tonumber(self.profile.speedrunGrindLookahead) or 20)))
+    self.profile.speedrunPitStopLookahead = math.max(1, math.min(100,
+        math.floor(tonumber(self.profile.speedrunPitStopLookahead) or 20)))
     NormalizeCustomThemeTooltip(self.profile)
     loadedProfileKey = settingsDB.keys.profile
 end
@@ -1416,6 +1471,211 @@ function addon.settings:CreateAceOptionsPanel()
         -- directly is implementation-sensitive on older embedded runtimes.
         AddXPDisplaySetting(definition, index)
     end
+
+    local function ApplySpeedrunSettings()
+        if addon.speedrun and addon.speedrun.ApplySuiteSettings then
+            addon.speedrun:ApplySuiteSettings()
+        end
+        if AceConfigRegistry and AceConfigRegistry.NotifyChange then
+            AceConfigRegistry:NotifyChange(addon.title)
+        end
+    end
+
+    local function SpeedrunToolPage(label, frameName, setting, service, order)
+        local page = ToolAppearancePage(label, frameName, function()
+            if service and service.Toggle then service:Toggle() end
+        end, function()
+            return not service or self.profile.enableSpeedrunSuite == false or
+                       self.profile[setting] ~= true
+        end)
+        page.order = order
+        page.args.enable = {
+            name = fmt(L("Enable %s"), label),
+            desc = L("Applies immediately. Disabling preserves settings and history while cancelling this tool's owned work."),
+            type = "toggle", width = optionsWidth, order = 0.1,
+            get = function() return self.profile[setting] == true end,
+            set = function(_, value)
+                self.profile[setting] = value == true
+                ApplySpeedrunSettings()
+            end,
+            disabled = function() return self.profile.enableSpeedrunSuite == false end,
+        }
+        return page
+    end
+
+    local coachToolPage = SpeedrunToolPage(L("Live Speedrun Coach"),
+        "RXPSpeedrunCoachWindow", "enableSpeedrunCoach", addon.speedrunCoach, 2)
+    coachToolPage.args.clock = {
+        name = L("Displayed clock"), type = "select", style = "radio",
+        values = {active = L("Active in-game time"), wall = L("Wall-clock time")},
+        width = optionsWidth, order = 2.1,
+        get = function() return self.profile.speedrunDisplayClock or "active" end,
+        set = function(_, value)
+            self.profile.speedrunDisplayClock = value == "wall" and "wall" or "active"
+            ApplySpeedrunSettings()
+        end,
+    }
+    coachToolPage.args.comparison = {
+        name = L("Automatic comparison"), type = "select", style = "radio",
+        values = {pb = L("Fastest compatible personal best"),
+                  median = L("Recent compatible median"),
+                  best = L("Best compatible segments"),
+                  manual = L("Selected archive")},
+        width = optionsWidth, order = 2.2,
+        get = function() return self.profile.speedrunComparison or "pb" end,
+        set = function(_, value)
+            self.profile.speedrunComparison = value
+            ApplySpeedrunSettings()
+        end,
+    }
+    coachToolPage.args.paceThreshold = {
+        name = L("Meaningful pace threshold"),
+        desc = L("Seconds gained or lost before the Coach and Audio Director surface a pace change."),
+        type = "range", min = 1, max = 120, step = 1,
+        width = optionsWidth, order = 2.3,
+        get = function() return self.profile.speedrunPaceThreshold or 15 end,
+        set = function(_, value)
+            self.profile.speedrunPaceThreshold = math.floor(value + 0.5)
+        end,
+    }
+
+    local grindToolPage = SpeedrunToolPage(L("Dynamic Grind Optimizer"),
+        "RXPSpeedrunGrindWindow", "enableSpeedrunGrind", addon.speedrunGrind, 3)
+    grindToolPage.args.lookahead = {
+        name = L("Guide steps considered"), type = "range", min = 1, max = 100,
+        step = 1, width = optionsWidth, order = 2.1,
+        get = function() return self.profile.speedrunGrindLookahead or 20 end,
+        set = function(_, value)
+            self.profile.speedrunGrindLookahead = math.floor(value + 0.5)
+            if addon.speedrunGrind then addon.speedrunGrind:ScheduleRefresh() end
+        end,
+    }
+    local pitToolPage = SpeedrunToolPage(L("Pit Stop Planner"),
+        "RXPSpeedrunPitStopWindow", "enableSpeedrunPitStop", addon.speedrunPitStop, 4)
+    pitToolPage.args.lookahead = {
+        name = L("Guide steps considered"), type = "range", min = 1, max = 100,
+        step = 1, width = optionsWidth, order = 2.1,
+        get = function() return self.profile.speedrunPitStopLookahead or 20 end,
+        set = function(_, value)
+            self.profile.speedrunPitStopLookahead = math.floor(value + 0.5)
+            if addon.speedrunPitStop then addon.speedrunPitStop:ScheduleRefresh() end
+        end,
+    }
+    local routeToolPage = SpeedrunToolPage(L("Adaptive Route Strategist"),
+        "RXPSpeedrunRouteWindow", "enableSpeedrunRoute", addon.speedrunRoute, 5)
+    local deathwarpToolPage = SpeedrunToolPage(L("Deathwarp Decision Assistant"),
+        "RXPSpeedrunDeathwarpWindow", "enableSpeedrunDeathwarp", addon.speedrunDeathwarp, 6)
+    local practiceToolPage = SpeedrunToolPage(L("Segment Practice Lab"),
+        "RXPSpeedrunPracticeWindow", "enableSpeedrunPractice", addon.speedrunPractice, 7)
+    local audioToolPage = SpeedrunToolPage(L("Speedrun Audio Director"),
+        "RXPSpeedrunAudioWindow", "enableSpeedrunAudio", addon.speedrunAudio, 8)
+    audioToolPage.args.muteCombat = {
+        name = L("Mute ordinary cues in combat"), type = "toggle",
+        width = optionsWidth, order = 2.1,
+        get = function() return self.profile.speedrunAudioMuteCombat ~= false end,
+        set = function(_, value) self.profile.speedrunAudioMuteCombat = value == true end,
+    }
+    audioToolPage.args.leadSteps = {
+        name = L("Audio lead steps"), type = "range", min = 0, max = 10,
+        step = 1, width = optionsWidth, order = 2.2,
+        get = function() return self.profile.speedrunAudioLeadSteps or 1 end,
+        set = function(_, value) self.profile.speedrunAudioLeadSteps = math.floor(value + 0.5) end,
+    }
+    audioToolPage.args.categoryHeader = {
+        name = L("Cue Categories"), type = "header", width = "full", order = 3,
+    }
+    local audioCategories = {"quest", "turnin", "loot", "travel", "hearth",
+        "vendor", "trainer", "danger", "deathskip", "grind", "inventory", "pace"}
+    local function AddAudioCategory(category, index)
+        audioToolPage.args["category_" .. category] = {
+            name = L(category:gsub("^%l", string.upper)), type = "toggle",
+            width = optionsWidth, order = 3 + index / 20,
+            get = function()
+                local values = self.profile.speedrunAudioCategories
+                return type(values) ~= "table" or values[category] ~= false
+            end,
+            set = function(_, value)
+                self.profile.speedrunAudioCategories =
+                    type(self.profile.speedrunAudioCategories) == "table" and
+                        self.profile.speedrunAudioCategories or {}
+                self.profile.speedrunAudioCategories[category] = value == true
+                if addon.speedrunAudio then addon.speedrunAudio:Refresh() end
+            end,
+        }
+    end
+    for index, category in ipairs(audioCategories) do AddAudioCategory(category, index) end
+    local rulesToolPage = SpeedrunToolPage(L("Run Ruleset and Integrity"),
+        "RXPSpeedrunRulesWindow", "enableSpeedrunRules", addon.speedrunRules, 9)
+    rulesToolPage.args.ruleset = {
+        name = L("Run ruleset"), type = "select", style = "radio",
+        values = { ["solo-any"] = L("Solo Any%"),
+                   ["solo-deathless"] = L("Solo Deathless"),
+                   custom = L("Custom")},
+        width = optionsWidth, order = 2.1,
+        get = function() return self.profile.speedrunRuleset or "solo-any" end,
+        set = function(_, value)
+            self.profile.speedrunRuleset = value
+            ApplySpeedrunSettings()
+        end,
+    }
+    rulesToolPage.args.customHeader = {
+        name = L("Custom Rules"), type = "header", width = "full", order = 3,
+    }
+    local customRules = {
+        {"allowDeaths", L("Allow deaths")},
+        {"allowGrouping", L("Allow grouping")},
+        {"allowRestedXP", L("Allow rested XP")},
+        {"allowHeirlooms", L("Allow heirlooms")},
+        {"allowXPRateChanges", L("Allow XP-rate changes")},
+        {"allowGuideChanges", L("Allow guide changes")},
+        {"allowManualSkips", L("Allow manual skips")},
+    }
+    local function AddCustomRule(spec, index)
+        local key, label = spec[1], spec[2]
+        rulesToolPage.args["custom_" .. key] = {
+            name = label, type = "toggle", width = optionsWidth,
+            order = 3 + index / 10,
+            disabled = function() return self.profile.speedrunRuleset ~= "custom" end,
+            get = function()
+                local values = self.profile.speedrunCustomRules
+                return type(values) == "table" and values[key] == true
+            end,
+            set = function(_, value)
+                self.profile.speedrunCustomRules =
+                    type(self.profile.speedrunCustomRules) == "table" and
+                        self.profile.speedrunCustomRules or {}
+                self.profile.speedrunCustomRules[key] = value == true
+                ApplySpeedrunSettings()
+            end,
+        }
+    end
+    for index, spec in ipairs(customRules) do AddCustomRule(spec, index) end
+
+    local speedrunningToolPage = {
+        type = "group", name = L("Speedrunning"), order = 6,
+        childGroups = "tree", args = {
+            overview = {type = "group", name = L("Overview"), order = 1, args = {
+                enableSpeedrunSuite = {
+                    name = L("Enable Speedrunning Suite"),
+                    desc = L("Master runtime pause. Individual choices and history are preserved."),
+                    type = "toggle", width = optionsWidth, order = 1,
+                    get = function() return self.profile.enableSpeedrunSuite ~= false end,
+                    set = function(_, value)
+                        self.profile.enableSpeedrunSuite = value == true
+                        ApplySpeedrunSettings()
+                    end,
+                },
+                explanation = {
+                    name = L("The coach is lightweight and enabled by default. Advisors, practice, audio, and integrity tracking remain opt-in and never automate protected gameplay actions."),
+                    type = "description", width = "full", order = 2,
+                },
+            }},
+            coach = coachToolPage, grind = grindToolPage,
+            pitstop = pitToolPage, route = routeToolPage,
+            deathwarp = deathwarpToolPage, practice = practiceToolPage,
+            audio = audioToolPage, rules = rulesToolPage,
+        },
+    }
 
     local optionsTable = {
         type = "group",
@@ -2564,6 +2824,7 @@ function addon.settings:CreateAceOptionsPanel()
                     petAssistant = petToolPage,
                     performance = performanceToolPage,
                     xpEstimator = xpToolPage,
+                    speedrunning = speedrunningToolPage,
                 },
             },
             targeting = {
@@ -5063,6 +5324,7 @@ function addon.settings:RefreshProfile()
     addon.settings:LoadFramePositions()
     if addon.toolWindows then addon.toolWindows:RestoreAll() end
     if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
+    if addon.speedrun then addon.speedrun:ApplySuiteSettings() end
 end
 
 function addon.settings:CopyProfile()
@@ -5085,6 +5347,7 @@ function addon.settings:CopyProfile()
     addon.settings:LoadFramePositions()
     if addon.toolWindows then addon.toolWindows:RestoreAll() end
     if addon.xpAssistant then addon.xpAssistant:ApplySettings() end
+    if addon.speedrun then addon.speedrun:ApplySuiteSettings() end
 end
 
 function addon.settings:ResetProfile()

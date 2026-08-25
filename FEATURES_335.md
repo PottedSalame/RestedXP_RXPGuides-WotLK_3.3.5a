@@ -24,6 +24,12 @@ unchanged.
   talents, known skills, and upcoming stable/tame preparation.
 - `/rxp perf` opens the Performance Inspector. Optional adaptive throttling is
   opt-in, changes only runtime scan rates, and restores them automatically.
+- The independently toggleable Speedrunning Suite adds active/wall step splits,
+  compatible personal-best comparisons, grind and pit-stop advice, confirmed
+  route alternatives, safe deathwarp estimates, shadow segment practice,
+  throttled audio cues, and anonymous run-integrity profiles. Use `/rxp coach`,
+  `/rxp grind`, `/rxp pitstop`, `/rxp route`, `/rxp deathwarp`,
+  `/rxp practice`, `/rxp audio`, or `/rxp rules` to open each enabled tool.
 - Party synchronization and Guide Author recording are opt-in. Remote party
   suggestions always require confirmation, and recorder drafts are never
   registered automatically.

@@ -207,10 +207,12 @@ function automationOrder:ClearQuestReservation(element, kind)
 end
 
 function addon.IsAutomationElementReady(element)
+    if addon.speedrunPracticeActive then return false end
     return automationOrder:IsReady(element)
 end
 
 function addon.IsQuestAutomationElementReady(element, kind)
+    if addon.speedrunPracticeActive then return false end
     return automationOrder:IsQuestReady(element, kind)
 end
 

@@ -2778,6 +2778,7 @@ end
 
 local homeText = strupper(_G.HOME or "%")
 function addon.SelectGossipType(gossipType,noOp)
+    if addon.speedrunPracticeActive then return end
     if C_GossipInfo.GetOptions then
         local options = GossipGetOptions()
         for i,option in ipairs(options) do
@@ -3082,7 +3083,8 @@ function addon.functions.fly(self, ...)
     local element = self.element
     if not element.step.active then return end
     local event = ...
-    local automationEnabled = addon.settings.profile.enableFPAutomation and
+    local automationEnabled = not addon.speedrunPracticeActive and
+                                  addon.settings.profile.enableFPAutomation and
                                   not IsShiftKeyDown()
     local automationReady = not addon.IsAutomationElementReady or
                                 addon.IsAutomationElementReady(element)
@@ -3170,7 +3172,8 @@ function addon.functions.deathskip(self, ...)
         addon.SetElementComplete(self)
         return
     end
-    if not addon.settings.profile.enableGossipAutomation or IsShiftKeyDown() then return end
+    if addon.speedrunPracticeActive or
+        not addon.settings.profile.enableGossipAutomation or IsShiftKeyDown() then return end
     if event == "CONFIRM_XP_LOSS" then
         self:SetScript("OnUpdate", function()
             local confirmed = false
@@ -5715,7 +5718,8 @@ function addon.functions.skipgossip(self, text, ...)
         return element
     end
 
-    if not addon.settings.profile.enableGossipAutomation or IsShiftKeyDown() then return end
+    if addon.speedrunPracticeActive or
+        not addon.settings.profile.enableGossipAutomation or IsShiftKeyDown() then return end
 
     local element = self.element
     local args = element.args or {}
@@ -5862,7 +5866,7 @@ function addon.functions.skipgossipid(self, text, ...)
 
     local element = self.element
     if not element or not element.step.active or not next(element.args) or
-        addon.isHidden or
+        addon.isHidden or addon.speedrunPracticeActive or
         not addon.settings.profile.enableGossipAutomation or IsShiftKeyDown() then
             return
     end
@@ -5953,7 +5957,8 @@ function addon.functions.gossipoption(self, ...)
     --print('1??')
     for _, v in pairs(options) do
         if v.gossipOptionID == element.gossipId then
-            if addon.settings.profile.enableGossipAutomation and not IsShiftKeyDown() then
+            if not addon.speedrunPracticeActive and
+                addon.settings.profile.enableGossipAutomation and not IsShiftKeyDown() then
                 C_GossipInfo.SelectOption(v.gossipOptionID,"",true)
                 --print('??')
             end

@@ -108,6 +108,9 @@ function archive:NewRun(silent)
     RXPCData.levelingArchiveRunId = id
     self.current = run
     self:Prune()
+    if addon.speedrun and addon.speedrun.OnArchiveStarted then
+        addon.speedrun:OnArchiveStarted(run)
+    end
     if not silent then addon.comms.PrettyPrint("Started anonymous leveling archive #%d.", id) end
     self:Refresh()
     return run
@@ -150,20 +153,28 @@ function archive:Snapshot()
 end
 
 function archive:RecordGuide(guide)
+    if addon.speedrunPracticeActive then return end
     local run = self:GetCurrent(true)
     if type(guide) ~= "table" or guide.empty then return end
     local key = guide.key or (addon.BuildGuideKey and addon.BuildGuideKey(guide))
     if not key or run.route[#run.route] == key then return end
     tinsert(run.route, tostring(key):sub(1, 180))
     while #run.route > 100 do table.remove(run.route, 1) end
+    run.speedrunRouteFingerprint = table.concat(run.route, "\030")
     run.updatedAt = _G.time()
 end
 
 function archive:Finish()
     local run = self:Snapshot()
     if not run then return end
+    if addon.speedrun and addon.speedrun.OnArchiveFinished then
+        addon.speedrun:OnArchiveFinished(run)
+    end
     run.finished = true
     run.finishedAt = _G.time()
+    if addon.speedrun and addon.speedrun.PruneDetailedRuns then
+        addon.speedrun:PruneDetailedRuns()
+    end
     run.currentLevelElapsed = nil
     RXPCData.levelingArchiveRunId = nil
     self.current = nil
@@ -188,6 +199,9 @@ end
 
 function archive:InstallComparison(run)
     if type(run) ~= "table" then return end
+    if addon.speedrun and addon.speedrun.SetManualReference then
+        addon.speedrun:SetManualReference(run.id)
+    end
     addon.db.profile.reports = type(addon.db.profile.reports) == "table" and
                                    addon.db.profile.reports or {}
     addon.db.profile.reports.splits =

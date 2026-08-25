@@ -114,6 +114,9 @@ Features\GuideAnalysis.lua
 Features\RunArchive.lua
 Features\PetAssistant.lua
 Features\XPAssistant.lua
+Features\SpeedrunCore.lua
+Features\SpeedrunAdvisors.lua
+Features\SpeedrunPractice.lua
 
 # Root-level copies of the guide/talent loaders so their "Guides/..." <Script>
 # paths resolve from the addon root on 3.3.5a (see DB note above).

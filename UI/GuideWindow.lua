@@ -1251,6 +1251,11 @@ function addon.GoToStep(n, n2)
     local guide = addon.currentGuide
     if not guide or not guide.steps or type(n) ~= "number" then return end
     if n < 1 then n = 1 elseif n > #guide.steps then n = #guide.steps end
+    if RXPCData and tonumber(RXPCData.currentStep) and
+        n > tonumber(RXPCData.currentStep) and addon.speedrun and
+        addon.speedrun.RecordDeviation then
+        addon.speedrun:RecordDeviation("manual-skip", n)
+    end
     if guide.steps[n] then guide.steps[n].completed = nil end
     return addon.SetStep(n)
 end
@@ -1675,6 +1680,31 @@ function addon.UpdatePreflightBadge(report)
     end
 end
 addon.UpdatePreflightBadge()
+
+-- Feature badges share the small footer from left to right.  Centralizing the
+-- anchors prevents independently loaded optional tools from overlapping one
+-- another or the XP status hit region.
+function addon.UpdateFooterStatusAnchor()
+    local anchor = Footer.preflight
+    for _, button in ipairs({Footer.speedrun, Footer.speedrunAdvisors}) do
+        if button then
+            button:ClearAllPoints()
+            button:SetPoint("LEFT", anchor, "RIGHT", 1, 0)
+            if button:IsShown() then anchor = button end
+        end
+    end
+    Footer.text:ClearAllPoints()
+    Footer.text:SetPoint("LEFT", anchor, "RIGHT", 3, 1)
+    Footer.text:SetPoint("RIGHT", Footer, -16, 1)
+    if Footer.xpStatus then
+        Footer.xpStatus:ClearAllPoints()
+        Footer.xpStatus:SetPoint("LEFT", anchor, "RIGHT", 1, 0)
+        Footer.xpStatus:SetPoint("RIGHT", Footer, "RIGHT", -16, 0)
+        Footer.xpStatus:SetPoint("TOP", Footer, "TOP", 0, 0)
+        Footer.xpStatus:SetPoint("BOTTOM", Footer, "BOTTOM", 0, 0)
+    end
+end
+addon.UpdateFooterStatusAnchor()
 -- local buttonToggle = 0
 -- Footer.cog:HookScript("OnEnter", function(self) buttonToggle = GetTime() end)
 -- Footer.cog:HookScript("OnLeave", function(self) self:Hide() end)
@@ -3455,7 +3485,39 @@ function RXPFrame:GenerateMenuTable(menu)
     -- of this menu: the guide-window cog and the minimap button.  XP shortfall
     -- and item reservations are parts of Route Preflight, while the watchdog
     -- is deliberately a separate manual action.
+    local speedrunTools = {
+        {text = L("Live Speedrun Coach"), notCheckable = 1,
+         disabled = not addon.speedrunCoach or addon.settings.profile.enableSpeedrunCoach ~= true,
+         func = function() if addon.speedrunCoach then addon.speedrunCoach:Toggle() end end},
+        {text = L("Dynamic Grind Optimizer"), notCheckable = 1,
+         disabled = not addon.speedrunGrind or addon.settings.profile.enableSpeedrunGrind ~= true,
+         func = function() if addon.speedrunGrind then addon.speedrunGrind:Toggle() end end},
+        {text = L("Pit Stop Planner"), notCheckable = 1,
+         disabled = not addon.speedrunPitStop or addon.settings.profile.enableSpeedrunPitStop ~= true,
+         func = function() if addon.speedrunPitStop then addon.speedrunPitStop:Toggle() end end},
+        {text = L("Adaptive Route Strategist"), notCheckable = 1,
+         disabled = not addon.speedrunRoute or addon.settings.profile.enableSpeedrunRoute ~= true,
+         func = function() if addon.speedrunRoute then addon.speedrunRoute:Toggle() end end},
+        {text = L("Deathwarp Decision Assistant"), notCheckable = 1,
+         disabled = not addon.speedrunDeathwarp or addon.settings.profile.enableSpeedrunDeathwarp ~= true,
+         func = function() if addon.speedrunDeathwarp then addon.speedrunDeathwarp:Toggle() end end},
+        {text = L("Segment Practice Lab"), notCheckable = 1,
+         disabled = not addon.speedrunPractice or addon.settings.profile.enableSpeedrunPractice ~= true,
+         func = function() if addon.speedrunPractice then addon.speedrunPractice:Toggle() end end},
+        {text = L("Speedrun Audio Director"), notCheckable = 1,
+         disabled = not addon.speedrunAudio or addon.settings.profile.enableSpeedrunAudio ~= true,
+         func = function() if addon.speedrunAudio then addon.speedrunAudio:Toggle() end end},
+        {text = L("Run Ruleset and Integrity"), notCheckable = 1,
+         disabled = not addon.speedrunRules or addon.settings.profile.enableSpeedrunRules ~= true,
+         func = function() if addon.speedrunRules then addon.speedrunRules:Toggle() end end},
+    }
+
     local featureTools = {
+        {
+            text = L("Speedrunning Suite"), notCheckable = 1, hasArrow = true,
+            disabled = addon.settings.profile.enableSpeedrunSuite == false,
+            menuList = speedrunTools,
+        },
         {
             text = L("XP & Yellow-Mob Estimator"),
             notCheckable = 1,

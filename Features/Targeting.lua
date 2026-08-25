@@ -341,6 +341,7 @@ function addon.targeting:RecordSeenTarget(name, wanted, now, source)
         if wanted.kind == "dangerous" and
             addon.settings.profile.showDangerousMobWarning and addon.tips then
             addon.tips:EnableDangerWarning(2, "dangerous")
+            addon:SendEvent("RXP_DANGEROUS_TARGET", name)
         elseif wanted.kind == "rare" and
             addon.settings.profile.enableTargetingFlash and addon.tips then
             addon.tips:EnableDangerWarning(1)
@@ -1321,6 +1322,10 @@ function addon.targeting:UpdateUnitList()
                 end
             end
         end
+    end
+    if type(addon.speedrunTemporaryTarget) == "string" and
+        addon.speedrunTemporaryTarget ~= "" then
+        tinsert(mobsGenerated, addon.speedrunTemporaryTarget)
     end
 
     wipe(dangerousTargets)
