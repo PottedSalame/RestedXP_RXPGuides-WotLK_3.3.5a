@@ -535,7 +535,10 @@ function practice:CreateWindow()
 end
 
 function practice:Toggle()
-    if not self.setup or not Enabled() then return end
+    if not Enabled() then return end
+    if addon.speedrun and addon.speedrun.EnsureLiveSetup and
+        not addon.speedrun:EnsureLiveSetup() then return end
+    if not self.setup then return end
     if not self.definition or self.definition.guideKey ~= GuideKey() then
         self:SelectDefinition(1)
     end

@@ -977,7 +977,8 @@ function coach:CreateWindow()
 end
 
 function coach:Toggle()
-    if not speedrun.setup or not ToolEnabled("enableSpeedrunCoach") then return end
+    if not ToolEnabled("enableSpeedrunCoach") then return end
+    if not speedrun:EnsureLiveSetup() then return end
     if not self.frame then self:CreateWindow() end
     if self.frame:IsShown() then self.frame:Hide() else self.frame:Show() end
 end
@@ -1044,7 +1045,8 @@ function audio:CreateWindow()
 end
 
 function audio:Toggle()
-    if not speedrun.setup or not ToolEnabled("enableSpeedrunAudio") then return end
+    if not ToolEnabled("enableSpeedrunAudio") then return end
+    if not speedrun:EnsureLiveSetup() then return end
     if not self.frame then self:CreateWindow() end
     if self.frame:IsShown() then self.frame:Hide() else self.frame:Show() end
 end
@@ -1142,7 +1144,8 @@ function rules:CreateWindow()
 end
 
 function rules:Toggle()
-    if not speedrun.setup or not ToolEnabled("enableSpeedrunRules") then return end
+    if not ToolEnabled("enableSpeedrunRules") then return end
+    if not speedrun:EnsureLiveSetup() then return end
     if not self.frame then self:CreateWindow() end
     if self.frame:IsShown() then self.frame:Hide() else self.frame:Show() end
 end
@@ -1170,8 +1173,42 @@ function speedrun:ApplySettings()
     rules:Refresh()
 end
 
+function speedrun:EnsureLiveSetup()
+    local advisorsReady = not addon.speedrunAdvisors or
+                              addon.speedrunAdvisors.setup
+    local practiceReady = not addon.speedrunPractice or
+                              addon.speedrunPractice.setup
+    if self.setup and advisorsReady and practiceReady then return true end
+
+    local function SetupAll()
+        self:Setup()
+        if addon.speedrunAdvisors and not addon.speedrunAdvisors.setup then
+            addon.speedrunAdvisors:Setup()
+        end
+        if addon.speedrunPractice and not addon.speedrunPractice.setup then
+            addon.speedrunPractice:Setup()
+        end
+    end
+    local function ShutdownAll()
+        self:Shutdown()
+        if addon.speedrunAdvisors then addon.speedrunAdvisors:Shutdown() end
+        if addon.speedrunPractice then addon.speedrunPractice:Shutdown() end
+    end
+
+    -- Keep optional-module failure accounting and its explicit recovery UI.
+    -- A normal feature toggle must not silently override a safe-mode choice.
+    if addon.roadmap and addon.roadmap.RunOptional then
+        local ok = addon.roadmap:RunOptional("speedrunning suite", SetupAll,
+                                             ShutdownAll)
+        return ok == true
+    end
+    local ok, errorText = pcall(SetupAll)
+    if not ok and _G.geterrorhandler then _G.geterrorhandler()(errorText) end
+    return ok
+end
+
 function speedrun:ApplySuiteSettings()
-    if not self.setup then return end
+    if not self:EnsureLiveSetup() then return false end
     self:ApplySettings()
     if addon.speedrunAdvisors and addon.speedrunAdvisors.ApplySettings then
         addon.speedrunAdvisors:ApplySettings()
@@ -1180,6 +1217,7 @@ function speedrun:ApplySuiteSettings()
         addon.speedrunPractice:ApplySettings()
     end
     addon:SendEvent("RXP_SPEEDRUN_SETTINGS_CHANGED")
+    return true
 end
 
 function speedrun:RegisterMessages()

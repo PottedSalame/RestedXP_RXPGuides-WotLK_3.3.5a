@@ -92,7 +92,10 @@ local function AddButton(frame, text, x, callback, minimum)
 end
 
 local function Toggle(service, setting)
-    if not advisors.setup or not Enabled(setting) then return end
+    if not Enabled(setting) then return end
+    if addon.speedrun and addon.speedrun.EnsureLiveSetup and
+        not addon.speedrun:EnsureLiveSetup() then return end
+    if not advisors.setup then return end
     if not service.frame then service:CreateWindow() end
     if service.frame:IsShown() then service.frame:Hide() else service.frame:Show() end
 end

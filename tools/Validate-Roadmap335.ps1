@@ -54,6 +54,7 @@ foreach ($setting in @('enableSpeedrunSuite','enableSpeedrunCoach',
 }
 foreach ($pattern in @('function\s+speedrun:StartSegment\s*\(',
         'function\s+speedrun:GetComparison\s*\(',
+        'function\s+speedrun:EnsureLiveSetup\s*\(',
         'loading/offline','MAX_DETAILED_RUNS\s*=\s*10')) {
     if ($speedrunCoreText -notmatch $pattern) {
         Add-Error "Speedrun timing foundation is missing: $pattern"
