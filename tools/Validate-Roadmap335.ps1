@@ -95,6 +95,8 @@ foreach ($pattern in @(
         'function\s+manager:GetAppearanceValue\s*\(',
         'function\s+manager:SetAppearanceValue\s*\(',
         'function\s+manager:ResetWindow\s*\(',
+        'function\s+manager:BringToFront\s*\(',
+        'function\s+manager:RefreshLayering\s*\(',
         'backgroundOpacity\s*=\s*\{0,\s*1\}')) {
     if ($toolWindowText -notmatch $pattern) {
         Add-Error "Shared feature-tool appearance control is missing: $pattern"

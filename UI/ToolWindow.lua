@@ -13,6 +13,7 @@ local max, min = math.max, math.min
 local tremove = table.remove
 
 manager.frames = manager.frames or {}
+manager.layerOrder = manager.layerOrder or {}
 manager.knownNames = manager.knownNames or {
     "RXPRoutePreflightWindow",
     "RXPPerformanceInspector",
@@ -41,6 +42,49 @@ local backdrop = {
 local function Clamp(value, low, high)
     value = tonumber(value) or low
     return max(low, min(high, value))
+end
+
+local function SetTreeFrameLevel(frame, base, depth, root)
+    if not (frame and frame.SetFrameLevel) then return end
+    root = root or frame
+    frame:SetFrameLevel(base + min(depth, 8))
+    if frame ~= root and frame.HookScript and not frame.rxpToolLayerHook then
+        frame.rxpToolLayerHook = true
+        frame:HookScript("OnEnter", function() manager:BringToFront(root) end)
+        frame:HookScript("OnMouseDown", function() manager:BringToFront(root) end)
+    end
+    if not frame.GetChildren then return end
+    local children = {frame:GetChildren()}
+    for _, child in ipairs(children) do
+        SetTreeFrameLevel(child, base, depth + 1, root)
+    end
+end
+
+function manager:RefreshLayering()
+    local compact = {}
+    for _, frame in ipairs(self.layerOrder) do
+        if frame and frame.GetName and self.frames[frame:GetName()] == frame then
+            compact[#compact + 1] = frame
+        end
+    end
+    self.layerOrder = compact
+    -- Keep each complete frame hierarchy inside its own level band.  Without
+    -- this, 3.3.5 can interleave one window's scrollbar/buttons with another
+    -- window's backdrop when both use the DIALOG strata.
+    for index, frame in ipairs(compact) do
+        SetTreeFrameLevel(frame, 40 + index * 16, 0)
+    end
+end
+
+function manager:BringToFront(frame)
+    if not frame then return end
+    for index = #self.layerOrder, 1, -1 do
+        if self.layerOrder[index] == frame then
+            tremove(self.layerOrder, index)
+        end
+    end
+    self.layerOrder[#self.layerOrder + 1] = frame
+    self:RefreshLayering()
 end
 
 local function PreventEscapeClose(name)
@@ -290,6 +334,7 @@ function manager:Create(spec)
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function(self)
+        manager:BringToFront(self)
         if not self.isResizing then self:StartMoving() end
     end)
     frame:SetScript("OnDragStop", function(self)
@@ -321,6 +366,7 @@ function manager:Create(spec)
         resize:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
         resize:SetScript("OnMouseDown", function(_, button)
             if button ~= "LeftButton" then return end
+            manager:BringToFront(frame)
             frame.isResizing = true
             if frame.StartSizing then frame:StartSizing("BOTTOMRIGHT") end
         end)
@@ -333,9 +379,17 @@ function manager:Create(spec)
     end
 
     frame.UpdateVisuals = function(self) manager:ApplyVisuals(self) end
-    frame:HookScript("OnShow", function(self) manager:ApplyVisuals(self) end)
+    frame:HookScript("OnShow", function(self)
+        manager:ApplyVisuals(self)
+        manager:BringToFront(self)
+    end)
+    frame:HookScript("OnEnter", function(self) manager:BringToFront(self) end)
+    frame:HookScript("OnMouseDown", function(self)
+        manager:BringToFront(self)
+    end)
     frame:HookScript("OnHide", function(self) manager:SavePlacement(self) end)
     manager.frames[name] = frame
+    manager:BringToFront(frame)
     -- Feature tools are persistent working windows.  Keep Escape available
     -- for gameplay panels and close these only through their explicit X or
     -- toggle command.
@@ -386,7 +440,9 @@ function manager:AddScrollingText(frame, spec)
     frame.UpdateToolTextLayout = UpdateLayout
     frame:SetScript("OnSizeChanged", UpdateLayout)
     scroll:EnableMouseWheel(true)
+    scroll:HookScript("OnEnter", function() manager:BringToFront(frame) end)
     scroll:SetScript("OnMouseWheel", function(self, delta)
+        manager:BringToFront(frame)
         local maximum = self:GetVerticalScrollRange() or 0
         local current = self:GetVerticalScroll() or 0
         self:SetVerticalScroll(Clamp(current - delta * 36, 0, maximum))
