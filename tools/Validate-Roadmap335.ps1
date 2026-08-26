@@ -117,6 +117,14 @@ if ($settingsText -notmatch 'featureToolsSettings\s*=\s*\{' -or
     $settingsText -notmatch 'childGroups\s*=\s*"tree"') {
     Add-Error 'Feature Tools does not expose an individual settings-page tree.'
 }
+if ($settingsText -notmatch
+        'function\s+addon\.settings:ApplySpeedrunSettings\s*\(' -or
+    $settingsText -notmatch
+        'SPEEDRUN_SETTINGS_OWNER' -or
+    $settingsText -match
+        'self\.profile\[setting\]\s*=\s*value\s*==\s*true') {
+    Add-Error 'Speedrun toggles are not reconciled live across legacy AceGUI callbacks.'
+}
 $xpText = [IO.File]::ReadAllText((Join-Path $root 'Features/XPAssistant.lua'))
 foreach ($key in @('xpEstimatorShowStockXP','xpEstimatorShowKills',
                     'xpEstimatorShowAdaptive','xpEstimatorShowAdaptiveKills',

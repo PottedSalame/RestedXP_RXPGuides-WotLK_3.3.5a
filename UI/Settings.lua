@@ -811,6 +811,39 @@ end
 
 local function GetProfileOption(info) return addon.settings.profile[info[#info]] end
 
+local SPEEDRUN_SETTINGS_OWNER = "settings-speedrun"
+
+function addon.settings:ApplySpeedrunSettings()
+    local function ApplyNow()
+        if not (addon.speedrun and addon.speedrun.ApplySuiteSettings) then
+            return
+        end
+        local ok, errorText = pcall(addon.speedrun.ApplySuiteSettings,
+                                    addon.speedrun)
+        if not ok and _G.geterrorhandler then
+            _G.geterrorhandler()(errorText)
+        end
+    end
+
+    -- Apply once immediately for responsive toggles, then reconcile after
+    -- AceConfig has completed its OnValueChanged refresh. Some legacy/private-
+    -- server AceGUI revisions rebuild the option tree inside that callback and
+    -- otherwise leave feature lifecycle changes deferred until the next login.
+    ApplyNow()
+    local function DeferredApply()
+        ApplyNow()
+        if AceConfigRegistry and AceConfigRegistry.NotifyChange then
+            pcall(AceConfigRegistry.NotifyChange, AceConfigRegistry, addon.title)
+        end
+    end
+    if addon.scheduler and addon.scheduler.After then
+        addon.scheduler:After(SPEEDRUN_SETTINGS_OWNER, "apply", 0.05,
+                              DeferredApply)
+    else
+        RunOnNextFrame(DeferredApply)
+    end
+end
+
 local targetingRefreshOptions = {
     enableFriendlyTargeting = true,
     enableTargetMarking = true,
@@ -826,6 +859,9 @@ local function SetProfileOption(info, value)
     if addon.gameVersion == 30300 and targetingRefreshOptions[key] and
         addon.targeting and addon.targeting.RefreshLegacyTargets then
         addon.targeting:RefreshLegacyTargets()
+    end
+    if type(key) == "string" and key:match("^enableSpeedrun") then
+        addon.settings:ApplySpeedrunSettings()
     end
 end
 
@@ -1473,12 +1509,7 @@ function addon.settings:CreateAceOptionsPanel()
     end
 
     local function ApplySpeedrunSettings()
-        if addon.speedrun and addon.speedrun.ApplySuiteSettings then
-            addon.speedrun:ApplySuiteSettings()
-        end
-        if AceConfigRegistry and AceConfigRegistry.NotifyChange then
-            AceConfigRegistry:NotifyChange(addon.title)
-        end
+        addon.settings:ApplySpeedrunSettings()
     end
 
     local function SpeedrunToolPage(label, frameName, setting, service, order)
@@ -1495,7 +1526,7 @@ function addon.settings:CreateAceOptionsPanel()
             type = "toggle", width = optionsWidth, order = 0.1,
             get = function() return self.profile[setting] == true end,
             set = function(_, value)
-                self.profile[setting] = value == true
+                self.profile[setting] = value and true or false
                 ApplySpeedrunSettings()
             end,
             disabled = function() return self.profile.enableSpeedrunSuite == false end,
@@ -1661,7 +1692,7 @@ function addon.settings:CreateAceOptionsPanel()
                     type = "toggle", width = optionsWidth, order = 1,
                     get = function() return self.profile.enableSpeedrunSuite ~= false end,
                     set = function(_, value)
-                        self.profile.enableSpeedrunSuite = value == true
+                        self.profile.enableSpeedrunSuite = value and true or false
                         ApplySpeedrunSettings()
                     end,
                 },
