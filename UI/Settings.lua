@@ -1325,7 +1325,7 @@ function addon.settings:CreateAceOptionsPanel()
     local settingsCache = {invertedOrphans = {}}
 
     local function ToolAppearancePage(label, frameName, openFunction,
-                                      unavailable)
+                                      unavailable, description, instructions)
         local function GetAppearance(key)
             if addon.toolWindows and addon.toolWindows.GetAppearanceValue then
                 return addon.toolWindows:GetAppearanceValue(frameName, key)
@@ -1344,6 +1344,32 @@ function addon.settings:CreateAceOptionsPanel()
             type = "group",
             name = label,
             args = {
+                descriptionHeader = {
+                    name = L("What it does"),
+                    type = "header",
+                    width = "full",
+                    order = 0.01,
+                },
+                description = {
+                    name = L(description or
+                        "This optional tool provides additional guidance without changing your saved guide progress."),
+                    type = "description",
+                    width = "full",
+                    order = 0.02,
+                },
+                instructionsHeader = {
+                    name = L("How to use it"),
+                    type = "header",
+                    width = "full",
+                    order = 0.03,
+                },
+                instructions = {
+                    name = L(instructions or
+                        "Enable the feature when required, then use Open Tool to show or hide its window."),
+                    type = "description",
+                    width = "full",
+                    order = 0.04,
+                },
                 open = {
                     name = L("Open Tool"),
                     desc = fmt(L("Open the %s window."), label),
@@ -1438,12 +1464,16 @@ function addon.settings:CreateAceOptionsPanel()
     local preflightToolPage = ToolAppearancePage(
         L("Route Preflight"), "RXPRoutePreflightWindow", function()
             if addon.routePreflight then addon.routePreflight:Toggle() end
-        end, function() return not addon.routePreflight end)
+        end, function() return not addon.routePreflight end,
+        "Scans upcoming guide steps for known quest prerequisites, quest-log limits, missing items, travel or flight problems, XP shortfalls, and other route risks. It also manages item reservations and the manually armed stuck-step watchdog.",
+        "Choose how many steps to inspect in Guide Routing, then click Open Tool to review the results. Rescan after changing routes or inventory. Arm the watchdog only when you want a warning for the current step; it never skips or completes a step automatically.")
     preflightToolPage.order = 1
     local archiveToolPage = ToolAppearancePage(
         L("Personal-Best Archives"), "RXPLevelingArchives", function()
             if addon.runArchive then addon.runArchive:Toggle() end
-        end, function() return not addon.runArchive end)
+        end, function() return not addon.runArchive end,
+        "Stores anonymous account-wide leveling splits and completed-run summaries so you can compare current pace with earlier attempts.",
+        "Open the archive to inspect runs and choose a comparison reference. Splits are recorded from normal guide and level progress; no player name, realm, GUID, chat, guild, or account identifier is stored.")
     archiveToolPage.order = 2
     local petToolPage = ToolAppearancePage(
         L("Hunter Pet Assistant"), "RXPHunterPetAssistant", function()
@@ -1451,14 +1481,18 @@ function addon.settings:CreateAceOptionsPanel()
         end, function()
             return not addon.petAssistant or not addon.player or
                        addon.player.class ~= "HUNTER"
-        end)
+        end,
+        "Shows Hunter pet status and recommendations for happiness, compatible food, talents, known skills, supplies, and guide-linked taming or stable preparation.",
+        "Summon your pet and open the tool to review its current needs. Refresh it after changing pets, families, food, or learned skills. Recommendations are advisory; feeding, taming, training, and spending talent points still require your input.")
     petToolPage.order = 3
     local performanceToolPage = ToolAppearancePage(
         L("Performance Inspector"), "RXPPerformanceInspector", function()
             if addon.performanceInspector then
                 addon.performanceInspector:Toggle()
             end
-        end, function() return not addon.performanceInspector end)
+        end, function() return not addon.performanceInspector end,
+        "Measures RXPGuides event, timer, scan, and refresh costs to help identify stuttering or unusually expensive subsystems. Optional adaptation can reduce nonessential work when the client is under load.",
+        "Open the inspector, reproduce the slowdown, and review the busiest entries and recent samples. Reset samples before a clean comparison. Performance adaptation is optional and does not disable guide progression or protected safety checks.")
     performanceToolPage.order = 4
     local xpToolPage = ToolAppearancePage(
         L("XP & Yellow-Mob Estimator"), "RXPXPProgressWindow", function()
@@ -1466,7 +1500,9 @@ function addon.settings:CreateAceOptionsPanel()
         end, function()
             return not addon.xpAssistant or
                        self.profile.enableMobXPEstimator == false
-        end)
+        end,
+        "Shows exact XP remaining and estimates XP and kills needed for ordinary solo yellow mobs. Stock WotLK values remain visible beside adaptive estimates learned from verified kills on the current server.",
+        "Enable the Yellow-Mob Estimator, then click Open Tool or the XP value in the guide footer. Select only the columns you need below. For adaptive estimates, kill ordinary solo yellow mobs; grouped, elite, rare, uncertain, or special-instance kills are ignored.")
     xpToolPage.order = 5
     xpToolPage.args.displayHeader = {
         name = L("Displayed Information"), type = "header", width = "full",
@@ -1512,18 +1548,19 @@ function addon.settings:CreateAceOptionsPanel()
         addon.settings:ApplySpeedrunSettings()
     end
 
-    local function SpeedrunToolPage(label, frameName, setting, service, order)
+    local function SpeedrunToolPage(label, frameName, setting, service, order,
+                                    description, instructions)
         local page = ToolAppearancePage(label, frameName, function()
             if service and service.Toggle then service:Toggle() end
         end, function()
             return not service or self.profile.enableSpeedrunSuite == false or
                        self.profile[setting] ~= true
-        end)
+        end, description, instructions)
         page.order = order
         page.args.enable = {
             name = fmt(L("Enable %s"), label),
             desc = L("Applies immediately. Disabling preserves settings and history while cancelling this tool's owned work."),
-            type = "toggle", width = optionsWidth, order = 0.1,
+            type = "toggle", width = optionsWidth, order = 0.5,
             get = function() return self.profile[setting] == true end,
             set = function(_, value)
                 self.profile[setting] = value and true or false
@@ -1535,7 +1572,9 @@ function addon.settings:CreateAceOptionsPanel()
     end
 
     local coachToolPage = SpeedrunToolPage(L("Live Speedrun Coach"),
-        "RXPSpeedrunCoachWindow", "enableSpeedrunCoach", addon.speedrunCoach, 2)
+        "RXPSpeedrunCoachWindow", "enableSpeedrunCoach", addon.speedrunCoach, 2,
+        "Times every stable guide step and compares the current run with a compatible personal best, recent median, selected archive, or best known segments. It shows pace, projected finish, and meaningful time gains or losses.",
+        "Enable the Speedrunning Suite and this tool, then open it or click the RUN badge in the guide footer. Follow the guide normally; stable step changes split automatically. Choose the active or wall clock and the comparison source below.")
     coachToolPage.args.clock = {
         name = L("Displayed clock"), type = "select", style = "radio",
         values = {active = L("Active in-game time"), wall = L("Wall-clock time")},
@@ -1571,7 +1610,9 @@ function addon.settings:CreateAceOptionsPanel()
     }
 
     local grindToolPage = SpeedrunToolPage(L("Dynamic Grind Optimizer"),
-        "RXPSpeedrunGrindWindow", "enableSpeedrunGrind", addon.speedrunGrind, 3)
+        "RXPSpeedrunGrindWindow", "enableSpeedrunGrind", addon.speedrunGrind, 3,
+        "Ranks validated guide mobs when extra XP may be useful, using travel distance, observed kill pace, recovery time, rested XP, danger, and route proximity.",
+        "Enable and open the tool when the route predicts an XP shortfall. Review the target, kill count, XP, time, and confidence, then activate a suggestion manually. Cancel or finish it to restore the normal guide arrow and Active Targets.")
     grindToolPage.args.lookahead = {
         name = L("Guide steps considered"), type = "range", min = 1, max = 100,
         step = 1, width = optionsWidth, order = 2.1,
@@ -1582,7 +1623,9 @@ function addon.settings:CreateAceOptionsPanel()
         end,
     }
     local pitToolPage = SpeedrunToolPage(L("Pit Stop Planner"),
-        "RXPSpeedrunPitStopWindow", "enableSpeedrunPitStop", addon.speedrunPitStop, 4)
+        "RXPSpeedrunPitStopWindow", "enableSpeedrunPitStop", addon.speedrunPitStop, 4,
+        "Combines upcoming purchases, class supplies, ammunition, repairs, junk sales, training, hearth binding, pet needs, and bag-space requirements into ordered stops.",
+        "Choose the lookahead, enable the tool, and open it before visiting a town or service NPC. Open the relevant merchant or trainer to refresh stock, price, money, and training data. Purchases, repairs, selling, training, and binding always require a user click.")
     pitToolPage.args.lookahead = {
         name = L("Guide steps considered"), type = "range", min = 1, max = 100,
         step = 1, width = optionsWidth, order = 2.1,
@@ -1593,13 +1636,21 @@ function addon.settings:CreateAceOptionsPanel()
         end,
     }
     local routeToolPage = SpeedrunToolPage(L("Adaptive Route Strategist"),
-        "RXPSpeedrunRouteWindow", "enableSpeedrunRoute", addon.speedrunRoute, 5)
+        "RXPSpeedrunRouteWindow", "enableSpeedrunRoute", addon.speedrunRoute, 5,
+        "Compares verified route alternatives using measured segments, travel data, discovered flight paths, hearth cooldown, XP state, class, mount speed, and completed quests.",
+        "Enable and open the tool when a branch is available. Review each option's expected duration, confidence, assumptions, and estimated savings. Applying a route or guide change always asks for confirmation.")
     local deathwarpToolPage = SpeedrunToolPage(L("Deathwarp Decision Assistant"),
-        "RXPSpeedrunDeathwarpWindow", "enableSpeedrunDeathwarp", addon.speedrunDeathwarp, 6)
+        "RXPSpeedrunDeathwarpWindow", "enableSpeedrunDeathwarp", addon.speedrunDeathwarp, 6,
+        "Compares ordinary travel, hearths, flights, corpse recovery, and verified Spirit Healer routes while accounting for durability, resurrection sickness, cooldowns, and the active run ruleset.",
+        "Enable and open the tool when considering a deathwarp. Follow a recommendation only after checking its route, costs, and confidence. The assistant never recommends unknown graveyards and never kills, releases, or resurrects your character automatically.")
     local practiceToolPage = SpeedrunToolPage(L("Segment Practice Lab"),
-        "RXPSpeedrunPracticeWindow", "enableSpeedrunPractice", addon.speedrunPractice, 7)
+        "RXPSpeedrunPracticeWindow", "enableSpeedrunPractice", addon.speedrunPractice, 7,
+        "Times a chosen start-to-end guide segment in a temporary shadow state without changing the real checkpoint, skipped steps, waypoints, automation state, or Active Targets.",
+        "Choose stable start and end steps, then use Start, Pause, Manual Split, Finish, or Abort. Practice mode cannot reset completed quests or world state, and guide automation remains suppressed until the original state is restored.")
     local audioToolPage = SpeedrunToolPage(L("Speedrun Audio Director"),
-        "RXPSpeedrunAudioWindow", "enableSpeedrunAudio", addon.speedrunAudio, 8)
+        "RXPSpeedrunAudioWindow", "enableSpeedrunAudio", addon.speedrunAudio, 8,
+        "Plays optional, throttled cues for quest actions, loot, travel, hearths, vendors, trainers, danger, deathskips, grind completion, inventory warnings, and pace changes.",
+        "Enable the tool, select the cue categories you want, configure combat muting and lead steps, then use the window's test action. Audio is advisory and can be disabled without affecting timing or guide progress.")
     audioToolPage.args.muteCombat = {
         name = L("Mute ordinary cues in combat"), type = "toggle",
         width = optionsWidth, order = 2.1,
@@ -1636,7 +1687,9 @@ function addon.settings:CreateAceOptionsPanel()
     end
     for index, category in ipairs(audioCategories) do AddAudioCategory(category, index) end
     local rulesToolPage = SpeedrunToolPage(L("Run Ruleset and Integrity"),
-        "RXPSpeedrunRulesWindow", "enableSpeedrunRules", addon.speedrunRules, 9)
+        "RXPSpeedrunRulesWindow", "enableSpeedrunRules", addon.speedrunRules, 9,
+        "Records anonymous run deviations such as grouping, deaths, rested XP, heirlooms, XP-rate changes, guide changes, and manual skips so timing comparisons use compatible rules.",
+        "Enable the tool and select Solo Any%, Solo Deathless, or Custom before a run. Configure allowed actions for Custom rules. Deviations never delete or invalidate a run; they only explain compatibility and remain available for manual comparison.")
     rulesToolPage.args.ruleset = {
         name = L("Run ruleset"), type = "select", style = "radio",
         values = { ["solo-any"] = L("Solo Any%"),
@@ -1686,6 +1739,22 @@ function addon.settings:CreateAceOptionsPanel()
         type = "group", name = L("Speedrunning"), order = 6,
         childGroups = "tree", args = {
             overview = {type = "group", name = L("Overview"), order = 1, args = {
+                descriptionHeader = {
+                    name = L("What it does"), type = "header", width = "full",
+                    order = 0.01,
+                },
+                description = {
+                    name = L("The Speedrunning Suite adds step timing, pace comparisons, route and resource advisors, segment practice, audio cues, and anonymous ruleset tracking. Every component is independently optional and recommendations never perform protected gameplay actions."),
+                    type = "description", width = "full", order = 0.02,
+                },
+                instructionsHeader = {
+                    name = L("How to use it"), type = "header", width = "full",
+                    order = 0.03,
+                },
+                instructions = {
+                    name = L("Turn on the master switch, then open each page in this tree to read its instructions and enable only the tools you want. Windows can also be opened from the guide or minimap Feature Tools menu and with the listed /rxp commands."),
+                    type = "description", width = "full", order = 0.04,
+                },
                 enableSpeedrunSuite = {
                     name = L("Enable Speedrunning Suite"),
                     desc = L("Master runtime pause. Individual choices and history are preserved."),
