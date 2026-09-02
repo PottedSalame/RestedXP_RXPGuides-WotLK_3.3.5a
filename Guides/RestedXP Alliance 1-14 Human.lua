@@ -10,8 +10,8 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RestedXP Alliance 1-20
 #defaultfor Human
-#next 11-12 Loch Modan << !Warlock
-#next 12-14 Loch Modan << Warlock
+#next 11-12 Loch Modan;11-14 Darkshore;14-20 Bloodmyst << !Warlock
+#next 12-14 Loch Modan;11-14 Darkshore;14-20 Bloodmyst << Warlock
 step << !Human
     #sticky
     #completewith next

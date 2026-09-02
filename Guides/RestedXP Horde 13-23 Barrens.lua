@@ -4,11 +4,11 @@ if faction == "Alliance" then return end
 RXPGuides.RegisterGuide([[
 #tbc
 #wotlk
-<< Horde Warrior/Horde Shaman
+<< Horde Warrior/Horde Shaman/Horde Orc Hunter/Horde Troll Hunter
 #name 13-22 The Barrens
 #version 1
 #group RestedXP Horde 1-30
-#defaultfor Shaman/Warrior
+#defaultfor Shaman/Warrior/Orc Hunter/Troll Hunter
 #next 22-25 Hillsbrad / South Barrens;22-25 Hillsbrad Foothills JJ
 
 step << Tauren Shaman
@@ -1657,6 +1657,11 @@ step << Shaman
 step << Paladin
     .goto Orgrimmar,32.272,35.794
         #completewith next
+    .trainer >> Go and train your class spells
+step << Hunter
+    .goto Orgrimmar,66.046,18.526
+    #completewith next
+    .target Ormak Grimshot
     .trainer >> Go and train your class spells
 step << Warrior
 .goto Orgrimmar,79.7,31.4

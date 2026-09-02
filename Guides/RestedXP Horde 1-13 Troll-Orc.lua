@@ -1354,8 +1354,8 @@ RXPGuides.RegisterGuide([[
 #name 6-10 Durotar
 #version 1
 #group RestedXP Horde 1-30
-#next 10-13 Durotar << Warrior/Shaman
-#next 10-12 Eversong Woods << !Warrior !Shaman
+#next 10-13 Durotar << Warrior/Shaman/Orc Hunter/Troll Hunter
+#next 10-12 Eversong Woods << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
 
 step
     .goto Durotar,52.06,68.30
@@ -2145,18 +2145,18 @@ step << !Shaman !Warrior !Warlock
 step << Hunter tbc
     .goto Durotar,57.2,12.0
     .tame 3108 >>Tame an Encrusted Surf Crawler (They have Claw Rank 3)
-step << !Shaman !Warrior
+step << !Shaman !Warrior !Hunter
     #sticky
     #completewith next
 +Go to the Zeppelin tower. Take the zeppelin to Undercity
     .goto Durotar,50.8,13.8
-step << !Shaman !Warrior
+step << !Shaman !Warrior !Hunter
 .zone Tirisfal Glades >>Arrive in Tirisfal
-step << !Shaman !Warrior
+step << !Shaman !Warrior !Hunter
 .goto Undercity,66.2,1.1,18 >>Go to Undercity
-step << !Shaman !Warrior
+step << !Shaman !Warrior !Hunter
 .goto Undercity,62.0,11.3,18 >>Go up the stairs here
-step << !Shaman !Warrior
+step << !Shaman !Warrior !Hunter
     .goto Undercity,54.63,11.28
     .zone Silvermoon City >>Use the Orb of Translocation to teleport to Silvermoon
     .zoneskip Eversong Woods
@@ -2173,7 +2173,7 @@ RXPGuides.RegisterGuide([[
 #name 10-13 Durotar
 #version 1
 #group RestedXP Horde 1-30
-#defaultfor Warrior !Tauren/Shaman !Tauren
+#defaultfor Warrior !Tauren/Shaman !Tauren/Orc Hunter/Troll Hunter
 #next 13-22 The Barrens
 step
     .goto Durotar,50.8,43.6
@@ -2665,6 +2665,11 @@ step << Warrior
     .goto Durotar,54.3,42.4
     .train 5242 >>Train Battle Shout r2
     .train 7384 >>Train Overpower
+step << Hunter
+    #level 12
+    .goto Durotar,51.8,43.5
+    .target Thotar
+    .trainer >>Train your level 12 class spells
 step << !Warrior
     .goto Durotar,54.4,42.2
 .vendor >>Buy 6 slot bags from Jark until you can't equip new bags

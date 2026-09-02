@@ -20,6 +20,46 @@ function Normalize-Group([string]$Group) {
     return $group
 }
 
+function Resolve-GuideTransitionCandidate(
+    [string]$SourceGroup,
+    [string]$SourceRawGroup,
+    [string]$CandidateRaw
+) {
+    $candidate = $CandidateRaw.Trim()
+    if (-not $candidate) { return $null }
+
+    # Every candidate is independent. In particular, an unqualified fallback
+    # after a qualified candidate must resolve in the source guide's group.
+    $targetGroup = $SourceGroup
+    $targetName = $candidate
+    if ($SourceRawGroup -match '^RestedXP (Alliance|Horde)' -and
+        $candidate -notmatch '^RestedXP (?:TBC|WotLK) Guide \([AH]\)\\') {
+        $candidate = $candidate -replace '^.*?\\', ''
+        $targetName = $candidate
+    }
+    if ($candidate -match '^(.*?)\\(.+)$') {
+        $targetGroup = Normalize-Group $Matches[1]
+        $targetName = $Matches[2].Trim()
+    }
+    return [pscustomobject]@{
+        Group = $targetGroup
+        Name = $targetName
+    }
+}
+
+function Normalize-NextHeader([string]$Header) {
+    $value = $Header.Trim()
+    $conditionMatch = [regex]::Match($value, '<<\s*(.+)$')
+    $condition = if ($conditionMatch.Success) {
+        ($conditionMatch.Groups[1].Value.Trim() -replace '\s+', ' ')
+    } else {
+        ''
+    }
+    $destination = ($value -replace '\s*<<.*$', '').Trim()
+    if ($condition) { return ($destination + ' << ' + $condition) }
+    return $destination
+}
+
 function Get-GuideHeader([string]$Content, [string]$Name) {
     $match = [regex]::Match($Content, "(?m)^#" + [regex]::Escape($Name) + "\s+(.+?)\s*$")
     if ($match.Success) { return ($match.Groups[1].Value -replace '\s*<<.*$', '').Trim() }
@@ -223,9 +263,26 @@ foreach ($file in $files) {
         $skipAc335 = $false
         $stepCondition = ''
         $lineNumber = 0
+        $previousUnconditionalNext = $false
+        $previousNextLine = 0
         foreach ($lineRaw in ($content -split "`n")) {
             $lineNumber++
             $line = $lineRaw.Trim()
+            # Conditional #next headers are ordered alternatives: the loader
+            # uses the first one whose condition applies. Adjacent
+            # unconditional headers are ambiguous and the latter is dead.
+            if (-not $isOriginalSnapshot) {
+                $isUnconditionalNext =
+                    $line -match '^#next\s+\S' -and
+                    -not (Get-GuideCondition $line)
+                if ($isUnconditionalNext -and $previousUnconditionalNext) {
+                    Add-Error (
+                        '{0}: {1} has consecutive unconditional #next headers at guide lines {2} and {3}' -f
+                        $relative, $name, $previousNextLine, $lineNumber)
+                }
+                $previousUnconditionalNext = $isUnconditionalNext
+                $previousNextLine = if ($isUnconditionalNext) { $lineNumber } else { 0 }
+            }
             if (-not $line) { continue }
             if ($line -match '^step\b') {
                 $stepCount++
@@ -458,6 +515,24 @@ if ($files.Count -ne [int]$surface.guideFileCount -or
         'Update tests/runtime-surface.json only for an intentional content integration.')
 }
 
+# Keep the transition resolver independent per semicolon-delimited candidate.
+# This focused synthetic case catches the historical state leak where the
+# second, unqualified candidate inherited the first candidate's group.
+$transitionResolverRegression = @(
+    Resolve-GuideTransitionCandidate `
+        'Synthetic Source Group' 'Synthetic Source Group' `
+        'Synthetic Qualified Group\Qualified Guide'
+    Resolve-GuideTransitionCandidate `
+        'Synthetic Source Group' 'Synthetic Source Group' `
+        'Unqualified Guide'
+)
+if ($transitionResolverRegression.Count -ne 2 -or
+    $transitionResolverRegression[0].Group -cne 'Synthetic Qualified Group' -or
+    $transitionResolverRegression[1].Group -cne 'Synthetic Source Group' -or
+    $transitionResolverRegression[1].Name -cne 'Unqualified Guide') {
+    Add-Error 'Transition resolver leaked a qualified candidate group into an unqualified fallback.'
+}
+
 $guideIndex = @{}
 foreach ($guide in $guides) {
     foreach ($guideName in $guide.Names) { $guideIndex["$($guide.Group)|$guideName"] = $true }
@@ -472,14 +547,214 @@ foreach ($guide in $guides) {
         foreach ($candidateRaw in ($nextValue -split ';')) {
             $candidate = $candidateRaw.Trim()
             if (-not $candidate) { continue }
-            if ($guide.RawGroup -match '^RestedXP (Alliance|Horde)' -and
-                $candidate -notmatch '^RestedXP (?:TBC|WotLK) Guide \([AH]\)\\') {
-                $candidate = $candidate -replace '^.*?\\', ''
-            }
-            if ($candidate -match '^(.*?)\\(.+)$') { $targetGroup = Normalize-Group $Matches[1]; $targetName = $Matches[2].Trim() }
-            else { $targetGroup = $guide.Group; $targetName = $candidate }
+            $resolved = Resolve-GuideTransitionCandidate `
+                $guide.Group $guide.RawGroup $candidate
+            if (-not $resolved) { continue }
+            $targetGroup = $resolved.Group
+            $targetName = $resolved.Name
             if (-not $guideIndex.ContainsKey("$targetGroup|$targetName")) { Add-Error "$($guide.File) dangling #next from $($guide.Name) to $targetGroup / $targetName" }
         }
+    }
+}
+
+# Pin the primary route chain. These fixtures intentionally validate authored
+# order and conditions as well as destination existence: the loader selects
+# the first applicable #next header and the first viable semicolon fallback.
+$routeFixtures = @(
+    [pscustomobject]@{
+        Label = 'Human starter fallbacks'; Group = 'RestedXP Alliance 1-20'
+        Name = '1-11 Elwynn Forest'; Exact = $true
+        Expected = @(
+            '11-12 Loch Modan;11-14 Darkshore;14-20 Bloodmyst << !Warlock'
+            '12-14 Loch Modan;11-14 Darkshore;14-20 Bloodmyst << Warlock'
+        )
+    }
+    [pscustomobject]@{
+        Label = 'Gnome Warlock starter fallbacks'; Group = 'RestedXP Alliance 1-20'
+        Name = '1-12 Dun Morogh'; Exact = $true
+        Expected = @('12-14 Loch Modan Gnome;11-14 Darkshore;14-20 Bloodmyst')
+    }
+    [pscustomobject]@{
+        Label = 'Orc/Troll Hunter starter handoff'; Group = 'RestedXP Horde 1-30'
+        Name = '6-10 Durotar'; Exact = $true
+        Expected = @(
+            '10-13 Durotar << Warrior/Shaman/Orc Hunter/Troll Hunter'
+            '10-12 Eversong Woods << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)'
+        )
+    }
+    [pscustomobject]@{
+        Label = 'Orc/Troll Hunter Barrens handoff'; Group = 'RestedXP Horde 1-30'
+        Name = '10-13 Durotar'; Exact = $true
+        Expected = @('13-22 The Barrens')
+    }
+    [pscustomobject]@{
+        Label = 'Horde Barrens Hunter applicability'; Group = 'RestedXP Horde 1-30'
+        Name = '13-22 The Barrens'; Exact = $true
+        TopCondition = 'Horde Warrior/Horde Shaman/Horde Orc Hunter/Horde Troll Hunter'
+        DefaultFor = 'Shaman/Warrior/Orc Hunter/Troll Hunter'
+        Expected = @('22-25 Hillsbrad / South Barrens;22-25 Hillsbrad Foothills JJ')
+    }
+    [pscustomobject]@{
+        Label = 'Alliance Classic Duskwood boundary'; Group = 'RestedXP Alliance 20-32'
+        Name = '30-32 Duskwood/STV'; Exact = $true
+        Expected = @('RestedXP TBC Guide (A)\32-33 Shimmering Flats')
+    }
+    [pscustomobject]@{
+        Label = 'Alliance Classic Hillsbrad boundary'; Group = 'RestedXP Alliance 20-32'
+        Name = '30-32 Hillsbrad'; Exact = $true
+        Expected = @('RestedXP TBC Guide (A)\32-33 Shimmering Flats')
+    }
+    [pscustomobject]@{
+        Label = 'Horde Classic normal boundary'; Group = 'RestedXP Horde 1-30'
+        Name = '26-30 Ashenvale / Thousand Needles'; Exact = $true
+        Expected = @('RestedXP TBC Guide (H)\30-33 Hillsbrad/Arathi part 1')
+    }
+    [pscustomobject]@{
+        Label = 'Horde Classic JJ boundary'; Group = 'RestedXP Horde 1-30'
+        Name = '28-30 Thousand Needles JJ'; Exact = $true
+        Expected = @('RestedXP TBC Guide (H)\30-33 Hillsbrad/Arathi part 1')
+    }
+    [pscustomobject]@{
+        Label = 'Alliance boosted boundary'; Group = 'RestedXP Alliance Boosted 58-60'
+        Name = 'Boosted Character 58-60'; Exact = $true
+        Expected = @('RestedXP TBC Guide (A)\59-61 Hellfire Peninsula')
+    }
+    [pscustomobject]@{
+        Label = 'Horde boosted boundary'; Group = 'RestedXP Horde Boosted 58-60'
+        Name = 'Boosted Character 58-60'; Exact = $true
+        Expected = @('RestedXP TBC Guide (H)\59-61 Hellfire Peninsula')
+    }
+    [pscustomobject]@{
+        Label = 'Death Knight WotLK boundaries'; Group = 'RestedXP Death Knight Start'
+        Name = '55-58 The Scarlet Enclave'; Exact = $false
+        Expected = @(
+            'RestedXP TBC Guide (A)\59-61 Hellfire Peninsula << Alliance wotlk'
+            'RestedXP TBC Guide (H)\59-61 Hellfire Peninsula << Horde wotlk'
+        )
+    }
+)
+
+foreach ($faction in @('A', 'H')) {
+    foreach ($alignment in @('Aldor', 'Scryer')) {
+        $routeFixtures += [pscustomobject]@{
+            Label = $faction + ' ' + $alignment + ' WotLK boundary'
+            Group = 'RestedXP TBC Guide (' + $faction + ')'
+            Name = '69-70 Shadowmoon Valley (' + $alignment + ')'
+            Exact = $true
+            Expected = @(
+                'RestedXP WotLK Guide (' + $faction + ')\70-72 Northrend')
+        }
+    }
+
+    $wotlkRanges = @('70-72', '72-74', '74-76', '76-78', '78-80')
+    for ($rangeIndex = 0; $rangeIndex -lt $wotlkRanges.Count; $rangeIndex++) {
+        $expectedNext = if ($rangeIndex -lt ($wotlkRanges.Count - 1)) {
+            @($wotlkRanges[$rangeIndex + 1] + ' Northrend')
+        } else {
+            @()
+        }
+        $routeFixtures += [pscustomobject]@{
+            Label = $faction + ' WotLK ' + $wotlkRanges[$rangeIndex] + ' handoff'
+            Group = 'RestedXP WotLK Guide (' + $faction + ')'
+            Name = $wotlkRanges[$rangeIndex] + ' Northrend'
+            Exact = $true
+            Expected = $expectedNext
+        }
+    }
+}
+
+$routeGuideIndex = @{}
+foreach ($guide in $guides) {
+    if ($guide.RawGroup.TrimStart('+', '*').StartsWith('Original Guides - ')) {
+        continue
+    }
+    $fixtureGroup = ($guide.RawGroup -replace '\s*<<.*$', '').Trim().TrimStart('+', '*')
+    $fixtureKey = $fixtureGroup + '|' + $guide.Name
+    if (-not $routeGuideIndex.ContainsKey($fixtureKey)) {
+        $routeGuideIndex[$fixtureKey] = New-Object 'Collections.ArrayList'
+    }
+    [void]$routeGuideIndex[$fixtureKey].Add($guide)
+}
+
+foreach ($fixture in $routeFixtures) {
+    $fixtureKey = $fixture.Group + '|' + $fixture.Name
+    $fixtureGuides = @()
+    if ($routeGuideIndex.ContainsKey($fixtureKey)) {
+        $fixtureGuides = @($routeGuideIndex[$fixtureKey])
+    }
+    if ($fixtureGuides.Count -ne 1) {
+        Add-Error (
+            'Route fixture {0} matched {1} guides instead of one: {2} / {3}' -f
+            $fixture.Label, $fixtureGuides.Count, $fixture.Group, $fixture.Name)
+        continue
+    }
+
+    $fixtureGuide = $fixtureGuides[0]
+    if ($null -ne $fixture.PSObject.Properties['TopCondition']) {
+        $actualTopCondition = (
+            [regex]::Match(
+                $fixtureGuide.Content,
+                '(?m)^<<\s*(.+?)\s*$').Groups[1].Value.Trim() -replace '\s+', ' ')
+        if ($actualTopCondition -cne $fixture.TopCondition) {
+            Add-Error (
+                'Route fixture {0} top condition changed. Expected [{1}], got [{2}]' -f
+                $fixture.Label, $fixture.TopCondition, $actualTopCondition)
+        }
+    }
+    if ($null -ne $fixture.PSObject.Properties['DefaultFor']) {
+        $actualDefaultFor = Get-GuideHeader $fixtureGuide.Content 'defaultfor'
+        $actualDefaultFor = ($actualDefaultFor -replace '\s+', ' ').Trim()
+        if ($actualDefaultFor -cne $fixture.DefaultFor) {
+            Add-Error (
+                'Route fixture {0} #defaultfor changed. Expected [{1}], got [{2}]' -f
+                $fixture.Label, $fixture.DefaultFor, $actualDefaultFor)
+        }
+    }
+
+    $actualHeaders = [string[]]@(
+        [regex]::Matches($fixtureGuide.Content, '(?m)^#next\s+(.+?)\s*$') |
+            ForEach-Object {
+                Normalize-NextHeader ([string]$_.Groups[1].Value)
+            }
+    )
+    $expectedHeaders = [string[]]@(
+        @($fixture.Expected) | ForEach-Object {
+            Normalize-NextHeader ([string]$_)
+        }
+    )
+    $mismatch = $false
+    if ($fixture.Exact) {
+        $mismatch = $actualHeaders.Count -ne $expectedHeaders.Count
+        if (-not $mismatch) {
+            for ($headerIndex = 0; $headerIndex -lt $expectedHeaders.Count; $headerIndex++) {
+                if ($actualHeaders[$headerIndex] -cne $expectedHeaders[$headerIndex]) {
+                    $mismatch = $true
+                    break
+                }
+            }
+        }
+    } else {
+        foreach ($expectedHeader in $expectedHeaders) {
+            if ($actualHeaders -cnotcontains $expectedHeader) {
+                $mismatch = $true
+                break
+            }
+        }
+    }
+    if ($mismatch) {
+        $expectedDisplay = if ($expectedHeaders.Count) {
+            $expectedHeaders -join ' | '
+        } else {
+            '<terminal: no #next>'
+        }
+        $actualDisplay = if ($actualHeaders.Count) {
+            $actualHeaders -join ' | '
+        } else {
+            '<terminal: no #next>'
+        }
+        Add-Error (
+            'Route fixture {0} changed. Expected [{1}], got [{2}]' -f
+            $fixture.Label, $expectedDisplay, $actualDisplay)
     }
 }
 

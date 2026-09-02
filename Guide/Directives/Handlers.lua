@@ -4061,48 +4061,81 @@ function addon.functions.next(skip, guide, arg1)
 
     if next then
         local requestedNext = next
-        local group = guide.group
-        local guideSkip
+        local fallbackGuide
+        local fallbackGroup
+        local fallbackName
         local nextGuide
+        local selectedGroup
+        local selectedName
         --Different guides can be separated by a semicolon when using #next
-        local n = next
-        for guideName in string.gmatch(n,"%s*([^;]+)%s*") do
-            next = guideName:gsub("^%s*(.+)\\%s*", function(grp)
-                group = grp
+        for guideName in string.gmatch(next,"%s*([^;]+)%s*") do
+            -- Each candidate starts in the source guide's group. An explicit
+            -- group on one candidate must never leak into the candidates after it.
+            local candidateGroup = guide.group
+            local candidateName = guideName:match("^%s*(.-)%s*$")
+            candidateName = candidateName:gsub("^%s*(.+)\\%s*", function(grp)
+                candidateGroup = grp
                 return ""
             end)
-            next = next:gsub("^(%d)-(%d%d?)", addon.affix)
-            --print(1,next,guideSkip)
-            guideSkip = addon.GetGuideTable(group, next)
+
+            candidateName = candidateName:gsub("^(%d)-(%d%d?)", addon.affix)
+
+            -- Reputation and season variants must be selected before lookup;
+            -- changing the name afterwards can only return the wrong table.
+            if addon.game ~= "CLASSIC" then
+                local faction = candidateName:match("Aldor") or
+                                    candidateName:match("Scryer")
+                if faction and
+                    not addon.stepLogic.AldorScryerCheck(faction) then
+                    if faction == "Aldor" then
+                        candidateName = candidateName:gsub("Aldor", "Scryer")
+                    else
+                        candidateName = candidateName:gsub("Scryer", "Aldor")
+                    end
+                end
+            else
+                local era = "(Era)"
+                local som = "(SoM)"
+
+                if addon.settings.profile.season == 1 then
+                    candidateName = candidateName:gsub(era, som)
+                else
+                    candidateName = candidateName:gsub(som, era)
+                end
+            end
+
+            local candidateGuide = addon.GetGuideTable(candidateGroup,
+                                                        candidateName)
+            fallbackGuide = candidateGuide
+            fallbackGroup = candidateGroup
+            fallbackName = candidateName
+
             --Iterates through every guide until it finds a valid one
-            --It uses the last one listed in case none of them are valid
-            if guideSkip and addon.IsGuideActive(guideSkip) then
-                nextGuide = guideSkip
+            local candidateActive = candidateGuide and
+                                        addon.IsGuideActive(candidateGuide)
+            if candidateActive and addon.gameVersion == 30300 then
+                local profile = addon.settings and addon.settings.profile or {}
+                candidateActive = not (candidateGuide.hardcore and
+                                            not profile.hardcore or
+                                        candidateGuide.softcore and
+                                            profile.hardcore)
+            end
+            if candidateActive then
+                nextGuide = candidateGuide
+                selectedGroup = candidateGroup
+                selectedName = candidateName
                 break
             end
         end
-        --print(guideSkip)
-        if addon.game ~= "CLASSIC" then
-            local faction = next:match("Aldor") or next:match("Scryer")
-            if not addon.stepLogic.AldorScryerCheck(faction) then
-                if faction == "Aldor" then
-                    next = next:gsub("Scryer", "Aldor")
-                elseif faction == "Scryer" then
-                    next = next:gsub("Aldor", "Scryer")
-                end
-            end
-        else
-            local era = "(Era)"
-            local som = "(SoM)"
 
-            if addon.settings.profile.season == 1 then
-                next = next:gsub(era, som)
-            else
-                next = next:gsub(som, era)
-            end
+        -- Older clients retain the historical final-candidate fallback. On
+        -- 3.3.5 an incompatible guide must never be loaded merely because it
+        -- was the last candidate in the header.
+        if not nextGuide and addon.gameVersion ~= 30300 then
+            nextGuide = fallbackGuide
+            selectedGroup = fallbackGroup
+            selectedName = fallbackName
         end
-
-        nextGuide = nextGuide or addon.GetGuideTable(group, next)
         if nextGuide then
             if (not addon.stepLogic.SeasonCheck(nextGuide)) or
                 (nextGuide.hardcore and not (addon.settings.profile.hardcore) or
@@ -4113,13 +4146,13 @@ function addon.functions.next(skip, guide, arg1)
                     addon:LoadGuide(nextGuide)
                     return true
                 else
-                    return group,next
+                    return selectedGroup,selectedName
                 end
             end
-        elseif guideSkip then
+        elseif fallbackGuide and addon.gameVersion ~= 30300 then
             --Used in case it doesn't find a valid guide after the name substition
             --Name substitution is deprecated, list multiple guides instead
-            return addon.functions.next(nil, guideSkip)
+            return addon.functions.next(nil, fallbackGuide)
         elseif addon.gameVersion == 30300 and skip ~= false then
             local key = guide.key or (guide.group or "") .. "|" ..
                 (guide.name or "") .. "|" .. requestedNext

@@ -2227,13 +2227,34 @@ local function ResolveGuideNext(guide)
     if type(guide) ~= "table" or type(guide.next) ~= "string" then return end
     for rawName in guide.next:gmatch("%s*([^;]+)%s*") do
         local group = guide.group
-        local name = rawName:gsub("^%s*(.+)\\%s*", function(nextGroup)
+        local name = rawName:match("^%s*(.-)%s*$")
+        name = name:gsub("^%s*(.+)\\%s*", function(nextGroup)
             group = nextGroup
             return ""
         end)
         name = name:gsub("^(%d)-(%d%d?)", addon.affix)
+
+        -- Mirror the live Shattrath choice before lookup so previous-guide
+        -- discovery cannot select the opposite reputation route.
+        if addon.game ~= "CLASSIC" then
+            local faction = name:match("Aldor") or name:match("Scryer")
+            if faction and not addon.stepLogic.AldorScryerCheck(faction) then
+                if faction == "Aldor" then
+                    name = name:gsub("Aldor", "Scryer")
+                else
+                    name = name:gsub("Scryer", "Aldor")
+                end
+            end
+        end
+
         local nextGuide = addon.GetGuideTable(group, name)
-        if nextGuide and addon.IsGuideActive(nextGuide) then return nextGuide end
+        local active = nextGuide and addon.IsGuideActive(nextGuide)
+        if active and addon.gameVersion == 30300 then
+            local profile = addon.settings and addon.settings.profile or {}
+            active = not (nextGuide.hardcore and not profile.hardcore or
+                              nextGuide.softcore and profile.hardcore)
+        end
+        if active then return nextGuide end
     end
 end
 

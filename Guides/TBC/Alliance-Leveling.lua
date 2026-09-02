@@ -28004,8 +28004,7 @@ RXPGuides.RegisterGuide([[
 #subgroup RestedXP Alliance 60-70
 << Alliance
 #name 67-69 Netherstorm
-#next 69-70 Shadowmoon Valley (Aldor)
-#next 69-70 Shadowmoon Valley (Scryer)
+#next 69-70 Shadowmoon Valley (Aldor);69-70 Shadowmoon Valley (Scryer)
 step
 #optional
 +|cRXP_WARN_You must be at least level 67 to begin Netherstorm. Consider running some dungeons to catch up on XP|r

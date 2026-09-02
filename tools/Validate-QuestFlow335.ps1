@@ -58,6 +58,10 @@ function Test-Token([string]$Token, $Profile) {
         'FEMALE' { $true; break }
         'SKIP' { $false; break }
         'DK' { $Profile.Class -eq 'DEATHKNIGHT'; break }
+        # UnitRace returns the stable token "Scourge" on 3.3.5 while guide
+        # conditions traditionally call the race "Undead". Runtime applies()
+        # treats those spellings as aliases, so validation must do the same.
+        'UNDEAD' { $Profile.Race -eq 'Scourge'; break }
         default {
             $number = 0
             if ([int]::TryParse($Token, [ref]$number)) { $Profile.Level -ge $number }
@@ -135,11 +139,66 @@ function Test-GuideConditions($Guide, $Profile) {
     $expansionHeaders = [regex]::Matches($header, '(?m)^#(?:classic|tbc|wotlk|cata|mop|retail|df)\b')
     if ($expansionHeaders.Count -gt 0 -and $header -notmatch '(?m)^#wotlk\b') { return $false }
     foreach ($line in ($header -split "`n")) {
-        if ($line -match '^(?:<<|#(?:group|name)\b).*<<\s*(.+)$' -and
+        # A bare condition disables the whole guide. Conditional #name and
+        # #group headers are alternatives selected by the parser, so a
+        # non-matching alternative must not disable an otherwise valid guide.
+        if ($line -match '^<<\s*(.+)$' -and
             -not (Test-Applies $Matches[1] $Profile)) { return $false }
-        if ($line -match '^<<\s*(.+)$' -and -not (Test-Applies $Matches[1] $Profile)) { return $false }
     }
     return $true
+}
+
+function Get-ApplicableHeaderValue(
+    [string]$Header,
+    [string]$Name,
+    $Profile
+) {
+    $pattern = '^#' + [regex]::Escape($Name) + '(?:\s+(.*?))?\s*$'
+    foreach ($rawLine in ($Header -split "`n")) {
+        $line = $rawLine.Trim()
+        $match = [regex]::Match($line, $pattern)
+        if (-not $match.Success) { continue }
+        $rawValue = $match.Groups[1].Value
+        $condition = Get-Condition $line
+        if ($condition -and -not (Test-Applies $condition $Profile)) { continue }
+        return ($rawValue -replace '\s*<<.*$', '').Trim()
+    }
+    return $null
+}
+
+function Get-GuideLevelRange([string]$Name) {
+    $match = [regex]::Match($Name, '(?<!\d)(\d{1,2})\s*-\s*(\d{1,2})(?!\d)')
+    if (-not $match.Success) {
+        return [pscustomobject]@{ Start = 0; End = 0 }
+    }
+    return [pscustomobject]@{
+        Start = [int]$match.Groups[1].Value
+        End = [int]$match.Groups[2].Value
+    }
+}
+
+function Resolve-RouteCandidate(
+    [string]$SourceGroup,
+    [string]$CandidateRaw,
+    [string]$Alignment
+) {
+    $candidate = $CandidateRaw.Trim()
+    if (-not $candidate) { return $null }
+    $targetGroup = $SourceGroup
+    $targetName = $candidate
+    if ($candidate -match '^(.*?)\\(.+)$') {
+        $targetGroup = Normalize-Group $Matches[1]
+        $targetName = $Matches[2].Trim()
+    }
+    # The runtime normalizes an authored Aldor/Scryer candidate before guide
+    # lookup. Validate both valid reputation paths without depending on live
+    # faction reputation data.
+    if ($Alignment -eq 'Scryer' -and $targetName -match 'Aldor') {
+        $targetName = $targetName -replace 'Aldor', 'Scryer'
+    } elseif ($Alignment -eq 'Aldor' -and $targetName -match 'Scryer') {
+        $targetName = $targetName -replace 'Scryer', 'Aldor'
+    }
+    return [pscustomobject]@{ Group = $targetGroup; Name = $targetName }
 }
 
 function Get-MissingPrerequisites($Specification, $TurnedIn, $Completed, $Accepted) {
@@ -303,12 +362,13 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
     $text = [IO.File]::ReadAllText($path)
     foreach ($guideMatch in $guidePattern.Matches($text)) {
         $content = $guideMatch.Groups[1].Value -replace "`r`n", "`n"
-        $group = Normalize-Group (Get-Header $content 'group')
-        $name = Get-Header $content 'name'
-        if (-not $group -or -not $name) { continue }
-        if ($group.TrimStart('+', '*').StartsWith('Original Guides - ')) { continue }
         $stepAt = $content.IndexOf("`nstep")
         $header = if ($stepAt -ge 0) { $content.Substring(0, $stepAt) } else { $content }
+        $rawGroup = Get-Header $header 'group'
+        $group = Normalize-Group $rawGroup
+        $name = Get-Header $header 'name'
+        if (-not $group -or -not $name) { continue }
+        if ($rawGroup.TrimStart('+', '*').StartsWith('Original Guides - ')) { continue }
         $parsedEvents = New-Object 'Collections.Generic.List[object]'
         $stepCondition = ''
         $stepRate = ''
@@ -354,8 +414,11 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
         }
         $guides.Add([pscustomobject]@{
             File = $relative; Group = $group; Name = $name; Content = $content;
+            RawGroup = $rawGroup;
             Header = $header; Level = [int](([regex]::Match($name, '^(\d+)').Groups[1].Value) -as [int])
-            XpRate = Get-Header $content 'xprate'; Lines = $contentLines;
+            # Only the pre-step header controls guide visibility. Step-level
+            # #xprate directives are evaluated independently below.
+            XpRate = Get-Header $header 'xprate'; Lines = $contentLines;
             Events = $parsedEvents
         })
     }
@@ -384,6 +447,251 @@ foreach ($combination in $combinations) {
             Level = 1; Rate = 1.0
         })
     }
+}
+
+# Follow every primary WotLK leveling route from its race/class-specific entry
+# point to the terminal level-80 chapter. This is deliberately narrower than
+# the general guide inventory: optional, dungeon, profession, farming, daily,
+# Original-snapshot, and manually selected boosted guides are not automatic
+# continuations for a fresh character and must not create false positives.
+$primaryRouteGroups = @{
+    'RestedXP Speedrun Guide (A)' = $true
+    'RestedXP Speedrun Guide (H)' = $true
+    'RestedXP TBC Guide (A)' = $true
+    'RestedXP TBC Guide (H)' = $true
+    'RestedXP WotLK Guide (A)' = $true
+    'RestedXP WotLK Guide (H)' = $true
+    'RestedXP Death Knight Start' = $true
+}
+$routeAlignments = @('Aldor', 'Scryer')
+$routeIssues = @{}
+$routeMatrixRuns = 0
+$primaryRouteGuides = @($guides | Where-Object {
+    $primaryRouteGroups.ContainsKey($_.Group)
+})
+$routeRateSet = @{}
+foreach ($baseRate in @(1.0, 1.2, 1.5, 2.0)) {
+    $routeRateSet[$baseRate.ToString(
+        [Globalization.CultureInfo]::InvariantCulture)] = [double]$baseRate
+}
+# Preserve the explicitly supported rates above and also exercise both sides
+# and the exact boundary of every guide-level XP-rate branch. Step-only rates
+# do not choose the next guide and therefore remain in the event-flow tests.
+foreach ($routeGuide in $primaryRouteGuides) {
+    foreach ($rateLine in [regex]::Matches(
+        $routeGuide.Header, '(?m)^#xprate\s+(.+?)\s*$')) {
+        foreach ($number in [regex]::Matches(
+            $rateLine.Groups[1].Value, '\d+(?:\.\d+)?')) {
+            $threshold = [double]::Parse(
+                $number.Value, [Globalization.CultureInfo]::InvariantCulture)
+            foreach ($delta in @(-0.001, 0.0, 0.001)) {
+                $candidateRate = [math]::Round($threshold + $delta, 3)
+                if ($candidateRate -le 0) { continue }
+                $rateKey = $candidateRate.ToString(
+                    [Globalization.CultureInfo]::InvariantCulture)
+                $routeRateSet[$rateKey] = $candidateRate
+            }
+        }
+    }
+}
+$routeRates = [double[]]@($routeRateSet.Values | Sort-Object -Unique)
+
+function Add-RouteIssue([string]$Message) {
+    if ($Message) { $script:routeIssues[$Message] = $true }
+}
+
+function Get-RouteStart($Profile) {
+    if ($Profile.Class -eq 'DEATHKNIGHT') {
+        return [pscustomobject]@{
+            Group = 'RestedXP Death Knight Start'
+            Name = '55-58 The Scarlet Enclave'
+        }
+    }
+    $group = if ($Profile.Faction -eq 'Alliance') {
+        'RestedXP Speedrun Guide (A)'
+    } else {
+        'RestedXP Speedrun Guide (H)'
+    }
+    $name = switch ($Profile.Race) {
+        'Human' { '1-11 Elwynn Forest'; break }
+        'Dwarf' {
+            if ($Profile.Class -eq 'HUNTER') { '1-11 Dun Morogh' }
+            else { '1-6 Coldridge Valley' }
+            break
+        }
+        'Gnome' {
+            if ($Profile.Class -eq 'WARLOCK') { '1-12 Dun Morogh' }
+            else { '1-6 Coldridge Valley' }
+            break
+        }
+        'NightElf' { '1-6 Shadowglen'; break }
+        'Draenei' { '1-12 Azuremyst Isle'; break }
+        'Orc' { '1-6 Durotar'; break }
+        'Troll' { '1-6 Durotar'; break }
+        'Tauren' { '1-6 Mulgore'; break }
+        'Scourge' { '1-6 Tirisfal Glades'; break }
+        'BloodElf' { '1-6 Eversong Woods'; break }
+    }
+    if (-not $name) { return $null }
+    return [pscustomobject]@{ Group = $group; Name = $name }
+}
+
+function Get-ExpectedEarlyRouteMilestone($Profile) {
+    if ($Profile.Class -eq 'DEATHKNIGHT') { return $null }
+    if ($Profile.Faction -eq 'Alliance') {
+        if ($Profile.Race -eq 'Draenei') { return '11-20 Bloodmyst (Draenei)' }
+        return '14-20 Bloodmyst'
+    }
+    $barrensClassRoute =
+        $Profile.Class -in @('WARRIOR', 'SHAMAN') -or
+        ($Profile.Class -eq 'HUNTER' -and
+            $Profile.Race -in @('Orc', 'Troll'))
+    if ($barrensClassRoute) {
+        return '13-22 The Barrens'
+    }
+    return '16-20 Ghostlands'
+}
+
+foreach ($baseProfile in $profiles) {
+    foreach ($rate in $routeRates) {
+        $profile = [pscustomobject]@{
+            Faction = $baseProfile.Faction; Race = $baseProfile.Race
+            Class = $baseProfile.Class; Level = 1; Rate = [double]$rate
+        }
+        $catalog = @{}
+        foreach ($guide in $primaryRouteGuides) {
+            $probeName = Get-ApplicableHeaderValue $guide.Header 'name' $profile
+            if (-not $probeName) { continue }
+            $probeRange = Get-GuideLevelRange $probeName
+            $guideProfile = [pscustomobject]@{
+                Faction = $profile.Faction; Race = $profile.Race
+                Class = $profile.Class
+                Level = if ($probeRange.Start -gt 0) { $probeRange.Start } else { 1 }
+                Rate = $profile.Rate
+            }
+            if (-not (Test-GuideConditions $guide $guideProfile)) { continue }
+            $name = Get-ApplicableHeaderValue $guide.Header 'name' $guideProfile
+            $rawGroup = Get-ApplicableHeaderValue $guide.Header 'group' $guideProfile
+            if (-not $name -or -not $rawGroup) { continue }
+            $group = Normalize-Group $rawGroup
+            if (-not $primaryRouteGroups.ContainsKey($group)) { continue }
+            $guideRate = Get-ApplicableHeaderValue $guide.Header 'xprate' $guideProfile
+            if ($guideRate -and -not (Test-XpRate $guideRate $profile.Rate)) { continue }
+            $range = Get-GuideLevelRange $name
+            $subgroup = Get-ApplicableHeaderValue $guide.Header 'subgroup' $guideProfile
+            $instance = [pscustomobject]@{
+                File = $guide.File; Header = $guide.Header; Group = $group
+                Name = $name; Range = $range
+                MaxLevel = Get-ApplicableHeaderValue $guide.Header 'maxlevel' $guideProfile
+                SavedKey = "$group|$subgroup|$name"
+            }
+            $lookupKey = "$group|$name"
+            if ($catalog.ContainsKey($lookupKey)) {
+                Add-RouteIssue (
+                    "Route catalog collision for $($profile.Race) $($profile.Class) @$rate`x: " +
+                    "$lookupKey [$($catalog[$lookupKey].SavedKey)] and [$($instance.SavedKey)].")
+            } else {
+                $catalog[$lookupKey] = $instance
+            }
+        }
+
+        $start = Get-RouteStart $profile
+        if (-not $start) {
+            Add-RouteIssue "No route start mapping for $($profile.Race) $($profile.Class)."
+            continue
+        }
+
+        foreach ($alignment in $routeAlignments) {
+            $routeMatrixRuns++
+            # Each reputation branch is an independent simulated login. Do
+            # not let the completed Aldor trace leave the Scryer trace at 80.
+            $profile.Level = if ($profile.Class -eq 'DEATHKNIGHT') { 55 } else { 1 }
+            $profileLabel = "$($profile.Race) $($profile.Class) @$rate`x/$alignment"
+            $currentKey = "$($start.Group)|$($start.Name)"
+            if (-not $catalog.ContainsKey($currentKey)) {
+                Add-RouteIssue "Route matrix $profileLabel has no active starter $currentKey."
+                continue
+            }
+
+            $seen = @{}
+            $traceNames = New-Object 'Collections.Generic.List[string]'
+            $traceGroups = @{}
+            $terminal = $false
+            for ($hop = 0; $hop -lt 80; $hop++) {
+                if ($seen.ContainsKey($currentKey)) {
+                    Add-RouteIssue "Route matrix $profileLabel loops at $currentKey."
+                    break
+                }
+                $seen[$currentKey] = $true
+                $current = $catalog[$currentKey]
+                $traceNames.Add($current.Name)
+                $traceGroups[$current.Group] = $true
+                if ($current.Range.End -gt 0) { $profile.Level = $current.Range.End }
+
+                $nextValue = Get-ApplicableHeaderValue $current.Header 'next' $profile
+                if (-not $nextValue) {
+                    if ($current.Range.End -ge 80 -and
+                        $current.Group -eq ("RestedXP WotLK Guide (" +
+                            $(if ($profile.Faction -eq 'Alliance') { 'A' } else { 'H' }) + ')')) {
+                        $terminal = $true
+                    } else {
+                        Add-RouteIssue (
+                            "Route matrix $profileLabel ends early at $currentKey " +
+                            "(level $($current.Range.End)).")
+                    }
+                    break
+                }
+
+                $selected = $null
+                $candidateDisplay = New-Object 'Collections.Generic.List[string]'
+                foreach ($candidateRaw in ($nextValue -split ';')) {
+                    $candidate = Resolve-RouteCandidate `
+                        $current.Group $candidateRaw $alignment
+                    if (-not $candidate) { continue }
+                    $candidateKey = "$($candidate.Group)|$($candidate.Name)"
+                    $candidateDisplay.Add($candidateKey)
+                    if (-not $catalog.ContainsKey($candidateKey)) { continue }
+                    $candidateGuide = $catalog[$candidateKey]
+                    $maxLevel = 0
+                    if ($candidateGuide.MaxLevel) {
+                        [void][int]::TryParse([string]$candidateGuide.MaxLevel,
+                                             [ref]$maxLevel)
+                    }
+                    if ($maxLevel -gt 0 -and $profile.Level -gt $maxLevel) { continue }
+                    $selected = $candidateGuide
+                    break
+                }
+                if (-not $selected) {
+                    Add-RouteIssue (
+                        "Route matrix $profileLabel cannot resolve #next from " +
+                        "$currentKey to [$($candidateDisplay -join '; ')].")
+                    break
+                }
+                $currentKey = "$($selected.Group)|$($selected.Name)"
+            }
+
+            if (-not $terminal) { continue }
+            $expectedEarly = Get-ExpectedEarlyRouteMilestone $profile
+            if ($expectedEarly -and -not $traceNames.Contains($expectedEarly)) {
+                Add-RouteIssue (
+                    "Route matrix $profileLabel misses intended early milestone " +
+                    "'$expectedEarly'.")
+            }
+            $suffix = if ($profile.Faction -eq 'Alliance') { 'A' } else { 'H' }
+            foreach ($requiredGroup in @(
+                "RestedXP TBC Guide ($suffix)",
+                "RestedXP WotLK Guide ($suffix)")) {
+                if (-not $traceGroups.ContainsKey($requiredGroup)) {
+                    Add-RouteIssue (
+                        "Route matrix $profileLabel never enters $requiredGroup.")
+                }
+            }
+        }
+    }
+}
+
+foreach ($routeIssue in ($routeIssues.Keys | Sort-Object)) {
+    $errors.Add($routeIssue)
 }
 
 # Label/reference integrity is independent of XP-rate branches. A reference is
@@ -596,4 +904,4 @@ if ($errors.Count -gt 0) {
     throw "3.3.5 quest-flow validation failed with $($errors.Count) error(s)."
 }
 
-Write-Host "Quest-flow validation passed: $($guides.Count) guides, $applicableRuns class/race/XP branch runs, $($entryWarnings.Count) documented entry dependencies." -ForegroundColor Green
+Write-Host "Quest-flow validation passed: $($guides.Count) guides, $applicableRuns class/race/XP branch runs, $routeMatrixRuns complete route-matrix runs, $($entryWarnings.Count) documented entry dependencies." -ForegroundColor Green

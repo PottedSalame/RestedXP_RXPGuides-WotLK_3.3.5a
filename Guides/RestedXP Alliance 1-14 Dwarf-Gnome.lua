@@ -1593,7 +1593,7 @@ RXPGuides.RegisterGuide([[
 #version 1
 #group RestedXP Alliance 1-20
 #defaultfor Gnome Warlock
-#next 12-14 Loch Modan Gnome;11-14 Darkshore
+#next 12-14 Loch Modan Gnome;11-14 Darkshore;14-20 Bloodmyst
 step << !Gnome !Dwarf
     #sticky
     #completewith next
