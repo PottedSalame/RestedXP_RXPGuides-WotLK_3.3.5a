@@ -4715,7 +4715,7 @@ step
 #label LCHTurnins
 .goto Eastern Plaguelands,80.605,57.979
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Smokey LaRue|r
-.accept 5214 >>Accept The Great Fras Siabi
+.turnin 5214 >>Turn in The Great Fras Siabi
 .target Smokey LaRue
 .isQuestComplete 5214
 step

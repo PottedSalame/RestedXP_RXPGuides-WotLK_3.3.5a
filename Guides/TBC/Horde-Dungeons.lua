@@ -5795,7 +5795,7 @@ step
 #label LCHTurnins
 .goto Eastern Plaguelands,80.605,57.979
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Smokey LaRue|r
-.accept 5214 >>Accept The Great Fras Siabi
+.turnin 5214 >>Turn in The Great Fras Siabi
 .target Smokey LaRue
 .isQuestComplete 5214
 step
@@ -6055,7 +6055,7 @@ step
 .goto Feralas,76.58,43.23,30,0
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sage Korolusk|r
 >>|cRXP_FRIENDLY_Sage Korolusk|r |cRXP_WARN_patrols slightly through Camp Mojache|r
-.accept 7481 >>Accept Elven Legends
+.turnin 7481 >>Turn in Elven Legends
 .target Sage Korolusk
 .isQuestComplete 7481
 step
@@ -6107,7 +6107,7 @@ step
 .isOnQuest 7482
 >>Click the |cRXP_PICK_Skeletas Remains of Kariel Winthalus|r inside the Dire Maul Library
 >>|cRXP_WARN_This is located beside|r |cRXP_FRIENDLY_Lorekeeper Lydros|r
-.complete 7482,1 
+.complete 7481,1
 step
 +|cRXP_WARN_If you are doing a Tribute run:|r
 >>Completely avoid |cRXP_ENEMY_Guard Mol'dar|r, |cRXP_ENEMY_Guard Fengus|r and |cRXP_ENEMY_Stomper Kreeg|r
@@ -6125,11 +6125,11 @@ step
 #completewith next
 .zone Feralas >>Travel to Feralas
 step
-.goto Feralas,31.8,44.4
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Scholar Runethorn|r
->>|cRXP_FRIENDLY_Scholar Runethorn|r |cRXP_WARN_patrols slightly through Feathermoon Stronghold|r
-.turnin 7482 >> Turn in Elven Legends
-.target Scholar Runethorn
+.goto Feralas,74.39,44.01
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sage Korolusk|r
+>>|cRXP_FRIENDLY_Sage Korolusk|r |cRXP_WARN_patrols slightly through Camp Mojache|r
+.turnin 7481 >> Turn in Elven Legends
+.target Sage Korolusk
 step
 +|cRXP_WARN_This is the end of the Dire Maul (North) guide. Please pick another guide to continue|r
 ]]);

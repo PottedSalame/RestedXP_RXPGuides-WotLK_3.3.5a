@@ -6267,6 +6267,20 @@ step
 .turnin 12884 >> Turn in The Ebon Watch
 .accept 12630 >> Accept Kickin' Nass and Takin' Manes
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,15.5,69.8
+.mob Withered Trolls
+>>Kill Withered Trolls
+.use 38659
+>>Use Stefan's Steel Toed Boot on Nass
+.complete 12630,1
+>>Collect 10 Hair Samples
+>>Collect a Unliving Choker
+.use 38660
+>>Click the Unliving Choker in your bags
+.accept 12631 >> Accept An Invitation, of Sorts...
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,15.5,69.8
 .mob Withered Trolls
 >>Kill Withered Trolls
@@ -6279,12 +6293,29 @@ step
 >>Click the Writhing Choker in your bags
 .accept 12633 >> Accept Darkness Calling
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,14.1,73.8
+.target Stefan Vadu
+.turnin 12630 >> Turn in Kickin' Nass and Takin' Manes
+.turnin 12631 >> Turn in An Invitation, of Sorts...
+.accept 12637 >> Accept Near Miss
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,14.1,73.8
 .target Stefan Vadu
 .turnin 12630 >> Turn in Kickin' Nass and Takin' Manes
 .turnin 12633 >> Turn in Darkness Calling
 .accept 12638 >> Accept Close Call
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,14.3,74
+.target Bloodrose Datura
+.accept 12795 >> Accept Taking a Stand
+>>Tell her Stefan said she would demonstrate the item's purpose
+.complete 12637,1
+>>Expose the Choker's Purpose
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,14.3,74
 .target Bloodrose Datura
 .accept 12795 >> Accept Taking a Stand
@@ -6292,11 +6323,29 @@ step
 .complete 12638,1
 >>Expose the Choker's Purpose
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,14.1,73.8
+.target Stefan Vadu
+.turnin 12637 >> Turn in Near Miss
+.accept 12629 >> Accept You Can Run, But You Can't Hide
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,14.1,73.8
 .target Stefan Vadu
 .turnin 12638 >> Turn in Close Call
 .accept 12643 >> Accept Silver Lining
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,19.9,73.5
+.mob Putrid Abominations
+>>Kill Putrid Abominations
+.complete 12629,1
+>>Collect Putrid Abomination Guts
+>>Click the Gooey Ghoul Drool on the ground - They look like jelly blobs on the ground around this area
+.complete 12629,2
+>>Collect Gooey Ghoul Drool
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,19.9,73.5
 .mob Putrid Abominations
 >>Kill Putrid Abominations
@@ -6306,11 +6355,28 @@ step
 .complete 12643,2
 >>Collect Gooey Ghoul Drool
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,14.1,73.8
+.target Stefan Vadu
+.turnin 12629 >> Turn in You Can Run, But You Can't Hide
+.accept 12648 >> Accept Dressing Down
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,14.1,73.8
 .target Stefan Vadu
 .turnin 12643 >> Turn in Silver Lining
 .accept 12649 >> Accept Suit Up!
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,19.9,75.5
+.use 38699
+>>Use the Ensorcelled Choker to wear a ghoul costume
+.target Gristlegut
+.accept 12652 >> Accept Feedin' Da Goolz
+.complete 12648,1
+>>Buy buy 1 Bitter Plasma
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,19.9,75.5
 .use 38699
 >>Use the Ensorcelled Choker to wear a ghoul costume
@@ -6329,6 +6395,13 @@ step
 .target Gristlegut
 .turnin 12652 >> Turn in Feedin' Da Goolz
 step
+.isQuestTurnedIn -12238
+.goto Zul'Drak,14.1,73.8
+.target Stefan Vadu
+.turnin 12648 >> Turn in Dressing Down
+.accept 12661 >> Accept Infiltrating Voltarus
+step
+.isQuestTurnedIn 12238
 .goto Zul'Drak,14.1,73.8
 .target Stefan Vadu
 .turnin 12649 >> Turn in Suit Up!
@@ -6372,19 +6445,41 @@ step
 .goto Zul'Drak,28.1,45.2,0.2
 >>Get teleported up to Overlord Drakuru
 step
+.isQuestTurnedIn -12238
 .goto Zul'Drak,27.1,46.2
 .target Overlord Drakuru
 .accept 12664 >> Accept Dark Horizon
 step
+.isQuestTurnedIn 12238
+.goto Zul'Drak,27.1,46.2
+.target Overlord Drakuru
+.accept 12663 >> Accept Reunited
+step
+.isQuestTurnedIn -12238
 .goto Zul'Drak,29.9,47.8
 .target Gorebag
 >>Go on the tour of Zul'Drak
 .complete 12664,1
 >>Complete the tour of Zul'Drak
 step
+.isQuestTurnedIn 12238
+.goto Zul'Drak,29.9,47.8
+.target Gorebag
+>>Go on the tour of Zul'Drak
+.complete 12663,1
+>>Complete the tour of Zul'Drak
+step
+.isQuestTurnedIn -12238
 .goto Zul'Drak,27.1,46.2
 .target Overlord Drakuru
 .turnin 12664 >> Turn in Dark Horizon
+.complete 12661,1
+>>Complete Overlord Drakuru's task
+step
+.isQuestTurnedIn 12238
+.goto Zul'Drak,27.1,46.2
+.target Overlord Drakuru
+.turnin 12663 >> Turn in Reunited
 .complete 12661,1
 >>Complete Overlord Drakuru's task
 step

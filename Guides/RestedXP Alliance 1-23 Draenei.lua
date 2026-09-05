@@ -429,7 +429,7 @@ step
     .goto Azuremyst Isle,39.4,73.9
 	>>Finish off Root Trappers/Stags.
     .complete 9463,1 --Collect Root Trapper Vine (x8)
-	.complete 9454,1 --Collect Moongraze Stag Tenderloin (x6)
+    .collect 23676,6,9454,1 --Collect Moongraze Stag Tenderloin (x6) before accepting the quest
 step
 	.xp 8-950 >> Grind until you are 950xp away from level 8 (3550/4500). Try to finish near Azure Watch if possible.
 step
@@ -1922,7 +1922,7 @@ step
 --
 --
     .accept 10067 >> Accept Fouled Water Spirits
-     .turnin 9760 >> Turn in Vindicator's Rest
+     .turnin -9760 >> Turn in Vindicator's Rest
 step
     #sticky
 	#completewith next
@@ -2003,31 +2003,6 @@ step
 	*Once you find him, use the flare in your bags to summon a Draenei NPC to assist you
 	*The flare gun only have 1 charge, if you fail this quest, you will have to abandon it
 	.unitscan Matis the Cruel
-step << Hunter/Shaman/Mage
-    #label limit1
-    #completewith L20
-	.xp 19-11,200,1
-    .goto Bloodmyst Isle,24.8,51.3
-    .complete 9746,1 --Kill Sunhawk Pyromancer (x10)
-    .complete 9746,2 --Kill Sunhawk Defender (x10)
-step << Hunter/Shaman/Mage
-    #label limit2
-    #completewith L20
-    #requires limit1
-    .isOnQuest 9746
-    .goto Bloodmyst Isle,55.6,55.3
->>Talk to |cRXP_FRIENDLY_Vindicator Aesom|r
-    .turnin 9746 >> Turn in Limits of Physical Exhaustion
-.target Vindicator Aesom
-    .accept 9740 >> Accept The Sun Gate
-step << Hunter/Shaman/Mage
-    #label sungate
-    #completewith L20
-    #requires limit2
-    .isOnQuest 9740
-    .goto Bloodmyst Isle,18.7,64.0
-    >>Click on the purple crystals around the lake and then on the big portal in the middle
-    .complete 9740,1
 step
     .goto Bloodmyst Isle,34.3,33.6
 	.use 24318 >>Use the Sampling Vial in your bags at the base of the waterfall
@@ -2075,7 +2050,29 @@ step
 step
 	.goto Bloodmyst Isle,55.6,55.3
 	.abandon 9711 >> Abandon Matis the Cruel
-step
+step << Hunter/Shaman/Mage
+    #label limit1
+    .isOnQuest 9746
+    .goto Bloodmyst Isle,24.8,51.3
+    .complete 9746,1 --Kill Sunhawk Pyromancer (x10)
+    .complete 9746,2 --Kill Sunhawk Defender (x10)
+step << Hunter/Shaman/Mage
+    #label limit2
+    #requires limit1
+    .isOnQuest 9746
+    .goto Bloodmyst Isle,55.6,55.3
+>>Talk to |cRXP_FRIENDLY_Vindicator Aesom|r
+    .turnin 9746 >> Turn in Limits of Physical Exhaustion
+.target Vindicator Aesom
+    .accept 9740 >> Accept The Sun Gate
+step << Hunter/Shaman/Mage
+    #label sungate
+    #requires limit2
+    .isOnQuest 9740
+    .goto Bloodmyst Isle,18.7,64.0
+    >>Click on the purple crystals around the lake and then on the big portal in the middle
+    .complete 9740,1
+step << Hunter/Shaman/Mage
 	#requires sungate
 	.goto Bloodmyst Isle,55.6,55.3
 .target Vindicator Aesom
@@ -2102,6 +2099,12 @@ step << Hunter/Shaman/Mage
     .goto Bloodmyst Isle,52.6,53.3
 .target Exarch Admetius
     .accept 9760 >> Accept Vindicator's Rest
+step << Hunter/Shaman/Mage
+    .isOnQuest 9760
+    .goto Bloodmyst Isle,30.8,46.8
+    >>Talk to |cRXP_FRIENDLY_Vindicator Corin|r
+    .turnin 9760 >> Turn in Vindicator's Rest
+    .target Vindicator Corin
 step
 	#label bearend
     .goto Bloodmyst Isle,55.9,56.9

@@ -3087,6 +3087,10 @@ step
 >>Talk to |cRXP_FRIENDLY_Braelyn Firehand|r
     .turnin 1087 >> Turn in Cenarius' Legacy
 .target Braelyn Firehand
+step
+    #xprate <1.1
+    .goto Stonetalon Mountains,46.00,60.50
+    .target Braelyn Firehand
     .accept 1088 >> Accept Ordanus
 step
     .goto Stonetalon Mountains,47.10,61.10
@@ -3565,6 +3569,17 @@ step << Rogue
 	>> Loot the Globe from Baron Aquanis. Accept the quest
 	.collect 16762,1,6922
 	.accept 6922 >> Accept Baron Aquanis
+step
+    #xprate <1.1
+    .isQuestComplete 1088
+    .goto Ashenvale,12.2,33.8
+    .fly Sun Rock Retreat >>Fly to Sun Rock Retreat to return Ordanus' Head before hearthing
+step
+    #xprate <1.1
+    .isQuestComplete 1088
+    .goto Stonetalon Mountains,46.00,60.50
+    .turnin 1088 >>Turn in Ordanus
+    .target Braelyn Firehand
 step << Rogue
     .hs >> Hearth to Splintertree Post
 	>> Buy food/water if needed

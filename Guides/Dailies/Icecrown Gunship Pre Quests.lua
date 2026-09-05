@@ -1127,6 +1127,8 @@ step << Horde
 	>> Fly to Orgrim's Hammer, the big Horde ship that's flying around high up in the air. Go into the big room in the front. Talk to Kolitra
 	.turnin 13312 >>Turn in The Ironwall Rampart
 	.turnin 13307 >>Turn in Bloodspattered Banners
+    .accept 13329 >>Accept Before the Gate of Horror
+    .target Koltira Deathweaver
 step << Horde
 	>>Talk to Krom Blackscar beside you
 	.accept 13313 >>Accept Blinding the Eyes in the Sky
@@ -1137,6 +1139,19 @@ step << Horde
 step << Horde
 	>> Fly to Orgrim's Hammer, the big Horde ship that's flying around high up in the air. Go into the big room in the front. Talk to Krom Blackscar
 	.turnin 13313 >>Turn in Blinding the Eyes in the Sky
+step << Horde
+    .isOnQuest 13329
+    .goto IcecrownGlacier,44.7,57.3
+    >>Kill |cRXP_ENEMY_Skeletal Reavers|r, then use the |cRXP_PICK_Volatile Acid|r on their corpses to dissolve their bones. Find a group if needed.
+    .use 44653
+    .complete 13329,1 --Skeletal Reaver bones dissolved (6)
+    .mob Skeletal Reaver
+step << Horde
+    .isQuestComplete 13329
+    .goto IcecrownGlacier,67.00,38.00,0
+    >>Return to |cRXP_FRIENDLY_Koltira Deathweaver|r aboard the moving Orgrim's Hammer. This unlocks Volatility.
+    .turnin 13329 >>Turn in Before the Gate of Horror
+    .target Koltira Deathweaver
 step
 	+If you skipped or did not finish any of the quests in this guide please restart the guide and finish them. To do this click on the cog wheel and navigate back to the Icecrown Gunship Unlock Daily Quests guide
 	>>If you have completed them all you can start using the Icecrown Gunship Daily Quests Route. Note that some may not be available today as you may have completed some daily quests already

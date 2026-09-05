@@ -632,6 +632,11 @@ step
 .complete 11073,1 
 .mob Terokk
 step
+.goto Terokkar Forest,64.082,66.903
+>>Talk to |cRXP_FRIENDLY_Sky Commander Adaris|r
+.turnin 11073 >>Turn in Terokk's Downfall
+.target Sky Commander Adaris
+step
 +|cRXP_WARN_You have completed all of the Sha'tari Skyguard quests in Skettis. If you have not already, complete the quests in Ogri'la, as that also contains daily quests that award reputation with the Sha'tari Skyguard|r
 .subzoneskip 3973,1 
 ]]);
@@ -2631,21 +2636,21 @@ step
 >>|cRXP_WARN_Before you turn this quest in, start looking for a 5 man group for the quest Zuluhed the Whacked|r
 .target Karynaku
 .turnin 10858 >>Turn in Karynaku
-.accept 10872 >>Accept Zuluhed the Whacked
+.accept 10866 >>Accept Zuluhed the Whacked
 step
 .goto Shadowmoon Valley,70.705,61.352
 >>Kill |cRXP_ENEMY_Zuluhed the Whacked|r. Loot him for |cRXP_LOOT_Zuluhed's Key|r
-.complete 10872,2 
+.complete 10866,2
 .mob Zuluhed the Whacked
 step
 .goto Shadowmoon Valley,69.845,61.287
 >>Click |cRXP_PICK_Zuluhed's Chains|r
-.complete 10872,1 
+.complete 10866,1
 step
 .goto Shadowmoon Valley,69.867,61.453
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Karynaku|r
 .target Karynaku
-.turnin 10872 >>Turn in Zuluhed the Whacked
+.turnin 10866 >>Turn in Zuluhed the Whacked
 .accept 10870 >>Accept Ally of the Netherwing
 step
 .goto Shadowmoon Valley,59.327,58.693

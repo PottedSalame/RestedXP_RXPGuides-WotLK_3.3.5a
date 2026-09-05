@@ -110,7 +110,7 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Tervosh|r |cRXP_WARN_first and then to|r |cRXP_FRIENDLY_Lady Jaina Proudmoore|r
 .turnin 1324 >> Turn in The Missing Diplomat
 .target +Archmage Tervosh
-.turnin 1267 >> Turn in The Missing Diplomat
+.accept 1267 >> Accept The Missing Diplomat
 .target +Lady Jaina Proudmoore
 step
 .isQuestTurnedIn 1324
@@ -19254,11 +19254,6 @@ step
 .accept 9817 >> Accept Leader of the Bloodscale
 .accept 9730 >> Accept Leader of the Darkcrest
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warden Hamoot|r atop the tower
-.accept 9728 >> Accept A Warm Welcome
-.goto Zangarmarsh,79.089,65.262
-.target Warden Hamoot
-step
 .goto Zangarmarsh,78.533,63.147
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lethyn Moonfire|r
 .accept 9895 >> Accept The Dying Balance
@@ -19268,7 +19263,14 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ysiel Windsinger|r
 .turnin 9912 >> Turn in The Cenarion Expedition
 .accept 9716 >> Accept Disturbance at Umbrafen Lake
+.accept 9778 >> Accept Warden Hamoot
 .target Ysiel Windsinger
+step
+.goto Zangarmarsh,79.089,65.262
+>>Talk to |cRXP_FRIENDLY_Warden Hamoot|r atop the tower
+.turnin 9778 >> Turn in Warden Hamoot
+.accept 9728 >> Accept A Warm Welcome
+.target Warden Hamoot
 step
 .skill riding,225,1
 #completewith TelredorEntry

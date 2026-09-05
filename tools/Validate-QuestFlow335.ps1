@@ -3,6 +3,9 @@ param(
     [string]$QuestTemplatePath = '',
     [int]$MaxErrors = 200,
     [switch]$FailOnEntryWarnings,
+    [switch]$FailOnLifecycleWarnings,
+    [string]$ReportPath = '',
+    [switch]$InventoryOnly,
     [switch]$SkipLabelValidation,
     [switch]$SkipQuestValidation
 )
@@ -11,6 +14,8 @@ $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $errors = New-Object 'Collections.Generic.List[string]'
 $entryWarnings = @{}
+$lifecycleWarnings = @{}
+$lifecycleDetails = @{}
 $conditionCache = @{}
 $reachabilityCache = @{}
 $guidePattern = [regex]'(?ms)RXPGuides\.RegisterGuide\(\[\[(.*?)\]\]\)\s*;?'
@@ -372,7 +377,8 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
         $parsedEvents = New-Object 'Collections.Generic.List[object]'
         $stepCondition = ''
         $stepRate = ''
-        $stepMetadata = [pscustomobject]@{ Optional = $false; Guards = @{} }
+        $stepRateCondition = ''
+        $stepMetadata = [pscustomobject]@{ Optional = $false; Guards = @{}; Rates = [Collections.Generic.List[object]]::new() }
         $lineNumber = 0
         $contentLines = $content -split "`n"
         foreach ($rawLine in $contentLines) {
@@ -381,7 +387,8 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
             if ($line -match '^step\b') {
                 $stepCondition = Get-Condition $line
                 $stepRate = ''
-                $stepMetadata = [pscustomobject]@{ Optional = $false; Guards = @{} }
+                $stepRateCondition = ''
+                $stepMetadata = [pscustomobject]@{ Optional = $false; Guards = @{}; Rates = [Collections.Generic.List[object]]::new() }
                 continue
             }
             if ($line -match '^#optional\b') {
@@ -390,6 +397,8 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
             }
             if ($line -match '^#xprate\s+(.+?)(?:\s*<<|$)') {
                 $stepRate = $Matches[1].Trim()
+                $stepRateCondition = Get-Condition $line
+                $stepMetadata.Rates.Add([pscustomobject]@{ Expression = $stepRate; Condition = $stepRateCondition })
                 continue
             }
             if ($line -match '^\.(?:isQuestTurnedIn|isQuestComplete|isOnQuest)\s+([^>]+)') {
@@ -400,14 +409,15 @@ foreach ($fileMatch in [regex]::Matches($manifest, '<Script\s+file="([^"]+)"\s*/
             }
             if ($line -match '^\.(accept|acceptmultiple|daily|turnin|turninmultiple|dailyturnin|complete)\s+([^>]+)') {
                 $directive = $Matches[1]
-                $args = $Matches[2] -replace '\s*--.*$', ''
-                $ids = @([regex]::Matches($args, '(?<![.\d])-?\d+(?![.\d])') | ForEach-Object { [math]::Abs([int]$_.Value) })
+                $args = $Matches[2] -replace '\s*(?:--|<<).*$', ''
+                $ids = @([regex]::Matches($args, '(?<![.\d])-?\d+(?![.\d])') | ForEach-Object { [int]$_.Value })
                 if ($directive -notin @('acceptmultiple','daily','turninmultiple','dailyturnin') -and $ids.Count -gt 1) { $ids = @($ids[0]) }
                 foreach ($id in $ids) {
                     $parsedEvents.Add([pscustomobject]@{
-                        Directive = $directive; Quest = $id; Line = $lineNumber;
+                        Directive = $directive; Quest = [math]::Abs($id); Line = $lineNumber;
+                        SkipIfMissing = ($directive -eq 'turnin' -and $id -lt 0);
                         StepCondition = $stepCondition; LineCondition = Get-Condition $line;
-                        XpRate = $stepRate; Metadata = $stepMetadata
+                        XpRate = $stepRate; XpRateCondition = $stepRateCondition; Metadata = $stepMetadata
                     })
                 }
             }
@@ -449,6 +459,8 @@ foreach ($combination in $combinations) {
     }
 }
 
+if ($InventoryOnly) { return }
+
 # Follow every primary WotLK leveling route from its race/class-specific entry
 # point to the terminal level-80 chapter. This is deliberately narrower than
 # the general guide inventory: optional, dungeon, profession, farming, daily,
@@ -465,6 +477,7 @@ $primaryRouteGroups = @{
 }
 $routeAlignments = @('Aldor', 'Scryer')
 $routeIssues = @{}
+$routeMembership = @{}
 $routeMatrixRuns = 0
 $primaryRouteGuides = @($guides | Where-Object {
     $primaryRouteGroups.ContainsKey($_.Group)
@@ -584,6 +597,7 @@ foreach ($baseProfile in $profiles) {
                 Name = $name; Range = $range
                 MaxLevel = Get-ApplicableHeaderValue $guide.Header 'maxlevel' $guideProfile
                 SavedKey = "$group|$subgroup|$name"
+                SourceKey = "$($guide.File)|$($guide.Name)"
             }
             $lookupKey = "$group|$name"
             if ($catalog.ContainsKey($lookupKey)) {
@@ -624,6 +638,10 @@ foreach ($baseProfile in $profiles) {
                 }
                 $seen[$currentKey] = $true
                 $current = $catalog[$currentKey]
+                if (-not $routeMembership.ContainsKey($current.SourceKey)) {
+                    $routeMembership[$current.SourceKey] = @{}
+                }
+                $routeMembership[$current.SourceKey]["$($profile.Race) $($profile.Class)"] = $true
                 $traceNames.Add($current.Name)
                 $traceGroups[$current.Group] = $true
                 if ($current.Range.End -gt 0) { $profile.Level = $current.Range.End }
@@ -726,6 +744,40 @@ if (-not $SkipLabelValidation) { foreach ($guide in $guides) {
     }
 } }
 
+# Lifecycle coverage is separate from prerequisite availability. A completed
+# collection with no reward anywhere, or a class-only accept paired with an
+# unconditional hand-in, can have perfectly valid prerequisite data.
+$acceptOwners = @{}
+$questWork = @{}
+$questClosures = @{}
+$lifecycleIssues = @{}
+foreach ($guide in $guides) {
+    $owner = "$($guide.File)|$($guide.Name)"
+    foreach ($event in $guide.Events) {
+        if (-not (Test-ConditionReachable335 $event.StepCondition) -or
+            -not (Test-ConditionReachable335 $event.LineCondition)) { continue }
+        $id = $event.Quest
+        if ($event.Directive -in @('accept','acceptmultiple','daily')) {
+            if (-not $acceptOwners.ContainsKey($id)) { $acceptOwners[$id] = @{} }
+            $acceptOwners[$id][$owner] = $true
+        } elseif ($event.Directive -eq 'complete') {
+            $questWork[$id] = "$($guide.File):$($event.Line) $($guide.Name)"
+        } elseif ($event.Directive -in @('turnin','turninmultiple','dailyturnin')) {
+            $questClosures[$id] = $true
+        }
+    }
+    # An explicit abandonment documents an intentional partial quest. Keep it
+    # distinct from simply losing a turn-in when content is imported/edited.
+    foreach ($abandon in [regex]::Matches($guide.Content, '(?m)^\s*\.abandon\s+(\d+)')) {
+        $questClosures[[int]$abandon.Groups[1].Value] = $true
+    }
+}
+foreach ($id in $questWork.Keys) {
+    if ($acceptOwners.ContainsKey($id) -and -not $questClosures.ContainsKey($id)) {
+        $lifecycleIssues["$($questWork[$id]) works on accepted quest $id, but no validated guide rewards or explicitly abandons it."] = $true
+    }
+}
+
 $rates = @(1.0, 1.1, 1.12, 1.3, 1.49, 1.5, 1.6, 1.7, 2.5)
 
 $internalIssues = @{}
@@ -734,9 +786,9 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
     # Only run one representative rate for each distinct visibility result in
     # this guide. Most guides have no XP branch or only the 1.5x split, so this
     # retains threshold coverage without multiplying every guide by all rates.
-    $xpExpressions = @($guide.Events | ForEach-Object { $_.XpRate } |
+    $xpExpressions = @($guide.Events | ForEach-Object { $_.Metadata.Rates.Expression } |
         Where-Object { $_ } | Select-Object -Unique)
-    $guideRateExpression = Get-Header $guide.Content 'xprate'
+    $guideRateExpression = Get-Header $guide.Header 'xprate'
     if ($guideRateExpression) { $xpExpressions += $guideRateExpression }
     $guideRates = New-Object 'Collections.Generic.List[double]'
     $rateSignatures = @{}
@@ -750,19 +802,13 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
         }
     }
 
-    # XP-rate expressions depend only on the representative rate, not on the
-    # character profile. Resolve them once per guide/rate instead of once for
-    # every class/race branch.
+    # Guide-level rates are independent of class. Step-level conditional
+    # headers are resolved separately for each profile below.
     $rateData = New-Object 'Collections.Generic.List[object]'
     foreach ($guideRate in $guideRates) {
-        $eventRateVisibility = [bool[]]::new($guide.Events.Count)
-        for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
-            $eventRateVisibility[$eventIndex] = Test-XpRate $guide.Events[$eventIndex].XpRate $guideRate
-        }
         $rateData.Add([pscustomobject]@{
             Rate = [double]$guideRate
             GuideVisible = Test-XpRate $guide.XpRate $guideRate
-            EventVisible = $eventRateVisibility
         })
     }
 
@@ -780,22 +826,39 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
         if (-not (Test-GuideConditions $guide $profile)) { continue }
 
         $conditionVisibility = [bool[]]::new($guide.Events.Count)
+        $profileRates = [string[]]::new($guide.Events.Count)
         for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
             $event = $guide.Events[$eventIndex]
             $conditionVisibility[$eventIndex] =
                 -not $event.Metadata.Optional -and
                 (Test-Applies $event.StepCondition $profile) -and
                 (Test-Applies $event.LineCondition $profile)
+            # Runtime applies conditional headers in source order; the last
+            # matching #xprate wins. A nonmatching Mage header must not erase
+            # the Warlock threshold from the same step (or vice versa).
+            foreach ($restriction in $event.Metadata.Rates) {
+                if (Test-Applies $restriction.Condition $profile) {
+                    $profileRates[$eventIndex] = $restriction.Expression
+                }
+            }
         }
 
       foreach ($currentRate in $rateData) {
         if (-not $currentRate.GuideVisible) { continue }
         $applicableRuns++
+        $visible = [bool[]]::new($guide.Events.Count)
+        $rateResults = @{}
+        for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
+            $expression = [string]$profileRates[$eventIndex]
+            if (-not $rateResults.ContainsKey($expression)) {
+                $rateResults[$expression] = Test-XpRate $expression $currentRate.Rate
+            }
+            $visible[$eventIndex] = $conditionVisibility[$eventIndex] -and $rateResults[$expression]
+        }
         $signature = [Text.StringBuilder]::new(
                          [math]::Max(16, $guide.Events.Count * 3))
         for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
-            if ($conditionVisibility[$eventIndex] -and
-                $currentRate.EventVisible[$eventIndex]) {
+            if ($visible[$eventIndex]) {
                 if ($signature.Length -gt 0) { [void]$signature.Append(',') }
                 [void]$signature.Append($eventIndex)
             }
@@ -805,8 +868,7 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
         if (-not $runGroups.ContainsKey($signatureKey)) {
             $events = New-Object 'Collections.Generic.List[object]'
             for ($eventIndex = 0; $eventIndex -lt $guide.Events.Count; $eventIndex++) {
-                if ($conditionVisibility[$eventIndex] -and
-                    $currentRate.EventVisible[$eventIndex]) {
+                if ($visible[$eventIndex]) {
                     $events.Add($guide.Events[$eventIndex])
                 }
             }
@@ -836,6 +898,36 @@ if (-not $SkipQuestValidation) { foreach ($guide in $guides) {
         }
         for ($eventIndex = 0; $eventIndex -lt $events.Count; $eventIndex++) {
             $event = $events[$eventIndex]
+            if ($event.Directive -in @('complete','turnin','turninmultiple') -and
+                -not $event.SkipIfMissing -and
+                -not $accepted[$event.Quest] -and -not $turnedIn[$event.Quest] -and
+                -not $event.Metadata.Guards.ContainsKey($event.Quest)) {
+                $owners = $acceptOwners[$event.Quest]
+                $owner = "$($guide.File)|$($guide.Name)"
+                # Potential ordering gap, not proof of an impossible route:
+                # pre-looting, optional pickups, sticky labels, item-started
+                # quests and manual entry all need runtime/server context.
+                # Keep these explicit in the audit report, not a silent allowlist.
+                if ($owners -and $owners.Count -eq 1 -and $owners.ContainsKey($owner)) {
+                    $warning = "$($guide.File):$($event.Line) $($guide.Name) .$($event.Directive) $($event.Quest) has no preceding mandatory applicable accept"
+                    if (-not $lifecycleWarnings.ContainsKey($warning)) {
+                        $lifecycleWarnings[$warning] = New-Object 'Collections.Generic.List[string]'
+                        $optionalPickups = @($guide.Events | Where-Object {
+                            $_.Quest -eq $event.Quest -and $_.Line -lt $event.Line -and
+                            $_.Directive -in @('accept','acceptmultiple','daily') -and
+                            $_.Metadata.Optional
+                        } | ForEach-Object { $_.Line })
+                        $lifecycleDetails[$warning] = [pscustomobject]@{
+                            Owner = $owner; OptionalPickups = $optionalPickups
+                        }
+                    }
+                    foreach ($profileName in $run.Profiles) {
+                        if (-not $lifecycleWarnings[$warning].Contains($profileName)) {
+                            $lifecycleWarnings[$warning].Add($profileName)
+                        }
+                    }
+                }
+            }
             if ($event.Directive -in @('turnin','turninmultiple','dailyturnin')) {
                 $futureTurnIns[$event.Quest] = [int]$futureTurnIns[$event.Quest] - 1
                 $turnedIn[$event.Quest] = $true
@@ -894,8 +986,71 @@ foreach ($key in $internalIssues.Keys | Sort-Object) {
     $errors.Add("$($parts[0]):$($parts[2]) $($parts[1]) accepts quest $($parts[3]) before prerequisite $($parts[4]) is active/completed [$profilesText]")
 }
 
+foreach ($issue in ($lifecycleIssues.Keys | Sort-Object)) { $errors.Add($issue) }
+if ($FailOnLifecycleWarnings) {
+    foreach ($warning in ($lifecycleWarnings.Keys | Sort-Object)) { $errors.Add($warning) }
+}
+
 if ($FailOnEntryWarnings) {
     foreach ($key in $entryWarnings.Keys) { $errors.Add("Unresolved guide-entry prerequisite: $key") }
+}
+
+if ($ReportPath) {
+    # Index authored providers once. A provider is evidence for review, not
+    # proof that every class/rate route actually visited or finished it.
+    $providers = @{}
+    foreach ($guide in $guides) {
+        foreach ($event in $guide.Events) {
+            if ($event.Directive -notin @('turnin','turninmultiple','dailyturnin')) { continue }
+            if (-not $providers.ContainsKey($event.Quest)) { $providers[$event.Quest] = @{} }
+            $source = "$($guide.File):$($event.Line) $($guide.Name)"
+            $providers[$event.Quest][$source] = $true
+        }
+    }
+    # Stable source-only diagnostics: no absolute source paths, account data,
+    # timestamps, machine names or runtime SavedVariables in the artifact.
+    $report = [ordered]@{
+        schemaVersion = 2
+        guideCount = $guides.Count
+        branchRuns = $applicableRuns
+        routeRuns = $routeMatrixRuns
+        errors = @($errors | Sort-Object)
+        entryDependencies = @($entryWarnings.Keys | Sort-Object)
+        entryReferences = @(
+            foreach ($entry in ($entryWarnings.Keys | Sort-Object)) {
+                $id = [int](($entry -split '\|')[-1])
+                [ordered]@{
+                    dependency = $entry
+                    authoredProviders = @(if ($providers.ContainsKey($id)) {
+                        @($providers[$id].Keys | Sort-Object)
+                    })
+                }
+            }
+        )
+        lifecycleReviews = @(
+            foreach ($warning in ($lifecycleWarnings.Keys | Sort-Object)) {
+                $details = $lifecycleDetails[$warning]
+                $members = $routeMembership[$details.Owner]
+                $onRoute = @($lifecycleWarnings[$warning] | Where-Object {
+                    $members -and $members.ContainsKey(($_ -replace ' @.*$', ''))
+                })
+                $context = if ($details.OptionalPickups.Count) { 'optional-pickup' }
+                    elseif ($members -and $onRoute.Count -eq 0) { 'manual-off-route-entry' }
+                    else { 'runtime-review' }
+                [ordered]@{
+                    finding = $warning
+                    context = $context
+                    precedingOptionalPickups = @($details.OptionalPickups)
+                    profiles = @($lifecycleWarnings[$warning] | Sort-Object)
+                    defaultRouteProfiles = @($onRoute | Sort-Object)
+                }
+            }
+        )
+    }
+    $reportFile = [IO.Path]::GetFullPath($ReportPath)
+    [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($reportFile))
+    [IO.File]::WriteAllText($reportFile, ($report | ConvertTo-Json -Depth 6),
+                          (New-Object Text.UTF8Encoding($false)))
 }
 
 if ($errors.Count -gt 0) {
@@ -904,4 +1059,5 @@ if ($errors.Count -gt 0) {
     throw "3.3.5 quest-flow validation failed with $($errors.Count) error(s)."
 }
 
-Write-Host "Quest-flow validation passed: $($guides.Count) guides, $applicableRuns class/race/XP branch runs, $routeMatrixRuns complete route-matrix runs, $($entryWarnings.Count) documented entry dependencies." -ForegroundColor Green
+Write-Host "Quest-flow validation passed: $($guides.Count) guides, $applicableRuns class/race/XP branch runs, $routeMatrixRuns complete route-matrix runs; missing-reward lifecycle check passed." -ForegroundColor Green
+Write-Host "REVIEW: $($lifecycleWarnings.Count) conditional/optional lifecycle findings and $($entryWarnings.Count) entry dependencies need route/server context; this is not an exhaustive gameplay certification. Use -ReportPath for details."

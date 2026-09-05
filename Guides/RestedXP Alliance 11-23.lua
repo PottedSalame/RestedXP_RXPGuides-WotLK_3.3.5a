@@ -1876,7 +1876,7 @@ step
 .target Gwennyth Bly'Leggonde
 >>Talk to |cRXP_FRIENDLY_Gwennyth Bly'Leggonde|r
     .turnin 4725 >> Turn in Beached Sea Turtle
-    .turnin 4727 >> Turn in Beached Sea Turtle
+    .turnin -4727 >> Turn in Beached Sea Turtle
     .isQuestTurnedIn 4681
 step
 #xprate <1.5

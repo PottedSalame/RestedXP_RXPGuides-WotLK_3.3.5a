@@ -85,7 +85,7 @@ jobs:
 
       - name: Validate quest flow
         shell: pwsh
-        run: ./tools/Validate-QuestFlow335.ps1 -SkipQuestValidation
+        run: ./tools/Validate-QuestFlow335.ps1
 
       - name: Validate talent guides
         shell: pwsh

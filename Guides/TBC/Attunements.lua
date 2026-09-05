@@ -197,6 +197,7 @@ step
     .subzone 3717 >> |cRXP_WARN_Find a group for HEROIC: Slave Pens in Zangarmarsh. Once you have found a group, zone into the Slave Pens|r
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Skar'this the Heretic|r
+    .turnin 10900 >> Turn in The Mark of Vashj
     .accept 10901 >> Accept The Cudgel of Kar'desh
     .target Skar'this the Heretic
 step
@@ -885,7 +886,7 @@ step
     .goto Shadowmoon Valley,58.110,48.184
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Akama|r
     .turnin 10707 >> Turn in The Ata'mal Terrace
-    .accept 11052 >> Accept Akama's Promise
+    .accept 10708 >> Accept Akama's Promise
 	.target Akama
 step
     #completewith next
@@ -893,7 +894,7 @@ step
 step
     .goto Shattrath City,53.98,44.73
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_A'dal|r
-    .turnin 11052 >> Turn in Akama's Promise
+    .turnin 10708 >> Turn in Akama's Promise
 	.target A'dal
 step
     #completewith next

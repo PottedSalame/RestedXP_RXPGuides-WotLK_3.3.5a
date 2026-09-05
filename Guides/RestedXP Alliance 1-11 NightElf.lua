@@ -1031,7 +1031,7 @@ step << Rogue
     .turnin -935 >> Turn in Crown of the Earth
 .target Arch Druid Fandral Staghelm
 >>Talk to |cRXP_FRIENDLY_Arch Druid Fandral Staghelm|r
-    .turnin 940 >> Turn in Teldrassil
+    .turnin -940 >> Turn in Teldrassil
 step << Rogue
     #xprate <1.5
     .goto Darnassus,34.7,9.0

@@ -555,15 +555,16 @@ function addon.LoadEmbeddedGuides()
             addon.ImportGuide(guideData.groupOrContent, guideData.text,
                               guideData.defaultFor, true)
         else
-            local guide, errorMsg, metadata, length, key, group, name
+            local guide, errorMsg, metadata, length, key, group, name, sourceSignature
             local enabled = true
             if not guideData.text then
                 length = guideData.groupOrContent:len()
-                if RXPCData.guideDisabled[n] == length then
+                sourceSignature = addon.A32(guideData.groupOrContent)
+                if RXPCData.guideDisabled[n] == sourceSignature then
                     enabled = false
                 else
-                    -- An embedded guide can change without changing its manifest
-                    -- index.  Re-evaluate stale disabled entries in that case.
+                    -- Length and manifest index are not content identities:
+                    -- same-length condition/route edits must be re-evaluated.
                     RXPCData.guideDisabled[n] = nil
                     local index = guideData.groupOrContent:find("[\r\n]%s*step")
                     local header = index and guideData.groupOrContent:sub(1,index)
@@ -600,7 +601,7 @@ function addon.LoadEmbeddedGuides()
                             key = addon.BuildGuideKey(group,"",name)
                             guide = key and RXPCData.guideMetaData[key]
                         else
-                            RXPCData.guideDisabled[n] = length
+                            RXPCData.guideDisabled[n] = sourceSignature
                         end
                     end
                 end
@@ -609,7 +610,8 @@ function addon.LoadEmbeddedGuides()
                 enabled = false
             end
 
-            if guide and guide.length == length then
+            if guide and guide.length == length and
+                guide.sourceSignature == sourceSignature then
                 --print('w',guide.key)
                 if (guide.defaultFor and not applies(guide.defaultFor)) then
                     guide.lowPrio = "*" .. group
@@ -620,9 +622,13 @@ function addon.LoadEmbeddedGuides()
                 errorMsg = not (not guide.enabledFor or applies(guide.enabledFor))
                 --print(guide,errorMsg,guide.enabledFor)
                 addon.guideCache[guide.key] = function(self)
-                    local tbl = addon.ParseGuide(guideData.groupOrContent,guideData.text)
-                    if RXPCData and RXPCData.guideMetaData then
-                        RXPCData.guideMetaData[guide.key] = metadata
+                    local tbl, parseError, parsedMetadata = addon.ParseGuide(
+                        guideData.groupOrContent, guideData.text,
+                        guideData.defaultFor, true, group, key)
+                    if parseError then return end
+                    if parsedMetadata and RXPCData and RXPCData.guideMetaData then
+                        parsedMetadata.sourceSignature = sourceSignature
+                        RXPCData.guideMetaData[key or guide.key] = parsedMetadata
                     end
                     if addon.player.faction == "Neutral" and tbl then
                         tbl.parse = self
@@ -636,7 +642,13 @@ function addon.LoadEmbeddedGuides()
                                     guideData.defaultFor, true, group, key)
                     --print('n2',guide and guide.key)
                 enabled = not errorMsg
+                if enabled and guide then
+                    -- A fully parsed bundled guide supersedes any lazy parser
+                    -- left by an older imported copy with the same key.
+                    addon.guideCache[guide.key] = nil
+                end
                 if key and metadata then
+                    metadata.sourceSignature = sourceSignature
                     local cleanup = {}
                     for guideKey,data in pairs(RXPCData.guideMetaData) do
                         if data.key == guide.key then

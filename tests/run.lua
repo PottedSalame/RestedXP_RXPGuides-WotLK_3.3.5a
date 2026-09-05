@@ -681,5 +681,6 @@ for _, localeCode in ipairs({
           localeCode .. " Original English objective was generated incorrectly")
 end
 
+assert(loadfile(root .. "/tests/guide-loading.lua"))()(root)
 if failures > 0 then os.exit(1) end
 print("Core Lua 5.1 tests passed.")

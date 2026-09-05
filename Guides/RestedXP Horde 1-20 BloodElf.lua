@@ -3994,6 +3994,7 @@ step << BloodElf Warlock
 step << BloodElf Warlock
     .goto Ghostlands,43.66,15.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Purple Shard|r on the ground
+    .turnin 9529 >>Turn in The Stone
     .accept 9619 >>Accept The Rune of Summoning
 step << BloodElf Warlock
     #completewith next
@@ -4206,6 +4207,13 @@ step << BloodElf Warlock
     .target Quartermaster Lymel
     .target Rathis Tomber
     .target Arcanist Vandril
+step
+    .isQuestTurnedIn -9145
+    .isQuestTurnedIn -9143
+    .goto Ghostlands,45,32,50
+    >>Talk to |cRXP_FRIENDLY_Ranger Lethvalin|r near the flight master before leaving Tranquillien.
+    .accept 9145 >>Accept Help Ranger Valanna!
+    .target Ranger Lethvalin
 step << skip
     >>Do NOT fly to Silvermoon City. Talk to the Flight Master.
     .goto Ghostlands,45.5,30.6
@@ -4414,6 +4422,7 @@ step << Paladin
 step
     .goto Ghostlands,69.40,15.19
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Valanna|r
+    .turnin 9145 >> Turn in Help Ranger Valanna!
     .accept 9143 >> Accept Dealing with Zeb'Sora
     .target Ranger Valanna
 step

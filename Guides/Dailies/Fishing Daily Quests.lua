@@ -92,7 +92,7 @@ step
 step
 	>>Talk to Marcia Chase in Dalaran
 	.goto Dalaran,53.04,64.95
-	.turnin 13834 >>Turn in The Ghostfish
+	.turnin 13830 >>Turn in The Ghostfish
 	.isQuestComplete 13830
 
 -- Quest: Jewel Of The Sewers -- 13832
@@ -163,7 +163,7 @@ step
 step
 	>>Talk to Marcia Chase in Dalaran
 	.goto Dalaran,53.04,64.95
-	.turnin 13834 >>Turn in Blood Is Thicker
+	.turnin 13833 >>Turn in Blood Is Thicker
 	.isQuestComplete 13833
 step
 	+You have finished the Fishing Daily Quest for today

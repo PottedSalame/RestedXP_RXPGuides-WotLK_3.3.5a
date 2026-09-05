@@ -574,6 +574,7 @@ addon.guideLocalization:RegisterEnglishNames({
         [44478] = "Alumeth's Scepter",
         [44479] = "Alumeth's Robes",
         [44480] = "Alumeth's Remains",
+        [44653] = "Volatile Acid",
         [45000] = "Winter Hyacinth",
         [45005] = "Everburning Ember",
         [45080] = "Large Femur",

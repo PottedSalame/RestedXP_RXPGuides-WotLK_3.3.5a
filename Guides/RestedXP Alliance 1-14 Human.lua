@@ -811,6 +811,7 @@ step << Paladin tbc
     #completewith Prowlers
     .goto Elwynn Forest,83.6,69.7,120 >>Die and respawn at the Spirit Healer, or start running back if someone cleared the corpse prior
 step
+    .isOnQuest 5545
     .goto Elwynn Forest,76.8,62.4,90,0
     .goto Elwynn Forest,83.7,59.4,90,0
     .goto Elwynn Forest,76.8,62.4,90,0
@@ -821,6 +822,7 @@ step
     >>Start running back, finish off the bundles
     .complete 5545,1 --Collect Bundle of Wood (x8)
 step
+    .isOnQuest 5545
     .goto Elwynn Forest,81.382,66.112
 .target Supervisor Raelen
 >>Talk to |cRXP_FRIENDLY_Supervisor Raelen|r
@@ -1140,11 +1142,12 @@ step
     #completewith next
     .goto Westfall,51.7,49.4,150 >> Die and respawn at the Spirit Healer, or run to Sentinel Hill
 step << Warlock wotlk
-#xprate >1.3
+#xprate >1.119
     .goto Westfall,52.8,53.6
     .home >> Set your Hearthstone to Sentinel Hill
 step << Mage wotlk/Warlock wotlk
-#xprate >1.3
+#xprate >1.3 << Mage
+#xprate >1.119 << Warlock
     .goto Westfall,54.00,53.00
 .target Scout Galiaan
 >>Talk to |cRXP_FRIENDLY_Scout Galiaan|r
@@ -1156,7 +1159,8 @@ step
 >>Talk to |cRXP_FRIENDLY_Gryan Stoutmantle|r
     .turnin 109 >> Turn in Report to Gryan Stoutmantle
 step << Mage wotlk/Warlock wotlk
-#xprate >1.3
+#xprate >1.3 << Mage
+#xprate >1.119 << Warlock
     .goto Westfall,56.327,47.520
 .target Gryan Stoutmantle
 >>Talk to |cRXP_FRIENDLY_Gryan Stoutmantle|r

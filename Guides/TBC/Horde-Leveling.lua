@@ -21048,11 +21048,6 @@ step
 .accept 9817 >> Accept Leader of the Bloodscale
 .accept 9730 >> Accept Leader of the Darkcrest
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warden Hamoot|r atop the tower
-.accept 9728 >> Accept A Warm Welcome
-.goto Zangarmarsh,79.089,65.262
-.target Warden Hamoot
-step
 #optional
 .goto Zangarmarsh,78.53,63.15
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lethyn|r
@@ -21079,7 +21074,14 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ysiel Windsinger|r
 .turnin 9912 >> Turn in The Cenarion Expedition
 .accept 9716 >> Accept Disturbance at Umbrafen Lake
+.accept 9778 >> Accept Warden Hamoot
 .target Ysiel Windsinger
+step
+.goto Zangarmarsh,79.089,65.262
+>>Talk to |cRXP_FRIENDLY_Warden Hamoot|r atop the tower
+.turnin 9778 >> Turn in Warden Hamoot
+.accept 9728 >> Accept A Warm Welcome
+.target Warden Hamoot
 step
 #completewith next
 >>Kill |cRXP_ENEMY_Fen Striders|r and |cRXP_ENEMY_Sporebats|r. Loot them for their |cRXP_LOOT_Fertile Spores|r

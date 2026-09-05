@@ -1565,7 +1565,7 @@ step << !Shaman !Warrior
 .target Orgnil Soulscar
 >>Talk to |cRXP_FRIENDLY_Orgnil Soulscar|r
     .turnin 823 >>Turn in Report to Orgnil
-step << Warlock/Shaman/Warrior
+step << Warlock/Shaman/Warrior/Hunter
     #xprate <1.5
     .goto Durotar,51.9,43.5
 .target Gar'Thok
@@ -1641,20 +1641,19 @@ step << Shaman
     .train 8044 >>Train Earth Shock r2
     .train 8018 >>Train Rockbiter Weapon r2
 step << Priest
-    #xprate <1.5
     .goto Durotar,54.3,42.9
     .train 139 >>Train Renew
     .train 2052 >> Train Lesser Heal r2
 >>Talk to |cRXP_FRIENDLY_Tai'jin|r
-    .turnin 5649 >> In Favor of Spirituality
+    .turnin 5649 >> In Favor of Spirituality << Troll
 .target Tai'jin
-    .accept 5648 >> Garments of Spirituality
-step << Priest
+    .accept 5648 >> Garments of Spirituality << Troll
+step << Troll Priest
     .goto Durotar,53.1,46.5
     .cast 2052 >>Cast Lesser Heal (Rank 2) on Grunt Kor'ja
     .cast 1243 >>Cast Power Word: Fortitude (Rank 1) on Grunt Kor'ja
     .complete 5648,1 --Heal and cast Fortify on Grunt Kor'ja
-step << Priest
+step << Troll Priest
     .goto Durotar,54.3,42.9
 .target Tai'jin
 >>Talk to |cRXP_FRIENDLY_Tai'jin|r
@@ -1860,7 +1859,7 @@ step
     >> Head to the bunker
 .target Gar'Thok
 >>Talk to |cRXP_FRIENDLY_Gar'Thok|r
-    .turnin 784 >>Turn in Vanquish the Betrayers
+    .turnin 825 >>Turn in From The Wreckage....
     .turnin 830 >>Turn in The Admiral's Orders
     .turnin 837 >>Turn in Encroachment
 step << Hunter
@@ -2145,18 +2144,18 @@ step << !Shaman !Warrior !Warlock
 step << Hunter tbc
     .goto Durotar,57.2,12.0
     .tame 3108 >>Tame an Encrusted Surf Crawler (They have Claw Rank 3)
-step << !Shaman !Warrior !Hunter
+step << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
     #sticky
     #completewith next
 +Go to the Zeppelin tower. Take the zeppelin to Undercity
     .goto Durotar,50.8,13.8
-step << !Shaman !Warrior !Hunter
+step << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
 .zone Tirisfal Glades >>Arrive in Tirisfal
-step << !Shaman !Warrior !Hunter
+step << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
 .goto Undercity,66.2,1.1,18 >>Go to Undercity
-step << !Shaman !Warrior !Hunter
+step << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
 .goto Undercity,62.0,11.3,18 >>Go up the stairs here
-step << !Shaman !Warrior !Hunter
+step << !Warrior !Shaman !(Orc Hunter) !(Troll Hunter)
     .goto Undercity,54.63,11.28
     .zone Silvermoon City >>Use the Orb of Translocation to teleport to Silvermoon
     .zoneskip Eversong Woods
