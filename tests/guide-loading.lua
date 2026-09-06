@@ -156,6 +156,32 @@ return function(root)
     end
 
     local humanPath = "Guides/RestedXP Alliance 1-14 Human.lua"
+    local starter = loadGuide("Guides/RestedXP Horde 1-13 Troll-Orc.lua",
+        "1-6 Durotar", "HUNTER", "Orc", "Horde")
+    assert(starter.next == "6-10 Durotar", "Starter route lost its Durotar continuation")
+    local first = starter.steps[1]
+    local introAccepted, introTarget
+    local wrongClassTargets = {
+        ["Ruzan"] = true, ["Hraug"] = true, ["Nartok"] = true,
+        ["Rwag"] = true, ["Ken'jai"] = true, ["Shikrik"] = true,
+        ["Canaga Earthcaller"] = true, ["Frang"] = true,
+    }
+    for _, step in ipairs(starter.steps) do
+        for _, element in ipairs(step.elements) do
+            if step == first and element.tag == "accept" and
+                tonumber(element.first) == 4641 then introAccepted = true end
+            if step == first and element.tag == "target" and
+                element.first == "Kaltunk" then introTarget = true end
+            if element.tag == "goto" then
+                assert(element.first == "Durotar", "Starter guide leaves Durotar")
+            elseif element.tag == "target" then
+                assert(not wrongClassTargets[element.first],
+                       "Orc Hunter received another class's target: " .. tostring(element.first))
+            end
+        end
+    end
+    assert(introAccepted and introTarget,
+           "Orc Hunter starter no longer begins with Kaltunk's intro quest")
     local priest = loadGuide("Guides/RestedXP Horde 1-13 Troll-Orc.lua",
         "6-10 Durotar", "PRIEST", "Troll", "Horde")
     for _, rate in ipairs({1, 1.5, 2.5}) do
@@ -251,6 +277,21 @@ return function(root)
         assert(refreshed.sourceSignature == addon.A32(newSource), "Source identity was not saved")
         assert(env.RXPCData.guideProgress[key] == progress and progress.currentStep == 17,
                "Metadata rebuild changed character progress")
+    end
+    do
+        local addon = newLoader("HUNTER", "Orc")
+        local stale = assert(addon.ParseGuide(oldSource))
+        stale.imported = true
+        assert(addon.AddGuide(stale), "Failed to seed stale imported guide")
+        addon.RegisterGuide(newSource)
+        addon.LoadEmbeddedGuides()
+        local replacement = assert(addon.guides["Fixture||Fixture"])
+        assert(replacement.next == "New Route" and replacement.bundled,
+               "Bundled guide did not replace its same-key imported copy")
+        assert(addon.bundledGuideReplacements[replacement.key],
+               "Same-key layout replacement was not recorded")
+        assert(addon.guideCache[replacement.key] == nil,
+               "Stale imported parser survived bundled replacement")
     end
     print("Alliance/Horde quest-chain, source filtering and embedded-cache regression tests passed.")
 end

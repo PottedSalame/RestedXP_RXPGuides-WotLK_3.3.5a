@@ -2324,6 +2324,15 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     if not guide or not guide.steps then
         return LoadEmptyGuide()
     end
+    if OnLoad and addon.bundledGuideReplacements and
+        addon.bundledGuideReplacements[guide.key] then
+        -- The saved position belongs to an imported guide that used this
+        -- bundled guide's key. Its line-derived step ID and numeric fallback
+        -- cannot be mapped safely to a different route layout.
+        OnLoad = nil
+        savedStep = nil
+        savedStepId = nil
+    end
     if loadSource == "manual" and addon.gameVersion == 30300 then
         redirectTrail = redirectTrail or {}
         local guideKey = guide.key or fmt("%s|%s", guide.group or "",

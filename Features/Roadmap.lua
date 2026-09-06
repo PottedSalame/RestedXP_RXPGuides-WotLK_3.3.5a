@@ -405,6 +405,13 @@ end
 
 function guideState:Get(guide)
     local key = GuideKey(guide)
+    -- A same-key imported route may have a completely different step layout.
+    -- Do not apply its numeric/line-derived checkpoint to the bundled route;
+    -- start the maintained guide coherently once, then save a fresh checkpoint.
+    if key and addon.bundledGuideReplacements and
+        addon.bundledGuideReplacements[key] then
+        return nil, key
+    end
     local progress = key and RXPCData.guideProgress
     local checkpoint = progress and progress[key]
     if checkpoint then return checkpoint, key end
@@ -462,6 +469,9 @@ function guideState:RecordLoaded(guide)
     table.insert(recent, 1, key)
     while #recent > 20 do table.remove(recent) end
     self:SaveCurrent()
+    if addon.bundledGuideReplacements then
+        addon.bundledGuideReplacements[key] = nil
+    end
     if addon.guideHub and addon.guideHub.Refresh then
         addon.guideHub:Refresh()
     end

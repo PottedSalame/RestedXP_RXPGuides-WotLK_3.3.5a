@@ -120,11 +120,35 @@ function addon.AddGuide(guide)
     -- Not applicable (e.g. wrong faction), rely on upstream functions to report parsing errors
     if not guide then return false end
     addon.GroupOverride(guide)
-    local loadedGuide
-    for _, checkGuide in ipairs(addon.guides) do
-        if guide.key == checkGuide.key then
-            loadedGuide = checkGuide
-            break
+    local index = fmt("%s||%s", guide.group, guide.name)
+    local loadedGuide = addon.guides[index]
+    if loadedGuide and loadedGuide.key ~= guide.key then loadedGuide = nil end
+
+    -- Account-wide imported guides are restored before the bundled guide
+    -- inventory. A cached import can have the same canonical key as a
+    -- maintained 3.3.5 route, so the bundled copy must win once it arrives.
+    -- The old branch below accidentally assigned checkGuide back to itself,
+    -- leaving stale/Classic guide contents under a valid WotLK picker entry.
+    local replaceImported = loadedGuide and guide.bundled and
+                                loadedGuide.imported
+    if loadedGuide and not replaceImported then return true end
+    if replaceImported then
+        local signature = tostring(guide.sourceSignature or
+                                     (tostring(guide.version or 0) .. ":" ..
+                                      tostring(guide.steps and #guide.steps or 0)))
+        local acknowledged
+        if RXPCData then
+            RXPCData.bundledGuidePrecedence =
+                type(RXPCData.bundledGuidePrecedence) == "table" and
+                    RXPCData.bundledGuidePrecedence or {}
+            acknowledged = RXPCData.bundledGuidePrecedence[guide.key] ==
+                               signature
+            RXPCData.bundledGuidePrecedence[guide.key] = signature
+        end
+        if not acknowledged then
+            addon.bundledGuideReplacements =
+                addon.bundledGuideReplacements or {}
+            addon.bundledGuideReplacements[guide.key] = true
         end
     end
 
@@ -147,7 +171,6 @@ function addon.AddGuide(guide)
     if guide.lowPrio then
         group = guide.lowPrio
     end
-    local index = fmt("%s||%s",guide.group,guide.name)
     addon.RegisterGroup(group,guide.group ~= group and guide.group)
 
     if not addon.guideList[group] then
@@ -163,13 +186,15 @@ function addon.AddGuide(guide)
         addon.guideIds[guide.guideId] = index
     end
 
-    if loadedGuide then -- guide exists, but new version
-        for i, checkGuide in ipairs(addon.guides) do
-            if guide.key == checkGuide.key then
-                addon.guides[i] = checkGuide
-                break
-            end
+    if loadedGuide then -- bundled guide replaces a stale imported copy
+        addon.guides[index] = guide
+        list[guide.name] = index
+        local listed
+        for _, listedName in ipairs(list.names_) do
+            if listedName == guide.name then listed = true break end
         end
+        if not listed then tinsert(list.names_, guide.name) end
+        if addon.defaultGuide == loadedGuide then addon.defaultGuide = guide end
     else -- guide doesn't exist, so insert
         if not addon.guides[index] then
             tinsert(list.names_, guide.name)
@@ -188,8 +213,8 @@ function addon.RemoveGuide(guideKey)
     if not guideKey then return false end
 
     local loadedGuide
-    for _, checkGuide in ipairs(addon.guides) do
-        if guideKey == checkGuide.key then
+    for _, checkGuide in pairs(addon.guides) do
+        if type(checkGuide) == "table" and guideKey == checkGuide.key then
             loadedGuide = checkGuide
             break
         end
@@ -626,6 +651,10 @@ function addon.LoadEmbeddedGuides()
                         guideData.groupOrContent, guideData.text,
                         guideData.defaultFor, true, group, key)
                     if parseError then return end
+                    if tbl then
+                        tbl.bundled = true
+                        tbl.sourceSignature = sourceSignature
+                    end
                     if parsedMetadata and RXPCData and RXPCData.guideMetaData then
                         parsedMetadata.sourceSignature = sourceSignature
                         RXPCData.guideMetaData[key or guide.key] = parsedMetadata
@@ -662,7 +691,14 @@ function addon.LoadEmbeddedGuides()
                 end
             end
             if enabled then
-                if name and group and addon.guides[group .. "||" .. name] then
+                if guide then
+                    guide.bundled = true
+                    guide.sourceSignature = sourceSignature or
+                                                guide.sourceSignature
+                end
+                local duplicate = name and group and
+                                      addon.guides[group .. "||" .. name]
+                if duplicate and not duplicate.imported then
                     addon.error("Error trying to load a guide already parsed: " .. group .. "/" .. name)
                 end
                 addon.AddGuide(guide)
@@ -705,6 +741,21 @@ function addon.LoadCachedGuides()
         local guide, errorMsg, metadata
         local enabled = not guideData.enabledFor or
                             applies(guideData.enabledFor)
+        local cachedMetadata = guideData.metadata
+        if enabled and type(cachedMetadata) == "table" then
+            local hasExpansion = cachedMetadata.classic ~= nil or
+                                     cachedMetadata.tbc ~= nil or
+                                     cachedMetadata.wotlk ~= nil or
+                                     cachedMetadata.cata ~= nil or
+                                     cachedMetadata.mop ~= nil or
+                                     cachedMetadata.retail ~= nil or
+                                     cachedMetadata.df ~= nil
+            if hasExpansion and cachedMetadata[game] == nil then
+                -- Metadata cached under another client must not enter the
+                -- registry without going through the current parser.
+                enabled = false
+            end
+        end
         if addon.release ~= RXPData.release then
             guideData.metadata = nil
         end

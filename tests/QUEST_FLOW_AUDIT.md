@@ -103,6 +103,15 @@ Embedded metadata now uses a content signature as well as length. Cache
 revision 34 triggers a rebuild without clearing guide progress. Updating addon
 files requires `/reload` before an already-running client uses the new source.
 
+Account-wide imported guides are restored before embedded content. If an old
+import reuses a maintained guide's canonical key, the bundled 3.3.5 guide now
+replaces it deterministically; metadata explicitly cached for another client
+expansion is not admitted to the WotLK registry. Because line-derived and
+numeric positions cannot safely identify the equivalent step in a different
+layout, the affected guide starts at step 1 once, records the bundled source
+signature, and resumes normally on later logins. Other guide checkpoints are
+not changed.
+
 ## Running and interpreting the audit
 
 ```powershell
