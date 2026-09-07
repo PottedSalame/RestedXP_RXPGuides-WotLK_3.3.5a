@@ -1572,11 +1572,10 @@ step << Warlock/Shaman/Warrior/Hunter
 >>Talk to |cRXP_FRIENDLY_Gar'Thok|r
 .accept 831 >>Accept The Admiral's Orders
 step
-    #xprate <1.5
 .goto Durotar,49.9,40.3
 .target Furl Scornbrow
 >>Talk to |cRXP_FRIENDLY_Furl Scornbrow|r
-    .turnin 791 >>Turn in Carry Your Weight
+    .turnin -791 >>Turn in Carry Your Weight
 step
     >> Talk to Cook Torka
     .goto Durotar,51.1,42.4
@@ -2283,6 +2282,18 @@ step << Undead Warrior
     .turnin 823 >>Turn in Report to Orgnil
 .target Orgnil Soulscar
     .accept 806 >>Accept Dark Storms
+step << Undead Warrior
+    .goto Durotar,51.9,43.5
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gar'Thok|r
+    .turnin 784 >>Turn in Vanquish the Betrayers
+    .turnin 830 >>Turn in The Admiral's Orders
+    .accept 831 >>Accept The Admiral's Orders
+    .target Gar'Thok
+step << Undead Warrior
+    .goto Durotar,49.9,40.3
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Furl|r
+    .turnin 791 >>Turn in Carry Your Weight
+    .target Furl Scornbrow
 step
     #xprate >1.499
     .goto Durotar,48.9,48.5
@@ -2562,7 +2573,7 @@ step << Orc/Troll
     .turnin 6385 >>Turn in Doras the Wind Rider Master
 .target Doras
     .accept 6386 >>Accept Return to the Crossroads.
-step << Orc/Troll
+step << Orc/Troll/Undead Warrior
     .goto Orgrimmar,34.340,36.328
     >> Cross the bridge from the flightpath tower
 .target Vol'jin

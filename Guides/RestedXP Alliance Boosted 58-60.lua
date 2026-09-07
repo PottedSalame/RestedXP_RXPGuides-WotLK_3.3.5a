@@ -339,7 +339,6 @@ step
 >>Talk to |cRXP_FRIENDLY_Egan|r
     .turnin 5281 >>Turn in The Restless Souls
 .target Egan
-    .accept 5282 >>Accept The Restless Souls
 step
     #completewith next
     .hs >> Hearth to Southshore

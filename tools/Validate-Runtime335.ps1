@@ -11,10 +11,25 @@ function Add-ValidationError([string]$Message) {
     $errors.Add($Message)
 }
 
+$exactChildrenByParent =
+    [Collections.Generic.Dictionary[string,object]]::new(
+        [StringComparer]::Ordinal)
+
 function Get-ExactChild([string]$Parent, [string]$Name) {
-    if (-not (Test-Path -LiteralPath $Parent -PathType Container)) { return $null }
-    return Get-ChildItem -LiteralPath $Parent -Force |
-        Where-Object { $_.Name -ceq $Name } | Select-Object -First 1
+    $parentPath = [IO.Path]::GetFullPath($Parent)
+    $children = $null
+    if (-not $exactChildrenByParent.TryGetValue($parentPath, [ref]$children)) {
+        if (-not [IO.Directory]::Exists($parentPath)) { return $null }
+        $children = [Collections.Generic.Dictionary[string,object]]::new(
+            [StringComparer]::Ordinal)
+        foreach ($child in Get-ChildItem -LiteralPath $parentPath -Force) {
+            $children[$child.Name] = $child
+        }
+        $exactChildrenByParent[$parentPath] = $children
+    }
+    $child = $null
+    if ($children.TryGetValue($Name, [ref]$child)) { return $child }
+    return $null
 }
 
 function Resolve-ExactPath([string]$Base, [string]$Relative) {
@@ -264,16 +279,29 @@ $surface = [IO.File]::ReadAllText(
 $directiveLuaFiles = $loadedFiles | Where-Object {
     [IO.Path]::GetExtension($_) -ceq '.lua'
 }
-$directiveText = ($directiveLuaFiles | ForEach-Object {
-    [IO.File]::ReadAllText($_)
-}) -join [Environment]::NewLine
+$functionDirectivePattern =
+    'function\s+addon\.functions\.([A-Za-z][A-Za-z0-9_]*)\b'
+$definedDirectivePattern =
+    '(?:function\s+addon\.functions\.|addon\.functions\.)([A-Za-z][A-Za-z0-9_]*)' +
+    '(?:\s*\(|\s*=\s*function\b)'
+$functionDirectiveNames = [Collections.Generic.HashSet[string]]::new(
+    [StringComparer]::Ordinal)
+$definedDirectiveNames = [Collections.Generic.HashSet[string]]::new(
+    [StringComparer]::Ordinal)
+foreach ($file in $directiveLuaFiles) {
+    $text = [IO.File]::ReadAllText($file)
+    foreach ($match in [regex]::Matches($text, $functionDirectivePattern)) {
+        [void]$functionDirectiveNames.Add($match.Groups[1].Value)
+    }
+    foreach ($match in [regex]::Matches($text, $definedDirectivePattern)) {
+        [void]$definedDirectiveNames.Add($match.Groups[1].Value)
+    }
+}
 $expectedDirectiveNames = [Collections.Generic.HashSet[string]]::new(
     [StringComparer]::Ordinal)
 foreach ($name in $surface.directives) {
     [void]$expectedDirectiveNames.Add([string]$name)
-    $pattern = 'function\s+addon\.functions\.' +
-        [regex]::Escape([string]$name) + '\b'
-    if ($directiveText -notmatch $pattern) {
+    if (-not $functionDirectiveNames.Contains([string]$name)) {
         Add-ValidationError "Compatibility directive is missing: .$name"
     }
 }
@@ -281,15 +309,9 @@ foreach ($name in $surface.directiveAliases) {
     [void]$expectedDirectiveNames.Add([string]$name)
 }
 
-# Database modules also own a few directives. Discover definitions across every
-# Lua resource actually loaded by the 30300 manifest so a future refactor cannot
-# silently omit one from the compatibility snapshot or domain catalog.
-$definedDirectivePattern =
-    '(?:function\s+addon\.functions\.|addon\.functions\.)([A-Za-z][A-Za-z0-9_]*)' +
-    '(?:\s*\(|\s*=\s*function\b)'
-foreach ($match in [regex]::Matches($directiveText,
-    $definedDirectivePattern)) {
-    $name = $match.Groups[1].Value
+# Database modules also own a few directives. Definitions were collected from
+# every Lua resource loaded by the 30300 manifest in the single pass above.
+foreach ($name in $definedDirectiveNames) {
     if (-not $expectedDirectiveNames.Contains($name)) {
         Add-ValidationError (
             "Loaded directive is absent from the compatibility snapshot: .$name")
@@ -700,6 +722,22 @@ foreach ($file in $runtimeFiles) {
     }
 }
 
+function Test-LuaSyntaxBatch([string]$Compiler, [string[]]$Files) {
+    $batchSize = 64
+    for ($start = 0; $start -lt $Files.Count; $start += $batchSize) {
+        $end = [Math]::Min($start + $batchSize - 1, $Files.Count - 1)
+        $batch = @($Files[$start..$end])
+        $batchOutput = @(& $Compiler -p @batch 2>&1)
+        if ($LASTEXITCODE -eq 0) { continue }
+        foreach ($file in $batch) {
+            & $Compiler -p $file
+            if ($LASTEXITCODE -ne 0) {
+                Add-ValidationError ('Lua syntax validation failed: ' + $file)
+            }
+        }
+    }
+}
+
 $lua = Get-Command lua5.1, lua -ErrorAction SilentlyContinue |
     Select-Object -First 1
 $luac = Get-Command luac5.1, luac -ErrorAction SilentlyContinue |
@@ -708,24 +746,33 @@ if ($RequireLua -and (-not $lua -or -not $luac)) {
     Add-ValidationError 'Lua 5.1 and luac 5.1 are required but were not found.'
 }
 if ($luac) {
+    $plainSyntaxFiles = [Collections.Generic.List[string]]::new()
     foreach ($file in $loadedFiles) {
         if ([IO.Path]::GetExtension($file) -ine '.lua') { continue }
-        $compilePath = $file
-        $temporaryPath = $null
         $bytes = [IO.File]::ReadAllBytes($file)
         if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and
             $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
             $temporaryPath = Join-Path ([IO.Path]::GetTempPath()) (
                 'rxp-luac-' + [guid]::NewGuid().ToString('N') + '.lua')
-            [IO.File]::WriteAllBytes($temporaryPath, $bytes[3..($bytes.Length - 1)])
-            $compilePath = $temporaryPath
+            try {
+                $withoutBom = if ($bytes.Length -gt 3) {
+                    [byte[]]$bytes[3..($bytes.Length - 1)]
+                } else { [byte[]]@() }
+                [IO.File]::WriteAllBytes($temporaryPath, $withoutBom)
+                & $luac.Source -p $temporaryPath
+                if ($LASTEXITCODE -ne 0) {
+                    Add-ValidationError ('Lua syntax validation failed: ' + $file)
+                }
+            } finally {
+                if ([IO.File]::Exists($temporaryPath)) {
+                    Remove-Item -LiteralPath $temporaryPath -Force
+                }
+            }
+        } else {
+            $plainSyntaxFiles.Add($file)
         }
-        & $luac.Source -p $compilePath
-        if ($LASTEXITCODE -ne 0) {
-            Add-ValidationError "Lua syntax validation failed: $file"
-        }
-        if ($temporaryPath) { Remove-Item -LiteralPath $temporaryPath -Force }
     }
+    Test-LuaSyntaxBatch $luac.Source ($plainSyntaxFiles.ToArray())
 }
 if ($lua) {
     & $lua.Source (Join-Path $root 'tests\run.lua') $root

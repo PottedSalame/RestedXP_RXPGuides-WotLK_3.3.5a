@@ -335,12 +335,12 @@ step << Shaman
 #completewith next
 #requires CallofWaterSVP2
 .goto Silverpine Forest,38.09,44.40
-.aura 8899 >>|cRXP_WARN_Drink the|r |T134754:0|t[Water Sapta] |cRXP_WARN_to see the|r |cRXP_ENEMY_Corrupt Minor Manifestion of Water|r
+.aura 8899 >>|cRXP_WARN_Drink the|r |T134754:0|t[Water Sapta] |cRXP_WARN_to see the|r |cRXP_ENEMY_Corrupt Minor Manifestation of Water|r
 .use 6637
 .isOnQuest 63
 step << Shaman
 .goto Silverpine Forest,38.50,44.46
->>Kill the |cRXP_ENEMY_Corrupt Minor Manifestion of Water|r. Loot it for the |cRXP_LOOT_Corrupt Manifestation's Bracers|r
+>>Kill the |cRXP_ENEMY_Corrupt Minor Manifestation of Water|r. Loot it for the |cRXP_LOOT_Corrupt Manifestation's Bracers|r
 .complete 63,1 
 .mob Corrupt Minor Manifestation of Water
 .isOnQuest 63
@@ -1321,7 +1321,7 @@ step
 step << Paladin
 #optional
 .goto Undercity,58.0,90.3
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lazarus|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Champion Cyssa Dawnrose|r
 .train 19836 >> Train your class spells
 .target Champion Cyssa Dawnrose
 .xp <32,1
@@ -1329,14 +1329,14 @@ step << Paladin
 step << Paladin
 #optional
 .goto Undercity,58.0,90.3
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lazarus|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Champion Cyssa Dawnrose|r
 .train 642 >> Train your class spells
 .target Champion Cyssa Dawnrose
 .xp <34,1
 .xp >36,1
 step << Paladin
 .goto Undercity,58.0,90.3
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lazarus|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Champion Cyssa Dawnrose|r
 .train 642 >> Train your class spells
 .target Champion Cyssa Dawnrose
 .xp <36,1
@@ -1361,14 +1361,14 @@ step << Druid
 .goto Moonglade,56.21,30.64
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dendrite|r
 .turnin 30 >> Turn in Trial of the Sea lion
-.accept 31 >> Accept Aquatic Form
+.accept 31 >> Accept Aquatic Form << tbc
 .target Dendrite Starblaze
 .isQuestComplete 30
 step << Druid
 #optional
 .goto Moonglade,56.21,30.64
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dendrite|r
-.accept 31 >> Accept Aquatic Form
+.accept 31 >> Accept Aquatic Form << tbc
 .target Dendrite Starblaze
 .isQuestTurnedIn 30
 step << Druid
@@ -2798,7 +2798,7 @@ step << Mage
 .xp <40,1
 step << Mage
 .goto Orgrimmar,38.70,85.36
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Pephredo|r at the top of the hut
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Thuul|r at the top of the hut
 .train 11417 >> Train |T135744:0|t[Portal: Orgrimmar]
 .target Thuul
 .xp <40,1
@@ -5762,7 +5762,7 @@ step << Mage
 .xp <44,1
 step << Mage
 .goto Orgrimmar,38.70,85.36
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Pephredo|r at the top of the hut
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Thuul|r at the top of the hut
 .train 11417 >> Train |T135744:0|t[Portal: Orgrimmar]
 .target Thuul
 .xp <40,1
@@ -7676,7 +7676,7 @@ step << Mage
 .xp <48,1
 step << Mage
 .goto Orgrimmar,38.70,85.36
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Pephredo|r at the top of the hut
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to|r |cRXP_FRIENDLY_Thuul|r at the top of the hut
 .train 11417 >> Train |T135744:0|t[Portal: Orgrimmar]
 .target Thuul
 .xp <40,1
@@ -14800,7 +14800,7 @@ step
 .complete 5098,2 
 step
 .goto Western Plaguelands,46.04,52.33
->>Kill |cRXP_ENEMY_Cauldron Lord Malvinous|r. Loot him for his |cRXP_LOOT_Cauldron Key|r
+>>Kill |cRXP_ENEMY_Cauldron Lord Malvinious|r. Loot him for his |cRXP_LOOT_Cauldron Key|r
 .complete 5231,1 
 .unitscan Cauldron Lord Malvinious
 step
@@ -15807,14 +15807,14 @@ step
 step << Paladin
 #optional
 .goto Undercity,58.0,90.3
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Carolyn|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Champion Cyssa Dawnrose|r
 .train 10301 >> Train your class spells
 .target Champion Cyssa Dawnrose
 .xp <56,1
 .xp >58,1
 step << Paladin
 .goto Undercity,58.0,90.3
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Carolyn|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Champion Cyssa Dawnrose|r
 .train 19943 >> Train your class spells
 .target Champion Cyssa Dawnrose
 .xp <58,1
@@ -19852,7 +19852,7 @@ step
 #completewith s1
 >>Kill |cRXP_ENEMY_Dredge Strikers|r
 .complete 8280,1 
-.mob Dredge Stalker
+.mob Dredge Striker
 step
 #completewith s1
 >>Kill |cRXP_ENEMY_Stonelash Scorpids|r and |cRXP_ENEMY_Sand Skitterers|r. Loot them for their |cRXP_LOOT_Stingers|r and |cRXP_LOOT_Fangs|r
@@ -19878,22 +19878,22 @@ step
 #completewith next
 >>Kill |cRXP_ENEMY_Dredge Strikers|r
 .complete 8280,1 
-.mob Dredge Stalker
+.mob Dredge Striker
 step
 #loop
 .goto Silithus,51.60,16.40,0
-.goto Silithus,51.60,16.40,70,0,0
-.goto Silithus,54.60,13.20,70,0,0
-.goto Silithus,58.40,13.60,70,0,0
-.goto Silithus,62.60,16.60,70,0,0
-.goto Silithus,61.40,21.60,70,0,0
-.goto Silithus,63.20,24.00,70,0,0
-.goto Silithus,64.80,28.20,70,0,0
-.goto Silithus,67.60,32.00,70,0,0
-.goto Silithus,60.60,30.60,70,0,0
-.goto Silithus,56.40,32.80,70,0,0
-.goto Silithus,53.00,28.00,70,0,0
-.goto Silithus,54.80,21.80,70,0,0
+.goto Silithus,51.60,16.40,70,0
+.goto Silithus,54.60,13.20,70,0
+.goto Silithus,58.40,13.60,70,0
+.goto Silithus,62.60,16.60,70,0
+.goto Silithus,61.40,21.60,70,0
+.goto Silithus,63.20,24.00,70,0
+.goto Silithus,64.80,28.20,70,0
+.goto Silithus,67.60,32.00,70,0
+.goto Silithus,60.60,30.60,70,0
+.goto Silithus,56.40,32.80,70,0
+.goto Silithus,53.00,28.00,70,0
+.goto Silithus,54.80,21.80,70,0
 >>Kill |cRXP_ENEMY_Stonelash Scorpids|r and |cRXP_ENEMY_Sand Skitterers|r. Loot them for their |cRXP_LOOT_Stingers|r and |cRXP_LOOT_Fangs|r
 .complete 8277,1 
 .mob +Stonelash Scorpid
@@ -19902,21 +19902,21 @@ step
 step
 #loop
 .goto Silithus,63.20,24.00,0
-.goto Silithus,51.60,16.40,70,0,0
-.goto Silithus,54.60,13.20,70,0,0
-.goto Silithus,58.40,13.60,70,0,0
-.goto Silithus,62.60,16.60,70,0,0
-.goto Silithus,61.40,21.60,70,0,0
-.goto Silithus,63.20,24.00,70,0,0
-.goto Silithus,64.80,28.20,70,0,0
-.goto Silithus,67.60,32.00,70,0,0
-.goto Silithus,60.60,30.60,70,0,0
-.goto Silithus,56.40,32.80,70,0,0
-.goto Silithus,53.00,28.00,70,0,0
-.goto Silithus,54.80,21.80,70,0,0
+.goto Silithus,51.60,16.40,70,0
+.goto Silithus,54.60,13.20,70,0
+.goto Silithus,58.40,13.60,70,0
+.goto Silithus,62.60,16.60,70,0
+.goto Silithus,61.40,21.60,70,0
+.goto Silithus,63.20,24.00,70,0
+.goto Silithus,64.80,28.20,70,0
+.goto Silithus,67.60,32.00,70,0
+.goto Silithus,60.60,30.60,70,0
+.goto Silithus,56.40,32.80,70,0
+.goto Silithus,53.00,28.00,70,0
+.goto Silithus,54.80,21.80,70,0
 >>Kill |cRXP_ENEMY_Dredge Strikers|r
 .complete 8280,1 
-.mob Dredge Stalker
+.mob Dredge Striker
 step
 .goto Silithus,49.70,37.30
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Larksbane|r
@@ -22439,7 +22439,7 @@ step
 .dungeon UB
 step
 .goto Zangarmarsh,22.33,45.89
->>Kill |cRXP_ENEMY_Terroclaw|r in the middle of the island
+>>Kill |cRXP_ENEMY_Terrorclaw|r in the middle of the island
 .complete 9904,1 
 .unitscan Terrorclaw
 step
@@ -23042,7 +23042,7 @@ step
 step << Mage
 #optional
 .goto Shattrath City,58.749,47.167
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nutral|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Iorioa|r
 .train 33690 >> Train |T135760:0|t[Teleport: Shattrath]
 .train 33691 >> Train |T135745:0|t[Portal: Shattrath]
 .target Iorioa
@@ -23050,7 +23050,7 @@ step << Mage
 step << Mage
 #optional
 .goto Shattrath City,58.749,47.167
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nutral|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Iorioa|r
 .train 33690 >> Train |T135760:0|t[Teleport: Shattrath]
 .target Iorioa
 .xp <60,1
@@ -23546,7 +23546,7 @@ step
 step
 #optional
 #completewith StrangeObject
->>Kill |cRXP_ENEMY_Vicious Teremoths|r. Loot them for their |cRXP_LOOT_Samples|r
+>>Kill |cRXP_ENEMY_Vicious Teromoths|r. Loot them for their |cRXP_LOOT_Samples|r
 .complete 9968,2 
 .mob Vicious Teromoth
 step
@@ -23616,7 +23616,7 @@ step
 .goto Terokkar Forest,43.77,25.38,50,0
 .goto Terokkar Forest,44.40,22.84,50,0
 .goto Terokkar Forest,41.81,22.69,50,0
->>Kill |cRXP_ENEMY_Vicious Teremoths|r. Loot them for their |cRXP_LOOT_Samples|r
+>>Kill |cRXP_ENEMY_Vicious Teromoths|r. Loot them for their |cRXP_LOOT_Samples|r
 .complete 9968,2 
 .mob Vicious Teromoth
 step
@@ -24082,7 +24082,7 @@ step
 .target Vekax
 step
 .goto Shattrath City,52.54,21.03
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vekax|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rilak the Redeemed|r
 .turnin 10847 >> Turn in The Eyes of Skettis
 .accept 10849 >> Accept Seek Out Kirrik
 .target Rilak the Redeemed
@@ -25560,7 +25560,7 @@ step
 .accept 10917 >> Accept The Outcast's Plight
 .turnin 10917 >> Turn in The Outcast's Plight
 .itemcount 25719,30 
-.target Vekaxa
+.target Vekax
 step
 #questguide << !tbc
 #xprate <1.5
@@ -30093,7 +30093,7 @@ step
 .mob Ruuan'ok Matriarch
 step
 .goto Blade's Edge Mountains,64.48,33.09
-.use 30704 >>|cRXP_WARN_Use|r |T134295:0|t[Ruuan'ok Claws] |cRXP_WARN_in the green circle. Kill the |cRXP_ENEMY_Haringer|r that spawns. Loot him for his|r |cRXP_LOOT_Pendant|r
+.use 30704 >>|cRXP_WARN_Use|r |T134295:0|t[Ruuan'ok Claws] |cRXP_WARN_in the green circle. Kill the |cRXP_ENEMY_Harbinger|r that spawns. Loot him for his|r |cRXP_LOOT_Pendant|r
 .cast 37426
 .timer 8,Creating the Pendant RP
 .complete 10567,1 
@@ -36865,6 +36865,7 @@ step
 .target Alieshor
 .subzoneskip 3938,1
 step
+.skill riding,<225,1
 .goto Shadowmoon Valley,55.732,58.168
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Larissa Sunstrike|r
 .accept 10687 >> Accept Karabor Training Grounds
@@ -37028,6 +37029,14 @@ step
 .use 30721
 .use 30719
 step
+.skill riding,<225,1
+.goto Shadowmoon Valley,68.8,49.2
+>>Kill |cRXP_ENEMY_Demon Hunter Initiates|r and |cRXP_ENEMY_Demon Hunter Supplicants|r. Loot them for their |cRXP_LOOT_Sunfury Glaives|r
+.complete 10687,1
+.mob Demon Hunter Supplicant
+.mob Demon Hunter Initiate
+.isOnQuest 10687
+step
 #completewith OTE
 .itemStat 1,QUALITY,1
 +|cRXP_WARN_Equip your normal|r |T133127:0|t[Helmet]
@@ -37064,6 +37073,13 @@ step
 .turnin 10684 >> Turn in Oronu the Elder
 .accept 10685 >> Accept The Ashtongue Corruptors
 .target Arcanist Thelis
+step
+.skill riding,<225,1
+.isQuestComplete 10687
+.goto Shadowmoon Valley,55.732,58.168
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Larissa Sunstrike|r
+.turnin 10687 >> Turn in Karabor Training Grounds
+.target Larissa Sunstrike
 step
 #completewith next
 .skill riding,225,1

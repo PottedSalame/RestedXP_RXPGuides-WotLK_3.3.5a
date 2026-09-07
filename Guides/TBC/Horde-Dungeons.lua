@@ -1144,7 +1144,7 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Je'neu Sancrea|r
 .turnin 6921 >>Turn in Amongst The Ruins
 .target Je'neu Sancrea
-.isQuestComplete 6521
+.isQuestComplete 6921
 step
 #label ZoramTurnins
 .goto Ashenvale,11.56,34.29
@@ -2507,7 +2507,7 @@ step
 .isOnQuest 7067
 step
 .goto 1414,38.77,58.12
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Centaur Pariah|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Cavindra|r
 .accept 7044 >> Accept Legends of Maraudon
 .target Cavindra
 step
@@ -3332,9 +3332,9 @@ step << Warlock
 .goto Felwood,52.00,24.80,60,0
 >>Kill |cRXP_ENEMY_Withered Protectors|, |cRXP_ENEMY_Irontree Stompers| and |cRXP_ENEMY_Irontree Wanderers|. Loot them for their |cRXP_LOOT_Rotting Wood|r
 .complete 8421,1 
-.mob Withered Protectors
-.mob Irontree Stompers
-.mob Irontree Wanderers
+.mob Withered Protector
+.mob Irontree Stomper
+.mob Irontree Wanderer
 .isOnQuest 8421
 step << Warlock
 #phase 4-6
@@ -3845,7 +3845,7 @@ step << Warrior
 .turnin 8424 >> Turn in War on the Shadowsworn
 .accept 8425 >> Accept Voodoo Feathers
 .target Fallen Hero of the Horde
-.isQuestComplete 8425
+.isQuestComplete 8424
 step << Warrior
 #phase 4-6
 #label VoodooFeathers
@@ -5117,11 +5117,17 @@ step
 .isOnQuest 5341
 step
 #completewith Kirtonos
+>>Kill |cRXP_ENEMY_Plagued Hatchlings|r
+.complete 5529,1
+.isOnQuest 5529
+step
+#optional
+#completewith Kirtonos
 >>Kill |cRXP_ENEMY_Plagued Hatchlings|r. Loot them for a |T134319:0|t[|cRXP_LOOT_Healthy Dragon Scale|r]. Use it to accept the quest
 .collect 13920,1,5582 
+.use 13920 >>Use the Healthy Dragon Scale to start the quest
 .accept 5582 >>Accept Healthy Dragon Scale
-.complete 5529,1 
-.isOnQuest 5529
+.isQuestTurnedIn 5529
 step << Shaman
 .use 18746 >>|cRXP_WARN_Use the|r |T133866:0|t[Divination Scryer] |cRXP_WARN_in |cRXP_ENEMY_Rattlegore's|r room|r
 >>|cRXP_WARN_Many |cRXP_ENEMY_Spirits|r will spawn. Kill them until the |cRXP_ENEMY_Death Knight Darkreaver|r spawns|r
@@ -5186,11 +5192,16 @@ step
 .isOnQuest 5384
 step
 #label Hatchlings
+>>Kill |cRXP_ENEMY_Plagued Hatchlings|r
+.complete 5529,1
+.isOnQuest 5529
+step
+#optional
 >>Kill |cRXP_ENEMY_Plagued Hatchlings|r. Loot them for a |T134319:0|t[|cRXP_LOOT_Healthy Dragon Scale|r]. Use it to accept the quest
 .collect 13920,1,5582 
+.use 13920 >>Use the Healthy Dragon Scale to start the quest
 .accept 5582 >>Accept Healthy Dragon Scale
-.complete 5529,1 
-.isOnQuest 5529
+.isQuestTurnedIn 5529
 step
 >>Loot the |cRXP_PICK_Deeds|r throughout Scholomance
 >>|cRXP_PICK_The Deed to Southshore|r |cRXP_WARN_is located in the large room right after the bridge as you enter the dungeon. It's in the left corner next to a bookshelf on top of a desk|r
@@ -5296,6 +5307,13 @@ step
 .turnin 5529 >>Turn in Plagued Hatchlings
 .target Betina Bigglezink
 .isQuestComplete 5529
+step
+#optional
+.goto Eastern Plaguelands,81.47,59.66
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Betina Bigglezink|r
+.turnin 5582 >>Turn in Healthy Dragon Scale
+.target Betina Bigglezink
+.isQuestComplete 5582
 step << Shaman
 #completewith next
 .zone Orgrimmar >>Travel to |cFFfa9602Orgrimmar|r
@@ -7015,7 +7033,7 @@ step
 #completewith next
 .goto Tanaris,55.416,53.529,30 >> Enter Old Hillsbrad (Escape from Durnholde)
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Andormu|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Erozion|r
 .turnin 10282 >>Turn in Old Hillsbrad
 .accept 10283 >>Accept Taretha's Diversion
 .target Erozion

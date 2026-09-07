@@ -15,11 +15,11 @@ $personalPathRegex = New-Object Text.RegularExpressions.Regex(
     ([Text.RegularExpressions.RegexOptions]::Compiled -bor
         [Text.RegularExpressions.RegexOptions]::CultureInvariant))
 
-$tracked = @(& git -c "safe.directory=$safeRoot" -C $root ls-files)
-if ($LASTEXITCODE -ne 0) { throw 'Unable to enumerate tracked release files.' }
-$untracked = @(& git -c "safe.directory=$safeRoot" -C $root ls-files --others --exclude-standard)
-if ($LASTEXITCODE -ne 0) { throw 'Unable to enumerate untracked candidate files.' }
-$files = @($tracked + $untracked) | Sort-Object -Unique
+$files = @(& git -c "safe.directory=$safeRoot" -C $root ls-files `
+    --cached --others --exclude-standard)
+if ($LASTEXITCODE -ne 0) {
+    throw 'Unable to enumerate tracked and untracked candidate files.'
+}
 
 $hits = New-Object 'Collections.Generic.List[object]'
 foreach ($file in $files) {

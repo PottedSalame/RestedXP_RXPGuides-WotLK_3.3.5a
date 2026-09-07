@@ -8,8 +8,47 @@ $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $errors = New-Object 'Collections.Generic.List[string]'
 $warnings = New-Object 'Collections.Generic.List[string]'
-$guidePattern = [regex]'(?ms)RXPGuides\.RegisterGuide\(\[\[(.*?)\]\]\)\s*;?'
-$flightResolveCache = @{}
+$regexOptions = [Text.RegularExpressions.RegexOptions]::Compiled -bor
+    [Text.RegularExpressions.RegexOptions]::CultureInvariant
+$regexOptionsIgnoreCase = $regexOptions -bor
+    [Text.RegularExpressions.RegexOptions]::IgnoreCase
+$guidePattern = [regex]::new(
+    '(?ms)RXPGuides\.RegisterGuide\(\[\[(.*?)\]\]\)\s*;?', $regexOptions)
+$guideMetadataHeaderPattern = [regex]::new(
+    '(?m)^#(?<header>group|name|subgroup|xprate|defaultfor)\s+(?<value>.+?)\s*$',
+    $regexOptions)
+$firstStepPattern = [regex]::new('(?m)^step\b', $regexOptionsIgnoreCase)
+$topConditionPattern = [regex]::new('(?m)^<<\s*(.+?)\s*$', $regexOptions)
+$nextHeaderPattern = [regex]::new('^#next\s+(.+?)\s*$', $regexOptions)
+$stepLinePattern = [regex]::new('^step\b', $regexOptionsIgnoreCase)
+$headerLinePattern = [regex]::new('^#([A-Za-z][A-Za-z0-9_]*)', $regexOptions)
+$missingDotDirectivePattern = [regex]::new(
+    '^(accept|acceptmultiple|turnin|turninmultiple|complete|abandon|goto|groundgoto|flygoto|waypoint|pin|zone|zoneskip|subzone|subzoneskip|hs|use|target|mob)\b',
+    $regexOptionsIgnoreCase)
+$directiveLinePattern = [regex]::new('^\.([A-Za-z][A-Za-z0-9_]*)\b', $regexOptions)
+$guardAcceptPattern = [regex]::new(
+    '^\.(isOnQuest|isQuestComplete|accept)\s+(-?\d+)\b', $regexOptionsIgnoreCase)
+$completeObjectivePattern = [regex]::new(
+    '^\.complete\s+-?(?<quest>\d+)\s*,\s*(?<objective>\d+)(?<tail>.*)$',
+    $regexOptionsIgnoreCase)
+$objectiveTargetPattern = [regex]::new(
+    '^\.(?:mob|unitscan|target)\s+\+?\S', $regexOptionsIgnoreCase)
+$objectiveCommentPattern = [regex]::new('--\s*\S', $regexOptions)
+$conditionPattern = [regex]::new('<<\s*(.*?)(?=\s*>>|$)', $regexOptions)
+$excluded335Pattern = [regex]::new(
+    '(^|\s)(?:!ac335|!wotlk|skip)(\s|$)', $regexOptionsIgnoreCase)
+$tbcConditionPattern = [regex]::new('(^|\s)tbc(\s|$)', $regexOptionsIgnoreCase)
+$wotlkConditionPattern = [regex]::new('(^|\s)wotlk(\s|$)', $regexOptionsIgnoreCase)
+$unsupportedRacePattern = [regex]::new(
+    '^\s*!?(?:Worgen|Goblin)(?:\s+!?(?:Worgen|Goblin))*\s*$',
+    $regexOptionsIgnoreCase)
+$flightEntryPattern = [regex]::new('\[\d+\]\s*=\s*\x22([^\x22]+)\x22', $regexOptions)
+$coordinateDirectives = @{ goto=$true; groundgoto=$true; flygoto=$true; waypoint=$true; pin=$true }
+$runtimeCoordinateDirectives = @{ goto=$true; groundgoto=$true; flygoto=$true }
+$zoneDirectives = @{ zone=$true; zoneskip=$true }
+$areaDirectives = @{ subzone=$true; subzoneskip=$true; bindlocation=$true }
+$hearthDirectives = @{ hs=$true; hsbatching=$true }
+$fileTextCache = @{}
 
 function Add-Error([string]$Message) { $errors.Add($Message) }
 
@@ -60,15 +99,8 @@ function Normalize-NextHeader([string]$Header) {
     return $destination
 }
 
-function Get-GuideHeader([string]$Content, [string]$Name) {
-    $match = [regex]::Match($Content, "(?m)^#" + [regex]::Escape($Name) + "\s+(.+?)\s*$")
-    if ($match.Success) { return ($match.Groups[1].Value -replace '\s*<<.*$', '').Trim() }
-    return $null
-}
-
-function Get-FlightData([string]$Faction) {
-    $path = Join-Path $root 'DB\wotlk\flightData.lua'
-    $text = [IO.File]::ReadAllText($path)
+function Get-FlightData([string]$Faction, [string]$Text) {
+    $text = $Text
     $start = $text.IndexOf("addon.flightPath[`"$Faction`"]")
     $end = if ($Faction -eq 'Alliance') {
         $text.IndexOf('addon.flightPath["Horde"]', $start + 1)
@@ -77,57 +109,58 @@ function Get-FlightData([string]$Faction) {
     }
     $full = @{}
     $base = @{}
-    foreach ($match in [regex]::Matches($text.Substring($start, $end - $start), '\[\d+\]\s*=\s*"([^"]+)"')) {
+    foreach ($match in $flightEntryPattern.Matches($text.Substring($start, $end - $start))) {
         $name = $match.Groups[1].Value
         $full[$name.ToLowerInvariant()] = $name
-        $baseName = ($name -split ',')[0].Trim().ToLowerInvariant()
+        $comma = $name.IndexOf(',')
+        $baseName = if ($comma -ge 0) { $name.Substring(0, $comma) } else { $name }
+        $baseName = $baseName.Trim().ToLowerInvariant()
         if (-not $base.ContainsKey($baseName)) { $base[$baseName] = $name }
         elseif ($base[$baseName] -ne $name) { $base[$baseName] = $null }
     }
-    return [pscustomobject]@{ Faction = $Faction; Full = $full; Base = $base }
+    return [pscustomobject]@{ Faction = $Faction; Full = $full; Base = $base; Cache = @{} }
 }
 
 function Resolve-Flight([string]$Name, $Data) {
     $key = $Name.Trim().ToLowerInvariant()
-    $cacheKey = "$($Data.Faction)|$key"
-    if ($flightResolveCache.ContainsKey($cacheKey)) {
-        return $flightResolveCache[$cacheKey]
+    if ($Data.Cache.ContainsKey($key)) {
+        return $Data.Cache[$key]
     }
     if ($Data.Full.ContainsKey($key)) {
-        $flightResolveCache[$cacheKey] = $Data.Full[$key]
+        $Data.Cache[$key] = $Data.Full[$key]
         return $Data.Full[$key]
     }
     if ($Data.Base.ContainsKey($key) -and $Data.Base[$key]) {
-        $flightResolveCache[$cacheKey] = $Data.Base[$key]
+        $Data.Cache[$key] = $Data.Base[$key]
         return $Data.Base[$key]
     }
     $partial = $null
-    foreach ($candidate in $Data.Full.Values) {
-        if (-not $candidate.ToLowerInvariant().Contains($key)) { continue }
+    foreach ($candidateKey in $Data.Full.Keys) {
+        if (-not $candidateKey.Contains($key)) { continue }
+        $candidate = $Data.Full[$candidateKey]
         if ($null -ne $partial -and $partial -ne $candidate) {
-            $flightResolveCache[$cacheKey] = $null
+            $Data.Cache[$key] = $null
             return $null
         }
         $partial = $candidate
     }
-    $flightResolveCache[$cacheKey] = $partial
+    $Data.Cache[$key] = $partial
     if ($partial) { return $partial }
     return $null
 }
 
 function Get-GuideCondition([string]$Line) {
-    $match = [regex]::Match($Line, '<<\s*(.*?)(?=\s*>>|$)')
+    $match = $conditionPattern.Match($Line)
     if ($match.Success) { return $match.Groups[1].Value.Trim() }
     return ''
 }
 
 function Test-ExcludedOn335([string]$Condition) {
     if (-not $Condition) { return $false }
-    if ($Condition -match '(^|\s)!ac335(\s|$)') { return $true }
-    if ($Condition -match '(^|\s)!wotlk(\s|$)') { return $true }
-    if ($Condition -match '(^|\s)skip(\s|$)') { return $true }
-    if ($Condition -match '(^|\s)tbc(\s|$)' -and $Condition -notmatch '(^|\s)wotlk(\s|$)') { return $true }
-    if ($Condition -match '^\s*!?(?:Worgen|Goblin)(?:\s+!?(?:Worgen|Goblin))*\s*$') { return $true }
+    if ($excluded335Pattern.IsMatch($Condition)) { return $true }
+    if ($tbcConditionPattern.IsMatch($Condition) -and
+        -not $wotlkConditionPattern.IsMatch($Condition)) { return $true }
+    if ($unsupportedRacePattern.IsMatch($Condition)) { return $true }
     return $false
 }
 
@@ -226,16 +259,21 @@ if ([IO.File]::Exists($QuestDbPath)) {
     $warnings.Add("Quest reference not found; quest-ID validation skipped: $QuestDbPath")
 }
 
-$allianceFlights = Get-FlightData 'Alliance'
-$hordeFlights = Get-FlightData 'Horde'
+$flightDataText = [IO.File]::ReadAllText((Join-Path $root 'DB\wotlk\flightData.lua'))
+$allianceFlights = Get-FlightData 'Alliance' $flightDataText
+$hordeFlights = Get-FlightData 'Horde' $flightDataText
 $guides = New-Object 'Collections.Generic.List[object]'
 $keys = @{}
 $guideCount = 0
 $stepCount = 0
+$guardErrors = New-Object 'Collections.Generic.List[string]'
+$objectiveContext = @{}
+$objectiveReferences = @{}
 
 foreach ($file in $files) {
     $relative = $file.Substring($root.Length).TrimStart([char[]]@('\', '/'))
     $text = [IO.File]::ReadAllText($file)
+    $fileTextCache[$file] = $text
     if ($text -match '(?m)^\s*print\s*\(') { Add-Error "$relative contains a debug print" }
     if ($text -match 'RXP\.enabledLocale') { Add-Error "$relative contains the unsupported modern guide-locale guard" }
     if ($text -match 'ZygorGuidesViewer:RegisterGuide|\|(?:q|goto|tip|petaction|havebuff|nobuff|script|invehicle|outvehicle)\b|##\d+') {
@@ -244,36 +282,82 @@ foreach ($file in $files) {
     foreach ($match in $guidePattern.Matches($text)) {
         $guideCount++
         $content = $match.Groups[1].Value -replace "`r`n", "`n"
-        $groupRaw = Get-GuideHeader $content 'group'
-        $name = Get-GuideHeader $content 'name'
-        $subgroup = Get-GuideHeader $content 'subgroup'
+        # Guide identity is defined only by the metadata preamble. Headers
+        # inside steps (notably #xprate route branches) must not rename the
+        # guide or alter its saved-progress compatibility signature.
+        $firstStep = $firstStepPattern.Match($content)
+        $metadata = if ($firstStep.Success) {
+            $content.Substring(0, $firstStep.Index)
+        } else {
+            $content
+        }
+        $headers = @{}
+        $aliases = New-Object 'Collections.Generic.List[string]'
+        $aliasSet = @{}
+        foreach ($headerMatch in $guideMetadataHeaderPattern.Matches($metadata)) {
+            $headerName = $headerMatch.Groups['header'].Value
+            $headerValue = $headerMatch.Groups['value'].Value.Trim()
+            $conditionOffset = $headerValue.IndexOf('<<')
+            if ($conditionOffset -ge 0) {
+                $headerValue = $headerValue.Substring(0, $conditionOffset).Trim()
+            }
+            if (-not $headers.ContainsKey($headerName)) {
+                $headers[$headerName] = $headerValue
+            }
+            if ($headerName -eq 'name' -and -not $aliasSet.ContainsKey($headerValue)) {
+                $aliasSet[$headerValue] = $true
+                $aliases.Add($headerValue)
+            }
+        }
+        $groupRaw = $headers['group']
+        $name = $headers['name']
+        $subgroup = $headers['subgroup']
         if (-not $groupRaw -or -not $name) { Add-Error "$relative contains a guide without #group or #name"; continue }
         $isOriginalSnapshot = $groupRaw.TrimStart('+', '*').StartsWith('Original Guides - ')
         $group = Normalize-Group $groupRaw
-        $xprate = Get-GuideHeader $content 'xprate'
-        $topCondition = ([regex]::Match($content, '(?m)^<<\s*(.+?)\s*$').Groups[1].Value).Trim()
+        $xprate = $headers['xprate']
+        $topCondition = ($topConditionPattern.Match($metadata).Groups[1].Value).Trim()
         $signature = "$group|$subgroup|$name|$xprate|$topCondition"
         if ($keys.ContainsKey($signature)) { Add-Error "Duplicate guide key: $group / $subgroup / $name" }
         else { $keys[$signature] = $true }
-        $aliases = @([regex]::Matches($content, '(?m)^#name\s+(.+?)\s*$') | ForEach-Object {
-            ($_.Groups[1].Value -replace '\s*<<.*$', '').Trim()
-        } | Select-Object -Unique)
-        $guides.Add([pscustomobject]@{ Group = $group; Name = $name; Names = $aliases; Subgroup = $subgroup; RawGroup = $groupRaw; Content = $content; File = $relative })
+        $nextHeaders = New-Object 'Collections.Generic.List[string]'
+        $guides.Add([pscustomobject]@{
+            Group = $group; Name = $name; Names = $aliases; Subgroup = $subgroup
+            RawGroup = $groupRaw; File = $relative
+            Headers = $headers; NextHeaders = $nextHeaders
+            TopCondition = $topCondition
+        })
 
         $skipAc335 = $false
         $stepCondition = ''
         $lineNumber = 0
         $previousUnconditionalNext = $false
         $previousNextLine = 0
-        foreach ($lineRaw in ($content -split "`n")) {
+        $analysisStepIndex = 0
+        $analysisStepActive = $false
+        $analysisAccepts = $null
+        $analysisOnQuestGuards = $null
+        $analysisCompleteGuards = $null
+        $analysisStepHasContext = $false
+        $analysisPendingObjectiveKeys = $null
+        foreach ($lineRaw in $content.Split([char]10)) {
             $lineNumber++
             $line = $lineRaw.Trim()
+            $nextMatch = if ($line.StartsWith(
+                '#next', [StringComparison]::OrdinalIgnoreCase)) {
+                $nextHeaderPattern.Match($line)
+            } else {
+                $null
+            }
+            if ($null -ne $nextMatch -and $nextMatch.Success) {
+                $nextHeaders.Add($nextMatch.Groups[1].Value)
+            }
             # Conditional #next headers are ordered alternatives: the loader
             # uses the first one whose condition applies. Adjacent
             # unconditional headers are ambiguous and the latter is dead.
             if (-not $isOriginalSnapshot) {
                 $isUnconditionalNext =
-                    $line -match '^#next\s+\S' -and
+                    $null -ne $nextMatch -and $nextMatch.Success -and
                     -not (Get-GuideCondition $line)
                 if ($isUnconditionalNext -and $previousUnconditionalNext) {
                     Add-Error (
@@ -284,24 +368,127 @@ foreach ($file in $files) {
                 $previousNextLine = if ($isUnconditionalNext) { $lineNumber } else { 0 }
             }
             if (-not $line) { continue }
-            if ($line -match '^step\b') {
+
+            if ($line.StartsWith('step', [StringComparison]::OrdinalIgnoreCase) -and
+                $stepLinePattern.IsMatch($line)) {
+                if ($analysisStepActive) {
+                    if ($analysisStepHasContext -and
+                        $null -ne $analysisPendingObjectiveKeys) {
+                        foreach ($objectiveKey in $analysisPendingObjectiveKeys) {
+                            $objectiveContext[$objectiveKey] = $true
+                        }
+                    }
+                    if ($null -ne $analysisAccepts) {
+                        foreach ($questId in $analysisAccepts.Keys) {
+                            if ($null -ne $analysisOnQuestGuards -and
+                                $analysisOnQuestGuards.ContainsKey($questId)) {
+                                $guardErrors.Add(
+                                    "$relative`: $name step $analysisStepIndex .isOnQuest " +
+                                    "$questId makes .accept $questId unreachable")
+                            }
+                            if ($null -ne $analysisCompleteGuards -and
+                                $analysisCompleteGuards.ContainsKey($questId)) {
+                                $guardErrors.Add(
+                                    "$relative`: $name step $analysisStepIndex .isQuestComplete " +
+                                    "$questId makes .accept $questId unreachable")
+                            }
+                        }
+                    }
+                }
+
                 $stepCount++
+                $analysisStepIndex++
                 $stepCondition = Get-GuideCondition $line
                 $skipAc335 = Test-ExcludedOn335 $stepCondition
+                $analysisStepActive = -not $isOriginalSnapshot -and
+                    -not (Test-ExcludedOn335 $line.Substring(4))
+                $analysisAccepts = $null
+                $analysisOnQuestGuards = $null
+                $analysisCompleteGuards = $null
+                $analysisStepHasContext = $false
+                $analysisPendingObjectiveKeys = $null
                 continue
             }
-            if ($line -match '^#([A-Za-z][A-Za-z0-9_]*)') {
-                if (-not $knownHeaders.ContainsKey($Matches[1])) { Add-Error "$relative`:$lineNumber unknown header #$($Matches[1])" }
+
+            if ($analysisStepActive -and -not $analysisStepHasContext -and
+                ($line.Contains('>>') -and $line -match '>>\s*\S' -or
+                    $objectiveTargetPattern.IsMatch($line))) {
+                $analysisStepHasContext = $true
+            }
+
+            $firstChar = $line[0]
+            if ($firstChar -eq '#') {
+                $headerMatch = $headerLinePattern.Match($line)
+                if ($headerMatch.Success -and
+                    -not $knownHeaders.ContainsKey($headerMatch.Groups[1].Value)) {
+                    Add-Error "$relative`:$lineNumber unknown header #$($headerMatch.Groups[1].Value)"
+                }
                 continue
             }
-            if ($line -match '^(accept|acceptmultiple|turnin|turninmultiple|complete|abandon|goto|groundgoto|flygoto|waypoint|pin|zone|zoneskip|subzone|subzoneskip|hs|use|target|mob)\b') {
-                Add-Error "$relative`:$lineNumber directive .$($Matches[1]) is missing its leading dot"
+            if ($firstChar -ne '.') {
+                $missingDotMatch = $missingDotDirectivePattern.Match($line)
+                if ($missingDotMatch.Success) {
+                    Add-Error (
+                        "$relative`:$lineNumber directive " +
+                        ".$($missingDotMatch.Groups[1].Value) is missing its leading dot")
+                }
                 continue
             }
-            if ($line -match '^\.([A-Za-z][A-Za-z0-9_]*)\b') {
-                $directive = $Matches[1]
-                if (-not $functionNames.ContainsKey($directive)) { Add-Error "$relative`:$lineNumber unknown directive .$directive"; continue }
+
+            $directiveMatch = $directiveLinePattern.Match($line)
+            if ($directiveMatch.Success) {
+                $directive = $directiveMatch.Groups[1].Value
                 $lineCondition = Get-GuideCondition $line
+
+                if ($analysisStepActive) {
+                    if (-not $lineCondition) {
+                        $guardMatch = $guardAcceptPattern.Match($line)
+                        if ($guardMatch.Success) {
+                            $kind = $guardMatch.Groups[1].Value
+                            $questId = [math]::Abs([int]$guardMatch.Groups[2].Value)
+                            if ($kind -eq 'accept') {
+                                if ($null -eq $analysisAccepts) { $analysisAccepts = @{} }
+                                $analysisAccepts[$questId] = $true
+                            } elseif ($kind -eq 'isOnQuest') {
+                                if ($null -eq $analysisOnQuestGuards) {
+                                    $analysisOnQuestGuards = @{}
+                                }
+                                $analysisOnQuestGuards[$questId] = $true
+                            } else {
+                                if ($null -eq $analysisCompleteGuards) {
+                                    $analysisCompleteGuards = @{}
+                                }
+                                $analysisCompleteGuards[$questId] = $true
+                            }
+                        }
+                    }
+
+                    if ($directive -eq 'complete') {
+                        $completeMatch = $completeObjectivePattern.Match($line)
+                        if ($completeMatch.Success -and -not (Test-ExcludedOn335 (
+                            Get-GuideCondition $completeMatch.Groups['tail'].Value))) {
+                            $objectiveKey =
+                                "$([int]$completeMatch.Groups['quest'].Value)," +
+                                "$([int]$completeMatch.Groups['objective'].Value)"
+                            if (-not $objectiveReferences.ContainsKey($objectiveKey)) {
+                                $objectiveReferences[$objectiveKey] = "$relative`: $name"
+                            }
+                            if ($analysisStepHasContext -or
+                                $objectiveCommentPattern.IsMatch(
+                                    $completeMatch.Groups['tail'].Value)) {
+                                $objectiveContext[$objectiveKey] = $true
+                            } else {
+                                if ($null -eq $analysisPendingObjectiveKeys) {
+                                    $analysisPendingObjectiveKeys = New-Object `
+                                        'Collections.Generic.List[string]'
+                                }
+                                $analysisPendingObjectiveKeys.Add($objectiveKey)
+                            }
+                        }
+                    }
+                }
+
+                if (-not $functionNames.ContainsKey($directive)) { Add-Error "$relative`:$lineNumber unknown directive .$directive"; continue }
                 if ($skipAc335 -or (Test-ExcludedOn335 $lineCondition)) { continue }
                 if (-not $isOriginalSnapshot -and $directive -eq 'accept' -and $line -notmatch '>>\s*\S') {
                     # Offered quests have no numeric ID in the 3.3.5 gossip API.
@@ -310,7 +497,7 @@ foreach ($file in $files) {
                     Add-Error "$relative`:$lineNumber .accept requires authored quest-title text on 3.3.5"
                 }
                 if (-not $isOriginalSnapshot -and
-                    $directive -in @('hs','hsbatching') -and
+                    $hearthDirectives.ContainsKey($directive) -and
                     $line -notmatch '>>\s*\S') {
                     Add-Error (
                         "$relative`:$lineNumber .$directive requires authored " +
@@ -324,7 +511,17 @@ foreach ($file in $files) {
                         Add-Error "$relative`:$lineNumber .accept title '$authoredTitle' does not match quest $acceptQuestId ('$($questNames[$acceptQuestId])')"
                     }
                 }
-                if ($directive -in @('goto','groundgoto','flygoto','waypoint','pin')) {
+                if ($coordinateDirectives.ContainsKey($directive)) {
+                    if (-not $isOriginalSnapshot -and
+                        $runtimeCoordinateDirectives.ContainsKey($directive)) {
+                        $coordinateClause = ($line -replace '\s*(?:>>|<<|--).*$','').Trim()
+                        $coordinatePayload = ($coordinateClause -replace '^\.[A-Za-z][A-Za-z0-9_]*\s+','')
+                        if ($coordinatePayload.Split(',').Count -gt 5) {
+                            Add-Error (
+                                "$relative`:$lineNumber .$directive has more fields than " +
+                                'the 3.3.5 runtime accepts (zone,x,y,radius,optional)')
+                        }
+                    }
                     if ($line -match '^\.(?:goto|groundgoto|flygoto|waypoint|pin)\s+([^,>]+),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)') {
                         $zone = (($Matches[1].Trim() -split ',')[0]).Trim()
                         $x = [double]$Matches[2]
@@ -342,7 +539,7 @@ foreach ($file in $files) {
                         Add-Error "$relative`:$lineNumber malformed .$directive coordinate"
                     }
                 }
-                if ($directive -in @('zone','zoneskip')) {
+                if ($zoneDirectives.ContainsKey($directive)) {
                     if ($line -match '^\.(?:zone|zoneskip)\s+(.+?)(?=\s*>>|\s*<<|$)') {
                         $zone = (($Matches[1].Trim() -split ',')[0]).Trim()
                         if ($zone -match '^\d+$') {
@@ -354,7 +551,7 @@ foreach ($file in $files) {
                         Add-Error "$relative`:$lineNumber malformed .$directive map"
                     }
                 }
-                if ($directive -in @('subzone','subzoneskip','bindlocation')) {
+                if ($areaDirectives.ContainsKey($directive)) {
                     if ($line -match '^\.(?:subzone|subzoneskip|bindlocation)\s+(\d+)') {
                         $areaId = [int]$Matches[1]
                         if (-not $areaIds.ContainsKey($areaId)) {
@@ -411,7 +608,8 @@ foreach ($file in $files) {
                     $questDirective = $Matches[1]
                     $questArgs = ($Matches[2] -replace '\s*--.*$', '')
                     $numberMatches = [regex]::Matches($questArgs, '(?<![.\d])\d+(?![.\d])')
-                    $numberLimit = if ($questDirective -in @('isQuestAvailable','acceptmultiple')) {
+                    $numberLimit = if ($questDirective -eq 'isQuestAvailable' -or
+                        $questDirective -eq 'acceptmultiple') {
                         $numberMatches.Count
                     } else {
                         [math]::Min(1, $numberMatches.Count)
@@ -443,43 +641,38 @@ foreach ($file in $files) {
                 }
             }
         }
-    }
-}
 
-# The 3.3.5 quest API occasionally reports a temporary, unnamed event
-# objective. The runtime can replace that placeholder with authored context
-# from any occurrence of the same quest/objective pair, so require every
-# playable objective pair to have at least one useful source description.
-$objectiveContext = @{}
-$objectiveReferences = @{}
-foreach ($guide in $guides) {
-    if ($guide.RawGroup.TrimStart('+', '*').StartsWith('Original Guides - ')) {
-        continue
-    }
-    $stepMatches = [regex]::Matches(
-        $guide.Content,
-        '(?ms)(?:^|\n)step(?<condition>[^\r\n]*)\r?\n(?<body>.*?)(?=\r?\nstep(?:\s|$)|\z)')
-    foreach ($stepMatch in $stepMatches) {
-        if (Test-ExcludedOn335 $stepMatch.Groups['condition'].Value) { continue }
-        $body = $stepMatch.Groups['body'].Value
-        $stepHasContext =
-            $body -match '(?m)>>\s*\S' -or
-            $body -match '(?m)^\s*\.(?:mob|unitscan|target)\s+\+?\S'
-        foreach ($completeMatch in [regex]::Matches(
-            $body,
-            '(?m)^\s*\.complete\s+-?(?<quest>\d+)\s*,\s*(?<objective>\d+)(?<tail>[^\r\n]*)$')) {
-            $tail = $completeMatch.Groups['tail'].Value
-            if (Test-ExcludedOn335 (Get-GuideCondition $tail)) { continue }
-            $key = "$([int]$completeMatch.Groups['quest'].Value),$([int]$completeMatch.Groups['objective'].Value)"
-            if (-not $objectiveReferences.ContainsKey($key)) {
-                $objectiveReferences[$key] = "$($guide.File): $($guide.Name)"
+        # Flush the final step; earlier steps are flushed when the next step
+        # line is encountered. Buffering these diagnostics preserves their
+        # existing post-parse ordering.
+        if ($analysisStepActive) {
+            if ($analysisStepHasContext -and
+                $null -ne $analysisPendingObjectiveKeys) {
+                foreach ($objectiveKey in $analysisPendingObjectiveKeys) {
+                    $objectiveContext[$objectiveKey] = $true
+                }
             }
-            if ($stepHasContext -or $tail -match '--\s*\S') {
-                $objectiveContext[$key] = $true
+            if ($null -ne $analysisAccepts) {
+                foreach ($questId in $analysisAccepts.Keys) {
+                    if ($null -ne $analysisOnQuestGuards -and
+                        $analysisOnQuestGuards.ContainsKey($questId)) {
+                        $guardErrors.Add(
+                            "$relative`: $name step $analysisStepIndex .isOnQuest " +
+                            "$questId makes .accept $questId unreachable")
+                    }
+                    if ($null -ne $analysisCompleteGuards -and
+                        $analysisCompleteGuards.ContainsKey($questId)) {
+                        $guardErrors.Add(
+                            "$relative`: $name step $analysisStepIndex .isQuestComplete " +
+                            "$questId makes .accept $questId unreachable")
+                    }
+                }
             }
         }
     }
 }
+
+foreach ($guardError in $guardErrors) { Add-Error $guardError }
 foreach ($key in $objectiveReferences.Keys) {
     if (-not $objectiveContext.ContainsKey($key)) {
         Add-Error (
@@ -539,11 +732,15 @@ foreach ($guide in $guides) {
 }
 foreach ($guide in $guides) {
     if ($guide.RawGroup.TrimStart('+', '*').StartsWith('Original Guides - ')) { continue }
-    foreach ($match in [regex]::Matches($guide.Content, '(?m)^#next\s+(.+?)\s*$')) {
-        $rawNext = $match.Groups[1].Value
-        $condition = ([regex]::Match($rawNext, '<<\s*(.+)$').Groups[1].Value).Trim()
+    foreach ($rawNext in $guide.NextHeaders) {
+        $condition = Get-GuideCondition $rawNext
         if ($condition -match '!wotlk|\bcata\b|\bmop\b') { continue }
-        $nextValue = ($rawNext -replace '\s*<<.*$', '').Trim()
+        $conditionOffset = $rawNext.IndexOf('<<')
+        $nextValue = if ($conditionOffset -ge 0) {
+            $rawNext.Substring(0, $conditionOffset).Trim()
+        } else {
+            $rawNext.Trim()
+        }
         foreach ($candidateRaw in ($nextValue -split ';')) {
             $candidate = $candidateRaw.Trim()
             if (-not $candidate) { continue }
@@ -691,10 +888,7 @@ foreach ($fixture in $routeFixtures) {
 
     $fixtureGuide = $fixtureGuides[0]
     if ($null -ne $fixture.PSObject.Properties['TopCondition']) {
-        $actualTopCondition = (
-            [regex]::Match(
-                $fixtureGuide.Content,
-                '(?m)^<<\s*(.+?)\s*$').Groups[1].Value.Trim() -replace '\s+', ' ')
+        $actualTopCondition = ($fixtureGuide.TopCondition -replace '\s+', ' ')
         if ($actualTopCondition -cne $fixture.TopCondition) {
             Add-Error (
                 'Route fixture {0} top condition changed. Expected [{1}], got [{2}]' -f
@@ -702,7 +896,7 @@ foreach ($fixture in $routeFixtures) {
         }
     }
     if ($null -ne $fixture.PSObject.Properties['DefaultFor']) {
-        $actualDefaultFor = Get-GuideHeader $fixtureGuide.Content 'defaultfor'
+        $actualDefaultFor = $fixtureGuide.Headers['defaultfor']
         $actualDefaultFor = ($actualDefaultFor -replace '\s+', ' ').Trim()
         if ($actualDefaultFor -cne $fixture.DefaultFor) {
             Add-Error (
@@ -711,17 +905,16 @@ foreach ($fixture in $routeFixtures) {
         }
     }
 
-    $actualHeaders = [string[]]@(
-        [regex]::Matches($fixtureGuide.Content, '(?m)^#next\s+(.+?)\s*$') |
-            ForEach-Object {
-                Normalize-NextHeader ([string]$_.Groups[1].Value)
-            }
-    )
-    $expectedHeaders = [string[]]@(
-        @($fixture.Expected) | ForEach-Object {
-            Normalize-NextHeader ([string]$_)
-        }
-    )
+    $actualHeaderList = New-Object 'Collections.Generic.List[string]'
+    foreach ($rawHeader in $fixtureGuide.NextHeaders) {
+        $actualHeaderList.Add((Normalize-NextHeader ([string]$rawHeader)))
+    }
+    $actualHeaders = [string[]]$actualHeaderList
+    $expectedHeaderList = New-Object 'Collections.Generic.List[string]'
+    foreach ($expectedHeader in @($fixture.Expected)) {
+        $expectedHeaderList.Add((Normalize-NextHeader ([string]$expectedHeader)))
+    }
+    $expectedHeaders = [string[]]$expectedHeaderList
     $mismatch = $false
     if ($fixture.Exact) {
         $mismatch = $actualHeaders.Count -ne $expectedHeaders.Count
@@ -763,7 +956,11 @@ foreach ($fixture in $routeFixtures) {
 # progress while Active Targets remains empty until a later duplicate step.
 $hordeLevelingPath = Join-Path $root 'Guides\TBC\Horde-Leveling.lua'
 if ([IO.File]::Exists($hordeLevelingPath)) {
-    $hordeLevelingText = "`n" + [IO.File]::ReadAllText($hordeLevelingPath)
+    $hordeLevelingText = "`n" + $(if ($fileTextCache.ContainsKey($hordeLevelingPath)) {
+        $fileTextCache[$hordeLevelingPath]
+    } else {
+        [IO.File]::ReadAllText($hordeLevelingPath)
+    })
     $objectiveTargetFixtures = @(
         @{ Quest = 546; Objective = 1 },
         @{ Quest = 556; Objective = 1 },

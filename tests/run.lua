@@ -252,6 +252,19 @@ loadAddonFile("Guide/Prerequisites.lua", addon)
 loadAddonFile("Guide/Directives/Registry.lua", addon)
 addon.directives:RegisterDomain("fixture-domain", {"fixtureDirective"})
 
+local reverseIds, reverseCondition =
+    addon.prerequisites:NormalizeTurnInConditionIds({-12238})
+check(reverseCondition and reverseIds[1] == 12238,
+      "negative isQuestTurnedIn IDs were not normalized as reverse conditions")
+local normalIds, normalCondition =
+    addon.prerequisites:NormalizeTurnInConditionIds({9145, 9143})
+check(not normalCondition and normalIds[1] == 9145 and normalIds[2] == 9143,
+      "positive isQuestTurnedIn IDs changed during normalization")
+local mixedIds, _, mixedError =
+    addon.prerequisites:NormalizeTurnInConditionIds({9145, -9143})
+check(not mixedIds and mixedError,
+      "mixed-sign isQuestTurnedIn conditions were not rejected")
+
 check(addon.directives:GetHandler("fixtureDirective")() == "directive" and
           addon.directives:GetDomain("fixtureDirective") == "fixture-domain",
       "directive registry did not retain its handler and domain")

@@ -107,15 +107,17 @@ step << !Shaman !Warrior
     .isOnQuest 9813 << !BloodElf
 step << !Shaman !Warrior
     #label MeetingTW
---   >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r and |cRXP_FRIENDLY_Dawnsinger|r
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r and |cRXP_FRIENDLY_Dawnsinger|r << BloodElf
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r << !BloodElf
     .turnin 9626 >> Turn in Meeting the Warchief << BloodElf
     .accept 9627 >> Accept Allegiance to the Horde << BloodElf
     .turnin 9813 >> Turn in Meeting the Warchief << !BloodElf
     .goto Orgrimmar,31.62,37.82
---  .goto Orgrimmar,31.62,38.39 << BloodElf
+    .turnin 9627 >> Turn in Allegiance to the Horde << BloodElf
+    .accept 9428 >> Accept Report to Splintertree Post << BloodElf
+    .goto Orgrimmar,31.62,38.39 << BloodElf
     .target Thrall
---   .target Ambassador Dawnsinger << BloodElf
+    .target Ambassador Dawnsinger << BloodElf
 step << Paladin
     .goto Orgrimmar,32.29,35.74
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pyreanor|r
@@ -2668,7 +2670,6 @@ step
 	.goto Hillsbrad Foothills,36.64,45.21,35,0
     .xp 24 >> Grind to level 24
 step
-    #xprate >1.499
 	.goto Hillsbrad Foothills,62.4,20.3
 .target High Executor Darthalia
 >>Talk to |cRXP_FRIENDLY_High Executor Darthalia|r
@@ -3567,8 +3568,35 @@ step << Rogue
 	>> Stealth all the way to the Moonshine Ruins, then swim under the Bridge and prepare for the boss (Use all buffs you have)
 	>> Loot the Fathom Core, this spawns the boss.
 	>> Loot the Globe from Baron Aquanis. Accept the quest
-	.collect 16762,1,6922
+	.complete 6921,1 --Collect Fathom Core
+	.collect 16782,1,6922
+	.use 16782
 	.accept 6922 >> Accept Baron Aquanis
+    .mob Baron Aquanis
+step << Rogue
+    .goto Ashenvale,11.56,34.29
+    >>Return to Zoram'gar Outpost and talk to |cRXP_FRIENDLY_Je'neu Sancrea|r
+    .turnin 6564 >>Turn in Allegiance to the Old Gods
+    .target Je'neu Sancrea
+    .isOnQuest 6564
+step << Rogue
+    .goto Ashenvale,11.56,34.29
+    >>Talk to |cRXP_FRIENDLY_Je'neu Sancrea|r
+    .turnin 6563 >>Turn in The Essence of Aku'Mai
+    .target Je'neu Sancrea
+    .isQuestComplete 6563
+step << Rogue
+    .goto Ashenvale,11.56,34.29
+    >>Talk to |cRXP_FRIENDLY_Je'neu Sancrea|r
+    .turnin 6921 >>Turn in Amongst The Ruins
+    .target Je'neu Sancrea
+    .isQuestComplete 6921
+step << Rogue
+    .goto Ashenvale,11.56,34.29
+    >>Talk to |cRXP_FRIENDLY_Je'neu Sancrea|r
+    .turnin 6922 >>Turn in Baron Aquanis
+    .target Je'neu Sancrea
+    .isOnQuest 6922
 step
     #xprate <1.1
     .isQuestComplete 1088
@@ -4420,7 +4448,6 @@ step << Warrior tbc
 .target Klannoc Macleod
     .accept 1791 >>Accept The Windwatcher
 step << Warrior wotlk
-    #xprate >1.499
     .isOnQuest 1719
     .goto The Barrens,68.6,49.2
 .target Klannoc Macleod
@@ -6373,7 +6400,7 @@ step << !Shaman !Warrior
     .zoneskip Orgrimmar << Troll Mage
     .isQuestAvailable 885
 step << BloodElf !Warlock !Paladin wotlk
-    .goto Undercity,59,91,11.32,20,0
+    .goto Undercity,59.91,11.32,20,0
     .goto Undercity,54.67,11.25
     .zone Silvermoon City >> Take the Orb of Translocation to Silvermoon City
     .cooldown item,6948,<0
@@ -6705,6 +6732,7 @@ step << !Shaman !Warrior
     .accept 9627 >> Accept Allegiance to the Horde << BloodElf
     .turnin 9813 >> Turn in Meeting the Warchief << !BloodElf
     .goto Orgrimmar,31.62,37.82
+    .turnin 9627 >> Turn in Allegiance to the Horde << BloodElf
     .accept 9428 >> Accept Report to Splintertree Post << BloodElf
     .goto Orgrimmar,31.62,38.39 << BloodElf
     .target Thrall
@@ -6716,6 +6744,7 @@ step << BloodElf
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thrall|r and |cRXP_FRIENDLY_Dawnsinger|r
     .accept 9627 >> Accept Allegiance to the Horde << BloodElf
     .goto Orgrimmar,31.62,37.82
+    .turnin 9627 >> Turn in Allegiance to the Horde << BloodElf
     .accept 9428 >> Accept Report to Splintertree Post << BloodElf
     .goto Orgrimmar,31.62,38.39 << BloodElf
     .target Thrall
@@ -7380,6 +7409,7 @@ step << !Shaman !Warrior
     .use 5099
     .unitscan Lakota'mani
 step << !Shaman !Warrior
+    #xprate <1.7 << !Tauren
     #label Weapons
     .goto The Barrens,45.10,57.68
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r
@@ -8737,7 +8767,7 @@ step
     .goto The Barrens,45.83,77.21,40,0
     .goto The Barrens,45.79,78.47,40,0
     .goto The Barrens,45.86,78.77,40,0
-    .goto The Barrens,46.07,79,19,40,0
+    .goto The Barrens,46.07,79.19,40,0
     .goto The Barrens,46.14,79.37,40,0
     .goto The Barrens,46.16,79.66,40,0
     .goto The Barrens,46.09,80.54,40,0
@@ -8748,6 +8778,7 @@ step
     .target Gann Stonespire
 step << Shaman/Warrior
     #completewith Lok
+    .isOnQuest 893
     >>Kill |cRXP_ENEMY_Razormane Stalkers|r and |cRXP_ENEMY_Razormane Pathfinders|r. Loot them for the |T135640:0|t[|cRXP_LOOT_Razormane Backstabber|r]
     >>|cRXP_WARN_The |cRXP_ENEMY_Razormane Stalkers|r are stealthed|r
     >>Kill |cRXP_ENEMY_Razormane Seers|r. Loot them for the |T135139:0|t[|cRXP_LOOT_Charred Razormane Wand|r]
@@ -8862,6 +8893,7 @@ step << !Shaman !Warrior
     .unitscan Washte Pawne
 step
     #completewith next
+    .isOnQuest 893
     >>Kill |cRXP_ENEMY_Razormane Stalkers|r and |cRXP_ENEMY_Razormane Pathfinders|r. Loot them for the |T135640:0|t[|cRXP_LOOT_Razormane Backstabber|r]
     >>|cRXP_WARN_The |cRXP_ENEMY_Razormane Stalkers|r are stealthed|r
     .complete 893,1 --Collect Razormane Backstabber (x1)
@@ -8869,6 +8901,7 @@ step
     .mob Razormane Pathfinder
 step
     #label WandShield
+    .isOnQuest 893
 #loop
 	.line The Barrens,42.57,78.81,42.12,78.48,41.49,78.69,41.22,79.72,40.91,80.60,40.55,80.84,41.62,80.92,41.54,82.28,42.48,82.28,42.57,78.81
 	.goto The Barrens,42.57,78.81,45,0
@@ -8898,6 +8931,7 @@ step << Shaman/Warrior
     .complete 879,2 --Lok's Skull (1)
     .mob Nak
 step
+    .isOnQuest 893
     .goto The Barrens,44.09,83.70,15,0
     .goto The Barrens,44.15,83.34,15,0
     .goto The Barrens,44.38,83.05,15,0
@@ -8993,7 +9027,7 @@ step
     .goto The Barrens,46.09,80.54,40,0
     .goto The Barrens,46.16,79.66,40,0
     .goto The Barrens,46.14,79.37,40,0
-    .goto The Barrens,46.07,79,19,40,0
+    .goto The Barrens,46.07,79.19,40,0
     .goto The Barrens,45.86,78.77,40,0
     .goto The Barrens,45.79,78.47,40,0
     .goto The Barrens,45.83,77.21,40,0
@@ -9123,7 +9157,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 885 >>Turn in Washte Pawne
@@ -9143,7 +9177,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 885 >>Turn in Washte Pawne
     .turnin 897 >>Turn in The Harvester
@@ -9161,7 +9195,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 897 >>Turn in The Harvester
@@ -9179,7 +9213,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 885 >>Turn in Washte Pawne
@@ -9197,7 +9231,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .goto The Barrens,44.86,59.13
@@ -9213,7 +9247,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 885 >>Turn in Washte Pawne
     .goto The Barrens,44.86,59.13
@@ -9229,7 +9263,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r, |cRXP_FRIENDLY_Jorn|r, and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 897 >>Turn in The Harvester
     .goto The Barrens,44.86,59.13
@@ -9246,7 +9280,7 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Mangletooth|r << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r << !Shaman !Warrior
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
+    .accept 1153 >> Accept A New Ore Sample << Tauren
     .goto The Barrens,45.10,57.68
     .turnin 879 >> Turn in Betrayal from Within << Shaman/Warrior
     .accept 906 >> Accept Betrayal from Within << Shaman/Warrior
@@ -9259,7 +9293,7 @@ step
     .goto The Barrens,46.09,80.54,40,0
     .goto The Barrens,46.16,79.66,40,0
     .goto The Barrens,46.14,79.37,40,0
-    .goto The Barrens,46.07,79,19,40,0
+    .goto The Barrens,46.07,79.19,40,0
     .goto The Barrens,45.86,78.77,40,0
     .goto The Barrens,45.79,78.47,40,0
     .goto The Barrens,45.83,77.21,40,0
@@ -9283,7 +9317,7 @@ step
     .goto The Barrens,46.09,80.54,40,0
     .goto The Barrens,46.16,79.66,40,0
     .goto The Barrens,46.14,79.37,40,0
-    .goto The Barrens,46.07,79,19,40,0
+    .goto The Barrens,46.07,79.19,40,0
     .goto The Barrens,45.86,78.77,40,0
     .goto The Barrens,45.79,78.47,40,0
     .goto The Barrens,45.83,77.21,40,0
@@ -9516,9 +9550,10 @@ step
     .mob Galak Scout
     .mob Galak Wrangler
     .mob Galak Windchaser
-step
+step << Tauren
     #xprate <1.7 << !Shaman !Warrior
     #completewith next
+    .isOnQuest 1153
     >>Kill |cRXP_ENEMY_Gravelsnout Surveyors|r, |cRXP_ENEMY_Gravelsnout Diggers|r, and |cRXP_ENEMY_Gibblesnik|r (if he's up). Loot them for an |cRXP_LOOT_Ore Sample|r
     .complete 1153,1 --Unrefined Ore Sample (1)
     .unitscan Gravelsnout Digger;Gravelsnout Surveyor;Gibblesnik
@@ -9544,9 +9579,10 @@ step
     .turnin 1149 >> Turn in Test of Faith
     .accept 1150 >> Accept Test of Endurance
     .target Dorn Plainstalker
-step
+step << Tauren
     #xprate <1.7 << !Shaman !Warrior
     #completewith Purifying
+    .isOnQuest 1153
     .line Thousand Needles,51.89,43.02,53.41,46.19,54.05,44.96
     .line Thousand Needles,53.47,46.65,52.61,48.28,53.64,48.50,52.61,48.28,51.48,48.06
     .line Thousand Needles,62.21,47.76,63.05,48.92,62.63,48.38,62.96,47.64,64.01,47.52,63.92,46.63,63.10,45.53
@@ -9582,8 +9618,9 @@ step
     >>Kill |cRXP_ENEMY_Thundering Boulderkins|r. Loot them for their |cRXP_LOOT_Purifying Earth|r
     .complete 9431,1 --Collect Purifying Earth (x2)
     .mob Thundering Boulderkin
-step
+step << Tauren
     #xprate <1.7 << !Shaman !Warrior
+    .isOnQuest 1153
     .line Thousand Needles,51.89,43.02,53.41,46.19,54.05,44.96
     .line Thousand Needles,53.47,46.65,52.61,48.28,53.64,48.50,52.61,48.28,51.48,48.06
     .line Thousand Needles,62.21,47.76,63.05,48.92,62.63,48.38,62.96,47.64,64.01,47.52,63.92,46.63,63.10,45.53
@@ -10155,8 +10192,20 @@ step
 	.goto Thousand Needles,34.88,34.82,30,0
 	.goto Thousand Needles,35.62,36.20,30,0
 	.goto Thousand Needles,36.05,37.41,30,0
-	.goto Thousand Needles,36.58,38.77,30,0
+    .goto Thousand Needles,36.58,38.77,30,0
     .xp 29+28860 >> Grind to 28860+/36300xp
+step
+    .goto Thousand Needles,44.8,49.0
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elu|r
+    .turnin 4767 >> Turn in Wind Rider
+    .target Elu
+    .isQuestComplete 4767
+step
+    .goto Thousand Needles,54.0,41.4
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dorn Plainstalker|r
+    .turnin 1150 >> Turn in Test of Endurance
+    .target Dorn Plainstalker
+    .isQuestComplete 1150
 step
 	#completewith next
     .hs >> Hearth to Thunder Bluff
@@ -10314,7 +10363,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 885 >>Turn in Washte Pawne
@@ -10330,7 +10378,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 885 >>Turn in Washte Pawne
     .turnin 897 >>Turn in The Harvester
@@ -10344,7 +10391,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 897 >>Turn in The Harvester
@@ -10358,7 +10404,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .turnin 885 >>Turn in Washte Pawne
@@ -10372,7 +10417,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 884 >>Turn in Owatanka
     .goto The Barrens,44.86,59.13
@@ -10384,7 +10428,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 885 >>Turn in Washte Pawne
     .goto The Barrens,44.86,59.13
@@ -10396,7 +10439,6 @@ step << Tauren !Warrior !Shaman
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r and |cRXP_FRIENDLY_Jorn|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .goto The Barrens,45.10,57.68
     .turnin 897 >>Turn in The Harvester
     .goto The Barrens,44.86,59.13
@@ -10410,7 +10452,6 @@ step << Tauren !Warrior !Shaman
     .goto The Barrens,45.10,57.68
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tatternack|r
     .turnin 893 >> Turn in Weapons of Choice
-    .accept 1153 >> Accept A New Ore Sample
     .target Tatternack Steelforge
     .zoneskip Thunder Bluff
 step << Tauren

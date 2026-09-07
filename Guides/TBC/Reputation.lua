@@ -1404,7 +1404,7 @@ step
 .subzoneskip 3712
 step
 #aldor
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Orelis|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Anchorite Karja|r
 .turnin 10407 >> Turn in Socrethar's Shadow
 .accept 10410 >> Accept Ishanah's Help
 .target Anchorite Karja

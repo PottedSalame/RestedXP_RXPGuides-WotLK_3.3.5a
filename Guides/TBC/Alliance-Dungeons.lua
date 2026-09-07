@@ -1865,7 +1865,7 @@ step
 #completewith next
 .zone Blasted Lands >> Travel to Blasted Lands
 step
-.isQuestTurnedIn 2990
+.isOnQuest 2990
 .goto Blasted Lands,66.898,19.469
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thadius Grimshade|r atop the Tower
 .turnin 2990 >> Turn in Thadius Grimshade
@@ -2142,7 +2142,7 @@ step
 .goto Desolace,68.501,8.880
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Talendria|r
 .accept 7041 >> Accept Vyletongue Corruption
-.target Keeper Marandis
+.target Talendria
 step
 .goto Desolace,66.275,6.554
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Lyshaerya|r
@@ -3698,10 +3698,10 @@ step
 step
 .isQuestTurnedIn 4322
 .goto Burning Steppes,84.334,68.326
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Borgun Stoutarm|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Borgus Stoutarm|r
 >>Have a Mage port you if you have one in your group
 .fly Stormwind >> Fly to Stormwind
-.target Borgun Stoutarm
+.target Borgus Stoutarm
 .zoneskip Stormwind City
 step
 .isQuestTurnedIn 4322
@@ -3788,7 +3788,7 @@ step
 #completewith Bijou
 +Talk to |cRXP_FRIENDLY_Warosh|r and |cRXP_FRIENDLY_Bijou|r inside Lower Blackrock Spire
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bijou|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warosh|r
 .accept 4867 >>Accept Urok Doomhowl
 .target Warosh
 step
@@ -3797,7 +3797,7 @@ step
 .accept 5001 >>Accept Bijou's Belongings
 .target Bijou
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bijou|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warosh|r
 .accept 4867 >>Accept Urok Doomhowl
 .target Warosh
 step
@@ -3847,7 +3847,7 @@ step
 .accept 5002 >>Accept Message to Maxwell
 .target Bijou
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bijou|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warosh|r
 .turnin 4867 >>Turn in Urok Doomhowl
 .target Warosh
 step
@@ -3868,7 +3868,7 @@ step
 #label BSTurnins
 .goto Burning Steppes,84.744,69.015
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marshal Maxwell|r
-.turnin 6402 >> Turn in Message to Maxwell
+.turnin 5002 >> Turn in Message to Maxwell
 .turnin 5089 >> Turn in General Drakkisath's Command
 .target Marshal Maxwell
 step
@@ -4216,21 +4216,27 @@ step
 #completewith Hatchlings
 >>Loot the |cRXP_PICK_Deeds|r throughout Scholomance
 >>|cRXP_PICK_The Deed to Southshore|r |cRXP_WARN_is located in the large room right after the bridge as you enter the dungeon. It's in the left corner next to a bookshelf on top of a desk|r
-.complete 5341,3
+.complete 5343,3
 >>|cRXP_PICK_The Deed to Tarren Mill|r |cRXP_WARN_is located on the desk in the right corner of the large room downstairs before the room filled with whelpes|r
-.complete 5341,4
+.complete 5343,4
 >>|cRXP_PICK_The Deed to Brill|r |cRXP_WARN_is located in |cRXP_ENEMY_Ras Frostwhisper's|r room on a table to the right side|r
-.complete 5341,1
+.complete 5343,1
 >>|cRXP_PICK_The Deed to Caer Darrow|r |cRXP_WARN_is located behind |cRXP_ENEMY_Lord Alexei Barov|r in the boss gauntlet in |cRXP_ENEMY_Grandmaster Gandling's|r room|r
-.complete 5341,2
-.isOnQuest 5341
+.complete 5343,2
+.isOnQuest 5343
 step
+#completewith Kirtonos
+>>Kill |cRXP_ENEMY_Plagued Hatchlings|r
+.complete 5529,1
+.isOnQuest 5529
+step
+#optional
 #completewith Kirtonos
 >>Kill |cRXP_ENEMY_Plagued Hatchlings|r. Loot them for a |T134319:0|t[|cRXP_LOOT_Healthy Dragon Scale|r]. Use it to accept the quest
 .collect 13920,1,5582 
+.use 13920 >>Use the Healthy Dragon Scale to start the quest
 .accept 5582 >>Accept Healthy Dragon Scale
-.complete 5529,1 
-.isOnQuest 5529
+.isQuestTurnedIn 5529
 step
 >>Kill |cRXP_ENEMY_Doctor Theolen Krastinov|r in the boss gauntlet in |cRXP_ENEMY_Grandmaster Gandling's|r room
 >>Click on the |cRXP_PICK_Remains of Eva Sarkhoff|r and |cRXP_PICK_Remains of Lucien Sarkhoff|r to burn them
@@ -4288,22 +4294,27 @@ step
 .isOnQuest 5384
 step
 #label Hatchlings
+>>Kill |cRXP_ENEMY_Plagued Hatchlings|r
+.complete 5529,1
+.isOnQuest 5529
+step
+#optional
 >>Kill |cRXP_ENEMY_Plagued Hatchlings|r. Loot them for a |T134319:0|t[|cRXP_LOOT_Healthy Dragon Scale|r]. Use it to accept the quest
 .collect 13920,1,5582 
+.use 13920 >>Use the Healthy Dragon Scale to start the quest
 .accept 5582 >>Accept Healthy Dragon Scale
-.complete 5529,1 
-.isOnQuest 5529
+.isQuestTurnedIn 5529
 step
 >>Loot the |cRXP_PICK_Deeds|r throughout Scholomance
 >>|cRXP_PICK_The Deed to Southshore|r |cRXP_WARN_is located in the large room right after the bridge as you enter the dungeon. It's in the left corner next to a bookshelf on top of a desk|r
-.complete 5341,3
+.complete 5343,3
 >>|cRXP_PICK_The Deed to Tarren Mill|r |cRXP_WARN_is located on the desk in the right corner of the large room downstairs before the room filled with whelpes|r
-.complete 5341,4
+.complete 5343,4
 >>|cRXP_PICK_The Deed to Brill|r |cRXP_WARN_is located in |cRXP_ENEMY_Ras Frostwhisper's|r room on a table to the right side|r
-.complete 5341,1
+.complete 5343,1
 >>|cRXP_PICK_The Deed to Caer Darrow|r |cRXP_WARN_is located behind |cRXP_ENEMY_Lord Alexei Barov|r in the boss gauntlet in |cRXP_ENEMY_Grandmaster Gandling's|r room|r
-.complete 5341,2
-.isOnQuest 5341
+.complete 5343,2
+.isOnQuest 5343
 step
 #completewith next
 .goto Western Plaguelands,70.22,73.71,50 >>Return to |cRXP_FRIENDLY_Eva Sarkhoff|r outside the instance
@@ -4374,9 +4385,10 @@ step
 .use 13544
 step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Weldon Barov|r
-.accept 5343 >> Accept Barov Family Fortune
+.turnin 5343 >> Turn in Barov Family Fortune
 .goto Western Plaguelands,43.4,83.6
 .target Weldon Barov
+.isQuestComplete 5343
 step
 #completewith HatchlingsTurnin
 .hs >>Hearth to Light's Hope Chapel
@@ -4394,6 +4406,13 @@ step
 .turnin 5529 >>Turn in Plagued Hatchlings
 .target Betina Bigglezink
 .isQuestComplete 5529
+step
+#optional
+.goto Eastern Plaguelands,81.47,59.66
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Betina Bigglezink|r
+.turnin 5582 >>Turn in Healthy Dragon Scale
+.target Betina Bigglezink
+.isQuestComplete 5582
 step
 +|cRXP_WARN_Select the "Stratholme guide" in order to continue with the quest chain of "The Human, Ras Frostwhisper"|r
 .isOnQuest 5461
@@ -5678,7 +5697,7 @@ step
 #completewith next
 .goto Tanaris,55.416,53.529,30 >> Enter Old Hillsbrad (Escape from Durnholde)
 step
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Andormu|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Erozion|r
 .turnin 10282 >>Turn in Old Hillsbrad
 .accept 10283 >>Accept Taretha's Diversion
 .target Erozion

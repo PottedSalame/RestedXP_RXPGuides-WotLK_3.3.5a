@@ -48,6 +48,14 @@ foreach ($quest in $quests.Values) {
 }
 
 $previousCandidates = @{}
+# AzerothCore treats 11287 as a breadcrumb into 11286, not as a hard
+# prerequisite. Older quest_template exports encode that relation through
+# NextQuestId, which otherwise looks identical to an ordinary predecessor.
+# Keep this verified exception here so regenerating the bundled database does
+# not make the Horde Howling Fjord route reject a direct 11286 pickup.
+$ignoredNextQuestLinks = @{
+    '11287>11286' = $true
+}
 function Add-PreviousCandidate([int]$QuestId, [int]$Candidate) {
     if ($QuestId -le 0 -or $Candidate -eq 0 -or
         [math]::Abs($Candidate) -eq $QuestId) { return }
@@ -64,7 +72,9 @@ foreach ($quest in $quests.Values) {
         Add-PreviousCandidate $quest.Id $quest.Previous
     }
     $nextId = [math]::Abs($quest.Next)
-    if ($nextId -gt 0 -and $quests.ContainsKey($nextId)) {
+    $nextLink = "$($quest.Id)>$nextId"
+    if ($nextId -gt 0 -and $quests.ContainsKey($nextId) -and
+        -not $ignoredNextQuestLinks.ContainsKey($nextLink)) {
         # The legacy combined table stores some destination IDs as negative;
         # the sign belongs to the link, not to the predecessor's completion
         # state. AzerothCore adds the source quest as a positive candidate.

@@ -252,7 +252,7 @@ step << !Tauren !Undead
     .complete 845,1 --Zhevra Hooves (4)
 step << Tauren Warrior
     .goto The Barrens,56.7,19.8,60 >> Run to here, grinding mobs en route
-step << !Tauren !Undead
+step << !Tauren
     .goto The Barrens,62.3,20.1
 .target Ak'Zeloth
 >>Talk to |cRXP_FRIENDLY_Ak'Zeloth|r

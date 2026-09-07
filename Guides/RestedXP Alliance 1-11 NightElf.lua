@@ -585,7 +585,12 @@ step << Druid
 >>Talk to |cRXP_FRIENDLY_Corithras Moonrage|r
     .turnin 929 >> Turn in Crown of the Earth
 .target Corithras Moonrage
+step << Druid
+	#xprate <1.5
+    .goto Teldrassil,56.2,61.7
+>>Talk to |cRXP_FRIENDLY_Corithras Moonrage|r
     .accept 933 >> Accept Crown of the Earth
+.target Corithras Moonrage
 step << Druid
     .goto Teldrassil,55.9,61.6
 	.trainer >> Train your level 8 spells
@@ -634,7 +639,7 @@ step << !Druid
 .target Corithras Moonrage
 >>Talk to |cRXP_FRIENDLY_Corithras Moonrage|r
     .turnin 929 >> Turn in Crown of the Earth
-step
+step << !Druid
 	#xprate <1.5
     .goto Teldrassil,56.2,61.7
 .target Corithras Moonrage
@@ -1163,6 +1168,13 @@ step
 .target Arch Druid Fandral Staghelm
 >>Talk to |cRXP_FRIENDLY_Arch Druid Fandral Staghelm|r
     .turnin 940 >> Turn in Teldrassil << Hunter
+step << !Hunter !Rogue
+    #xprate >1.4999
+    .isOnQuest 940
+    .goto Darnassus,34.814,9.255
+.target Arch Druid Fandral Staghelm
+>>Talk to |cRXP_FRIENDLY_Arch Druid Fandral Staghelm|r
+    .turnin 940 >> Turn in Teldrassil
 step
     #xprate <1.5
     .goto Darnassus,34.814,9.255

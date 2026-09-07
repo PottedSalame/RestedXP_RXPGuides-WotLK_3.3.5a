@@ -84,6 +84,47 @@ addon at runtime. Old prerequisite metadata, current server data, and Wowhead
 comments do not always agree, especially for optional breadcrumbs. Unverified
 disagreements remain review notes rather than mandatory new detours.
 
+## Route-wide accepted/completed quest audit
+
+The follow-up lifecycle pass carries accepted, completed, rewarded, and
+abandoned quest state across every automatic 1-80 continuation for each
+supported class, race, XP-rate boundary, and Aldor/Scryer branch. Optional
+pickups and work do not define the mandatory route, while optional or
+skip-safe hand-ins still close a quest the route is already carrying.
+
+Confirmed zero- or low-detour repairs include:
+
+- Horde starter and Classic routes now deliver Carry Your Weight, The Demon
+  Seed, Defending Fairbreeze Village, and Battle of Hillsbrad at existing NPC
+  returns. The JJ route only accepts Weapons of Choice and A New Ore Sample
+  on branches that reach their objectives and later hand-ins. WotLK no longer
+  accepts the obsolete trainable Aquatic Form delivery quest. The Affray is
+  now handed in at Klannoc at every WotLK XP rate, not just accelerated rates.
+- Alliance starter and Classic routes now close Supplies to Tannok, Plagued
+  Lands, Teldrassil, The Collector, The Daughter Who Lived, Return the
+  Statuette, and Blessed Arm on already-routed NPC or city visits. Red Crystal
+  and Crown of the Earth pickups share the XP branch containing their work;
+  the accelerated Duskwood route no longer starts Bride of the Embalmer when
+  it skips Eliza and the return trip. The boosted route no longer starts the
+  unrouted Stratholme-only Restless Souls follow-up.
+- Endgame follow-ups 8333, 5505, and 5511 are accepted from the same NPC after
+  their prerequisite hand-ins. Alliance LBRS uses quest 5002; Alliance
+  Scholomance uses quest 5343; and Healthy Dragon Scale is explicitly a
+  second-run, item-started quest for both factions after Plagued Hatchlings is
+  rewarded.
+- Horde WotLK Drake Hunt now completes the same quest it rewards. The
+  Sunreaver Light's Mercy objective uses 14140, and the Scryer Karabor Training
+  Grounds pickup, objective, and return are retained only for the flying route.
+- The Alliance TBC route starts Cyclonian and Razzeric's Tweaking only on the
+  normal-rate branches that later finish and reward them. Accelerated branches
+  no longer fill the quest log with work whose return chapters they skip.
+  Mortality Wanes remains the authored exception: the guide explains the
+  optional Darnassus portal turn-in and explicitly removes the quest otherwise.
+
+Large dungeon, reputation, attunement, group, or optional epilogues remain
+explicit handoffs instead of being converted into mandatory speedrun detours.
+Original guide snapshots were not changed.
+
 ## Routing and cache regression coverage
 
 `guide-loading.lua` executes the actual Lua guide parser with inert directive
@@ -134,21 +175,33 @@ list. `-FailOnLifecycleWarnings` promotes those findings to errors for focused
 review; `-FailOnEntryWarnings` does the same for cross-guide prerequisites.
 These are **unresolved review items**, not an approved exception allowlist.
 
-The final structural baseline is **50 files, 709 guides, 48,654 steps**.
-Quest-flow validation examines **360 Validated guides**, with **17,361
+The final structural baseline is **50 files, 709 guides, 48,684 steps**.
+Quest-flow validation examines **360 Validated guides**, with **17,423
 class/race/XP branch runs** and **1,364 complete next-guide route-matrix runs**.
-The latter check transitions, not a simulation of quest state through 1-80.
+The route matrix carries mandatory accepted, objective, rewarded, and
+explicitly abandoned quest state through the selected 1-80 chapters. It is a
+conservative static lifecycle model, not a substitute for live quest-state,
+NPC-dialog, or server-script testing.
 
 After these fixes the report has zero fatal errors, **17 lifecycle review
 findings** (13 manual/off-route-entry contexts and four optional-pickup
-contexts), and **184 entry-prerequisite notes**. Candidate authored hand-ins
-exist for 129 of those entry notes; 55 have no authored provider in the
+contexts), and **182 entry-prerequisite notes**. Candidate authored hand-ins
+exist for 129 of those entry notes; 53 have no authored provider in the
 Validated inventory. A candidate provider does not prove a particular
 character's route visited it. No finding is silently suppressed or certified
 as resolved based on this classification.
 
-Report schema 2 includes `entryReferences` and `lifecycleReviews`, with sorted
-candidate source locations and optional-pickup/default-route context. XP
+The validator caches parsed guide conditions and lifecycle events, reuses
+class/race route catalogs, and simulates one representative only when every
+loaded route XP expression proves a set of sampled rates behaviorally
+identical. Counts and exact profile labels are still fanned out for all
+**17,423** branch runs and **1,364** route runs. On the local Windows
+PowerShell 5.1 benchmark, a full JSON audit dropped from **522.447 seconds**
+to **216.023 seconds** (about **59% faster**) without changing its findings.
+
+Report schema 3 includes `routeOpenCompletions`, `entryReferences`, and
+`lifecycleReviews`, with sorted candidate source locations and
+optional-pickup/default-route context. XP
 filters are retained in source order and selected per class/race profile;
 negative optional turn-ins are distinguished from mandatory missing accepts.
 

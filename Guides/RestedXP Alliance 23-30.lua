@@ -1017,6 +1017,12 @@ step << !Rogue !Druid
 	#requires spiders
     .goto Westfall,56.6,52.6
     .fp Sentinel >> Get the Sentinel Hill flight path
+step << Human Warlock
+    .isOnQuest 6285
+    .goto Westfall,57.00,47.17
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quartermaster Lewis|r
+    .turnin 6285 >> Turn in Return to Lewis
+    .target Quartermaster Lewis
 step << !Rogue !Druid
     .goto Westfall,41.5,66.8
     .turnin 67 >> Turn in The Legend of Stalvan
@@ -2161,6 +2167,12 @@ step
     .turnin 228 >> Turn in Mor'Ladim
 .target Commander Althea Ebonlocke
     .accept 229 >> Accept The Daughter Who Lived
+step << Hunter/Paladin
+    .isOnQuest 229
+    .goto Duskwood,74.543,46.085
+>>Talk to |cRXP_FRIENDLY_Watcher Ladimore|r
+    .turnin 229 >> Turn in The Daughter Who Lived
+.target Watcher Ladimore
 step << !Hunter !Paladin
     .goto Duskwood,74.543,46.085
 >>Talk to |cRXP_FRIENDLY_Watcher Ladimore|r
@@ -2910,7 +2922,7 @@ step
 >>Talk to |cRXP_FRIENDLY_Mikhail|r
     .turnin 1249 >> Turn in The Missing Diplomat
 step
-    .isOnQuest 1250
+    .isQuestTurnedIn 1249
     .goto Wetlands,10.6,60.3
 .target Tapoke "Slim" Jahn
 >>Talk to |cRXP_FRIENDLY_Tapoke "Slim" Jahn|r
@@ -3094,8 +3106,10 @@ step << Warlock
     .goto StormwindClassic,25.3,78.7
 	.trainer >> Train your class spells
 step
-   .isOnQuest 337
+    .itemcount 2794,1
 	.goto StormwindClassic,74.1,7.6
+    >>Click the Old History Book in your bags
+    .use 2794
     .accept 337 >> Accept An Old History Book
 >>Talk to |cRXP_FRIENDLY_Milton Sheaf|r
     .turnin 337 >> Turn in An Old History Book
@@ -3237,6 +3251,12 @@ step
     .turnin 228 >> Turn in Mor'Ladim
 .target Commander Althea Ebonlocke
     .accept 229 >> Accept The Daughter Who Lived
+step << Hunter/Paladin
+    .isOnQuest 229
+    .goto Duskwood,74.543,46.085
+>>Talk to |cRXP_FRIENDLY_Watcher Ladimore|r
+    .turnin 229 >> Turn in The Daughter Who Lived
+.target Watcher Ladimore
 step << !Hunter !Paladin
     .goto Duskwood,74.543,46.085
 >>Talk to |cRXP_FRIENDLY_Watcher Ladimore|r
@@ -3500,12 +3520,6 @@ step
 .target Lord Ello Ebonlocke
 >>Talk to |cRXP_FRIENDLY_Lord Ello Ebonlocke|r
     .turnin 252 >> Turn in Translation to Ello
-step
-#xprate <1.7
-    .goto Duskwood,71.9,46.6
-.target Lord Ello Ebonlocke
->>Talk to |cRXP_FRIENDLY_Lord Ello Ebonlocke|r
-    .accept 253 >> Accept Bride of the Embalmer
 step
 	#sticky
 	#completewith next
@@ -4467,4 +4481,10 @@ step
 .target First Mate Fitzsimmons
 >>Talk to |cRXP_FRIENDLY_First Mate Fitzsimmons|r
     .turnin 289 >> Turn in The Cursed Crew
+step
+    .isOnQuest 286
+    .goto Wetlands,8.310,58.533
+.target Karl Boran
+>>Talk to |cRXP_FRIENDLY_Karl Boran|r
+    .turnin 286 >> Turn in Return the Statuette
 ]])

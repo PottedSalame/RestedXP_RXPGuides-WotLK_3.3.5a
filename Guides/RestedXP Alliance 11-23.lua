@@ -127,16 +127,17 @@ step
 step << !Dwarf/!Hunter
     .xp 12 >> Grind to level 12
 step << !Dwarf/!Hunter
-    >> Talk to Sentinel Glynda and Tharnariun
+    #xprate <1.7
+    .goto Darkshore,37.706,43.390
 .target Sentinel Glynda Nal'Shea
 >>Talk to |cRXP_FRIENDLY_Sentinel Glynda Nal'Shea|r
     .accept 4811 >> Accept The Red Crystal
-    .goto Darkshore,37.706,43.390
-    .turnin -2118 >> Turn in Plagued Lands
+step << !Dwarf/!Hunter
     .goto Darkshore,38.8,43.4
+.target Tharnariun Treetender
+>>Talk to |cRXP_FRIENDLY_Tharnariun Treetender|r
+    .turnin -2118 >> Turn in Plagued Lands
 step << Dwarf Hunter
-    #xprate <1.5
-    .maxlevel 13
     .goto Darkshore,38.8,43.4
     .target Tharnariun Treetender
     >>Talk to |cRXP_FRIENDLY_Tharnariun Treetender|r
@@ -1917,8 +1918,14 @@ step << Dwarf Hunter/!NightElf Rogue
     >> Exit Darnassus through the purple portal
     .fp Rut'theran >> Get the Rut'theran Village flight path
 step << Dwarf Hunter/Rogue
-    .goto Teldrassil,58.399,94.016
-    .fly Auberdine >>Fly back to Auberdine
+	.goto Teldrassil,58.399,94.016
+	.fly Auberdine >>Fly back to Auberdine
+step << NightElf
+    .isOnQuest 952
+    .goto Darkshore,43.5,76.2
+    >>Talk to |cRXP_FRIENDLY_Onu|r
+    .turnin 952 >> Turn in Grove of the Ancients
+    .target Onu
 step
 #xprate <1.5 << !Druid
     .isOnQuest 948

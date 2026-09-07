@@ -799,9 +799,9 @@ step << Warrior
 .goto Alterac Mountains,80.499,66.923
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bath'rah the Windwatcher|r
 .turnin 1791 >>Turn in The Windwatcher
-.accept 1712 >>Accept Cyclonian
 .target Bath'rah the Windwatcher
 step << Warrior
+#xprate <1.3001
 .isQuestTurnedIn 1791
 .goto Alterac Mountains,80.499,66.923
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bath'rah the Windwatcher|r
@@ -2607,6 +2607,12 @@ step << Hunter
 .trainer >> Train your class spells
 .target Einris Brightspear
 step
+.isOnQuest 322
+.goto StormwindClassic,51.7,12.3
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grimand Elmore|r
+.turnin 322 >> Turn in Blessed Arm
+.target Grimand Elmore
+step
 .isOnQuest 577,189,601
 .hs >> Hearth to Booty Bay
 >>|cRXP_BUY_Buy food/water if needed|r << !Warrior !Rogue
@@ -2770,6 +2776,12 @@ step
 .goto Thousand Needles,80.326,76.096
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Razzeric|r
 .turnin 1186 >> Turn in The Eighteenth Pilot
+.target Razzeric
+step
+#xprate <1.3001
+.isQuestTurnedIn 1186
+.goto Thousand Needles,80.326,76.096
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Razzeric|r
 .accept 1187 >> Accept Razzeric's Tweaking
 .target Razzeric
 step
@@ -9097,7 +9109,7 @@ step
 .goto The Barrens,63.084,37.163
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bragok|r
 .fly Mudsprocket>> Fly to Mudsprocket
-.target Baldruc
+.target Bragok
 .zoneskip Dustwallow Marsh
 step << !Mage
 #label TPTheramore
@@ -13212,9 +13224,9 @@ step
 .goto Un'Goro Crater,39.6,42.2,0
 .goto Un'Goro Crater,36.8,76.6,0
 .goto Un'Goro Crater,24.6,61.6,0
-.goto Un'Goro Crater,20.6,60,4,70,0
+.goto Un'Goro Crater,20.6,60.4,70,0
 .goto Un'Goro Crater,22.4,50.0,70,0
-.goto Un'Goro Crater,22.2,41,0,70,0
+.goto Un'Goro Crater,22.2,41.0,70,0
 .goto Un'Goro Crater,34.8,29.4,70,0
 .goto Un'Goro Crater,39.6,42.2,70,0
 .goto Un'Goro Crater,36.8,76.6,70,0
@@ -20738,7 +20750,7 @@ step
 .isQuestTurnedIn 9697
 #questguide << !tbc
 .goto Zangarmarsh,23.318,66.217
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lessa'oh|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watcher Leesa'oh|r
 .turnin 9702 >> Turn in A Question of Gluttony
 .accept 9708 >> Accept Familiar Fungi
 .target Watcher Leesa'oh
@@ -20753,7 +20765,7 @@ step << tbc
 step << !tbc
 #label Ungula
 .goto Zangarmarsh,23.318,66.217
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lessa'oh|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watcher Leesa'oh|r
 .turnin 9911 >> Turn in The Count of the Marshes
 .turnin 9702 >> Turn in A Question of Gluttony
 .target Watcher Leesa'oh
@@ -20922,7 +20934,7 @@ step
 .isQuestTurnedIn 9697
 #questguide << !tbc
 .goto Zangarmarsh,23.318,66.217
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lessa'oh|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watcher Leesa'oh|r
 .turnin 9708 >> Turn in Familiar Fungi
 .accept 9709 >> Accept Stealing Back the Mushrooms
 .turnin 9911 >> Turn in The Count of the Marshes
@@ -20930,7 +20942,7 @@ step
 step
 .isOnQuest 9911
 .goto Zangarmarsh,23.318,66.217
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lessa'oh|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watcher Leesa'oh|r
 .turnin 9911 >> Turn in The Count of the Marshes
 .target Watcher Leesa'oh
 step
@@ -21035,7 +21047,7 @@ step
 .xp <63,1
 step
 .goto Zangarmarsh,22.328,45.866
->>Kill |cRXP_ENEMY_Terroclaw|r on the island
+>>Kill |cRXP_ENEMY_Terrorclaw|r on the island
 .complete 9902,1 
 .mob Terrorclaw
 step
@@ -21310,7 +21322,7 @@ step
 .isQuestTurnedIn 9697
 #questguide << !tbc
 .goto Zangarmarsh,23.318,66.217
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lessa'oh|r
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watcher Leesa'oh|r
 .turnin 9709 >> Turn in Stealing Back the Mushrooms
 .target Watcher Leesa'oh
 step
@@ -21546,7 +21558,7 @@ step
 step
 #optional
 #completewith StrangeObject
->>Kill |cRXP_ENEMY_Vicious Teremoths|r. Loot them for their |cRXP_LOOT_Samples|r
+>>Kill |cRXP_ENEMY_Vicious Teromoths|r. Loot them for their |cRXP_LOOT_Samples|r
 .complete 9968,2 
 .mob Vicious Teromoth
 step
@@ -21615,7 +21627,7 @@ step
 .goto Terokkar Forest,44.40,22.84,50,0
 .goto Terokkar Forest,41.81,22.69,50,0
 .goto Terokkar Forest,44.29,20.34,50,0
->>Kill |cRXP_ENEMY_Vicious Teremoths|r. Loot them for their |cRXP_LOOT_Samples|r
+>>Kill |cRXP_ENEMY_Vicious Teromoths|r. Loot them for their |cRXP_LOOT_Samples|r
 .complete 9968,2 
 .mob Vicious Teromoth
 step

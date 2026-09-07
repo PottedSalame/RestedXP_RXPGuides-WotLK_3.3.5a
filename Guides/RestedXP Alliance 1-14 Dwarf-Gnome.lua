@@ -449,7 +449,7 @@ step << !Priest
 .target Ragnar Thunderbrew
 >>Talk to |cRXP_FRIENDLY_Ragnar Thunderbrew|r
     .accept 384 >> Accept Beer Basted Boar Ribs
-step << !Priest
+step
     .goto Dun Morogh,47.217,52.195
 .target Tannok Frosthammer
 >>Talk to |cRXP_FRIENDLY_Tannok Frosthammer|r

@@ -643,7 +643,7 @@ RXPGuides.RegisterGuide([[
 
 step
     .goto Eversong Woods,47.26,46.31
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jarondis|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Jaronis|r
     .accept 8472 >> Accept Major Malfunction
     .target Magister Jaronis
 step
@@ -845,7 +845,7 @@ step
     .complete 8472,1 --Collect Arcane Core (x6)
     .mob Arcane Patroller
 step
-    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Jarondis|r, |cRXP_FRIENDLY_Kan'ren|r, and |cRXP_FRIENDLY_Aeldon|r
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Jaronis|r, |cRXP_FRIENDLY_Kan'ren|r, and |cRXP_FRIENDLY_Aeldon|r
     .turnin 8472 >> Turn in Major Malfunction
     .accept 8895 >> Accept Delivery to the North Sanctum
     .goto Eversong Woods,47.26,46.31
@@ -1964,6 +1964,12 @@ step
     >>|cRXP_WARN_Be careful as|r |cRXP_ENEMY_Darkwraiths|r |cRXP_WARN_cast|r |T136224:0|t[Enrage] |cRXP_WARN_(increased damage and attack speed) at low health|r
     .complete 9252,2 --Kill Darkwraith (x4)
     .mob Darkwraith
+step << Undead Warrior
+    .goto Eversong Woods,46.93,71.79
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ranger Sareyn|r
+    .turnin 9252 >> Turn in Defending Fairbreeze Village
+    .target Ranger Sareyn
+    .isQuestComplete 9252
 step
     .goto Eversong Woods,54.28,70.97
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mirveda|r
@@ -3653,7 +3659,7 @@ step << Rogue
     .zoneskip Eversong Woods
     .zoneskip Ghostlands
 step << Rogue
-    .goto Undercity,59,91,11.32,20,0
+    .goto Undercity,59.91,11.32,20,0
     .goto Undercity,54.67,11.25
     .zone Silvermoon City >> Take the Orb of Translocation to Silvermoon City
     .cooldown item,6948,<0
@@ -5337,7 +5343,7 @@ step << Rogue
     .zoneskip Ghostlands
     .xp <16,1
 step << Rogue
-    .goto Undercity,59,91,11.32,20,0
+    .goto Undercity,59.91,11.32,20,0
     .goto Undercity,54.67,11.25
     .zone Silvermoon City >> Take the Orb of Translocation to Silvermoon City
     .cooldown item,6948,<0
@@ -6562,7 +6568,7 @@ step << Rogue
     .zoneskip Eversong Woods
     .zoneskip Ghostlands
 step << Rogue
-    .goto Undercity,59,91,11.32,20,0
+    .goto Undercity,59.91,11.32,20,0
     .goto Undercity,54.67,11.25
     .zone Silvermoon City >> Take the Orb of Translocation to Silvermoon City
     .cooldown item,6948,<0
@@ -7535,7 +7541,7 @@ step << Rogue
     .zoneskip Eversong Woods
     .zoneskip Ghostlands
 step << Rogue
-    .goto Undercity,59,91,11.32,20,0
+    .goto Undercity,59.91,11.32,20,0
     .goto Undercity,54.67,11.25
     .zone Silvermoon City >> Take the Orb of Translocation to Silvermoon City
     .cooldown item,6948,<0

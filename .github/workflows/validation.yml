@@ -10,6 +10,12 @@ on:
 permissions:
   contents: read
 
+# Discard superseded runs on the same branch or pull request while retaining
+# the complete validation suite for every current branch, PR, and tag revision.
+concurrency:
+  group: validation-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: Guides, quest flow, talents, and privacy
@@ -27,17 +33,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.1
 
-      - name: Validate runtime architecture and compatibility surface
+      - name: Validate runtime, guides, and localization loader
         shell: pwsh
-        run: ./tools/Validate-Runtime335.ps1 -RequireLua
-
-      - name: Validate loaded guides and compatibility packs
-        shell: pwsh
-        run: ./tools/Validate-Guides335.ps1
-
-      - name: Validate optional localization loader
-        shell: pwsh
-        run: ./tools/Validate-GuideTranslations335.ps1 -CoreOnly
+        run: |
+          ./tools/Validate-Runtime335.ps1 -RequireLua
+          ./tools/Validate-Guides335.ps1
+          ./tools/Validate-GuideTranslations335.ps1 -CoreOnly
 
       - name: Resolve pinned localization commit
         id: localizations
@@ -83,18 +84,10 @@ jobs:
             --version v0-ci \
             --revision "${{ steps.localizations.outputs.commit }}"
 
-      - name: Validate quest flow
+      - name: Validate quest flow, talents, roadmap, and privacy
         shell: pwsh
-        run: ./tools/Validate-QuestFlow335.ps1
-
-      - name: Validate talent guides
-        shell: pwsh
-        run: ./tools/Validate-Talents335.ps1
-
-      - name: Validate roadmap module wiring and safety guards
-        shell: pwsh
-        run: ./tools/Validate-Roadmap335.ps1
-
-      - name: Reject personal paths and private runtime data
-        shell: pwsh
-        run: ./tools/Validate-Privacy335.ps1
+        run: |
+          ./tools/Validate-QuestFlow335.ps1
+          ./tools/Validate-Talents335.ps1
+          ./tools/Validate-Roadmap335.ps1
+          ./tools/Validate-Privacy335.ps1

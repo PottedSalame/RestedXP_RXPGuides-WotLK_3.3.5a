@@ -48,6 +48,24 @@ if ($uiLocale -match 'local\s+ssplit[^\r\n]*strsplittable' -or
     $errors.Add('Core locale fallback still depends on unavailable modern string split/join helpers.')
 }
 
+# Verify that directives which synthesize English display text can resolve an
+# authored name (quest 9671 is the sole catalogued legacy bare directive). Build
+# the indexes first so this and visible-text coverage share one guide pass.
+$required = @{ quests = @{}; items = @{}; spells = @{} }
+$known = @{ quests = @{}; items = @{}; spells = @{} }
+foreach ($kind in @('quests','items','spells')) {
+    $block = [regex]::Match($englishNames,
+        '(?s)\b' + $kind + '\s*=\s*\{(.*?)\n\s*\},')
+    if (-not $block.Success) {
+        $errors.Add("Missing bundled English $kind catalog.")
+        continue
+    }
+    foreach ($match in [regex]::Matches($block.Groups[1].Value,
+            '\[(\d+)\]\s*=\s*"')) {
+        $known[$kind][[int]$match.Groups[1].Value] = $true
+    }
+}
+
 $loadedVisible = @{}
 foreach ($script in [regex]::Matches($guideList,
         '<Script\s+file="([^"]+\.lua)"')) {
@@ -56,11 +74,62 @@ foreach ($script in [regex]::Matches($guideList,
     $path = Join-Path $RepoRoot $relative
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
     foreach ($line in [IO.File]::ReadAllLines($path, $utf8)) {
-        $visible = [regex]::Match($line, '>>\s*(.+?)\s*$')
-        if (-not $visible.Success) {
-            $visible = [regex]::Match($line, '^\s*[+*]\s*(.+?)\s*$')
+        if (-not $CoreOnly) {
+            $visible = [regex]::Match($line, '>>\s*(.+?)\s*$')
+            if (-not $visible.Success) {
+                $visible = [regex]::Match($line, '^\s*[+*]\s*(.+?)\s*$')
+            }
+            if ($visible.Success) {
+                $loadedVisible[$visible.Groups[1].Value] = $true
+            }
         }
-        if ($visible.Success) { $loadedVisible[$visible.Groups[1].Value] = $true }
+
+        $directive = [regex]::Match($line, '^\s*\.(\S+)\s+-?(\d+)')
+        if (-not $directive.Success) { continue }
+        $tag = $directive.Groups[1].Value
+        $id = [int]$directive.Groups[2].Value
+        if ($tag -eq 'daily' -or $tag -eq 'dailyturnin') {
+            $daily = [regex]::Match($line,
+                '^\s*\.(?:daily|dailyturnin)\s+([^>]+)>>\s*(.+?)(?:\s*<<.*)?\s*$')
+            if ($daily.Success) {
+                $dailyName = $daily.Groups[2].Value -replace
+                    '^(?i:(?:Accept|Turn in))\s+', ''
+                if ($dailyName.Trim()) {
+                    foreach ($questId in [regex]::Matches(
+                            $daily.Groups[1].Value, '\d+')) {
+                        $known.quests[[int]$questId.Value] = $true
+                    }
+                }
+            }
+        }
+        $kind = if ($tag -in @('accept','turnin','complete')) { 'quests' }
+            elseif ($tag -eq 'collect') { 'items' }
+            else { $null }
+        if (-not $kind) { continue }
+        if ($tag -eq 'complete' -and $line -match '--\s*\S') { continue }
+        $visibleMatch = [regex]::Match($line, '>>\s*(.+?)(?:\s*<<.*)?\s*$')
+        if (-not $visibleMatch.Success -or $visibleMatch.Groups[1].Value -eq '*quest*') {
+            $required[$kind][$id] = $true
+            continue
+        }
+        $visibleText = $visibleMatch.Groups[1].Value
+        $visibleText = $visibleText -replace '\|T.*?\|t','' -replace '\|cRXP_[A-Z]+_',''
+        $visibleText = $visibleText -replace '\|c[0-9a-fA-F]{8}','' -replace '\|r',''
+        if ($kind -eq 'quests') {
+            $actionName = if ($tag -eq 'accept') {
+                $visibleText -replace '^(?i:Accept)\s+',''
+            } elseif ($visibleText -match '^(?i:Turn in)\s+(.+)$') {
+                $Matches[1]
+            } else { $null }
+            if ($actionName -and $actionName.Trim()) {
+                $known[$kind][$id] = $true
+            }
+        } else {
+            $bracketName = [regex]::Match($visibleText, '\[([^\]]+)\]')
+            if ($bracketName.Success -or ($kind -eq 'spells' -and $visibleText.Trim())) {
+                $known[$kind][$id] = $true
+            }
+        }
     }
 }
 
@@ -260,74 +329,6 @@ if (-not $CoreOnly) {
     }
 }
 
-# Verify that directives which must synthesize English display text can resolve
-# a bundled authored name from another loaded guide occurrence. Quest 9671 is
-# the sole legacy bare directive and is explicitly catalogued by the service.
-$required = @{ quests = @{}; items = @{}; spells = @{} }
-$known = @{ quests = @{}; items = @{}; spells = @{} }
-foreach ($kind in @('quests','items','spells')) {
-    $block = [regex]::Match($englishNames,
-        '(?s)\b' + $kind + '\s*=\s*\{(.*?)\n\s*\},')
-    if (-not $block.Success) {
-        $errors.Add("Missing bundled English $kind catalog.")
-        continue
-    }
-    foreach ($match in [regex]::Matches($block.Groups[1].Value,
-            '\[(\d+)\]\s*=\s*"')) {
-        $known[$kind][[int]$match.Groups[1].Value] = $true
-    }
-}
-foreach ($script in [regex]::Matches($guideList, '<Script\s+file="([^"]+\.lua)"')) {
-    $relative = $script.Groups[1].Value.Replace('\', [IO.Path]::DirectorySeparatorChar)
-    $path = Join-Path $RepoRoot $relative
-    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
-    foreach ($line in [IO.File]::ReadAllLines($path, $utf8)) {
-        $daily = [regex]::Match($line,
-            '^\s*\.(?:daily|dailyturnin)\s+([^>]+)>>\s*(.+?)(?:\s*<<.*)?\s*$')
-        if ($daily.Success) {
-            $dailyName = $daily.Groups[2].Value -replace
-                '^(?i:(?:Accept|Turn in))\s+', ''
-            if ($dailyName.Trim()) {
-                foreach ($questId in [regex]::Matches(
-                        $daily.Groups[1].Value, '\d+')) {
-                    $known.quests[[int]$questId.Value] = $true
-                }
-            }
-        }
-        $directive = [regex]::Match($line, '^\s*\.(\S+)\s+-?(\d+)')
-        if (-not $directive.Success) { continue }
-        $tag = $directive.Groups[1].Value
-        $id = [int]$directive.Groups[2].Value
-        $kind = if ($tag -in @('accept','turnin','complete')) { 'quests' }
-            elseif ($tag -eq 'collect') { 'items' }
-            else { $null }
-        if (-not $kind) { continue }
-        if ($tag -eq 'complete' -and $line -match '--\s*\S') { continue }
-        $visibleMatch = [regex]::Match($line, '>>\s*(.+?)(?:\s*<<.*)?\s*$')
-        if (-not $visibleMatch.Success -or $visibleMatch.Groups[1].Value -eq '*quest*') {
-            $required[$kind][$id] = $true
-            continue
-        }
-        $visible = $visibleMatch.Groups[1].Value
-        $visible = $visible -replace '\|T.*?\|t','' -replace '\|cRXP_[A-Z]+_',''
-        $visible = $visible -replace '\|c[0-9a-fA-F]{8}','' -replace '\|r',''
-        if ($kind -eq 'quests') {
-            $actionName = if ($tag -eq 'accept') {
-                $visible -replace '^(?i:Accept)\s+',''
-            } elseif ($visible -match '^(?i:Turn in)\s+(.+)$') {
-                $Matches[1]
-            } else { $null }
-            if ($actionName -and $actionName.Trim()) {
-                $known[$kind][$id] = $true
-            }
-        } else {
-            $bracketName = [regex]::Match($visible, '\[([^\]]+)\]')
-            if ($bracketName.Success -or ($kind -eq 'spells' -and $visible.Trim())) {
-                $known[$kind][$id] = $true
-            }
-        }
-    }
-}
 foreach ($kind in @('quests','items','spells')) {
     $missing = @($required[$kind].Keys | Where-Object { -not $known[$kind].ContainsKey($_) })
     if ($missing.Count -gt 0) {

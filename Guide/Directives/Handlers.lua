@@ -4600,15 +4600,35 @@ function addon.functions.isQuestTurnedIn(self, text, ...)
     if type(self) == "string" then
         local element = {}
         local args = {...}
-        local ids = {}
+        local rawIds = {}
         local arg
-        for _, v in pairs(args) do
+        for _, v in ipairs(args) do
             local id = tonumber(v)
             if id then
-                table.insert(ids,GetQuestId(id))
+                table.insert(rawIds, id)
             elseif not arg then
                 arg = v
             end
+        end
+        local ids, reverse, normalizeError
+        if addon.prerequisites and
+            addon.prerequisites.NormalizeTurnInConditionIds then
+            ids, reverse, normalizeError =
+                addon.prerequisites:NormalizeTurnInConditionIds(rawIds)
+        else
+            ids = {}
+            for _, id in ipairs(rawIds) do
+                if id < 0 then reverse = true end
+                ids[#ids + 1] = math.abs(id)
+            end
+        end
+        if normalizeError then
+            return addon.error(
+                L("Error parsing guide") .. " " .. addon.currentGuideName ..
+                    ": Invalid quest condition (" .. normalizeError .. ")\n" .. self)
+        end
+        for index, id in ipairs(ids or {}) do
+            ids[index] = GetQuestId(id)
         end
         if not ids[1] then
             return addon.error(
@@ -4617,6 +4637,7 @@ function addon.functions.isQuestTurnedIn(self, text, ...)
         end
         if arg == "account" then element.account = true end
         element.questIds = ids
+        element.reverse = reverse or nil
         if text and text ~= "" then element.text = text end
         element.textOnly = true
         return element

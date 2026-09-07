@@ -27,7 +27,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          # Packaging and validation use only GITHUB_SHA; release notes are
+          # generated server-side by gh, so repository history is unnecessary.
+          fetch-depth: 1
 
       - name: Install Lua 5.1 test runtime
         shell: bash
@@ -35,17 +37,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.1
 
-      - name: Validate runtime architecture and compatibility surface
+      - name: Validate runtime, guides, and localization loader
         shell: pwsh
-        run: ./tools/Validate-Runtime335.ps1 -RequireLua
-
-      - name: Validate 3.3.5 guides and compatibility packs
-        shell: pwsh
-        run: ./tools/Validate-Guides335.ps1
-
-      - name: Validate optional localization loader
-        shell: pwsh
-        run: ./tools/Validate-GuideTranslations335.ps1 -CoreOnly
+        run: |
+          ./tools/Validate-Runtime335.ps1 -RequireLua
+          ./tools/Validate-Guides335.ps1
+          ./tools/Validate-GuideTranslations335.ps1 -CoreOnly
 
       - name: Resolve pinned localization commit
         id: localizations
@@ -81,16 +78,13 @@ jobs:
         shell: pwsh
         run: ./.release-localizations/tools/Validate-TranslationPacks335.ps1 -RepoRoot .release-localizations -SourceCatalog .validation-cache/translation-source.json -RequireLua
 
-      - name: Validate quest flow and talent plans
+      - name: Validate quest flow, talents, roadmap, and privacy
         shell: pwsh
         run: |
           ./tools/Validate-QuestFlow335.ps1
           ./tools/Validate-Talents335.ps1
           ./tools/Validate-Roadmap335.ps1
-
-      - name: Reject personal paths from the release archive
-        shell: pwsh
-        run: ./tools/Validate-Privacy335.ps1
+          ./tools/Validate-Privacy335.ps1
 
       - name: Resolve release metadata
         id: metadata

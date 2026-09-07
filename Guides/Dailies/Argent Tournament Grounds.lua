@@ -5644,10 +5644,10 @@ step
 	.mob Kvaldir Berserker
 	.mob Kvaldir Harpooner
 step
-	.isOnQuest 14080
+	.isOnQuest 14140
 	>>Head to Hrothgar's Landing
 	>>Kill |cRXP_ENEMY_Kvaldir Reavers|r or |cRXP_ENEMY_Kvaldir Mist Binder|r.
-	.complete 14080,1
+	.complete 14140,1
 	.goto Hrothgar's Landing,48.65,32.64
 	.mob Kvaldir Reaver
 	.mob Kvaldir Mist Binder
@@ -5717,7 +5717,7 @@ step
 	>>Return to the Sunreaver Pavilion
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Girana the Blooded|r and |cRXP_FRIENDLY_Tylos Dawnrunner|r.
 	.dailyturnin 14142 >>Turn in You've Really Done It This Time, Kul
-	.dailyturnin 14143,14136,14080,14144 >>Turn in A Leg Up
+	.dailyturnin 14143,14136,14140,14144 >>Turn in A Leg Up
 	>>|c99ffff99OR|r Rescue at Sea
 	>>|c99ffff99OR|r Stop The Aggressors
 	>>|c99ffff99OR|r The Light's Mercy

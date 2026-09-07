@@ -1103,6 +1103,16 @@ step << Druid
 .target Turak Runetotem
 >>Talk to |cRXP_FRIENDLY_Turak Runetotem|r
     .turnin 6002 >>Turn in Body and Heart
+step << Hunter
+    .goto Thunder Bluff,57.4,89.4
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Holt|r
+    .turnin 6089 >> Turn in Training the Beast
+    .target Holt Thunderhorn
+step << Hunter
+    .goto Thunder Bluff,54.08,84.08
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hesuwa|r
+    .train 24547 >>Train your pet spells
+    .target Hesuwa Thunderhorn
 step << Druid/Hunter
     #sticky
     #completewith next

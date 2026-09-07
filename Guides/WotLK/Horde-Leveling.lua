@@ -968,7 +968,7 @@ step
 >>10 Frostberries
 step
 .goto Borean Tundra,32.9,34.4
-.target Archmage Berninand
+.target Archmage Berinand
 .turnin 11900 >> Turn in Reading the Meters
 .turnin 11910 >> Turn in Secrets of the Ancients
 step
@@ -1032,9 +1032,9 @@ step
 >>Do not kill it, let it hit you until it becomes friendly
 step
 .goto Borean Tundra,33.3,34.5
-.complete 11940,1
+.complete 11919,1
 >>Capture the Nexus Drake
-.target Raelsorasz
+.target Raelorasz
 .turnin 11919 >> Turn in Drake Hunt
 .accept 11931 >> Accept Cracking the Code
 step
@@ -2815,29 +2815,18 @@ step
 .target Apothecary Grick
 .accept 11301 >> Accept Brains! Brains! Brains!
 step
-.goto Howling Fjord,26.4,24.5
-.target Apothecary Malthus
-.accept 11298 >> Accept What's in That Brew?
-step
 .goto Howling Fjord,33.8,33.7
 .goto Howling Fjord,33.8,33.7,0.5
->>The path down to Brains! Brains! Brains! and What's in That Brew? starts here
+>>The path down to Brains! Brains! Brains! starts here
 step
 .goto Howling Fjord,33.3,36.5
 >>Go down the hill to 33.3,36.5
->>Click the Dwarven Kegs - They look like huge barrels sitting on the ground around this area
-.complete 11298,1
->>Collect Dwarven Keg
 .mob Deranged Explorers all around this area
 >>Kill Deranged Explorers all around this area
 .use 33554
 >>Use Grick's Bonesaw on their corpses
 .complete 11301,1
 >>Collect Deranged Explorer Brain
-step
-.goto Howling Fjord,26.4,24.5
-.target Apothecary Malthus
-.turnin 11298 >> Turn in What's in That Brew?
 step
 .goto Howling Fjord,26,24.4
 .target Apothecary Grick
@@ -2971,6 +2960,10 @@ step
 .goto Howling Fjord,48.9,12
 .target Wind Tamer Kagan
 .turnin 11311 >> Turn in Suppressing the Elements
+step
+.goto Howling Fjord,48.5,10.5
+.target Junat the Wanderer
+.accept 11297 >> Accept Keeping Watch on the Interlopers
 step
 .goto Howling Fjord,49.2,12.2
 .target Longrunner Pembe
@@ -3200,6 +3193,20 @@ step
 .target Sage Mistwalker
 .turnin 11317 >> Turn in The Cleansing
 .accept 11323 >> Accept In Worg's Clothing
+step
+.goto Howling Fjord,26.4,24.5
+.target Apothecary Malthus
+.turnin 11297 >> Turn in Keeping Watch on the Interlopers
+.accept 11298 >> Accept What's in That Brew?
+step
+.goto Howling Fjord,33.3,36.5
+>>Click the Dwarven Kegs - They look like huge barrels sitting on the ground around this area
+.complete 11298,1
+>>Collect Dwarven Keg
+step
+.goto Howling Fjord,26.4,24.5
+.target Apothecary Malthus
+.turnin 11298 >> Turn in What's in That Brew?
 step
 .goto Howling Fjord,29.7,5.7
 .use 33618
@@ -6051,7 +6058,7 @@ step
 >>You can find more Golem Parts around 75.3,57.3
 step
 .goto Grizzly Hills,65,47
-.target Propector Rokar
+.target Prospector Rokar
 .turnin 12196 >> Turn in From the Ground Up
 .accept 12197 >> Accept We Have the Power
 step

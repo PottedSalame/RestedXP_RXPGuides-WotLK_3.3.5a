@@ -1377,6 +1377,7 @@ step
     .goto Silithus,51.96,38.1
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Aurel Goldleaf|r
     .turnin 8332 >>Turn in Dukes of the Council
+    .accept 8333 >>Accept Medallion of Station
     .target Aurel Goldleaf
     .itemcount 20513,3
 step
@@ -2544,6 +2545,7 @@ step
 step
     .goto Western Plaguelands,42.702,84.031
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Commander Ashlam Valorfist|r
+    .turnin 5092 >> Turn in Clear the Way
     .accept 5098 >> Accept All Along the Watchtowers
     .target Commander Ashlam Valorfist
 step
@@ -2684,6 +2686,7 @@ step
     .goto Western Plaguelands,42.665,83.774
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Alchemist Arbington|r
     .turnin 5803 >>Turn in Araj's Scarab
+    .accept 5505 >>Accept The Key to Scholomance
     .target Alchemist Arbington
 step
     .goto Western Plaguelands,42.665,83.774
@@ -2939,6 +2942,7 @@ step
     .goto Tirisfal Glades,83.28,69.23
 	>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dithers|r
     .turnin 5804 >>Turn in Araj's Scarab
+    .accept 5511 >>Accept The Key to Scholomance
 	.target Apothecary Dithers
 step
     .goto Tirisfal Glades,83.28,69.23

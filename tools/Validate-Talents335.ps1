@@ -218,9 +218,10 @@ foreach ($path in $files) {
 
         $ranks = @{}
         $tabPoints = @{ 1 = 0; 2 = 0; 3 = 0 }
-        foreach ($step in $steps) {
+        for ($stepIndex = 0; $stepIndex -lt $steps.Count; $stepIndex++) {
+            $step = $steps[$stepIndex]
             if ($step.Talents.Count -eq 0) {
-                Add-ValidationError "$relative / $name has an empty step at level $($minLevel + $steps.IndexOf($step))."
+                Add-ValidationError "$relative / $name has an empty step at level $($minLevel + $stepIndex)."
                 continue
             }
             if (-not $step.Optional -and $step.Talents.Count -ne 1) {
