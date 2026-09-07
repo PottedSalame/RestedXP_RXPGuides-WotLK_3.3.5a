@@ -14,7 +14,7 @@ This project adapts the RestedXP guide engine, interface, automation, navigation
 
 ## Version
 
-- Addon version: **v6.7.0**
+- Addon version: **v6.7.1**
 - Intended client: **WotLK 3.3.5a / build 12340**
 - Primary server target: **AzerothCore**
 - Interface number: **30300**
@@ -26,6 +26,9 @@ client. Cataclysm, Mists of Pandaria, Retail, and Season of Discovery content,
 newer-client manifests, and duplicate modern libraries are intentionally
 excluded. Classic, TBC, and WotLK data—as well as dormant feature sources that
 may support future backports—remain in the repository.
+
+
+Great! Can you extend every downstream class gate for every class in our validated version? 
 
 ## Who This Is For
 
