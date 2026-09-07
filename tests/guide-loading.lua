@@ -182,6 +182,20 @@ return function(root)
     end
     assert(introAccepted and introTarget,
            "Orc Hunter starter no longer begins with Kaltunk's intro quest")
+    local barrens = loadGuide("Guides/RestedXP Horde 13-23 Barrens.lua",
+        "13-22 The Barrens", "HUNTER", "Orc", "Horde")
+    assert(barrens.next ==
+               "22-25 Hillsbrad / South Barrens;22-25 Hillsbrad Foothills JJ",
+           "Orc Hunter Barrens route lost its 22-25 continuation")
+    local barrensFinal = barrens.steps[#barrens.steps]
+    assert(barrensFinal and barrensFinal.completewith ~= "next",
+           "Orc Hunter Barrens route ends on an impossible #completewith next")
+    local finalTrainer
+    for _, element in ipairs(barrensFinal and barrensFinal.elements or {}) do
+        if element.tag == "trainer" then finalTrainer = true end
+    end
+    assert(finalTrainer,
+           "Orc Hunter Barrens route no longer ends at the Orgrimmar trainer")
     local priest = loadGuide("Guides/RestedXP Horde 1-13 Troll-Orc.lua",
         "6-10 Durotar", "PRIEST", "Troll", "Horde")
     for _, rate in ipairs({1, 1.5, 2.5}) do

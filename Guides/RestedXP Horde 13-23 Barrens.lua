@@ -1660,7 +1660,6 @@ step << Paladin
     .trainer >> Go and train your class spells
 step << Hunter
     .goto Orgrimmar,66.046,18.526
-    #completewith next
     .target Ormak Grimshot
     .trainer >> Go and train your class spells
 step << Warrior

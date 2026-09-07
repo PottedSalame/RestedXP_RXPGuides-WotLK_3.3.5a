@@ -774,7 +774,12 @@ function addon.SetStep(n, n2, loopback)
         local isComplete = true
         --local completedStep
         for i, step in ipairs(activeSteps) do
-            if step.sticky and not RXPCData.stepSkip[i] then
+            -- activeSteps is a compact display list, not the guide's indexed
+            -- step list.  Using i here can inspect an unrelated skip flag and
+            -- leave the guide pinned at its bottom after the real sticky step
+            -- was completed.
+            local stepIndex = step.index or i
+            if step.sticky and not RXPCData.stepSkip[stepIndex] then
                 isComplete = false
             end
         end
@@ -2526,7 +2531,15 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
             end
         end
         step.waitForHearth = waitForHearth or nil
-        if step.completewith and not step.tip and not waitForHearth then
+        -- A class/race filter can make a #completewith next step the final
+        -- parsed step even when more authored steps follow it.  With no next
+        -- step inside this guide it must behave as an ordinary blocking step;
+        -- otherwise its sticky completion target can never be reached.
+        local terminalCompleteWithNext = step.lastStep and
+                                             step.completewith == "next"
+        if terminalCompleteWithNext then
+            step.sticky = nil
+        elseif step.completewith and not step.tip and not waitForHearth then
             step.sticky = true
         elseif waitForHearth then
             -- Hearth travel is a blocking action. Existing .cooldown,
