@@ -1752,6 +1752,13 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zarise|r
     .fp Tarren Mill>> Get the Tarren Mill Flight Path
     .target Zarise
+step << Orc Hunter/Troll Hunter
+    .goto Hillsbrad Foothills,61.51,19.42,8,0
+    .goto Hillsbrad Foothills,61.44,19.06
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r
+    .turnin 1065 >> Turn in Journey to Tarren Mill
+    .target Apothecary Lydon
+    .isOnQuest 1065
 step << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r, |cRXP_FRIENDLY_Darthalia|r, the |cRXP_FRIENDLY_Wanted Poster|r, |cRXP_FRIENDLY_Krusk|r
     .turnin 493 >> Turn in Journey to Hillsbrad Foothills
@@ -3237,6 +3244,7 @@ step
     .goto Ashenvale,73.1,61.5
 .target Senani Thunderheart
 >>Talk to |cRXP_FRIENDLY_Senani Thunderheart|r
+    .turnin 6382 >> Turn in The Ashenvale Hunt << Orc Hunter/Troll Hunter
     .turnin 6383 >> Turn in The Ashenvale Hunt
     .goto Ashenvale,73.8,61.5
 step << Rogue
@@ -4791,13 +4799,13 @@ RXPGuides.RegisterGuide([[
 #next 25-27 Ashenvale JJ
 #xprate >1.4999
 
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .goto Orgrimmar,69.41,13.11
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kildar|r
     .skill riding,75 >> Train |T136103:0|t[Apprentice Riding] from him
     .target Kildar
     .money <4.5
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .goto Orgrimmar,69.38,12.25
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ogunaro|r
     +|cRXP_BUY_Buy any|r |T132224:0|t[Wolf] |cRXP_BUY_that you like from him|r
@@ -4808,41 +4816,41 @@ step << Orc Shaman wotlk/Orc Warrior wotlk
     .itemcount 46099,<1 --Horn of the Black Wolf
     .money <0.9
     .skill riding,<75,1
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .cast 55884 >> Use the |T132224:0|t[Horn of the Timber Wolf] to learn it
     .use 1132
     .itemcount 1132,1
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .cast 55884 >> Use the |T132266:0|t[Horn of the Dire Wolf] to learn it
     .use 5665
     .itemcount 5665,1
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .cast 55884 >> Use the |T132224:0|t[Horn of the Brown Wolf] to learn it
     .use 5668
     .itemcount 5668,1
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     .cast 55884 >> Use the |T132224:0|t[Horn of the Black Wolf] to learn it
     .use 46099
     .itemcount 46099,1
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132224:0|t[Timber Wolf] |cRXP_WARN_onto your Action Bars|r
     .cast 580 >> Mount your |T132224:0|t[Timber Wolf]
     .train 580,3
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132266:0|t[Dire Wolf] |cRXP_WARN_onto your Action Bars|r
     .cast 6653 >> Mount your |T132266:0|t[Dire Wolf]
     .train 6653,3
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132224:0|t[Brown Wolf] |cRXP_WARN_onto your Action Bars|r
     .cast 6654 >> Mount your |T132224:0|t[Brown Wolf]
     .train 6654,3
-step << Orc Shaman wotlk/Orc Warrior wotlk
+step << Orc Shaman wotlk/Orc Warrior wotlk/Orc Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132224:0|t[Black Wolf] |cRXP_WARN_onto your Action Bars|r
@@ -4853,7 +4861,7 @@ step << Shaman/Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gryshka|r
     .home >> Set your Hearthstone to Orgrimmar
     .target Innkeeper Gryshka
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     #completewith next
     .goto Durotar,49.41,20.97,35,0
     .goto Durotar,50.21,26.30,35,0
@@ -4861,13 +4869,13 @@ step << Troll Shaman wotlk/Troll Warrior wotlk
     .goto Durotar,52.26,34.68,35,0
     .goto Durotar,55.28,75.48,50 >>Travel toward |cRXP_FRIENDLY_Xar'Ti|r
     .money <4.5
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     .goto Durotar,55.28,75.48
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Xar'Ti|r
     .skill riding,75 >> Train |T136103:0|t[Apprentice Riding] from her
     .target Xar'Ti
     .money <4.5
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     .goto Durotar,55.23,75.65
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zjolnir|r
     +|cRXP_BUY_Buy any|r |T132253:0|t[Raptor Whistle] |cRXP_BUY_that you like from him|r
@@ -4877,44 +4885,44 @@ step << Troll Shaman wotlk/Troll Warrior wotlk
     .itemcount 8592,<1 --Whistle of the Violet Raptor
     .money <0.9
     .skill riding,<75,1
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     .cast 55884 >> Use the |T132253:0|t[Whistle of the Emerald Raptor] to learn it
     .use 8588
     .itemcount 8588,1
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     .cast 55884 >> Use the |T132253:0|t[Whistle of the Turquoise Raptor] to learn it
     .use 8591
     .itemcount 8591,1
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     .cast 55884 >> Use the |T132253:0|t[Whistle of the Violet Raptor] to learn it
     .use 8592
     .itemcount 8592,1
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132253:0|t[Emerald Raptor] |cRXP_WARN_onto your Action Bars|r
     .cast 8395 >> Mount your |T132253:0|t[Emerald Raptor]
     .train 8395,3
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132253:0|t[Turquoise Raptor] |cRXP_WARN_onto your Action Bars|r
     .cast 10796 >> Mount your |T132253:0|t[Turquoise Raptor]
     .train 10796,3
-step << Troll Shaman wotlk/Troll Warrior wotlk
+step << Troll Shaman wotlk/Troll Warrior wotlk/Troll Hunter wotlk
     #completewith TZeppelin
     >>|cRXP_WARN_Press "Shift+P" to open your Mount tab|r
     >>|cRXP_WARN_Drag the|r |T132253:0|t[Violet Raptor] |cRXP_WARN_onto your Action Bars|r
     .cast 10799 >> Mount your |T132253:0|t[Violet Raptor]
     .train 10799,3
-step << Shaman/Warrior
+step << Shaman/Warrior/Orc Hunter/Troll Hunter
     #completewith next
     .goto Orgrimmar,52.26,88.65,30,0
     .goto Orgrimmar,49.42,90.90,30,0
     .goto Orgrimmar,49.59,94.74,30,0
     .goto Durotar,50.61,13.27
     .zone Durotar >> Exit Orgrimmar
-step << Shaman/Warrior
+step << Shaman/Warrior/Orc Hunter/Troll Hunter
     #label TZeppelin
     .goto Durotar,50.61,13.27,12,0
     .goto Durotar,50.82,13.07,6,0
@@ -4928,6 +4936,41 @@ step << Shaman/Warrior
     >>Go up the Zeppelin Tower
     .zone Tirisfal Glades >>Take the Zeppelin to Tirisfal
     .zoneskip Silverpine Forest
+step << Orc Hunter/Troll Hunter
+    #completewith HunterUCHearth
+    .goto Tirisfal Glades,61.80,65.06,20,0
+    .zone Undercity >> Enter Undercity
+    .zoneskip Undercity
+step << Orc Hunter/Troll Hunter
+    #completewith HunterUCHearth
+    .goto Undercity,66.08,18.24,30,0
+    .goto Undercity,66.04,32.97,30,0
+    .goto Undercity,65.97,44.08,30,0
+    .goto Undercity,60.52,44.02,10,0
+    .goto Undercity,60.07,47.70,10 >> Take the lift down to the Undercity
+step << Orc Hunter/Troll Hunter
+    #optional
+    .goto Undercity,63.25,48.56
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Michael|r
+    .fp Undercity >> Get the Undercity flight path
+    .target Michael Garrett
+step << Orc Hunter/Troll Hunter
+    #label HunterUCHearth
+    .goto Undercity,67.73,37.89
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Norman|r
+    .home >> Set your Hearthstone to Undercity
+    .target Innkeeper Norman
+    .bindlocation 1497
+step << Orc Hunter/Troll Hunter
+    #completewith next
+    .goto Undercity,60.07,47.70,10,0
+    .goto Undercity,60.52,44.02,10,0
+    .goto Undercity,65.97,44.08,30,0
+    .goto Undercity,66.04,32.97,30,0
+    .goto Undercity,66.08,18.24,30,0
+    .goto Undercity,66.21,4.90,15 >> Take the lift back up toward Tirisfal
+    .goto Tirisfal Glades,61.73,64.87,20
+    .zone Tirisfal Glades >> Exit Undercity
 step
     #completewith next
     .goto Tirisfal Glades,56.30,66.20,30,0
@@ -4947,10 +4990,21 @@ step
     .goto Silverpine Forest,42.90,41.99 << Warrior/Shaman
     .target Apothecary Renferrel
     .target Mura Runetotem << Warrior/Shaman
+step << Orc Hunter/Troll Hunter
+    .goto Silverpine Forest,42.90,41.99
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mura|r
+    .turnin 3301 >> Turn in Mura Runetotem
+    .target Mura Runetotem
+    .isOnQuest 3301
 step << Warrior/Shaman
     .goto Silverpine Forest,44.19,42.67
     >>Click |cRXP_PICK_Yuriv's Tombstone|r on the ground
     .turnin 264 >> Turn in Until Death Do Us Part
+step << Orc Hunter/Troll Hunter
+    .goto Silverpine Forest,44.19,42.67
+    >>Click |cRXP_PICK_Yuriv's Tombstone|r on the ground
+    .turnin 264 >> Turn in Until Death Do Us Part
+    .isOnQuest 264
 step
     .goto Silverpine Forest,45.62,42.60
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Karos|r
@@ -4974,6 +5028,13 @@ step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Zarise|r
     .fp Tarren Mill >> Get the Tarren Mill Flight Path
     .target Zarise
+step << Orc Hunter/Troll Hunter
+    .goto Hillsbrad Foothills,61.51,19.42,8,0
+    .goto Hillsbrad Foothills,61.44,19.06
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r
+    .turnin 1065 >> Turn in Journey to Tarren Mill
+    .target Apothecary Lydon
+    .isOnQuest 1065
 step << Shaman/Warrior
     #xprate >1.6999
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r, |cRXP_FRIENDLY_Darthalia|r, the |cRXP_FRIENDLY_Wanted Poster|r, and |cRXP_FRIENDLY_Krusk|r
@@ -7652,6 +7713,12 @@ step << !Shaman !Warrior
 	.home >> Set your Hearthstone to Thunder Bluff
     .target Innkeeper Pala
     .isQuestAvailable 1195
+step << Orc Hunter/Troll Hunter
+    .goto Thunder Bluff,45.81,64.71
+    >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pala|r
+    .home >> Set your Hearthstone to Thunder Bluff
+    .target Innkeeper Pala
+    .bindlocation 1638
 step << skip
 	#completewith next
 	.goto Thunder Bluff,76.477,27.221
@@ -8038,7 +8105,7 @@ step
 step
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senani|r, |cRXP_FRIENDLY_Mastok|r, and |cRXP_FRIENDLY_Pixel|r << !Shaman !Warrior
     >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Senani|r and |cRXP_FRIENDLY_Mastok|r << Shaman/Warrior
-    .turnin 6382 >> Turn in The Ashenvale Hunt << Shaman/Warrior
+    .turnin 6382 >> Turn in The Ashenvale Hunt << Shaman/Warrior/Orc Hunter/Troll Hunter
     .turnin 6383 >> Turn in The Ashenvale Hunt
     .goto Ashenvale,73.45,63.56,30,0
     .goto Ashenvale,73.78,61.46
