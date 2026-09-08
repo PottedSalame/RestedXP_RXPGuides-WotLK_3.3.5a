@@ -2,12 +2,12 @@
 -- mocked runtime tests. Quest/UI handlers are inert: this tests which authored
 -- instructions survive class/race filtering, not gameplay automation.
 return function(root)
-    local function newLoader(class, race, character, faction)
+    local function newLoader(class, race, character, faction, level)
         local env = setmetatable({}, {__index = _G})
         env._G = env
         env.strlower, env.strupper = string.lower, string.upper
         env.tinsert, env.tremove = table.insert, table.remove
-        env.UnitLevel = function() return 10 end
+        env.UnitLevel = function() return level or 10 end
         env.UnitSex = function() return 2 end
         env.bit = {band = function(value) return value % 4294967296 end}
         env.LibStub = function() return {} end
@@ -716,6 +716,139 @@ return function(root)
     assert(razzericPickup and visibleAtRate(razzericPickup, 1.3) and
                not visibleAtRate(razzericPickup, 1.301),
            "Razzeric's Tweaking pickup is not confined to its return route")
+
+    -- Direct parsing alone cannot catch a startup filter that discards valid
+    -- guides first. Exercise the registration queue and old disabled cache.
+    do
+        local fixtures = {
+            {"Generic", "", true},
+            {"Legacy client", "<< ac335\n", true},
+            {"Wrong client condition", "<< !ac335\n", false},
+            {"Wrath", "#wotlk\n", true},
+            {"Classic only", "#classic\n", false},
+            {"TBC only", "#tbc\n", false},
+            {"Mists only", "#mop\n", false},
+            {"Dragonflight only", "#df\n", false},
+            {"Multiple expansions", "#classic\n#wotlk\n", true},
+            {"Wrong faction", "<< ac335 Alliance\n", false},
+            {"Wrong class", "<< ac335 Mage\n", false},
+            {"Conditional expansion", "#wotlk << Hunter\n#classic << !Hunter\n", true},
+            {"Filtered expansion", "#classic\n#wotlk << Mage\n", false},
+            {"Prose is not a header", "#classic\n#description Mentions #wotlk\n", false},
+        }
+        local addon, env = newLoader("HUNTER", "Orc", nil, "Horde", 1)
+        local character = env.RXPCData
+        character.guideDisabled = {[0] = #fixtures}
+        local checkpoint = {currentStep = 17, stepSkip = {[2] = true},
+                            completedWaypoints = {[3] = true}}
+        character.guideProgress.saved = checkpoint
+        character.currentGuideName = "Saved guide"
+        character.currentStep = 17
+        local oldMetadata = character.guideMetaData
+        for index, fixture in ipairs(fixtures) do
+            local source = fixture[2] .. "#group Startup\n#subgroup Test\n" ..
+                "#name " .. fixture[1] .. "\nstep\n+Fixture\n"
+            local parsed, failure = addon.ParseGuide(source)
+            fixture.directEligible = parsed ~= nil and not failure
+            fixture.source = source
+            character.guideDisabled[index] = addon.A32(source)
+            addon.RegisterGuide(source)
+        end
+        addon.LoadEmbeddedGuides()
+        for _, fixture in ipairs(fixtures) do
+            assert((addon.guides["Startup||" .. fixture[1]] ~= nil) == fixture[3],
+                   "Startup eligibility differs for " .. fixture[1])
+            assert(fixture.directEligible == fixture[3],
+                   "Unexpected direct-parse eligibility for " .. fixture[1])
+        end
+        assert(character.guideProgress.saved == checkpoint and
+                   checkpoint.currentStep == 17 and checkpoint.stepSkip[2] and
+                   checkpoint.completedWaypoints[3] and
+                   character.currentGuideName == "Saved guide" and
+                   character.currentStep == 17 and
+                   character.guideMetaData == oldMetadata,
+               "Disabled-cache migration changed progress or metadata")
+        -- Subsequent logins retain the new cache and still reject other clients.
+        local currentCache = character.guideDisabled
+        local reloaded = newLoader("HUNTER", "Orc", character, "Horde", 1)
+        for _, fixture in ipairs(fixtures) do reloaded.RegisterGuide(fixture.source) end
+        reloaded.LoadEmbeddedGuides()
+        assert(character.guideDisabled == currentCache,
+               "Disabled-cache migration repeats on every login")
+        for _, fixture in ipairs(fixtures) do
+            assert((reloaded.guides["Startup||" .. fixture[1]] ~= nil) == fixture[3],
+                   "Reload eligibility differs for " .. fixture[1])
+        end
+    end
+
+    -- Audit the actual 30300 manifest, including Original guides, rather than
+    -- maintaining a second hand-picked list that can miss new content.
+    do
+        local function readFile(path)
+            local input = assert(io.open(root .. "/" .. path, "rb"))
+            local text = input:read("*a")
+            input:close()
+            return text
+        end
+        local sources, fileCount = {}, 0
+        for path in readFile("GuideList_335.xml"):gmatch('<Script%s+file="([^"]+)"') do
+            fileCount = fileCount + 1
+            for block in readFile(path:gsub("\\", "/")):gmatch(
+                "RXPGuides%.RegisterGuide%(%[%[(.-)%]%]%)") do
+                sources[#sources + 1] = block
+            end
+        end
+        assert(#sources > 0, "Startup audit found no manifest guides")
+        local profiles = {
+            {"HUNTER", "Orc", "Horde", 1},
+            {"WARRIOR", "Human", "Alliance", 1},
+            {"DRUID", "Tauren", "Horde", 80},
+            {"MAGE", "Gnome", "Alliance", 80},
+        }
+        for _, profile in ipairs(profiles) do
+            local reference = newLoader(profile[1], profile[2], nil, profile[3], profile[4])
+            local startup, env = newLoader(profile[1], profile[2], nil, profile[3], profile[4])
+            local expected = {}
+            -- Same block count AND signature reproduces the former persistent
+            -- exclusion; merely adding a guide would not exercise recovery.
+            env.RXPCData.guideDisabled = {[0] = #sources}
+            for index, source in ipairs(sources) do
+                local guide, failure = reference.ParseGuide(source)
+                if guide and not failure then
+                    expected[guide.group .. "||" .. guide.name] = guide
+                end
+                env.RXPCData.guideDisabled[index] = startup.A32(source)
+                startup.RegisterGuide(source)
+            end
+            startup.LoadEmbeddedGuides()
+            local endgameCount = 0
+            for key, parsed in pairs(expected) do
+                local loaded = assert(startup.guides[key],
+                    "Startup lost applicable guide: " .. key .. " for " .. profile[2])
+                assert(loaded.key == parsed.key and #loaded.steps == #parsed.steps,
+                       "Startup changed identity or step count: " .. key)
+                for index, step in ipairs(parsed.steps) do
+                    -- Embedded keys omit subgroups before ParseGuide assigns
+                    -- guideId. Compare the source-line portion of step IDs.
+                    assert(loaded.steps[index].stepId - loaded.guideId ==
+                               step.stepId - parsed.guideId,
+                           "Startup changed step source position: " .. key)
+                end
+                if parsed.group == "RestedXP Endgame Guides" then
+                    endgameCount = endgameCount + 1
+                end
+            end
+            for key in pairs(startup.guides) do
+                assert(expected[key], "Startup admitted an incompatible guide: " .. key)
+            end
+            assert(endgameCount == 10,
+                   "Missing Endgame chapters for " .. profile[2] .. " at level " .. profile[4])
+            local group = assert(startup.guideList["RestedXP Endgame Guides"])
+            assert(#group.names_ == 10, "Endgame chapters did not reach the picker registry")
+        end
+        print(string.format("Manifest startup coverage passed: %d files, %d guides, %d profiles.",
+                            fileCount, #sources, #profiles))
+    end
 
     local oldSource = "#wotlk\n#group Fixture\n#name Fixture\n#next Old Route\nstep\n+Fixture\n"
     local newSource = oldSource:gsub("Old Route", "New Route")

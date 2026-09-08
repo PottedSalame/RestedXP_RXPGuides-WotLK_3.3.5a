@@ -15,6 +15,19 @@ local LibDeflate = LibStub("LibDeflate")
 local RXPGuides = addon.RXPGuides
 
 local game = strlower(addon.game)
+-- Keep startup filtering, direct parsing and imported metadata in agreement.
+-- Guides without expansion headers are generic; conditions such as << ac335
+-- still restrict them to the intended client through applies().
+local function supportsGame(guide)
+    return guide[game] ~= nil or (game == "retail" and guide.df ~= nil) or
+        not (guide.classic ~= nil or guide.tbc ~= nil or guide.wotlk ~= nil or
+             guide.cata ~= nil or guide.mop ~= nil or guide.retail ~= nil or
+             guide.df ~= nil)
+end
+
+-- Old startup filters cached valid headerless guides as disabled. Invalidate
+-- only those exclusions once per character; checkpoints/metadata stay intact.
+local disabledCacheVersion = 1
 --local suffix = 1
 -- Alias addon.locale.Get
 local L = addon.locale.Get
@@ -572,8 +585,12 @@ function addon.LoadEmbeddedGuides()
         embeddedGuidesLoaded = true
     end
     --A1 = GetTimePreciseSec()
-    if RXPCData.guideDisabled[0] ~= #embeddedGuides then
-        RXPCData.guideDisabled = {[0] = #embeddedGuides}
+    if type(RXPCData.guideDisabled) ~= "table" or
+       RXPCData.guideDisabled[0] ~= #embeddedGuides or
+       RXPCData.guideDisabled.version ~= disabledCacheVersion then
+        RXPCData.guideDisabled = {
+            [0] = #embeddedGuides, version = disabledCacheVersion,
+        }
     end
     for n, guideData in ipairs(embeddedGuides) do
         if guideData.cache then
@@ -594,12 +611,9 @@ function addon.LoadEmbeddedGuides()
                     local index = guideData.groupOrContent:find("[\r\n]%s*step")
                     local header = index and guideData.groupOrContent:sub(1,index)
                     if header then
-                        local subgroup, enabledFor
-                        enabled = false
+                        local enabledFor
+                        local headerFields = {}
                         for line in header:gmatch("[^\r\n]+") do
-                            if subgroup and name and group and enabledFor and enabled then
-                                break
-                            end
                             line = line:gsub("%-%-.*$","")
                             line = line:gsub("^%s*(#.+)%s*<<%s*(.+)", function(l,t)
                                 if not applies(t) then
@@ -608,19 +622,14 @@ function addon.LoadEmbeddedGuides()
                                     return l
                                 end
                             end)
-                            if not enabled then
-                                local u = strupper(line)
-                                if u:find("#" .. addon.game) or
-                                    (addon.game == "RETAIL" and u:find("#DF")) then
-                                    enabled = true
-                                end
-                            end
+                            local tag = line:match("^%s*#(%S+)")
+                            if tag then headerFields[tag] = true end
                             enabledFor = enabledFor or line:match("^%s*<<%s*(.-)%s*$")
                             group = group or line:match("^%s*#group%s+(.-)%s*$")
-                            subgroup = subgroup or line:match("^%s*#subgroup%s+(.-)%s*$")
                             name = name or line:match("^%s*#name%s+(.-)%s*$")
                         end
-                        enabled = enabled and (not enabledFor or applies(enabledFor))
+                        enabled = supportsGame(headerFields) and
+                            (not enabledFor or applies(enabledFor))
 
                         if enabled then
                             key = addon.BuildGuideKey(group,"",name)
@@ -743,18 +752,8 @@ function addon.LoadCachedGuides()
                             applies(guideData.enabledFor)
         local cachedMetadata = guideData.metadata
         if enabled and type(cachedMetadata) == "table" then
-            local hasExpansion = cachedMetadata.classic ~= nil or
-                                     cachedMetadata.tbc ~= nil or
-                                     cachedMetadata.wotlk ~= nil or
-                                     cachedMetadata.cata ~= nil or
-                                     cachedMetadata.mop ~= nil or
-                                     cachedMetadata.retail ~= nil or
-                                     cachedMetadata.df ~= nil
-            if hasExpansion and cachedMetadata[game] == nil then
-                -- Metadata cached under another client must not enter the
-                -- registry without going through the current parser.
-                enabled = false
-            end
+            -- Metadata cached under another client must not bypass filtering.
+            enabled = supportsGame(cachedMetadata)
         end
         if addon.release ~= RXPData.release then
             guideData.metadata = nil
@@ -1032,8 +1031,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
             end
             if currentStep == 0 then
                 if guide.df then guide.retail = true end
-                if ((not guide[game] and
-                    (guide.classic or guide.tbc or guide.wotlk or guide.df or guide.retail or guide.cata)) or not guide.name or not guide.group) then
+                if not supportsGame(guide) or not guide.name or not guide.group then
                     -- print(game,guide[game],guide.name)
                     skipGuide = "#0"
                 end
