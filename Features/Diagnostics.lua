@@ -1,6 +1,7 @@
 local _, addon = ...
 
 local _G = _G
+local C_Map = addon.mapAPI335 or _G.C_Map
 local format = string.format
 local GetTime = _G.GetTime
 local time = _G.time

@@ -2,6 +2,7 @@ local _, addon = ...
 
 local _G = _G
 local format = string.format
+local C_Map = addon.mapAPI335 or _G.C_Map
 
 addon.catchUp = addon.catchUp or {}
 addon.travel = addon.travel or {}

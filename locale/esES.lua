@@ -105,5 +105,6 @@ L["Quest is being turned in at"] = "La misión se entrega en"
 L["Development"] = "Desarrollo"
 
 -- SettingsPanel.lua
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "La automatización de misiones de Questie está activada. Desactiva la aceptación y entrega automáticas de Questie para que RXPGuides pueda controlar de forma segura el orden de las misiones de la guía."
 L["Please restart your game client and try again"] = "Por favor, reinicia el juego e inténtalo de nuevo"
 L["Failed to Import Guides: Invalid Import String"] = "Error al importar guías: cadena de importación inválida"

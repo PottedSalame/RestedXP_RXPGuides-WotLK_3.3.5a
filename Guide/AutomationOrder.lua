@@ -143,7 +143,8 @@ function automationOrder:GetQuestReservation(kind, now)
     local reservation = self.questReservation
     if not reservation then return end
     now = tonumber(now) or (GetTime and GetTime()) or 0
-    if now - (tonumber(reservation.time) or 0) > QUEST_SELECTION_LIFETIME then
+    if not reservation.submitted and
+        now - (tonumber(reservation.time) or 0) > QUEST_SELECTION_LIFETIME then
         self.questReservation = nil
         return
     end
@@ -167,7 +168,7 @@ function automationOrder:IsQuestReady(element, kind, now)
     return reservationElement == element
 end
 
-function automationOrder:MarkQuestSubmitted(kind, questId, now)
+function automationOrder:MarkQuestSubmitted(kind, questId, now, title)
     local element, reservation = self:GetQuestReservation(kind, now)
     if not reservation then return false end
 
@@ -180,8 +181,21 @@ function automationOrder:MarkQuestSubmitted(kind, questId, now)
     reservation.questId = questId or reservedId
     reservation.submitted = true
     reservation.submittedAt = now
+    if type(title) == "string" and title ~= "" then
+        reservation.title = title
+    end
     reservation.time = now
     return true, reservation
+end
+
+-- Submitted interactions need to remain observable even if their ordinary
+-- five-second selection lease has elapsed. The quest coordinator owns the
+-- bounded timeout and clears them explicitly after its final reconciliation.
+function automationOrder:GetSubmittedQuestReservation(kind)
+    local reservation = self.questReservation
+    if type(reservation) ~= "table" or not reservation.submitted then return end
+    if kind and reservation.kind and reservation.kind ~= kind then return end
+    return reservation.element, reservation
 end
 
 -- Return an in-flight selection only when it can represent the confirmation

@@ -277,10 +277,13 @@ local function legacyPositionToAstrolabe(x, y, instance)
 end
 
 --=========================================================================
--- C_Map  (fill the table created by Compat335.lua)
+-- C_Map-compatible private API. Compat/Bootstrap.lua records whether RXP
+-- created the global namespace. Keeping the working implementation private
+-- prevents us from replacing Questie's compatibility methods when Questie
+-- happened to load first.
 --=========================================================================
-local C_Map = _G.C_Map or {}
-_G.C_Map = C_Map
+local C_Map = {}
+addon.mapAPI335 = C_Map
 
 function C_Map.GetBestMapForUnit(unit)
     if unit ~= "player" then return nil end
@@ -583,6 +586,13 @@ function C_Map.GetWorldPosFromMapPos(uiMapID, mapPos)
     if mapPos and mapPos.GetXY then x, y = mapPos:GetXY() end
     local wx, wy = Astrolabe:TranslateWorldMapPosition(c, z, x, y, c, 0)
     return c, _G.CreateVector2D(wx or 0, wy or 0)
+end
+
+-- Preserve the historical standalone facade only when Bootstrap created it.
+-- If another addon owns C_Map, leave both the table and every method identity
+-- untouched; all RXPGuides consumers use addon.mapAPI335 below this point.
+if addon.PublishMapAPI335 then
+    addon.PublishMapAPI335(C_Map)
 end
 
 -- WorldMapFrame:GetMapID() -> the uiMapID currently displayed on the world map.

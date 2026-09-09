@@ -143,7 +143,8 @@ foreach ($manifest in $tocPaths) {
 
 $tocText = [IO.File]::ReadAllText($tocPath)
 $orderedPaths = @(
-    'Compat\Bootstrap.lua', 'Compat\InventoryCount335.lua',
+    'Compat\Bootstrap.lua', 'Compat\MapFacade335.lua',
+    'Compat\InventoryCount335.lua',
     'libs\embeds_335.xml', 'Core\Locale.lua',
     'Core\Services.lua', 'Core\Scheduler.lua', 'Core\Storage.lua',
     'Core\Runtime.lua', 'Core\Facade.lua', 'Guide\QuestAcceptState.lua',
@@ -151,7 +152,8 @@ $orderedPaths = @(
     'DB\wotlk\db.lua', 'Compat\LocationLocales335.lua',
     'Guide\ElementState.lua', 'Guide\AutomationOrder.lua',
     'Guide\Directives\Handlers.lua',
-    'Guide\Directives\Registry.lua', 'Guide\Loader.lua',
+    'Guide\Directives\Registry.lua', 'Guide\QuestAutomation.lua',
+    'Compat\Questie335.lua', 'Guide\Loader.lua',
     'Guide\Registry.lua', 'GuideList_335.xml',
     'Features\Talents.lua', 'Talents_wotlk_335.xml', 'Compat\Options.lua'
 )
@@ -173,9 +175,41 @@ foreach ($path in $orderedPaths) {
 # silently reintroduce that failure.
 $hbdPath = Join-Path $root 'libs\HBD335\HereBeDragons-335.lua'
 $hbdText = [IO.File]::ReadAllText($hbdPath)
+$bootstrapText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\Bootstrap.lua'))
+$mapFacadeText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\MapFacade335.lua'))
 $mapDbText = [IO.File]::ReadAllText((Join-Path $root 'DB\wotlk\db.lua'))
 $astrolabeText = [IO.File]::ReadAllText(
     (Join-Path $root 'libs\Astrolabe\Astrolabe.lua'))
+
+if ($bootstrapText -notmatch
+        'addon\._ownsGlobalCMap335\s*=\s*type\(_G\.C_Map\)\s*~=\s*"table"' -or
+    $hbdText -notmatch 'local\s+C_Map\s*=\s*\{\}' -or
+    $hbdText -notmatch 'addon\.mapAPI335\s*=\s*C_Map' -or
+    $hbdText -notmatch 'addon\.PublishMapAPI335\(C_Map\)' -or
+    $mapFacadeText -notmatch 'if\s+not\s+addon\._ownsGlobalCMap335\s+then' -or
+    $hbdText -match 'local\s+C_Map\s*=\s*_G\.C_Map') {
+    Add-ValidationError (
+        'The 3.3.5 map bridge must stay private and publish globally only ' +
+        'when RXPGuides created C_Map.')
+}
+
+$privateMapConsumers = @(
+    'Core\Recovery.lua', 'Features\Communications.lua',
+    'Features\Diagnostics.lua', 'Features\FlightTimers.lua',
+    'Features\GuideRecorder.lua', 'Features\Tips.lua',
+    'Features\VendorTreasures.lua', 'Guide\Directives\Handlers.lua',
+    'DB\classic\db.lua', 'UI\HardcoreIntro.lua'
+)
+foreach ($relative in $privateMapConsumers) {
+    $text = [IO.File]::ReadAllText((Join-Path $root $relative))
+    if ($text -notmatch
+            'local\s+C_Map\s*=\s*addon\.mapAPI335\s+or\s+_G\.C_Map') {
+        Add-ValidationError (
+            "3.3.5 map consumer bypasses the private map facade: $relative")
+    }
+}
 
 function ConvertTo-StableMapKey([string]$Name) {
     if ([string]::IsNullOrWhiteSpace($Name)) { return $null }
@@ -469,6 +503,12 @@ if ($directiveHandlersText -notmatch
 
 $automationOrderText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\AutomationOrder.lua'))
+$questAutomationText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Guide\QuestAutomation.lua'))
+$questieCompatText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\Questie335.lua'))
+$settingsText = [IO.File]::ReadAllText(
+    (Join-Path $root 'UI\Settings.lua'))
 if ($coreAddonText -notmatch
         'RegisterEvent\s*\(\s*"QUEST_FINISHED"\s*\)' -or
     $coreAddonText -notmatch
@@ -478,10 +518,39 @@ if ($coreAddonText -notmatch
     $automationOrderText -notmatch
         'function\s+automationOrder:MarkQuestSubmitted\s*\(' -or
     $automationOrderText -notmatch
-        'GetQuestReservation\s*\(\s*nil\s*,\s*now\s*\)') {
+        'GetQuestReservation\s*\(\s*nil\s*,\s*now\s*\)' -or
+    $automationOrderText -notmatch
+        'function\s+automationOrder:GetSubmittedQuestReservation\s*\(' -or
+    $coreAddonText -notmatch 'DeferWhileTurnInSettles\s*\(' -or
+    $coreAddonText -notmatch 'questSettlement\.submitting\s*=\s*true' -or
+    $coreAddonText -notmatch 'ReserveQuest\s*\(' -or
+    $coreAddonText -notmatch 'turnin-settlement-timeout' -or
+    $coreAddonText -notmatch
+        'DeferSubmittedTurnInConfirmation\s*\(\s*disabled' -or
+    $questAutomationText -notmatch 'turnin-event-confirmation' -or
+    $settingsText -notmatch
+        'key\s*==\s*"enableQuestAutomation"[\s\S]*?ResetTransient') {
     Add-ValidationError (
         'Same-NPC quest automation must reconcile submitted rewards through ' +
-        'the stock 3.3.5 QUEST_FINISHED lifecycle without cross-kind races.')
+        'a bounded next-cycle 3.3.5 settlement without cross-kind races.')
+}
+
+if ($questieCompatText -match 'QuestieLoader|ImportModule' -or
+    $questieCompatText -match '_G\.Questie\s*=' -or
+    $questieCompatText -match 'profile\.[A-Za-z0-9_]+\s*=' -or
+    $questieCompatText -notmatch 'profile\.autocomplete' -or
+    $questieCompatText -notmatch 'profile\.autoaccept' -or
+    $questieCompatText -notmatch 'autoAccept\.enabled' -or
+    $questieCompatText -notmatch 'autoTurnIn\.enabled') {
+    Add-ValidationError (
+        'Questie compatibility must remain read-only and must recognize both ' +
+        'current and legacy automation settings without importing private APIs.')
+}
+
+if ($directiveHandlersText -match 'QuestieLoader|ImportModule\("QuestieDB"\)|questieDB') {
+    Add-ValidationError (
+        'Guide directives must use RXPGuides quest data and must not import ' +
+        'Questie private database modules.')
 }
 
 foreach ($module in $surface.aceModules) {
@@ -510,7 +579,6 @@ foreach ($prefix in $surface.addonMessagePrefixes) {
     }
 }
 
-$settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI\Settings.lua'))
 if ($settingsText -notmatch
     'localizedAceConfigOptions\s*=\s*setmetatable\s*\(\s*\{\s*\}\s*,\s*\{\s*__mode\s*=\s*["'']k["'']' -or
     $settingsText -notmatch

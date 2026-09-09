@@ -300,6 +300,7 @@ L["Announce when all Step items are collected"] = "Объявлять, когд�
 L["Announce Flying Step timers"] = "Объявлять таймеры шагов полета"
 L["Enable Addon Version Checks"] = "Включить проверку версий аддона"
 L["Ignore Questie announcements"] = "Игнорировать объявления Questie"
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "Автоматизация заданий Questie включена. Отключите автоматическое принятие и сдачу заданий в Questie, чтобы RXPGuides мог безопасно соблюдать порядок заданий руководства."
 L["Tips"] = "Подсказки"
 L["Enable Tips"] = "Включить подсказки"
 L["Enable Tips Frame"] = "Включить фрейм подсказок"

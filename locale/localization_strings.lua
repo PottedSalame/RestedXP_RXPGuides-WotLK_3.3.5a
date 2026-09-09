@@ -295,6 +295,7 @@ L["Announce when all Step items are collected"] = "Announce when all Step items 
 L["Announce Flying Step timers"] = "Announce Flying Step timers"
 L["Enable Addon Version Checks"] = "Enable Addon Version Checks"
 L["Ignore Questie announcements"] = "Ignore Questie announcements"
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."
 L["Tips"] = "Tips"
 L["Enable Tips"] = "Enable Tips"
 L["Enable Tips Frame"] = "Enable Tips Frame"

@@ -1,4 +1,5 @@
 local _,addon = ...
+local C_Map = addon.mapAPI335 or _G.C_Map
 local RXPFrame = addon.RXPFrame
 local candy = LibStub("LibCandyBar-3.0")
 

@@ -390,6 +390,7 @@ L["Announce in party chat where you're flying and how long until you arrive"] = 
 L["Enable Addon Version Checks"] = "애드온 버전 확인 활성화"
 L["Advertises and compares addon versions with all RXP users in party"] = "파티의 모든 RXP 사용자와 애드온 버전을 광고하고 비교합니다"
 L["Ignore Questie announcements"] = "Questie 공지 무시"
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "Questie 퀘스트 자동화가 활성화되어 있습니다. RXPGuides가 가이드의 퀘스트 순서를 안전하게 제어할 수 있도록 Questie의 자동 수락 및 자동 완료를 비활성화하세요."
 L["Send quest and collect step announcements even if Questie is enabled"] = "Questie가 활성화되어 있어도 퀘스트와 수집 단계 공지를 보냅니다"
 L["Advanced Settings"] = "고급 설정"
 L["Tips"] = "팁"

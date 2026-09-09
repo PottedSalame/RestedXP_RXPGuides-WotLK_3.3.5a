@@ -51,6 +51,29 @@ _G.geterrorhandler = function() return function() end end
 
 local addon = {}
 
+-- The 3.3.5 map facade must remain private when another addon already owns
+-- C_Map, while standalone RXPGuides still publishes its compatibility API.
+local savedCMap = _G.C_Map
+local foreignBestMap = function() return 999 end
+local foreignMap = {GetBestMapForUnit = foreignBestMap}
+_G.C_Map = foreignMap
+local mapAddon = {_ownsGlobalCMap335 = false}
+loadAddonFile("Compat/MapFacade335.lua", mapAddon)
+local privateMap = {GetBestMapForUnit = function() return 1 end}
+check(not mapAddon.PublishMapAPI335(privateMap) and
+          mapAddon.mapAPI335 == privateMap and _G.C_Map == foreignMap and
+          _G.C_Map.GetBestMapForUnit == foreignBestMap,
+      "foreign C_Map ownership or method identity was overwritten")
+
+local standaloneMap = {}
+_G.C_Map = standaloneMap
+mapAddon._ownsGlobalCMap335 = true
+check(mapAddon.PublishMapAPI335(privateMap) and
+          _G.C_Map == standaloneMap and
+          _G.C_Map.GetBestMapForUnit == privateMap.GetBestMapForUnit,
+      "standalone C_Map facade was not published")
+_G.C_Map = savedCMap
+
 -- Legacy keyring item counting must reconcile clients whose GetItemCount omits
 -- container -2, without double-counting clients that already include it.
 local savedGetItemCount = _G.GetItemCount
@@ -346,12 +369,21 @@ local acceptWhileTurningIn = {
     questId = 9001,
 }
 local submitted, submittedReservation =
-    addon.automationOrder:MarkQuestSubmitted("turnin", 8890, 107.5)
+    addon.automationOrder:MarkQuestSubmitted("turnin", 8890, 107.5,
+                                             "Word from the Spire")
 check(addon.automationOrder:GetQuestReservation("turnin", 108) ==
           wordFromSpire and submitted and submittedReservation.submitted and
+          submittedReservation.title == "Word from the Spire" and
           not addon.automationOrder:IsQuestReady(acceptWhileTurningIn,
                                                   "accept", 108),
       "submitted turn-in reservation was lost or bypassed by an accept")
+local lateSubmittedElement, lateSubmittedReservation =
+    addon.automationOrder:GetSubmittedQuestReservation("turnin")
+check(lateSubmittedElement == wordFromSpire and
+          lateSubmittedReservation == submittedReservation and
+          addon.automationOrder:GetQuestReservation("turnin", 113) ==
+              wordFromSpire,
+      "submitted turn-in did not survive its ordinary selection lease")
 check(not addon.automationOrder:GetQuestConfirmation("turnin", 8891, 108) and
           addon.automationOrder:GetQuestConfirmation("turnin", 8890, 108) ==
               wordFromSpire,
@@ -448,6 +480,38 @@ check(committedAccept.element == pendingElement and
 local duplicateAccept = addon.questAcceptState:Commit(42, 12, 5)
 check(duplicateAccept.alreadyCommitted,
       "duplicate quest acceptance was not suppressed")
+
+-- Questie coexistence is deliberately read-only. Detect both current and
+-- legacy automation settings, warn once, and leave Questie's profile intact.
+local savedQuestie = _G.Questie
+local savedGameVersion = addon.gameVersion
+local savedSettings = addon.settings
+local savedLocale = addon.locale
+local savedComms = addon.comms
+local warnings = 0
+local questieProfile = {
+    autoAccept = {enabled = true, trivial = true},
+    autocomplete = false,
+}
+_G.Questie = {db = {profile = questieProfile}}
+addon.gameVersion = 30300
+addon.settings = {profile = {enableQuestAutomation = true}}
+addon.locale = {Get = function(text) return text end}
+addon.comms = {PrettyPrint = function() warnings = warnings + 1 end}
+loadAddonFile("Compat/Questie335.lua", addon)
+check(addon.CheckQuestieAutomationConflict() and
+          not addon.CheckQuestieAutomationConflict() and warnings == 1,
+      "Questie automation conflict did not emit exactly one warning")
+check(questieProfile.autoAccept.enabled == true and
+          questieProfile.autoAccept.trivial == true and
+          questieProfile.autocomplete == false,
+      "Questie profile was modified by compatibility detection")
+_G.Questie = savedQuestie
+addon.gameVersion = savedGameVersion
+addon.settings = savedSettings
+addon.locale = savedLocale
+addon.comms = savedComms
+
 addon.questAcceptState:Begin(nil, "Delayed Quest", pendingElement, 20)
 local delayedAccept = addon.questAcceptState:Commit(43, 21, 5)
 check(delayedAccept.element == pendingElement and delayedAccept.questId == 43,

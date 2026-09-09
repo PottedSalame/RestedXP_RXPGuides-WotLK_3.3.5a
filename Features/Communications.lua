@@ -1,6 +1,7 @@
 local _, addon = ...
 
 local _G = _G
+local C_Map = addon.mapAPI335 or _G.C_Map
 
 local fmt, mrand, smatch, sbyte, tostr = string.format, math.random, string.match, string.byte, tostring
 local concat = table.concat

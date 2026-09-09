@@ -1,5 +1,6 @@
 local addonName, addon = ...
 if addon.game ~= "CLASSIC" then return end
+local C_Map = addon.mapAPI335 or _G.C_Map
 local L = addon.locale.Get
 local default_x = 420
 local default_y = -60

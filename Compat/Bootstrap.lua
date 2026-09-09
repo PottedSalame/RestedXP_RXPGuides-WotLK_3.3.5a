@@ -12,8 +12,9 @@
 
     The map/coordinate namespace (C_Map) and the HereBeDragons libraries are
     handled separately by the Astrolabe-backed shim (libs\HBD335\*). This file
-    only creates an empty C_Map table so file-scope indexing is safe; the shim
-    fills it in.
+    records whether C_Map was inherited and creates an empty namespace only
+    when needed. The shim always fills RXPGuides' private map facade and only
+    publishes it globally when RXPGuides owns that namespace.
 ------------------------------------------------------------------------------ ]]
 
 -- This manifest is for the 3.3.5a build only. Check the interface explicitly so
@@ -1362,8 +1363,9 @@ do
             id = partialID
         end
         if not id and nodeType == "CURRENT" and addon and addon.FPbyZone and faction then
-            local mapID = _G.C_Map and _G.C_Map.GetBestMapForUnit and
-                _G.C_Map.GetBestMapForUnit("player")
+            local mapAPI = addon.mapAPI335 or _G.C_Map
+            local mapID = mapAPI and mapAPI.GetBestMapForUnit and
+                mapAPI.GetBestMapForUnit("player")
             id = mapID and addon.FPbyZone[faction] and addon.FPbyZone[faction][mapID]
         end
         return type(id) == "number" and id or nil, false
@@ -1533,8 +1535,11 @@ do
     local C_PartyInfo = ns("C_PartyInfo")
     def(C_PartyInfo, "LeaveParty", function() return _G.LeaveParty and _G.LeaveParty() end)
 
-    -- Create an empty C_Map now so any file-scope indexing is safe; the
-    -- Astrolabe-backed shim (libs\HBD335\*) fills in the real methods.
+    -- Record ownership before creating the compatibility namespace. Other
+    -- 3.3.5 addons (notably Questie) may already have published their own
+    -- C_Map table. RXPGuides must never replace methods in a foreign table;
+    -- the Astrolabe bridge exposes a private map API for our runtime instead.
+    addon._ownsGlobalCMap335 = type(_G.C_Map) ~= "table"
     ns("C_Map")
 end
 

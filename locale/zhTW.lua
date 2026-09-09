@@ -297,6 +297,7 @@ L["Holding the Control key modifier also toggles the quest auto accept feature o
 L["If this option is enabled, it disables all steps involving trading or Auction House"] = "如果啟用此選項,將禁用所有涉及交易或拍賣行的步驟"
 L["If two or more steps are very close together, this addon will group them into a single pin on the map. Adjust this range to determine how close together two steps must be to form a group."] = "如果兩個或多個步驟非常接近,此插件會將它們分組到地圖上的單個圖釘。調整此範圍以確定兩個步驟必須多近才能形成一個組。"
 L["Ignore Questie announcements"] = "忽略 Questie 通告"
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "Questie 任務自動化已啟用。請停用 Questie 的自動接受與自動交付，讓 RXPGuides 能夠安全地控制指南任務順序。"
 L["Import"] = "導入"
 L["Innkeeper Bind automation"] = "旅店老闆綁定自動化"
 L["Join Discord"] = "加入 Discord"

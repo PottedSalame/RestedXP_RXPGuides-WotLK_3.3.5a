@@ -994,14 +994,45 @@ local function ShowAdditionalUpgradeChoices(iconTable, owner, options,
 end
 
 local questRewardRetrySerial = 0
+local questSettlement = {}
 
 local function SubmitAutomatedQuestReward(choice, questId, numChoices)
     local order = addon.automationOrder
+    local submitted, reservation
     if order and order.MarkQuestSubmitted then
-        order:MarkQuestSubmitted("turnin", questId, GetTime())
+        local now = GetTime()
+        local title = GetTitleText and GetTitleText()
+        local element = GetQuestAutomationElement(addon.questTurnIn, questId)
+        local reservedElement = order.GetQuestReservation and
+                                    order:GetQuestReservation("turnin", now)
+        if not reservedElement and element and order.ReserveQuest then
+            order:ReserveQuest({
+                kind = "turnin",
+                element = element,
+                questId = questId,
+            }, now)
+        end
+        submitted, reservation = order:MarkQuestSubmitted(
+                                     "turnin", questId, now, title)
     end
-    GetQuestReward(choice)
+    questSettlement.submitting = true
+    local rewardOK, rewardError = pcall(GetQuestReward, choice)
+    questSettlement.submitting = false
+    if not rewardOK then
+        if order and order.ClearQuestReservation then
+            order:ClearQuestReservation(reservation and reservation.element,
+                                        "turnin")
+        end
+        error(rewardError, 0)
+    end
+    if submitted and reservation and questSettlement.Schedule then
+        questSettlement.Schedule(reservation.element, reservation)
+    end
     addon:SendEvent("RXP_QUEST_TURNIN", questId, numChoices, choice)
+end
+
+function addon.IsQuestRewardSubmissionActive()
+    return questSettlement.submitting and true or false
 end
 
 local function ResolveDisplayedTurnInQuestID()
@@ -1365,6 +1396,13 @@ local function GetReservedQuestInteraction(kind, questId)
     end
 end
 
+local function GetSubmittedQuestInteraction(kind)
+    local order = addon.automationOrder
+    if order and order.GetSubmittedQuestReservation then
+        return order:GetSubmittedQuestReservation(kind)
+    end
+end
+
 local function ClearQuestInteraction(element, kind)
     local order = addon.automationOrder
     if order and order.ClearQuestReservation then
@@ -1373,7 +1411,7 @@ local function ClearQuestInteraction(element, kind)
 end
 
 local function ReconcileSubmittedQuestInteraction(disabled, questFinished)
-    local element, reservation = GetReservedQuestInteraction()
+    local element, reservation = GetSubmittedQuestInteraction()
     if type(element) ~= "table" or type(reservation) ~= "table" or
         not reservation.submitted then return false end
 
@@ -1426,6 +1464,111 @@ local function ScheduleQuestStateRefresh(disabled)
             end
         end)
     end
+end
+
+local TURN_IN_SETTLEMENT_DELAYS = {0.05, 0.20, 0.50, 1.00, 2.00, 4.50}
+local TURN_IN_SETTLEMENT_TIMEOUT = 5.00
+
+local function IsQuestAutomationCurrentlyDisabled()
+    return not addon.settings or not addon.settings.profile or
+               not addon.settings.profile.enableQuestAutomation or
+               addon.isHidden or addon.speedrunPracticeActive
+end
+
+-- A reward can synchronously reopen gossip on fast private-server cores. Keep
+-- the exact submitted turn-in reserved while the client and companion addons
+-- finish their GetQuestReward hooks, then reconcile only from authoritative
+-- quest state. This is bounded and never polls after the five-second window.
+function questSettlement.Schedule(element, reservation)
+    if type(element) ~= "table" or type(reservation) ~= "table" then return end
+    local submittedAt = reservation.submittedAt
+
+    for index, delay in ipairs(TURN_IN_SETTLEMENT_DELAYS) do
+        addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                              "turnin-settlement-" .. index, delay, function()
+            local currentElement, current =
+                GetSubmittedQuestInteraction("turnin")
+            if currentElement ~= element or type(current) ~= "table" or
+                current.submittedAt ~= submittedAt then return end
+            if C_QuestLog and C_QuestLog.RefreshLegacyCache then
+                C_QuestLog.RefreshLegacyCache()
+            end
+            ReconcileSubmittedQuestInteraction(
+                IsQuestAutomationCurrentlyDisabled(), false)
+        end)
+    end
+
+    addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                          "turnin-settlement-timeout",
+                          TURN_IN_SETTLEMENT_TIMEOUT, function()
+        local currentElement, current =
+            GetSubmittedQuestInteraction("turnin")
+        if currentElement ~= element or type(current) ~= "table" or
+            current.submittedAt ~= submittedAt then return end
+        if C_QuestLog and C_QuestLog.RefreshLegacyCache then
+            C_QuestLog.RefreshLegacyCache()
+        end
+        if not ReconcileSubmittedQuestInteraction(
+            IsQuestAutomationCurrentlyDisabled(), false) then
+            ClearQuestInteraction(element, "turnin")
+            addon.questAutoAccept = false
+            if addon.diagnostics and addon.diagnostics.Record then
+                addon.diagnostics:Record("quest-turnin-settlement-timeout", {
+                    questId = tonumber(current.questId or element.questId),
+                })
+            end
+        end
+    end)
+end
+
+local function DeferWhileTurnInSettles(disabled)
+    local element, reservation = GetSubmittedQuestInteraction("turnin")
+    if (type(element) ~= "table" or type(reservation) ~= "table") and
+        not questSettlement.submitting then
+        return false
+    end
+
+    if questSettlement.submitting then
+        -- Do not clear the reservation from an event nested inside the secure
+        -- reward call, even when the legacy quest log already looks updated.
+        -- The post-hook inspection occurs only after GetQuestReward returns.
+        ScheduleQuestStateRefresh(disabled)
+        return true
+    end
+
+    -- Always defer the current event, even if the refreshed log confirms the
+    -- turn-in immediately. This event may be nested inside GetQuestReward;
+    -- selecting another quest here would replace the title before post-hooks
+    -- owned by tracking addons have inspected the completed quest.
+    if C_QuestLog and C_QuestLog.RefreshLegacyCache then
+        C_QuestLog.RefreshLegacyCache()
+    end
+    ReconcileSubmittedQuestInteraction(disabled, false)
+    ScheduleQuestStateRefresh(disabled)
+    return true
+end
+
+local function DeferSubmittedTurnInConfirmation(disabled, questId)
+    local element, reservation = GetSubmittedQuestInteraction("turnin")
+    if type(element) ~= "table" or type(reservation) ~= "table" then
+        return false
+    end
+    local confirmedId = tonumber(questId)
+    local reservedId = tonumber(reservation.questId or element.questId)
+    if confirmedId and reservedId and confirmedId ~= reservedId then
+        return false
+    end
+
+    local submittedAt = reservation.submittedAt
+    addon.scheduler:After(QUEST_AUTOMATION_OWNER,
+                          "turnin-event-confirmation", 0, function()
+        local currentElement, current =
+            GetSubmittedQuestInteraction("turnin")
+        if currentElement ~= element or type(current) ~= "table" or
+            current.submittedAt ~= submittedAt then return end
+        ReconcileSubmittedQuestInteraction(disabled, true)
+    end)
+    return true
 end
 
 function addon:QuestAutomation(event, arg1, arg2, arg3)
@@ -1488,7 +1631,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         end
         return
     elseif event == "QUEST_FINISHED" then
-        if not ReconcileSubmittedQuestInteraction(disabled, true) then
+        if not DeferSubmittedTurnInConfirmation(disabled) then
             -- Accept-state caches can lag QUEST_FINISHED by one frame. Keep a
             -- single bounded reconciliation rather than requiring the player
             -- to close and reopen the NPC repeatedly.
@@ -1511,10 +1654,12 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             questAcceptState:MarkTurnIn(GetTime())
             CompleteConfirmedQuestElement(guideTurnIn, "QUEST_TURNED_IN",
                                            arg1)
-            ClearQuestInteraction(guideTurnIn, "turnin")
-            if not disabled then
-                addon.questAutoAccept = true
-                ScheduleQuestAutomationRetries()
+            if not DeferSubmittedTurnInConfirmation(disabled, arg1) then
+                ClearQuestInteraction(guideTurnIn, "turnin")
+                if not disabled then
+                    addon.questAutoAccept = true
+                    ScheduleQuestAutomationRetries()
+                end
             end
         end
         ScheduleQuestStateRefresh(disabled)
@@ -1523,9 +1668,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
 
     --print(event)
     if event == "GOSSIP_SHOW" then
-        -- A new gossip list after our reward submission also proves the prior
-        -- quest interaction finished, even on cores which omit QUEST_FINISHED.
-        ReconcileSubmittedQuestInteraction(disabled, true)
+        if DeferWhileTurnInSettles(disabled) then return end
         local nActive = GossipGetNumActiveQuests()
         local nAvailable = GossipGetNumAvailableQuests()
         local quests, selectAvailableByQuestID, missingTurnIn
@@ -1659,6 +1802,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         end
         -- questProgressTimer = GetTime()
     elseif event == "QUEST_DETAIL" then
+        if DeferWhileTurnInSettles(disabled) then return end
         -- Offered quests are not in the 3.3.5 quest log yet. More importantly,
         -- looking the frame title up in that log can return the just-turned-in
         -- quest when a chain reuses a title (Sarkoth 790 -> 804). Match the
@@ -1707,7 +1851,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
             addon.questAutoAccept = true
         end
     elseif event == "QUEST_GREETING" then
-        ReconcileSubmittedQuestInteraction(disabled, true)
+        if DeferWhileTurnInSettles(disabled) then return end
         local nActive = GetNumActiveQuests()
         local nAvailable = GetNumAvailableQuests()
 
@@ -2240,6 +2384,9 @@ end
 
 function addon:OnDisable()
     addon.scheduler:CancelOwner(CORE_TICKER_OWNER)
+    if addon.questAutomation and addon.questAutomation.ResetTransient then
+        addon.questAutomation:ResetTransient()
+    end
     addon.runtime:DisableAll()
 end
 
@@ -2292,7 +2439,12 @@ function addon:PLAYER_ENTERING_WORLD(event, isInitialLogin)
     addon.targeting:Setup()
 end
 --addon:LoadGuideTable(addon.defaultGroupHC, addon.defaultGuideHC)
-function addon:PLAYER_LEAVING_WORLD() addon.isHidden = true end
+function addon:PLAYER_LEAVING_WORLD()
+    addon.isHidden = true
+    if addon.questAutomation and addon.questAutomation.ResetTransient then
+        addon.questAutomation:ResetTransient()
+    end
+end
 
 -- Sent when the player logs out or the UI is reloaded, just before SavedVariables are saved
 function addon:SaveCharacterGuideProgress()
@@ -2330,6 +2482,9 @@ function addon:SaveCharacterGuideProgress()
 end
 
 function addon:PLAYER_LOGOUT()
+    if addon.questAutomation and addon.questAutomation.ResetTransient then
+        addon.questAutomation:ResetTransient()
+    end
     addon:SaveCharacterGuideProgress()
     addon.settings:SaveFramePositions()
 end

@@ -46,6 +46,13 @@ function automation:ResetTransient()
     if addon.automationOrder and addon.automationOrder.ClearQuestReservation then
         addon.automationOrder:ClearQuestReservation()
     end
+    for index = 1, 6 do
+        addon.scheduler:Cancel("quest-engine",
+                               "turnin-settlement-" .. index)
+    end
+    addon.scheduler:Cancel("quest-engine", "turnin-settlement-timeout")
+    addon.scheduler:Cancel("quest-engine", "turnin-event-confirmation")
+    addon.scheduler:Cancel("quest-engine", "guide-change-reset")
     for index = 1, 3 do
         addon.scheduler:Cancel("quest-engine", "automation-retry-" .. index)
     end
@@ -55,6 +62,24 @@ function automation:ResetTransient()
         addon.scheduler:Cancel("quest-engine",
                                "guide-quest-state-refresh-" .. index)
     end
+end
+
+function automation:ResetForGuideChange(preserveSubmitted)
+    local order = addon.automationOrder
+    local _, submitted = order and order.GetSubmittedQuestReservation and
+                             order:GetSubmittedQuestReservation("turnin")
+    if preserveSubmitted and submitted then
+        -- A guide can cross its boundary from an event nested inside
+        -- GetQuestReward. Keep that one reservation until its next-frame
+        -- confirmation so companion tracking addons can finish their hooks.
+        addon.scheduler:After("quest-engine", "guide-change-reset", 0,
+                              function()
+            local _, current = order:GetSubmittedQuestReservation("turnin")
+            if not current then automation:ResetTransient() end
+        end)
+        return
+    end
+    self:ResetTransient()
 end
 
 addon.services:Register("quest-automation", automation, "questAutomation")

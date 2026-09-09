@@ -2,6 +2,7 @@ local _, addon = ...
 
 if addon.gameVersion > 60000 then return end
 
+local C_Map = addon.mapAPI335 or _G.C_Map
 local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
 local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
 local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or _G.GetSpellTexture

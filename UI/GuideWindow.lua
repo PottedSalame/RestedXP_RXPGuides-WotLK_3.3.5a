@@ -2295,6 +2295,11 @@ end
 
 function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     addon.loadNextStep = false
+    if addon.questAutomation and addon.questAutomation.ResetForGuideChange then
+        local preserveSubmitted = addon.IsQuestRewardSubmissionActive and
+                                      addon.IsQuestRewardSubmissionActive()
+        addon.questAutomation:ResetForGuideChange(preserveSubmitted)
+    end
 
     local savedStep = OnLoad and RXPCData and RXPCData.currentStep
     local savedStepId = OnLoad and RXPCData and RXPCData.currentStepId

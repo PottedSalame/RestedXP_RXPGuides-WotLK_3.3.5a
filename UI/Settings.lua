@@ -856,6 +856,14 @@ local targetingRefreshOptions = {
 local function SetProfileOption(info, value)
     local key = info[#info]
     addon.settings.profile[key] = value
+    if key == "enableQuestAutomation" then
+        if not value and addon.questAutomation and
+            addon.questAutomation.ResetTransient then
+            addon.questAutomation:ResetTransient()
+        elseif value and addon.CheckQuestieAutomationConflict then
+            addon.CheckQuestieAutomationConflict()
+        end
+    end
     if addon.gameVersion == 30300 and targetingRefreshOptions[key] and
         addon.targeting and addon.targeting.RefreshLegacyTargets then
         addon.targeting:RefreshLegacyTargets()

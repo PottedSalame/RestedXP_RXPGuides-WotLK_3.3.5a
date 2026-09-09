@@ -10,6 +10,7 @@
 
 # --- Compatibility prelude: MUST load before libraries and runtime files. ---
 Compat\Bootstrap.lua
+Compat\MapFacade335.lua
 Compat\InventoryCount335.lua
 
 libs\embeds_335.xml
@@ -90,6 +91,7 @@ Guide\Directives\Collection.lua
 Guide\Directives\SpecialActions.lua
 Guide\QuestCache.lua
 Guide\QuestAutomation.lua
+Compat\Questie335.lua
 Guide\Loader.lua
 Guide\Registry.lua
 Guide\Parser.lua

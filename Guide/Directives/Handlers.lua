@@ -6,6 +6,7 @@ local addonName, addon = ...
 
 local localizedClass, class = UnitClass("player")
 local gameVersion = select(4, GetBuildInfo())
+local C_Map = addon.mapAPI335 or _G.C_Map
 local fmt, tinsert = string.format,tinsert
 local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or _G.LoadAddOn
 local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
@@ -463,10 +464,6 @@ local nrequests = 0
 local requests = {}
 addon.requestQuestInfo = requests
 
-local db
-if _G.QuestieLoader then db = _G.QuestieLoader:ImportModule("QuestieDB") end
-addon.questieDB = db
-
 function addon.FormatNumber(number, precision)
     if type(number) ~= "number" then
         return "-1"
@@ -682,16 +679,6 @@ function addon.GetQuestName(id)
         end
     end
 
-    if db and type(db.QueryQuest) == "function" and type(db.GetQuest) ==
-        "function" then
-        local ok, quest = pcall(db.GetQuest, db, id)
-        if ok and type(quest) == "table" and
-            type(quest.name) == "string" and quest.name ~= "" then
-            CacheQuestName(quest.name)
-            return quest.name
-        end
-    end
-
     if IsOnQuest(id) then
         if GetQuestLogTitle then
             addon.ExpandQuestHeaders()
@@ -848,55 +835,6 @@ function addon.GetQuestObjectives(id, step, useCache)
         end
     elseif (stepdiff > 4 or useCache) and questObjectivesCache[id] then
         return questObjectivesCache[id]
-    elseif db and type(db.QueryQuest) == "function" and
-            (stepdiff > 4 or useCache) and type(db.GetQuest) == "function" then
-        local qInfo = {}
-        local q = db:GetQuest(id)
-        -- print(type(q))
-        local objectives
-        if q and q.ObjectiveData then
-            objectives = q.ObjectiveData
-        else
-            err = true
-        end
-        local nObj
-        if objectives then
-            nObj = 0
-            for i, quest in pairs(objectives) do
-                nObj = nObj + 1
-                local qType = quest.Type
-                local objId = quest.Id
-                qInfo[i] = {type = qType, finished = false, questie = true}
-                if qType == "monster" then
-                    local npc = db:GetNPC(objId)
-                    if npc and npc.name then
-                        qInfo[i].text = npc.name
-                    else
-                        qInfo[i].text = ""
-                    end
-                elseif qType == "item" then
-                    qInfo[i].text = db:GetItem(objId).name
-                elseif quest.Text then
-                    qInfo[i].text = quest.Text
-                else
-                    err = true
-                    break
-                end
-            end
-        end
-        if not err then
-            if nObj == 0 then
-                qInfo[1] = {
-                    text = L("Objective Complete"),
-                    type = "event",
-                    numRequired = 1,
-                    numFulfilled = 0,
-                    finished = false,
-                    generated = true,
-                }
-            end
-            return qInfo
-        end
     end
 
     if (not IsOnQuest(id) or err) and not useCache then
@@ -1096,50 +1034,6 @@ local function IsQuestTurnedInLater(id)
     return false
 end
 
-local function GetRequiredQuests(quest)
-    local requiredQuests = {}
-    if type(quest) ~= "table" then return requiredQuests end
-    if quest.preQuestSingle then
-        local preQuestSingle = -1
-        for _, qID in pairs(quest.preQuestSingle) do
-            local questId = tonumber(qID)
-            if questId then
-                local acceptedLater = type(addon.questAccept) == "table" and
-                                          type(addon.questAccept[questId]) == "table"
-                local hasPickup = type(addon.pickUpList) == "table" and
-                                      addon.pickUpList[questId]
-                if (IsQuestTurnedInLater(questId) and
-                    (IsOnQuest(questId) or acceptedLater or not hasPickup)) or
-                    IsQuestTurnedIn(questId) then
-                    preQuestSingle = 0
-                elseif preQuestSingle < 0 then
-                    preQuestSingle = questId
-                end
-            end
-        end
-        if preQuestSingle > 0 then
-            tinsert(requiredQuests, preQuestSingle)
-        end
-    end
-    if quest.preQuestGroup then
-        for _, qID in pairs(quest.preQuestGroup) do
-            local questId = tonumber(qID)
-            if questId then
-                local acceptedLater = type(addon.questAccept) == "table" and
-                                          type(addon.questAccept[questId]) == "table"
-                local hasPickup = type(addon.pickUpList) == "table" and
-                                      addon.pickUpList[questId]
-                if not ((IsQuestTurnedInLater(questId) and
-                    (IsOnQuest(questId) or acceptedLater or not hasPickup)) or
-                    IsQuestTurnedIn(questId)) then
-                    tinsert(requiredQuests, questId)
-                end
-            end
-        end
-    end
-    return requiredQuests
-end
-
 -- Standalone prerequisite handling. RXP's own per-guide quest database is
 -- authoritative here; an unknown quest is deliberately left alone so custom
 -- guides and partial databases cannot be skipped by accident.
@@ -1319,38 +1213,9 @@ function addon.functions.accept(self, ...)
         end
 
         local icon = addon.icons[element.tag]
-        -- local skip
-        if step.active and db and type(db.QueryQuest) == "function" and
-            not isQuestAccepted and not addon.skipPreReq[id] and not element.multiple then
-            local quest = db:GetQuest(id)
-            if quest then
-                local doable = db:IsDoable(id)
-                local requiredQuests
-
-                if not doable then
-                    requiredQuests = GetRequiredQuests(quest)
-                end
-                if requiredQuests and #requiredQuests > 0 then
-                    local tooltip = addon.colors.tooltip ..
-                                        L("Missing pre-requisites") .. ":|r\n"
-                    for i, qid in ipairs(requiredQuests) do
-                        tooltip = format("%s\n%s%s (%d)", tooltip,
-                                         addon.icons.turnin,
-                                         db:GetQuest(qid).name, qid)
-                    end
-                    element.tooltip = tooltip
-                    element.icon = addon.icons.error
-                elseif not doable then
-                    local tooltip = addon.colors.tooltip ..
-                                        L("Missing pre-requisites") .. "|r"
-                    element.tooltip = tooltip
-                    element.icon = addon.icons.error
-                else
-                    element.icon = icon
-                    element.tooltip = nil
-                end
-            end
-        elseif element.icon then
+        -- Prerequisite decisions are handled below by RXPGuides' bundled
+        -- AzerothCore database. Never import Questie's private quest database.
+        if element.icon then
             element.icon = icon
             element.tooltip = nil
         end
@@ -1530,47 +1395,9 @@ function addon.functions.turnin(self, ...)
         end
 
         local icon = addon.icons[element.tag]
-        -- local skip
-        if step.active and db and type(db.QueryQuest) == "function" and
-            addon.pickUpList[id] and not addon.questAccept[id] and
-            not addon.skipPreReq[id] and not element.multiple and not isComplete then
-            local quest = db:GetQuest(id)
-            if not IsOnQuest(id) and quest and not quest.IsRepeatable then
-                local requiredQuests
-                local doable = db:IsDoable(id)
-
-                if not doable then
-                    requiredQuests = GetRequiredQuests(quest)
-                    tinsert(requiredQuests, id)
-                else
-                    requiredQuests = {id}
-                end
-
-                local tooltip = addon.colors.tooltip ..
-                                    L("Missing pre-requisites") .. ":|r\n"
-                for i, qid in ipairs(requiredQuests) do
-                    if i < #requiredQuests then
-                        tooltip = format("%s\n%s%s (%d)", tooltip,
-                                         addon.icons.turnin,
-                                         addon.GetQuestName(qid) or
-                                             db:GetQuest(qid).name, qid)
-                    else
-                        tooltip = format("%s\n%s%s (%d)", tooltip,
-                                         addon.icons.accept,
-                                         addon.GetQuestName(qid) or
-                                             db:GetQuest(qid).name, qid)
-                    end
-                end
-                element.tooltip = tooltip
-                element.icon = addon.icons.error
-            elseif element.icon then
-                element.icon = icon
-                element.tooltip = nil
-            end
-        else
-            element.icon = icon
-            element.tooltip = nil
-        end
+        -- Keep quest state independent from Questie's private database.
+        element.icon = icon
+        element.tooltip = nil
 
         SkipMissingQuestPreReqs(self, id)
 
@@ -1871,58 +1698,8 @@ function addon.UpdateQuestCompletionData(self)
     end
 
 
-    if step.active and db and type(db.QueryQuest) == "function" and element.obj and
-        not isQuestComplete and not addon.skipPreReq[id] then
-
-        local quest = db:GetQuest(id)
-
-        if quest and quest.ObjectiveData and quest.ObjectiveData[element.obj] then
-            local itemId = quest.ObjectiveData[element.obj].Id
-            local questType = quest.ObjectiveData[element.obj].Type
-            local validQuest = true
-
-            if questType == "item" then
-                addon.GetItemName(itemId)
-                validQuest = select(12, GetItemInfo(itemId)) == 12 and
-                                 select(11, GetItemInfo(itemId)) == 0
-            end
-
-            if not IsOnQuest(id) and validQuest then
-                local requiredQuests
-                local doable = db:IsDoable(id)
-                if not doable then
-                    requiredQuests = GetRequiredQuests(quest)
-                    tinsert(requiredQuests, id)
-                else
-                    requiredQuests = {id}
-                end
-
-                local tooltip = addon.colors.tooltip ..
-                                    L("Missing pre-requisites") .. ":|r\n"
-
-                for i, qid in ipairs(requiredQuests) do
-                    if i < #requiredQuests then
-                        tooltip = format("%s\n%s%s (%d)", tooltip,
-                                         addon.icons.turnin,
-                                         db:GetQuest(qid).name, qid)
-                    else
-                        tooltip = format("%s\n%s%s (%d)", tooltip,
-                                         addon.icons.accept,
-                                         db:GetQuest(qid).name, qid)
-                    end
-                end
-
-                element.tooltip = tooltip
-                element.icon = addon.icons.error
-            else
-                element.icon = icon
-                element.tooltip = nil
-            end
-        end
-    else
-        element.icon = icon
-        element.tooltip = nil
-    end
+    element.icon = icon
+    element.tooltip = nil
 
     if addon.settings.profile.debug then
         element.tooltip = id

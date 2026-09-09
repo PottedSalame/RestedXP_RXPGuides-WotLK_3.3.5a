@@ -9,6 +9,7 @@ local L = addon.locale.Get
 local build = select(4, GetBuildInfo())
 local legacy335 = build == 30300
 if build > 40000 then return end
+local C_Map = addon.mapAPI335 or _G.C_Map
 local HBD = LibStub("HereBeDragons-2.0")
 local HBDPins = LibStub("HereBeDragons-Pins-2.0")
 

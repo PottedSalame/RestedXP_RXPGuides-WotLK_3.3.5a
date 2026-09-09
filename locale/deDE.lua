@@ -330,6 +330,7 @@ L["Announce in party chat where you're flying and how long until you arrive"] = 
 L["Enable Addon Version Checks"] = "Addon Version Checks aktivieren"
 L["Advertises and compares addon versions with all RXP users in party"] = "Vergleicht Addon versionen mit allen RXP Nutzern in deiner Gruppe"
 L["Ignore Questie announcements"] = "Questie verkuendigungen ignorieren"
+L["Questie quest automation is enabled. Disable Questie's auto-accept and auto-turn-in so RXPGuides can control guide quest order safely."] = "Questies Questautomatisierung ist aktiviert. Deaktiviere Questies automatische Annahme und Abgabe, damit RXPGuides die Questreihenfolge des Guides sicher steuern kann."
 L["Send quest and collect step announcements even if Questie is enabled"] = "Verkuendigt die Vollendung der Schritte selbst, wenn Questie aktiviert ist."
 L["Advanced Settings"] = "Erweiterte Einstellungen"
 L["Enable Beta Features"] = "Beta-Features aktivieren"
