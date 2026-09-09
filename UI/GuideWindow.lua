@@ -671,6 +671,11 @@ local function ApplyElementVisualState(elementFrame, element, step)
 end
 
 function addon.UpdateStepCompletion()
+    if addon.IsQuestRewardSettlementActive and
+        addon.IsQuestRewardSettlementActive() then
+        addon.updateSteps = true
+        return
+    end
     addon.updateSteps = false
     if addon.currentGuide.empty then return end
 
@@ -1275,7 +1280,10 @@ end
 
 function CurrentStepFrame.EventHandler(self, event, ...)
     --print(event,self.index,self.element.tag)
-    if addon.isHidden then
+    if addon.ShouldDeferQuestAutomationEvent and
+        addon.ShouldDeferQuestAutomationEvent(event, ...) then
+        return
+    elseif addon.isHidden then
         return
     elseif self.callback and self.step and self.step.active then
         --print(self.callback,self.element.tag)
@@ -1307,6 +1315,8 @@ end
 -- objective cannot remain stale until the next unrelated quest-log event.
 function RXPFrame.RefreshQuestState(event)
     event = event or "QUEST_LOG_UPDATE"
+    if addon.ShouldDeferQuestAutomationEvent and
+        addon.ShouldDeferQuestAutomationEvent(event) then return end
     local refreshed
     for _, step in ipairs(activeSteps) do
         if step.active then
@@ -2296,9 +2306,7 @@ end
 function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     addon.loadNextStep = false
     if addon.questAutomation and addon.questAutomation.ResetForGuideChange then
-        local preserveSubmitted = addon.IsQuestRewardSubmissionActive and
-                                      addon.IsQuestRewardSubmissionActive()
-        addon.questAutomation:ResetForGuideChange(preserveSubmitted)
+        addon.questAutomation:ResetForGuideChange()
     end
 
     local savedStep = OnLoad and RXPCData and RXPCData.currentStep

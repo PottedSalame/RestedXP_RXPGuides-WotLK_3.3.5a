@@ -503,6 +503,8 @@ if ($directiveHandlersText -notmatch
 
 $automationOrderText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\AutomationOrder.lua'))
+$questRewardTransactionText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Guide\QuestRewardTransaction.lua'))
 $questAutomationText = [IO.File]::ReadAllText(
     (Join-Path $root 'Guide\QuestAutomation.lua'))
 $questieCompatText = [IO.File]::ReadAllText(
@@ -512,27 +514,40 @@ $settingsText = [IO.File]::ReadAllText(
 if ($coreAddonText -notmatch
         'RegisterEvent\s*\(\s*"QUEST_FINISHED"\s*\)' -or
     $coreAddonText -notmatch
-        'ReconcileSubmittedQuestInteraction\s*\(\s*disabled\s*,\s*true\s*\)' -or
+        'scheduler:After\s*\(\s*QUEST_AUTOMATION_OWNER\s*,\s*"turnin-submit"\s*,\s*0' -or
     $coreAddonText -notmatch
         'MarkQuestSubmitted\s*\(\s*"turnin"' -or
+    $coreAddonText -notmatch '_G\.GetQuestReward' -or
+    $coreAddonText -notmatch 'IsRewardTransactionContextCurrent\s*\(' -or
+    $coreAddonText -notmatch 'ShouldDeferQuestAutomationEvent\s*\(' -or
+    $coreAddonText -notmatch
+        'questSettlementCallbacks\.Schedule\s*=\s*function' -or
     $automationOrderText -notmatch
         'function\s+automationOrder:MarkQuestSubmitted\s*\(' -or
     $automationOrderText -notmatch
         'GetQuestReservation\s*\(\s*nil\s*,\s*now\s*\)' -or
     $automationOrderText -notmatch
         'function\s+automationOrder:GetSubmittedQuestReservation\s*\(' -or
-    $coreAddonText -notmatch 'DeferWhileTurnInSettles\s*\(' -or
-    $coreAddonText -notmatch 'questSettlement\.submitting\s*=\s*true' -or
+    $automationOrderText -notmatch 'IsQuestRewardSettlementActive' -or
+    $questRewardTransactionText -notmatch
+        'function\s+transaction:Begin\s*\(' -or
+    $questRewardTransactionText -notmatch
+        'function\s+transaction:Observe\s*\(' -or
+    $questRewardTransactionText -notmatch
+        'function\s+transaction:ShouldDefer\s*\(' -or
+    $questRewardTransactionText -notmatch 'QUEST_TURNED_IN\s*=\s*true' -or
+    $guideWindowText -notmatch 'ShouldDeferQuestAutomationEvent' -or
+    $guideWindowText -notmatch 'IsQuestRewardSettlementActive' -or
     $coreAddonText -notmatch 'ReserveQuest\s*\(' -or
     $coreAddonText -notmatch 'turnin-settlement-timeout' -or
-    $coreAddonText -notmatch
-        'DeferSubmittedTurnInConfirmation\s*\(\s*disabled' -or
-    $questAutomationText -notmatch 'turnin-event-confirmation' -or
+    $coreAddonText -notmatch 'turnin-release' -or
+    $questAutomationText -notmatch 'CancelQuestRewardTransaction' -or
     $settingsText -notmatch
         'key\s*==\s*"enableQuestAutomation"[\s\S]*?ResetTransient') {
     Add-ValidationError (
-        'Same-NPC quest automation must reconcile submitted rewards through ' +
-        'a bounded next-cycle 3.3.5 settlement without cross-kind races.')
+        'Same-NPC quest automation must use an exact, deferred reward ' +
+        'transaction which blocks nested directive events until companion ' +
+        'post-hooks and authoritative quest state have settled.')
 }
 
 if ($questieCompatText -match 'QuestieLoader|ImportModule' -or

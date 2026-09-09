@@ -227,6 +227,8 @@ end
 
 function addon.IsQuestAutomationElementReady(element, kind)
     if addon.speedrunPracticeActive then return false end
+    if addon.IsQuestRewardSettlementActive and
+        addon.IsQuestRewardSettlementActive() then return false end
     return automationOrder:IsQuestReady(element, kind)
 end
 

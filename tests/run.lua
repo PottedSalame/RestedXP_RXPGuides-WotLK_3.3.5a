@@ -266,6 +266,10 @@ loadAddonFile("Core/Storage.lua", addon)
 loadAddonFile("Core/Runtime.lua", addon)
 loadAddonFile("Core/Facade.lua", addon)
 loadAddonFile("Guide/QuestAcceptState.lua", addon)
+loadAddonFile("Guide/QuestRewardTransaction.lua", addon)
+addon.IsQuestRewardSettlementActive = function()
+    return addon.questRewardTransaction:IsActive()
+end
 
 addon.functions = {events = {fixtureDirective = {"FIXTURE_EVENT"}}}
 addon.functions.fixtureDirective = function() return "directive" end
@@ -404,6 +408,82 @@ check(addon.automationOrder:SelectQuest({
           {kind = "turnin", element = abandonedInvestigations, selector = 1},
       }).element == abandonedInvestigations,
       "next same-NPC quest did not unlock after confirmation")
+
+-- Reward settlement starts before GetQuestReward and blocks every quest event
+-- consumer until external secure post-hooks have observed the original panel.
+local rewardGuide = {key = "fixture||reward"}
+local rewardStep = {active = true, index = 12, stepId = "reward-step"}
+local rewardElement = {step = rewardStep, tag = "turnin", questId = 1234}
+rewardStep.elements = {rewardElement}
+local rewardRequest = {
+    guide = rewardGuide,
+    guideKey = rewardGuide.key,
+    step = rewardStep,
+    stepId = rewardStep.stepId,
+    stepIndex = rewardStep.index,
+    currentStep = rewardStep.index,
+    element = rewardElement,
+    questId = rewardElement.questId,
+    title = "Original Reward Quest",
+    choice = 1,
+    numChoices = 0,
+}
+local rewardSerial, rewardCreated =
+    addon.questRewardTransaction:Begin(rewardRequest, 200)
+local duplicateSerial, duplicateCreated =
+    addon.questRewardTransaction:Begin(rewardRequest, 200)
+check(rewardCreated and rewardSerial == duplicateSerial and
+          not duplicateCreated and
+          addon.questRewardTransaction:ShouldDefer("QUEST_COMPLETE") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_LOG_UPDATE") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_PROGRESS") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_DETAIL") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_FINISHED") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_GREETING") and
+          addon.questRewardTransaction:ShouldDefer("GOSSIP_SHOW") and
+          addon.questRewardTransaction:ShouldDefer("QUEST_TURNED_IN"),
+      "reward transaction did not start early or deduplicate repeated events")
+addon.questRewardTransaction:Observe("QUEST_FINISHED", nil, nil, 200)
+check(not addon.questRewardTransaction:HasAuthoritativeConfirmation(
+          rewardSerial),
+      "a pre-submission quest event confirmed a queued reward")
+
+addon.questRewardTransaction:SetPhase(rewardSerial, "submitting", 201)
+local displayedTitle = rewardRequest.title
+local nestedSelections = 0
+local function DispatchNestedRewardEvent(eventName, arg1, arg2)
+    if addon.questRewardTransaction:ShouldDefer(eventName) then
+        addon.questRewardTransaction:Observe(eventName, arg1, arg2, 201)
+        return
+    end
+    nestedSelections = nestedSelections + 1
+    displayedTitle = "Wrong Follow-up Quest"
+end
+local function SimulatedRewardCall()
+    DispatchNestedRewardEvent("QUEST_LOG_UPDATE")
+    DispatchNestedRewardEvent("GOSSIP_SHOW")
+    DispatchNestedRewardEvent("QUEST_TURNED_IN", 9999)
+    DispatchNestedRewardEvent("QUEST_FINISHED")
+end
+SimulatedRewardCall()
+local questiePostHookTitle = displayedTitle
+addon.questRewardTransaction:SetPhase(rewardSerial, "settling", 202)
+check(nestedSelections == 0 and
+          questiePostHookTitle == rewardRequest.title and
+          addon.questRewardTransaction:HasAuthoritativeConfirmation(
+              rewardSerial),
+      "nested reward events changed the quest panel before a Questie-style post-hook")
+check(addon.questRewardTransaction:Finish(rewardSerial) and
+          not addon.questRewardTransaction:IsActive(),
+      "confirmed reward transaction did not release")
+
+local cancelSerial = addon.questRewardTransaction:Begin(rewardRequest, 203)
+addon.questRewardTransaction:Observe("QUEST_TURNED_IN", 9999, nil, 203)
+check(not addon.questRewardTransaction:HasAuthoritativeConfirmation(cancelSerial),
+      "a different quest ID confirmed the reserved reward transaction")
+check(addon.questRewardTransaction:Cancel(cancelSerial, "fixture") and
+          not addon.questRewardTransaction:IsActive(),
+      "cancelled reward transaction remained active")
 
 -- Follow-up accepts from the immediately following step are registered before
 -- the delayed 3.3.5 quest-log update advances the visible guide.
