@@ -1127,7 +1127,20 @@ function addon.IsQuestRewardSubmissionActive()
 end
 
 function addon.IsQuestRewardSettlementActive()
-    return addon.IsQuestRewardSubmissionActive()
+    if not addon.IsQuestRewardSubmissionActive() then return false end
+    -- Safety net: never let a reward transaction hold the progression barrier
+    -- indefinitely. The normal settlement/release timers are far shorter than
+    -- this; if they were ever lost (for example a cancelled scheduler handle)
+    -- the guide would otherwise freeze with every quest event deferred.
+    local active = questSettlement and questSettlement:Get()
+    local startedAt = active and tonumber(active.startedAt) or 0
+    if startedAt > 0 and GetTime() - startedAt > 8 then
+        if addon.CancelQuestRewardTransaction then
+            addon.CancelQuestRewardTransaction("watchdog-timeout")
+        end
+        return false
+    end
+    return true
 end
 
 local function ResolveDisplayedTurnInQuestID()
@@ -2873,7 +2886,7 @@ function addon.LegacyUpdateLoop()
                 addon.updateBottomFrame = true
             end
         end
-    elseif activeQuestUpdate == 0 then
+    elseif activeQuestUpdate == 0 or addon.updateSteps then
         if addon.updateSteps then
             event = event .. "/stepComplete"
 

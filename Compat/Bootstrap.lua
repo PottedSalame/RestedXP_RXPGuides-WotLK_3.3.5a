@@ -799,10 +799,18 @@ end
 --=========================================================================
 -- C_Timer  (OnUpdate-based scheduler; must be self-contained since this file
 --           loads before AceTimer)
+--
+-- Install RXP's own implementation even when a global C_Timer already exists.
+-- Some 3.3.5a HD/private clients and companion addons publish a C_Timer shim
+-- whose tickers never fire (they drive a hidden OnUpdate frame), which
+-- silently kills RXP's guide update loop.
 --=========================================================================
-if not _G.C_Timer then
+do
     local C_Timer = ns("C_Timer")
-    local scheduler = CreateFrame("Frame", "RXPCompat335TimerFrame")
+    local scheduler = CreateFrame("Frame", "RXPCompat335TimerFrame", UIParent)
+    scheduler:SetSize(1, 1)
+    -- OnUpdate only runs while the frame is shown.
+    scheduler:Show()
     local active = {}      -- ticker -> true
     local pool = {}
 
@@ -1647,7 +1655,12 @@ do
     questFrame:RegisterEvent("QUEST_LOG_UPDATE")
     questFrame:RegisterEvent("QUEST_QUERY_COMPLETE")
     questFrame:RegisterEvent("QUEST_ACCEPTED")
+    -- QUEST_TURNED_IN is a Cataclysm-era event and does not exist on the
+    -- 3.3.5a client, which fires QUEST_FINISHED instead. Register both (the
+    -- missing one is a harmless no-op) so the compatibility layer works on
+    -- stock 3.3.5a and on cores that backport the newer event.
     questFrame:RegisterEvent("QUEST_TURNED_IN")
+    questFrame:RegisterEvent("QUEST_FINISHED")
     questFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     questFrame:SetScript("OnEvent", function(_, event, arg1, arg2)
         if event == "QUEST_LOG_UPDATE" then
@@ -1668,6 +1681,13 @@ do
                 recentlyAccepted[qid] = nil
                 completedCache[qid] = true
             end
+        elseif event == "QUEST_FINISHED" then
+            -- 3.3.5a reward-accepted signal. The log and completed list can
+            -- settle a frame later, so refresh the log now and re-query
+            -- completion so IsOnQuest/IsQuestTurnedIn see the change.
+            rebuildLog()
+            if _G.QueryQuestsCompleted then _G.QueryQuestsCompleted() end
+            rebuildCompleted()
         elseif event == "PLAYER_ENTERING_WORLD" then
             rebuildLog()
             if _G.QueryQuestsCompleted then _G.QueryQuestsCompleted() end

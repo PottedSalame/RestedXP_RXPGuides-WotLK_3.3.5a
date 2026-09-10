@@ -747,9 +747,17 @@ function addon.UpdateStepCompletion()
                 step.active = nil
             elseif step.index >= RXPCData.currentStep then
                 step.completed = true
-                RXPFrame.BottomFrame.UpdateFrame(nil, nil, step.index)
-                if step.index == RXPCData.currentStep then
-                    addon.loadNextStep = true
+                -- Commit progression before the (potentially failing) UI
+                -- refresh.  SetElementComplete has already marked the element
+                -- complete, so a redraw error must never leave a checked step
+                -- stranded on screen with no way to advance.
+                addon.loadNextStep = true
+                local ok, err = pcall(RXPFrame.BottomFrame.UpdateFrame,
+                                      nil, nil, step.index)
+                if not ok and addon.diagnostics and addon.diagnostics.Record then
+                    addon.diagnostics:Record("step-refresh-error", {
+                        step = step.index, error = tostring(err),
+                    })
                 end
                 return
             end
