@@ -398,7 +398,8 @@ local function getQuestData(questLogIndex)
             ["questID"] = questInfo.questID,
             ["frequency"] = questInfo.frequency,
 
-            ["isComplete"] = questID and C_QuestLog.IsComplete(questID)
+            ["isComplete"] = questInfo.questID and
+                                 C_QuestLog.IsComplete(questInfo.questID)
         }
     else
         questLogTitleText, level, _, isHeader, _, isComplete, frequency, questID =
@@ -484,6 +485,13 @@ function addon.AbandonOrphanedQuests(orphans)
 
     local id, questData
 
+    -- This fallback needs the raw multi-return quest log title (questID at
+    -- position 8 in the reshaped order). The file-level GetQuestLogTitle is
+    -- C_QuestLog.GetInfo, which returns a table, so select(8, ...) would always
+    -- be nil. Use the compatibility wrapper explicitly.
+    local RawGetQuestLogTitle = _G.RXPCompatGetQuestLogTitle or
+                                    _G.GetQuestLogTitle
+
     -- Reverse process list, to avoid searching, abandon from bottom
     for i = #orphans, 1, -1 do
         questData = orphans[i]
@@ -491,13 +499,13 @@ function addon.AbandonOrphanedQuests(orphans)
         if C_QuestLog.SetSelectedQuest then
             abandonQuest(questData)
         else
-            id = select(8, GetQuestLogTitle(questData.questLogIndex))
+            id = select(8, RawGetQuestLogTitle(questData.questLogIndex))
 
             if id == questData.questID then
                 abandonQuest(questData)
             else
                 for j = 1, GetNumQuests() do
-                    id = select(8, GetQuestLogTitle(j))
+                    id = select(8, RawGetQuestLogTitle(j))
 
                     if id == questData.questID then
                         abandonQuest(questData)
@@ -810,6 +818,7 @@ do
     f:RegisterEvent("PLAYER_LOGIN")
     f:RegisterEvent("PLAYER_REGEN_DISABLED")
     f:RegisterEvent("PLAYER_REGEN_ENABLED")
+    f:RegisterEvent("QUEST_LOG_UPDATE")
 
     local hookedToggle = false
 
@@ -818,6 +827,14 @@ do
             if arg1 == "Blizzard_QuestLog" or arg1 == "Blizzard_WorldMap" or arg1 == addonName then
                 CreateCleanupButton()
             end
+
+        elseif ev == "QUEST_LOG_UPDATE" then
+            -- The cached orphan list describes the character's quest state at
+            -- the moment it was first built. Invalidate it whenever the quest
+            -- log changes so the next quest selection (UpdateQuestButton)
+            -- rebuilds it from the current status instead of showing stale
+            -- results.
+            addon.orphanedList = nil
 
         elseif ev == "PLAYER_LOGIN" then
             CreateCleanupButton()
