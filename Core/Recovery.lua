@@ -35,6 +35,7 @@ function catchUp:Analyze(guide)
         return nil, "No active guide is available."
     end
     local lastResolved = 0
+    local partiallyResolved
     local evidence, uncertain = {}, {}
     local level = UnitLevel("player") or 1
     local low, high = tostring(guide.name or ""):match("(%d+)%s*%-%s*(%d+)")
@@ -82,10 +83,17 @@ function catchUp:Analyze(guide)
             table.insert(uncertain, format(
                 "Step %d has no authoritative quest milestone", index))
         elseif unresolvedCount > 0 and index > lastResolved then
+            -- A turn-in and its follow-up acceptance often share one NPC and
+            -- one authored step. If the turn-in is already authoritative,
+            -- resume on this partially resolved step instead of backing up to
+            -- an earlier travel instruction. Fully unresolved steps still use
+            -- lastResolved + 1 so their non-quest approach steps are retained.
+            if doneCount > 0 then partiallyResolved = index end
             break
         end
     end
-    local proposed = math.max(1, math.min(#guide.steps, lastResolved + 1))
+    local proposed = partiallyResolved or lastResolved + 1
+    proposed = math.max(1, math.min(#guide.steps, proposed))
     local confidence = #uncertain == 0 and "high" or
                            (#uncertain <= 2 and "medium" or "low")
     return {

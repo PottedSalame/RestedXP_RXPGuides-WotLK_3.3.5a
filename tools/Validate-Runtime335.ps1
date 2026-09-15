@@ -254,9 +254,10 @@ foreach ($loadedPath in $loadedFiles) {
         continue
     }
     $relative = $loadedPath.Substring($rootPrefix.Length)
-    if ($relative -ieq 'Compat\TimerFacade335.lua' -or
-        $relative.StartsWith('Guides\',
-                            [StringComparison]::OrdinalIgnoreCase)) {
+    $portableRelative = $relative.Replace('\', '/')
+    if ($portableRelative -ieq 'Compat/TimerFacade335.lua' -or
+        $portableRelative.StartsWith('Guides/',
+                                    [StringComparison]::OrdinalIgnoreCase)) {
         continue
     }
     $text = [IO.File]::ReadAllText($loadedPath)

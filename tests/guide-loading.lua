@@ -125,7 +125,7 @@ return function(root)
 
     local function loadGuide(path, name, class, race, faction, level)
         local block = readGuideBlock(path, name)
-        local addon = newLoader(class, race, nil, faction, level)
+        local addon, env = newLoader(class, race, nil, faction, level)
         local guide, failure = addon.ParseGuide(block)
         assert(guide and not failure, "Failed to parse " .. name)
         return guide, addon, env
