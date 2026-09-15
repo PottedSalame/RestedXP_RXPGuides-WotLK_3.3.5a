@@ -23,6 +23,7 @@
 
 local addonName, addon = ...
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 
 -- Obtain the Astrolabe instance (registered through DongleStub).
 local Astrolabe

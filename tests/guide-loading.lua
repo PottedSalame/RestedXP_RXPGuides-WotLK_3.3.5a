@@ -93,20 +93,42 @@ return function(root)
         end
     end
 
-    local function loadGuide(path, name, class, race, faction)
+    local function readGuideBlock(path, name)
         local input = assert(io.open(root .. "/" .. path, "rb"))
         local text = input:read("*a")
         input:close()
         for block in text:gmatch("RXPGuides%.RegisterGuide%(%[%[(.-)%]%]%)") do
             if block:find("#name " .. name .. "\n", 1, true) or
                block:find("#name " .. name .. "\r\n", 1, true) then
-                local addon = newLoader(class, race, nil, faction)
-                local guide, failure = addon.ParseGuide(block)
-                assert(guide and not failure, "Failed to parse " .. name)
-                return guide
+                return block
             end
         end
         error("Missing guide fixture " .. name)
+    end
+
+    local function normalizedGuideSignature(text)
+        text = text:gsub("\r\n", "\n"):gsub("\r", "\n")
+        local a, b = 1, 0
+        for index = 1, #text do
+            a = (a + text:byte(index)) % 65521
+            b = (b + a) % 65521
+        end
+        return (b * 65536 + a) % 4294967296
+    end
+
+    local function readText(path)
+        local input = assert(io.open(root .. "/" .. path, "rb"))
+        local text = input:read("*a")
+        input:close()
+        return text
+    end
+
+    local function loadGuide(path, name, class, race, faction, level)
+        local block = readGuideBlock(path, name)
+        local addon = newLoader(class, race, nil, faction, level)
+        local guide, failure = addon.ParseGuide(block)
+        assert(guide and not failure, "Failed to parse " .. name)
+        return guide, addon, env
     end
 
     -- Run only the selected quest chain, retaining unrelated route actions.
@@ -407,6 +429,214 @@ return function(root)
     local _, scholomanceRewards = checkChain(scholomanceKey, {5092, 5098})
     assert(scholomanceRewards[5092] and scholomanceRewards[5098],
            "Alliance Scholomance key chain skips Clear the Way turn-in")
+
+    local onyxiaFixtureChunk = assert(loadfile(
+        root .. "/tests/fixtures/individual-progression-onyxia.lua"))
+    local onyxiaFixture = onyxiaFixtureChunk()
+    assert(onyxiaFixture.source.revision ==
+               "977e2005bacf97f35e506eb27b8af6b2ea1136af",
+           "Onyxia validation fixture lost its pinned source revision")
+    assert(onyxiaFixture.reward.id == 16309 and
+               onyxiaFixture.reward.name == "Drakefire Amulet",
+           "Onyxia validation fixture has the wrong final reward")
+    local onyxiaStepTotal = 0
+    for _, facts in ipairs(onyxiaFixture.guides) do
+        onyxiaStepTotal = onyxiaStepTotal + facts.steps
+    end
+    assert(#onyxiaFixture.guides == 2 and onyxiaStepTotal == 105,
+           "Onyxia integration is not exactly two guides and 105 steps")
+    local prerequisiteSource = readText(
+        "DB/wotlk/questPrerequisites_335.lua")
+
+    for _, facts in ipairs(onyxiaFixture.guides) do
+        local path = "Guides/Classic-Endgame335.lua"
+        local block = readGuideBlock(path, facts.name)
+        assert(normalizedGuideSignature(block) == facts.generatedSignature,
+               facts.name .. " differs from its reviewed generated route")
+        assert(block:match("^%s*<< ac335 " .. facts.faction .. "[%s\r\n]") and
+                   not block:find("#classic", 1, true),
+               facts.name .. " lacks its combined 3.3.5 faction gate")
+        assert(block:find("Individual Progression", 1, true) and
+                   block:find("unavailable on stock AzerothCore", 1, true) and
+                   block:find("cannot detect server%-side modules automatically"),
+               facts.name .. " lacks the server-requirement warning")
+        assert(not block:find("#next", 1, true),
+               facts.name .. " transitions into an unrelated guide")
+        assert(not block:find(".subzone 2158", 1, true) and
+                   not block:find(".subzone 2245", 1, true),
+               facts.name .. " retains a locale-sensitive cave subzone")
+        for _, routePoint in ipairs(facts.routePoints) do
+            assert(block:find(routePoint, 1, true),
+                   facts.name .. " omits normalized route point " .. routePoint)
+        end
+        for questID, requirement in pairs(facts.prerequisites) do
+            assert(prerequisiteSource:find(
+                       tostring(questID) .. "=" .. requirement, 1, true),
+                   facts.name .. " prerequisite database differs for quest " ..
+                       questID)
+        end
+
+        local race = facts.faction == "Alliance" and "Human" or "Orc"
+        local class = facts.faction == "Alliance" and "PALADIN" or "SHAMAN"
+        local guide = loadGuide(path, facts.name, class, race, facts.faction, 1)
+        assert(guide.group == "RestedXP Endgame Guides" and
+                   guide.subgroup == "Attunements",
+               facts.name .. " moved out of the Attunements picker section")
+        assert(#guide.steps == facts.steps,
+               facts.name .. " step count changed")
+        assert(not guide.next, facts.name .. " unexpectedly has a next guide")
+
+        local otherFaction = facts.faction == "Alliance" and "Horde" or "Alliance"
+        local otherRace = otherFaction == "Alliance" and "Human" or "Orc"
+        local hiddenLoader = newLoader(class, otherRace, nil, otherFaction, 1)
+        local hiddenGuide, hiddenReason = hiddenLoader.ParseGuide(block)
+        assert(hiddenGuide and hiddenReason,
+               facts.name .. " is selectable by the opposite faction")
+
+        local questSet, accepted, rewarded = {}, {}, {}
+        local objectives, items, targets, objectiveTargets = {}, {}, {}, {}
+        for _, questID in ipairs(facts.quests) do questSet[questID] = true end
+        for _, step in ipairs(guide.steps) do
+            local stepItems, stepTargets = {}, {}
+            for _, element in ipairs(step.elements or {}) do
+                local first = tonumber(element.first)
+                if element.tag == "collect" or element.tag == "use" then
+                    if first then
+                        items[first] = true
+                        stepItems[first] = true
+                    end
+                elseif element.tag == "target" or element.tag == "mob" or
+                       element.tag == "unitscan" then
+                    local target = tostring(element.first or ""):gsub("^%+", "")
+                    targets[target] = true
+                    stepTargets[target] = true
+                end
+            end
+
+            local pendingObjective
+            for _, element in ipairs(step.elements or {}) do
+                local first = tonumber(element.first)
+                if element.tag == "accept" and questSet[first] then
+                    local requirement = facts.prerequisites[first]
+                    if requirement then
+                        for required in requirement:gmatch("R(%d+)") do
+                            required = tonumber(required)
+                            assert(rewarded[required], facts.name .. " accepts quest " ..
+                                       first .. " before rewarding prerequisite " ..
+                                       required)
+                        end
+                    end
+                    accepted[first] = true
+                elseif element.tag == "complete" and questSet[first] then
+                    assert(accepted[first], facts.name .. " works quest " .. first ..
+                               " before accepting it")
+                    local objective = tonumber(element.second)
+                    objectives[first] = objectives[first] or {}
+                    objectives[first][objective] = true
+                    pendingObjective = tostring(first) .. ":" .. tostring(objective)
+                elseif element.tag == "turnin" and questSet[first] then
+                    assert(accepted[first], facts.name .. " turns in quest " .. first ..
+                               " before accepting it")
+                    rewarded[first] = true
+                elseif element.tag == "target" or element.tag == "mob" or
+                       element.tag == "unitscan" then
+                    local target = tostring(element.first or ""):gsub("^%+", "")
+                    if pendingObjective and
+                       facts.objectiveTargets[pendingObjective] == target then
+                        objectiveTargets[pendingObjective] = target
+                    end
+                end
+
+                if (element.tag == "accept" or element.tag == "turnin") and
+                   questSet[first] then
+                    local interaction = assert(facts.interactions[first] and
+                        facts.interactions[first][element.tag],
+                        facts.name .. " fixture lacks " .. element.tag ..
+                            " actor facts for quest " .. first)
+                    assert(not interaction.npc or
+                               (type(interaction.npc) == "number" and
+                                interaction.npc > 0 and
+                                interaction.npc % 1 == 0),
+                           facts.name .. " has an invalid NPC fixture for quest " ..
+                               first)
+                    assert((interaction.target and
+                                stepTargets[interaction.target]) or
+                               (interaction.item and
+                                stepItems[interaction.item]),
+                           facts.name .. " has no matching " .. element.tag ..
+                               " actor or item for quest " .. first)
+                end
+            end
+        end
+        for _, questID in ipairs(facts.quests) do
+            assert(accepted[questID], facts.name .. " omits quest " .. questID ..
+                       " acceptance")
+            assert(rewarded[questID], facts.name .. " omits quest " .. questID ..
+                       " turn-in")
+        end
+        for questID, indexes in pairs(facts.objectives) do
+            for _, objective in ipairs(indexes) do
+                assert(objectives[questID] and objectives[questID][objective],
+                       facts.name .. " omits objective " .. questID .. "," .. objective)
+            end
+        end
+        for _, itemID in ipairs(facts.items) do
+            assert(items[itemID], facts.name .. " omits required item " .. itemID)
+        end
+        for _, target in ipairs(facts.targets) do
+            assert(targets[target], facts.name .. " omits target metadata for " .. target)
+        end
+        for objective, target in pairs(facts.objectiveTargets) do
+            assert(objectiveTargets[objective] == target,
+                   facts.name .. " associates objective " .. objective ..
+                       " with the wrong target; expected " .. target)
+        end
+        assert(findStep(guide, "accept", facts.firstQuest),
+               facts.name .. " has no starting quest")
+        assert(findStep(guide, "turnin", facts.finalQuest),
+               facts.name .. " has no final Drakefire Amulet turn-in")
+    end
+
+    for _, facts in ipairs(onyxiaFixture.guides) do
+        local race = facts.faction == "Alliance" and "Human" or "Orc"
+        local class = facts.faction == "Alliance" and "PALADIN" or "SHAMAN"
+        local guide, catchAddon, catchEnv = loadGuide(
+            "Guides/Classic-Endgame335.lua", facts.name, class, race,
+            facts.faction, 60)
+        local rewarded = {}
+        for _, questID in ipairs(facts.quests) do
+            rewarded[questID] = true
+            if questID == facts.catchup.completedThrough then break end
+        end
+        local questTags = {
+            accept = true, daily = true, complete = true,
+            turnin = true, dailyturnin = true,
+        }
+        for _, step in ipairs(guide.steps) do
+            for _, element in ipairs(step.elements or {}) do
+                if questTags[element.tag] then
+                    element.questId = tonumber(element.first)
+                    element.id = element.questId
+                end
+            end
+        end
+        catchAddon.IsQuestTurnedIn = function(questID)
+            return rewarded[tonumber(questID)] == true
+        end
+        catchAddon.IsOnQuest = function() return false end
+        catchAddon.IsQuestComplete = function() return false end
+        catchAddon.GetQuestPreReqState = function() return true, {} end
+        catchAddon.settings.profile.xprate = 1
+        local recovery = assert(loadfile(root .. "/Core/Recovery.lua"))
+        setfenv(recovery, catchEnv)("RXPGuides", catchAddon)
+        local proposal = assert(catchAddon.catchUp:Analyze(guide))
+        local _, expectedStep = findStep(
+            guide, "accept", facts.catchup.nextQuest)
+        assert(expectedStep and proposal.step == expectedStep,
+               facts.name .. " catch-up proposed step " .. proposal.step ..
+                   " instead of unresolved quest " .. facts.catchup.nextQuest ..
+                   " at step " .. tostring(expectedStep))
+    end
 
     local hordeFjord = loadGuide("Guides/WotLK/Horde-Leveling.lua",
         "72-74 Northrend", "HUNTER", "Orc", "Horde")
@@ -841,10 +1071,10 @@ return function(root)
             for key in pairs(startup.guides) do
                 assert(expected[key], "Startup admitted an incompatible guide: " .. key)
             end
-            assert(endgameCount == 10,
+            assert(endgameCount == 11,
                    "Missing Endgame chapters for " .. profile[2] .. " at level " .. profile[4])
             local group = assert(startup.guideList["RestedXP Endgame Guides"])
-            assert(#group.names_ == 10, "Endgame chapters did not reach the picker registry")
+            assert(#group.names_ == 11, "Endgame chapters did not reach the picker registry")
         end
         print(string.format("Manifest startup coverage passed: %d files, %d guides, %d profiles.",
                             fileCount, #sources, #profiles))

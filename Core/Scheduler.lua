@@ -1,6 +1,7 @@
 local _, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local scheduler = addon.scheduler or {}
 addon.scheduler = scheduler
 
@@ -52,7 +53,7 @@ function scheduler:After(owner, key, delay, callback)
     self:Cancel(owner, key)
     local entries = OwnerEntries(owner, true)
     local handle
-    handle = _G.C_Timer.NewTimer(delay, function(...)
+    handle = C_Timer.NewTimer(delay, function(...)
         local current = OwnerEntries(owner, false)
         if not current or current[key] ~= handle then return end
         current[key] = nil
@@ -71,7 +72,7 @@ function scheduler:Ticker(owner, key, interval, callback, iterations)
     interval = math.max(0.01, tonumber(interval) or 0.01)
     self:Cancel(owner, key)
     local entries = OwnerEntries(owner, true)
-    local handle = _G.C_Timer.NewTicker(interval, callback, iterations)
+    local handle = C_Timer.NewTicker(interval, callback, iterations)
     entries[key] = handle
     return handle
 end
@@ -131,4 +132,3 @@ function scheduler:Has(owner, key)
 end
 
 addon.services:Register("scheduler", scheduler, "scheduler")
-

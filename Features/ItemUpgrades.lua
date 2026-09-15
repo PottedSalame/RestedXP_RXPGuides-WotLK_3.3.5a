@@ -1,4 +1,5 @@
 local addonName, addon = ...
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local L = addon.locale.Get
 
 if not (addon.game == "CLASSIC" or addon.game == "TBC" or addon.game == "CATA" or addon.game == "WOTLK") then return end

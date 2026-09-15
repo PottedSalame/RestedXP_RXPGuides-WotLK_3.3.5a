@@ -29,8 +29,8 @@ foreach ($module in $modules) {
 
 $coreText = [IO.File]::ReadAllText((Join-Path $root 'Core/Addon.lua'))
 $cacheVersionMatch = [regex]::Match($coreText, 'local cacheVersion\s*=\s*(\d+)\b')
-if (-not $cacheVersionMatch.Success -or [int]$cacheVersionMatch.Groups[1].Value -lt 34) {
-    Add-Error 'Guide metadata cache version must be at least 34 for content-signature invalidation.'
+if (-not $cacheVersionMatch.Success -or [int]$cacheVersionMatch.Groups[1].Value -lt 35) {
+    Add-Error 'Guide metadata cache version must be at least 35 for content-signature invalidation.'
 }
 
 $settingsText = [IO.File]::ReadAllText((Join-Path $root 'UI/Settings.lua'))

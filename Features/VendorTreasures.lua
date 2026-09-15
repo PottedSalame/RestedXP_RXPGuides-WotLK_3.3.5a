@@ -5,6 +5,7 @@ Derived from https://www.curseforge.com/wow/addons/cpt-stadics-map-of-vendor-tre
 Creative Commons Attribution-NonCommercial 3.0 Unported https://creativecommons.org/licenses/by-nc/3.0/
 ]] local _, addon = ...
 
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local L = addon.locale.Get
 local build = select(4, GetBuildInfo())
 local legacy335 = build == 30300

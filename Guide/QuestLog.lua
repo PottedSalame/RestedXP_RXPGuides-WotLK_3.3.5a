@@ -1,10 +1,31 @@
 local addonName, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 
 local GetNumQuests = C_QuestLog.GetNumQuestLogEntries or
                          _G.GetNumQuestLogEntries
-local GetQuestLogTitle = C_QuestLog.GetInfo or _G.GetQuestLogTitle
+local LegacyGetQuestLogTitle = _G.RXPCompatGetQuestLogTitle
+local GetQuestLogTitle = C_QuestLog.GetInfo or LegacyGetQuestLogTitle or
+                             _G.GetQuestLogTitle
+
+local function PositiveQuestID(value)
+    value = tonumber(value)
+    if value and value > 0 then return value end
+end
+
+local function GetLegacyQuestIDAtIndex(index)
+    if type(LegacyGetQuestLogTitle) == "function" then
+        return PositiveQuestID(select(8, LegacyGetQuestLogTitle(index)))
+    end
+    if type(_G.GetQuestLogTitle) ~= "function" then return nil end
+
+    -- AzerothCore 3.3.5 exposes questID at #9; later legacy clients may expose
+    -- it at #8. Prefer #9 so the stock isDaily value cannot be mistaken for an
+    -- ID, then retain the later-client fallback for shared code paths.
+    local _, _, _, _, _, _, _, eighth, ninth = _G.GetQuestLogTitle(index)
+    return PositiveQuestID(ninth) or PositiveQuestID(eighth)
+end
 
 local L = addon.locale.Get
 local maxQuests = 25
@@ -390,15 +411,20 @@ local function getQuestData(questLogIndex)
 
     if C_QuestLog.GetInfo then
         questInfo = C_QuestLog.GetInfo(questLogIndex) or {}
+        questID = tonumber(questInfo.questID)
+        isComplete = questInfo.isComplete
+        if questID and type(C_QuestLog.IsComplete) == "function" then
+            isComplete = C_QuestLog.IsComplete(questID)
+        end
 
         data = {
             ["questLogTitleText"] = questInfo.title,
             ["level"] = questInfo.level,
             ["isHeader"] = questInfo.isHeader,
-            ["questID"] = questInfo.questID,
+            ["questID"] = questID,
             ["frequency"] = questInfo.frequency,
 
-            ["isComplete"] = questID and C_QuestLog.IsComplete(questID)
+            ["isComplete"] = isComplete
         }
     else
         questLogTitleText, level, _, isHeader, _, isComplete, frequency, questID =
@@ -433,21 +459,22 @@ function addon.GetOrphanedQuests()
 
     for i = 1, GetNumQuests() do
         questData = getQuestData(i)
+        local questID = questData and tonumber(questData.questID)
 
-        if not questData.isHeader and questData.questID > 0 then
+        if questData and not questData.isHeader and questID and questID > 0 then
             orphanData = {
                 ["questLogTitleText"] = questData.questLogTitleText,
                 ["level"] = questData.level,
-                ["questID"] = questData.questID,
+                ["questID"] = questID,
                 ["questLogIndex"] = i
             }
 
-            isPartOfGuide = guideQuests[questData.questID] or futureTurnIns[questData.questID]
+            isPartOfGuide = guideQuests[questID] or futureTurnIns[questID]
 
             if not isPartOfGuide and not questData.isComplete then
                 table.insert(invertedList, 1, orphanData)
 
-                orphanedList[questData.questID] = orphanData
+                orphanedList[questID] = orphanData
             end
         end
 
@@ -491,13 +518,13 @@ function addon.AbandonOrphanedQuests(orphans)
         if C_QuestLog.SetSelectedQuest then
             abandonQuest(questData)
         else
-            id = select(8, GetQuestLogTitle(questData.questLogIndex))
+            id = GetLegacyQuestIDAtIndex(questData.questLogIndex)
 
             if id == questData.questID then
                 abandonQuest(questData)
             else
                 for j = 1, GetNumQuests() do
-                    id = select(8, GetQuestLogTitle(j))
+                    id = GetLegacyQuestIDAtIndex(j)
 
                     if id == questData.questID then
                         abandonQuest(questData)
@@ -810,6 +837,7 @@ do
     f:RegisterEvent("PLAYER_LOGIN")
     f:RegisterEvent("PLAYER_REGEN_DISABLED")
     f:RegisterEvent("PLAYER_REGEN_ENABLED")
+    f:RegisterEvent("QUEST_LOG_UPDATE")
 
     local hookedToggle = false
 
@@ -841,6 +869,9 @@ do
             if cleanupBtn then
                 cleanupBtn:SetShown(not addon.isHidden)
             end
+
+        elseif ev == "QUEST_LOG_UPDATE" then
+            addon.orphanedList = nil
 
         elseif ev == "PLAYER_REGEN_DISABLED" then
             SetCleanupBtnEnabled(false)

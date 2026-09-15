@@ -12,6 +12,7 @@
 .fleet/
 .aider*
 
+%SystemDrive%
 # Local architecture and refactor notes
 ARCHITECTURE.md
 ARCHITECTURE_*.md

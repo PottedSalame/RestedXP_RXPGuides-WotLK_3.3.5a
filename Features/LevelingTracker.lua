@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local fmt, strsub, tinsert, srep, mmax, abs = string.format, string.sub,
                                               tinsert, string.rep, math.max,
                                               abs

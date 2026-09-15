@@ -1,5 +1,7 @@
 local _, addon = ...
 
+local C_Timer = addon.timerAPI335 or _G.C_Timer
+
 -- Allows you to set your hearthstone as you teleport away to your previous location at the end of the hearthstone cast.
 -- Only works if the binding confirmation and the HS spell cast are processed in the same batch (<10ms as of patch 1.14)
 local HSframe = CreateFrame("Frame");

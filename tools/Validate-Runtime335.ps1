@@ -143,7 +143,8 @@ foreach ($manifest in $tocPaths) {
 
 $tocText = [IO.File]::ReadAllText($tocPath)
 $orderedPaths = @(
-    'Compat\Bootstrap.lua', 'Compat\MapFacade335.lua',
+    'Compat\Bootstrap.lua', 'Compat\TimerFacade335.lua',
+    'Compat\MapFacade335.lua',
     'Compat\InventoryCount335.lua',
     'libs\embeds_335.xml', 'Core\Locale.lua',
     'Core\Services.lua', 'Core\Scheduler.lua', 'Core\Storage.lua',
@@ -179,6 +180,8 @@ $bootstrapText = [IO.File]::ReadAllText(
     (Join-Path $root 'Compat\Bootstrap.lua'))
 $mapFacadeText = [IO.File]::ReadAllText(
     (Join-Path $root 'Compat\MapFacade335.lua'))
+$timerFacadeText = [IO.File]::ReadAllText(
+    (Join-Path $root 'Compat\TimerFacade335.lua'))
 $mapDbText = [IO.File]::ReadAllText((Join-Path $root 'DB\wotlk\db.lua'))
 $astrolabeText = [IO.File]::ReadAllText(
     (Join-Path $root 'libs\Astrolabe\Astrolabe.lua'))
@@ -209,6 +212,133 @@ foreach ($relative in $privateMapConsumers) {
         Add-ValidationError (
             "3.3.5 map consumer bypasses the private map facade: $relative")
     }
+}
+
+# A private timer driver prevents partial C_Timer implementations supplied by
+# private-server UI packs from stalling guide progression. Just as with C_Map,
+# a foreign namespace must retain its exact table and method identities.
+if ($timerFacadeText -notmatch
+        'addon\._ownsGlobalCTimer335\s*=\s*ownsGlobalTimer' -or
+    $timerFacadeText -notmatch
+        'local\s+ownsGlobalTimer\s*=\s*inheritedTimer\s*==\s*nil' -or
+    $timerFacadeText -notmatch
+        'addon\.timerAPI335\s*=\s*timerAPI' -or
+    $timerFacadeText -notmatch 'if\s+ownsGlobalTimer\s+then' -or
+    $timerFacadeText -match
+        '(?s)if\s+not\s+_G\.C_Timer\s+then.*function\s+C_Timer\.' -or
+    $bootstrapText -match 'RXPCompat335TimerFrame') {
+    Add-ValidationError (
+        'The 3.3.5 timer bridge must stay private and publish globally only ' +
+        'when RXPGuides created C_Timer.')
+}
+
+if ($bootstrapText -notmatch
+        'addon\.MarkQuestTurnedIn335\s*=\s*markQuestTurnedIn' -or
+    $bootstrapText -notmatch
+        'completedCache\[questID\]\s*=\s*true') {
+    Add-ValidationError (
+        'Confirmed 3.3.5 turn-ins must remain visible to later prerequisites.')
+}
+
+# Derive consumers from the recursively resolved 30300 load graph. Guide files
+# are data here: their C_Timer snippets are copy/paste player macros, not calls
+# made by RXPGuides. All executable first-party consumers must bind privately.
+$privateTimerConsumers = [Collections.Generic.List[string]]::new()
+$rootPrefix = $root.TrimEnd([IO.Path]::DirectorySeparatorChar,
+                            [IO.Path]::AltDirectorySeparatorChar) +
+                  [IO.Path]::DirectorySeparatorChar
+foreach ($loadedPath in $loadedFiles) {
+    if ([IO.Path]::GetExtension($loadedPath) -ine '.lua' -or
+        -not $loadedPath.StartsWith($rootPrefix,
+                                   [StringComparison]::OrdinalIgnoreCase)) {
+        continue
+    }
+    $relative = $loadedPath.Substring($rootPrefix.Length)
+    if ($relative -ieq 'Compat\TimerFacade335.lua' -or
+        $relative.StartsWith('Guides\',
+                            [StringComparison]::OrdinalIgnoreCase)) {
+        continue
+    }
+    $text = [IO.File]::ReadAllText($loadedPath)
+    if ($text -match
+        '(?<![\w\.])C_Timer\.(?:After|NewTimer|NewTicker)\s*\(' -or
+        $text -match
+        '_G\.C_Timer\.(?:After|NewTimer|NewTicker)\s*\(') {
+        $privateTimerConsumers.Add($relative)
+    }
+}
+foreach ($relative in ($privateTimerConsumers | Sort-Object)) {
+    $text = [IO.File]::ReadAllText((Join-Path $root $relative))
+    if ($text -notmatch
+            'local\s+C_Timer\s*=\s*addon\.timerAPI335\s+or\s+_G\.C_Timer' -or
+        $text -match '_G\.C_Timer\.(?:After|NewTimer|NewTicker)') {
+        Add-ValidationError (
+            "3.3.5 timer consumer bypasses the private timer facade: $relative")
+    }
+}
+
+# Keep the accepted PR #4 quest-log corrections and the exact-current-step
+# redraw ordering covered even on CI hosts which do not run a WoW client.
+$questLogText = [IO.File]::ReadAllText((Join-Path $root 'Guide\QuestLog.lua'))
+if ($questLogText -notmatch
+        'questID\s*=\s*tonumber\(questInfo\.questID\)' -or
+    $questLogText -notmatch
+        'GetLegacyQuestIDAtIndex\(questData\.questLogIndex\)' -or
+    $questLogText -notmatch 'RegisterEvent\("QUEST_LOG_UPDATE"\)' -or
+    $questLogText -notmatch
+        'QUEST_LOG_UPDATE"\s+then\s+addon\.orphanedList\s*=\s*nil') {
+    Add-ValidationError (
+        'The guarded 3.3.5 quest-log completion, abandon, or cache fix is missing.')
+}
+
+$guideWindowText = [IO.File]::ReadAllText((Join-Path $root 'UI\GuideWindow.lua'))
+$addonText = [IO.File]::ReadAllText((Join-Path $root 'Core\Addon.lua'))
+$settlementMatch = [regex]::Match(
+    $addonText,
+    '(?s)questSettlementCallbacks\.Reconcile\s*=\s*function\(disabled\)' +
+        '.*?\r?\nend')
+$settlementBlock = if ($settlementMatch.Success) {
+    $settlementMatch.Value
+} else { '' }
+$markTurnInIndex = $settlementBlock.IndexOf(
+    'addon.MarkQuestTurnedIn335(questId)', [StringComparison]::Ordinal)
+$completeElementIndex = $settlementBlock.IndexOf(
+    'CompleteConfirmedQuestElement(active.element', [StringComparison]::Ordinal)
+if (-not $settlementMatch.Success -or $markTurnInIndex -lt 0 -or
+    $completeElementIndex -lt 0 -or
+    $markTurnInIndex -gt $completeElementIndex) {
+    Add-ValidationError (
+        'Exact reward settlement must cache the confirmed 3.3.5 turn-in ' +
+        'before completing its guide element.')
+}
+
+$completionMatch = [regex]::Match(
+    $guideWindowText,
+    '(?s)elseif\s+step\.index\s*>=\s*RXPCData\.currentStep\s+then' +
+        '.*?\r?\n\s*return\s*\r?\n\s*end')
+$completionBlock = if ($completionMatch.Success) { $completionMatch.Value } else { '' }
+$advanceIndex = $completionBlock.IndexOf('addon.loadNextStep = true',
+                                          [StringComparison]::Ordinal)
+$redrawIndex = $completionBlock.IndexOf(
+    'pcall(updateFrame, nil, step.index, true)',
+    [StringComparison]::Ordinal)
+if (-not $completionMatch.Success -or
+    $completionBlock -notmatch
+        'local\s+shouldAdvance\s*=\s*step\.index\s*==\s*RXPCData\.currentStep' -or
+    $completionBlock -notmatch
+        'if\s+shouldAdvance\s+then\s+addon\.loadNextStep\s*=\s*true\s+end' -or
+    $completionBlock -notmatch
+        'local\s+updateFrame\s*=\s*bottomFrame\s+and\s+' +
+            'bottomFrame\.UpdateFrame' -or
+    $completionBlock -notmatch
+        'pcall\(updateFrame,\s*nil,\s*step\.index,\s*true\)' -or
+    $advanceIndex -lt 0 -or $redrawIndex -lt 0 -or
+    $advanceIndex -gt $redrawIndex -or
+    $guideWindowText -match
+        'BottomFrame\.UpdateFrame\(nil,\s*nil,\s*step\.index\)') {
+    Add-ValidationError (
+        'Guide completion must commit only the exact current step before a ' +
+        'correctly addressed protected redraw.')
 }
 
 function ConvertTo-StableMapKey([string]$Name) {

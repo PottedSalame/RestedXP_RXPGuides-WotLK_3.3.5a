@@ -17,6 +17,7 @@ local function loadAddonFile(path, addon)
 end
 
 local timers, tickers = {}, {}
+local foreignTimerCalls = 0
 local combat = false
 local eventFrame
 local function newHandle(callback)
@@ -28,11 +29,13 @@ end
 
 _G.C_Timer = {
     NewTimer = function(_, callback)
+        foreignTimerCalls = foreignTimerCalls + 1
         local handle = newHandle(callback)
         timers[#timers + 1] = handle
         return handle
     end,
     NewTicker = function(_, callback)
+        foreignTimerCalls = foreignTimerCalls + 1
         local handle = newHandle(callback)
         tickers[#tickers + 1] = handle
         return handle
@@ -50,6 +53,150 @@ end
 _G.geterrorhandler = function() return function() end end
 
 local addon = {}
+
+-- RXPGuides must remain independent from partial or broken C_Timer facades
+-- installed by private-server UI packs. Preserve the foreign namespace exactly
+-- while driving all first-party scheduling from the private frame-backed API.
+local mockTime = 0
+_G.GetBuildInfo = function() return "3.3.5", "Release", "", 30300 end
+_G.GetTime = function() return mockTime end
+_G.UIParent = {}
+
+local foreignTimer = _G.C_Timer
+local foreignAfter = function() foreignTimerCalls = foreignTimerCalls + 1 end
+foreignTimer.After = foreignAfter
+local foreignNewTimer = foreignTimer.NewTimer
+local foreignNewTicker = foreignTimer.NewTicker
+local foreignMeta = {fixture = true}
+setmetatable(foreignTimer, foreignMeta)
+
+local timerAddon = {}
+loadAddonFile("Compat/TimerFacade335.lua", timerAddon)
+local timerDriver = eventFrame
+check(_G.C_Timer == foreignTimer and getmetatable(_G.C_Timer) == foreignMeta and
+          _G.C_Timer.After == foreignAfter and
+          _G.C_Timer.NewTimer == foreignNewTimer and
+          _G.C_Timer.NewTicker == foreignNewTicker,
+      "foreign C_Timer ownership, metatable, or function identity was overwritten")
+check(timerAddon.timerAPI335 and timerAddon.timerAPI335 ~= foreignTimer and
+          not timerAddon._ownsGlobalCTimer335,
+      "private timer facade was not created beside a foreign C_Timer")
+
+local afterCalls, nestedCalls = 0, 0
+timerAddon.timerAPI335.After(0, function()
+    afterCalls = afterCalls + 1
+    timerAddon.timerAPI335.After(0, function() nestedCalls = nestedCalls + 1 end)
+end)
+check(afterCalls == 0, "zero-delay timer ran synchronously")
+timerDriver.callback(timerDriver, 0)
+check(afterCalls == 1 and nestedCalls == 0,
+      "private timer did not defer nested zero-delay work to another update")
+timerDriver.callback(timerDriver, 0)
+check(nestedCalls == 1, "nested private timer did not run on the next update")
+
+local finiteCalls = 0
+local finiteTicker = timerAddon.timerAPI335.NewTicker(1, function()
+    finiteCalls = finiteCalls + 1
+end, 2)
+mockTime = 1
+timerDriver.callback(timerDriver, 1)
+mockTime = 2
+timerDriver.callback(timerDriver, 1)
+check(finiteCalls == 2 and finiteTicker:IsCancelled(),
+      "finite private ticker did not stop after its requested iterations")
+
+local staleHandle = timerAddon.timerAPI335.NewTimer(0, function() end)
+timerDriver.callback(timerDriver, 0)
+local laterTimerCalls = 0
+local laterHandle = timerAddon.timerAPI335.NewTimer(1, function()
+    laterTimerCalls = laterTimerCalls + 1
+end)
+staleHandle:Cancel()
+check(staleHandle ~= laterHandle and not laterHandle:IsCancelled(),
+      "a stale completed handle aliased or cancelled a later timer")
+mockTime = 3
+timerDriver.callback(timerDriver, 1)
+check(laterTimerCalls == 1,
+      "a stale completed handle prevented a later timer from firing")
+
+local cancelledCalls = 0
+local cancelledTimer = timerAddon.timerAPI335.NewTimer(1, function()
+    cancelledCalls = cancelledCalls + 1
+end)
+cancelledTimer:Cancel()
+mockTime = 4
+timerDriver.callback(timerDriver, 1)
+check(cancelledCalls == 0 and cancelledTimer:IsCancelled(),
+      "cancelled private timer still invoked its callback")
+
+local timerErrors, survivingCallbacks = 0, 0
+local savedErrorHandler = _G.geterrorhandler
+_G.geterrorhandler = function()
+    return function() timerErrors = timerErrors + 1 end
+end
+timerAddon.timerAPI335.After(0, function() error("timer fixture") end)
+timerAddon.timerAPI335.After(0, function()
+    survivingCallbacks = survivingCallbacks + 1
+end)
+timerDriver.callback(timerDriver, 0)
+check(timerErrors == 1 and survivingCallbacks == 1,
+      "one private timer error interrupted unrelated due callbacks")
+
+local callbacksAfterBrokenReporter = 0
+_G.geterrorhandler = function() error("broken error handler fixture") end
+timerAddon.timerAPI335.After(0, function() error("reported fixture") end)
+timerAddon.timerAPI335.After(0, function()
+    callbacksAfterBrokenReporter = callbacksAfterBrokenReporter + 1
+end)
+timerDriver.callback(timerDriver, 0)
+check(callbacksAfterBrokenReporter == 1,
+      "a broken error handler interrupted private timer cleanup")
+_G.geterrorhandler = savedErrorHandler
+
+local privateSchedulerAddon = {timerAPI335 = timerAddon.timerAPI335}
+privateSchedulerAddon.services = {
+    Register = function(_, _, instance, alias)
+        if alias then privateSchedulerAddon[alias] = instance end
+        return instance
+    end,
+}
+loadAddonFile("Core/Scheduler.lua", privateSchedulerAddon)
+local foreignCallsBefore = foreignTimerCalls
+local privateSchedulerCalls = 0
+privateSchedulerAddon.scheduler:After({}, "private", 0, function()
+    privateSchedulerCalls = privateSchedulerCalls + 1
+end)
+timerDriver.callback(timerDriver, 0)
+check(privateSchedulerCalls == 1 and foreignTimerCalls == foreignCallsBefore,
+      "core scheduler called a foreign C_Timer instead of the private facade")
+
+_G.C_Timer = nil
+local standaloneTimerAddon = {}
+loadAddonFile("Compat/TimerFacade335.lua", standaloneTimerAddon)
+check(standaloneTimerAddon._ownsGlobalCTimer335 and
+          type(_G.C_Timer) == "table" and
+          type(_G.C_Timer.After) == "function" and
+          type(_G.C_Timer.NewTimer) == "function" and
+          type(_G.C_Timer.NewTicker) == "function" and
+          _G.C_Timer ~= standaloneTimerAddon.timerAPI335,
+      "standalone client did not receive a separate global timer facade")
+local privateNewTimer = standaloneTimerAddon.timerAPI335.NewTimer
+_G.C_Timer.NewTimer = function() error("foreign replacement") end
+check(standaloneTimerAddon.timerAPI335.NewTimer == privateNewTimer,
+      "later global timer replacement mutated the private timer facade")
+
+_G.C_Timer = false
+local malformedGlobalTimerAddon = {}
+loadAddonFile("Compat/TimerFacade335.lua", malformedGlobalTimerAddon)
+check(_G.C_Timer == false and malformedGlobalTimerAddon.timerAPI335 and
+          not malformedGlobalTimerAddon._ownsGlobalCTimer335,
+      "a non-table foreign C_Timer value was overwritten")
+_G.C_Timer = foreignTimer
+
+-- Continue the general runtime fixture with the same TOC-style private timer
+-- service. This ensures Scheduler and optional compatibility modules below do
+-- not silently fall back to the deliberately foreign C_Timer test double.
+addon.timerAPI335 = timerAddon.timerAPI335
 
 -- The 3.3.5 map facade must remain private when another addon already owns
 -- C_Map, while standalone RXPGuides still publishes its compatibility API.
@@ -619,6 +766,11 @@ check(addon.services:Require("fixture") == service,
 check(not pcall(function() addon.services:Register("fixture", {}) end),
       "duplicate services were accepted")
 
+-- Exercise Scheduler through the TOC-style private timer driver, not the
+-- deliberately inert foreign C_Timer fixture installed at the top of this
+-- file.
+mockTime = 20
+_G.GetTime = function() return mockTime end
 local owner, calls = {}, 0
 local first = addon.scheduler:After(owner, "refresh", 1, function()
     calls = calls + 1
@@ -626,9 +778,10 @@ end)
 local second = addon.scheduler:After(owner, "refresh", 1, function()
     calls = calls + 1
 end)
-check(first.cancelled, "replaced timer was not cancelled")
+check(first:IsCancelled(), "replaced timer was not cancelled")
 check(addon.scheduler:Has(owner, "refresh"), "active timer was not indexed")
-second.callback(second)
+mockTime = 21
+timerDriver.callback(timerDriver, 1)
 check(calls == 1 and not addon.scheduler:Has(owner, "refresh"),
       "one-shot timer did not clear itself")
 
@@ -637,8 +790,7 @@ addon.scheduler:AfterCombat(owner, "secure", function() calls = calls + 1 end)
 check(addon.scheduler:Has(owner, "secure"), "combat callback was not queued")
 combat = false
 eventFrame.callback(eventFrame, "PLAYER_REGEN_ENABLED")
-local combatTimer = timers[#timers]
-combatTimer.callback(combatTimer)
+timerDriver.callback(timerDriver, 0)
 check(calls == 2 and not addon.scheduler:Has(owner, "secure"),
       "combat callback did not flush once")
 

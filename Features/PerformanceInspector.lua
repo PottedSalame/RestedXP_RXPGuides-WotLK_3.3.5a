@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local format = string.format
 local L = addon.locale.Get
 local floor, max, min = math.floor, math.max, math.min

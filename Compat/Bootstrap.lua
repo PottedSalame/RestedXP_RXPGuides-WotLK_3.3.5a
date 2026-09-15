@@ -797,92 +797,6 @@ end
 -- GetContainerItemQuestInfo etc. left to per-namespace polyfills above.
 
 --=========================================================================
--- C_Timer  (OnUpdate-based scheduler; must be self-contained since this file
---           loads before AceTimer)
---=========================================================================
-if not _G.C_Timer then
-    local C_Timer = ns("C_Timer")
-    local scheduler = CreateFrame("Frame", "RXPCompat335TimerFrame")
-    local active = {}      -- ticker -> true
-    local pool = {}
-
-    local function releaseTicker(ticker)
-        active[ticker] = nil
-        ticker._callback = nil
-        pool[#pool + 1] = ticker
-    end
-
-    scheduler:SetScript("OnUpdate", function(_, elapsed)
-        local now = GetTime()
-        -- Snapshot to allow tickers to schedule new tickers safely.
-        local due
-        for ticker in pairs(active) do
-            if ticker._cancelled then
-                releaseTicker(ticker)
-            elseif now >= ticker._expires then
-                due = due or {}
-                due[#due + 1] = ticker
-            end
-        end
-        if not due then return end
-        for i = 1, #due do
-            local ticker = due[i]
-            if not ticker._cancelled and active[ticker] then
-                local cb = ticker._callback
-                ticker._iterations = ticker._iterations - 1
-                if ticker._iterations <= 0 then
-                    releaseTicker(ticker)
-                else
-                    ticker._expires = now + ticker._interval
-                end
-                if cb then
-                    -- Ticker callbacks receive the ticker as the arg (Blizzard behavior).
-                    local ok, err = pcall(cb, ticker)
-                    if not ok and _G.geterrorhandler then _G.geterrorhandler()(err) end
-                end
-            end
-        end
-    end)
-
-    local tickerMeta = {}
-    tickerMeta.__index = tickerMeta
-    function tickerMeta:Cancel()
-        self._cancelled = true
-    end
-    function tickerMeta:IsCancelled()
-        return self._cancelled == true
-    end
-
-    local function newTicker(interval, callback, iterations)
-        if type(interval) ~= "number" then interval = 0 end
-        if interval < 0 then interval = 0 end
-        local ticker = pool[#pool]
-        if ticker then
-            pool[#pool] = nil
-        else
-            ticker = setmetatable({}, tickerMeta)
-        end
-        ticker._cancelled = false
-        ticker._interval = interval
-        ticker._expires = GetTime() + interval
-        ticker._callback = callback
-        ticker._iterations = iterations or math.huge
-        active[ticker] = true
-        return ticker
-    end
-
-    function C_Timer.After(delay, callback)
-        newTicker(delay, function() if callback then callback() end end, 1)
-    end
-    function C_Timer.NewTimer(delay, callback)
-        return newTicker(delay, callback, 1)
-    end
-    function C_Timer.NewTicker(interval, callback, iterations)
-        return newTicker(interval, callback, iterations)
-    end
-end
-
---=========================================================================
 -- C_AddOns  (all map to old globals)
 --=========================================================================
 do
@@ -1643,6 +1557,22 @@ do
         return true
     end
 
+    local function markQuestTurnedIn(questID)
+        questID = tonumber(questID)
+        if not questID or questID <= 0 then return false end
+
+        -- Stock 3.3.5 does not reliably emit QUEST_TURNED_IN. The reward
+        -- transaction calls this only after its exact submitted quest has
+        -- settled, preserving completion for later prerequisite checks.
+        logIndexByQuestID[questID] = nil
+        onQuest[questID] = nil
+        completeByQuestID[questID] = nil
+        recentlyAccepted[questID] = nil
+        completedCache[questID] = true
+        return true
+    end
+    addon.MarkQuestTurnedIn335 = markQuestTurnedIn
+
     local questFrame = CreateFrame("Frame", "RXPCompat335QuestFrame")
     questFrame:RegisterEvent("QUEST_LOG_UPDATE")
     questFrame:RegisterEvent("QUEST_QUERY_COMPLETE")
@@ -1660,14 +1590,7 @@ do
                             (index and questIDFromIndex(index))
             if qid then markQuestAccepted(qid, index) end
         elseif event == "QUEST_TURNED_IN" then
-            local qid = tonumber(arg1)
-            if qid then
-                logIndexByQuestID[qid] = nil
-                onQuest[qid] = nil
-                completeByQuestID[qid] = nil
-                recentlyAccepted[qid] = nil
-                completedCache[qid] = true
-            end
+            markQuestTurnedIn(arg1)
         elseif event == "PLAYER_ENTERING_WORLD" then
             rebuildLog()
             if _G.QueryQuestsCompleted then _G.QueryQuestsCompleted() end
@@ -1710,6 +1633,7 @@ do
     end)
     def(C_QuestLog, "RefreshLegacyCache", rebuildLog)
     def(C_QuestLog, "MarkQuestAccepted", markQuestAccepted)
+    def(C_QuestLog, "MarkQuestTurnedIn", markQuestTurnedIn)
     def(C_QuestLog, "IsOnQuest", function(questID)
         questID = tonumber(questID)
         if not questID then return false end

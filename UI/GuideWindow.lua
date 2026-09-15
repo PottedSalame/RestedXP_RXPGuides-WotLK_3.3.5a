@@ -746,10 +746,35 @@ function addon.UpdateStepCompletion()
                 update = true
                 step.active = nil
             elseif step.index >= RXPCData.currentStep then
+                local shouldAdvance = step.index == RXPCData.currentStep
                 step.completed = true
-                RXPFrame.BottomFrame.UpdateFrame(nil, nil, step.index)
-                if step.index == RXPCData.currentStep then
-                    addon.loadNextStep = true
+                if shouldAdvance then addon.loadNextStep = true end
+
+                -- Commit progression before touching presentation. A malformed
+                -- row must not strand an otherwise completed step. The former
+                -- call passed step.index as languageRefresh (argument three)
+                -- and forced a broad rebuild instead of targeting this row.
+                local bottomFrame = RXPFrame and RXPFrame.BottomFrame
+                local updateFrame = bottomFrame and bottomFrame.UpdateFrame
+                local ok, redrawError
+                if type(updateFrame) == "function" then
+                    ok, redrawError = pcall(updateFrame, nil, step.index, true)
+                else
+                    ok, redrawError = false, "bottom frame is unavailable"
+                end
+                if not ok then
+                    addon.updateBottomFrame = true
+                    if addon.diagnostics and addon.diagnostics.Record then
+                        addon.diagnostics:Record("guide-redraw-error", {
+                            step = tonumber(step.index),
+                        })
+                    end
+                    if type(_G.geterrorhandler) == "function" then
+                        local gotHandler, handler = pcall(_G.geterrorhandler)
+                        if gotHandler and type(handler) == "function" then
+                            pcall(handler, redrawError)
+                        end
+                    end
                 end
                 return
             end

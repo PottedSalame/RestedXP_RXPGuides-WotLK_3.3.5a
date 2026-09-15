@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+local C_Timer = addon.timerAPI335 or _G.C_Timer
+
 local fmt, tinsert, tremove, mmax, mmin, ceil = string.format, table.insert,
     table.remove, math.max, math.min, math.ceil
 local GetMacroInfo, CreateMacro, EditMacro, InCombatLockdown, GetNumMacros = GetMacroInfo, CreateMacro, EditMacro,

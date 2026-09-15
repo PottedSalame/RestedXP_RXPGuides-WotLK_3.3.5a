@@ -1,6 +1,7 @@
 ﻿local addonName, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local UnitInRaid = UnitInRaid
 local fmt = string.format
 
@@ -99,7 +100,7 @@ end
 local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
 addon.release = GetAddOnMetadata(addonName, "Version")
 addon.title = GetAddOnMetadata(addonName, "Title")
-local cacheVersion = 34
+local cacheVersion = 35
 local L = addon.locale.Get
 
 if string.match(addon.release, 'project') then
@@ -1573,6 +1574,9 @@ questSettlementCallbacks.Reconcile = function(disabled)
     questSettlement:SetPhase(active.serial, "releasing", GetTime())
     CancelQuestSettlementTimers(false)
     questAcceptState:MarkTurnIn(GetTime())
+    if type(addon.MarkQuestTurnedIn335) == "function" then
+        addon.MarkQuestTurnedIn335(questId)
+    end
     CompleteConfirmedQuestElement(active.element, "QUEST_TURNED_IN", questId)
     ClearQuestInteraction(active.element, "turnin")
 

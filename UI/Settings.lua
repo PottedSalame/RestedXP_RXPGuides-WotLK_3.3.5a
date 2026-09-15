@@ -1,6 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 
 local AceConfig = LibStub("AceConfig-3.0")
 local LibDBIcon = LibStub("LibDBIcon-1.0")
@@ -87,8 +88,8 @@ addon.settings.AddToBlizzardOptions = AddToBlizzardOptions
 local function RunOnNextFrame(callback)
     if _G.RunNextFrame then
         _G.RunNextFrame(callback)
-    elseif _G.C_Timer and _G.C_Timer.After then
-        _G.C_Timer.After(0, callback)
+    elseif C_Timer and C_Timer.After then
+        C_Timer.After(0, callback)
     else
         callback()
     end

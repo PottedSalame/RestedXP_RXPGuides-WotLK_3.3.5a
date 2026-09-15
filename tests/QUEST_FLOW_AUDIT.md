@@ -141,7 +141,7 @@ These tests inspect source order with inert directive handlers: they do not
 simulate NPC dialogs, loot, combat, or the full dynamic step evaluator.
 
 Embedded metadata now uses a content signature as well as length. Cache
-revision 34 triggers a rebuild without clearing guide progress. Updating addon
+revision 35 triggers a rebuild without clearing guide progress. Updating addon
 files requires `/reload` before an already-running client uses the new source.
 
 Account-wide imported guides are restored before embedded content. If an old
@@ -175,8 +175,8 @@ list. `-FailOnLifecycleWarnings` promotes those findings to errors for focused
 review; `-FailOnEntryWarnings` does the same for cross-guide prerequisites.
 These are **unresolved review items**, not an approved exception allowlist.
 
-The final structural baseline is **50 files, 709 guides, 48,684 steps**.
-Quest-flow validation examines **360 Validated guides**, with **17,423
+The final structural baseline is **50 files, 711 guides, 48,799 steps**.
+Quest-flow validation examines **362 Validated guides**, with **17,485
 class/race/XP branch runs** and **1,364 complete next-guide route-matrix runs**.
 The route matrix carries mandatory accepted, objective, rewarded, and
 explicitly abandoned quest state through the selected 1-80 chapters. It is a
@@ -195,7 +195,7 @@ The validator caches parsed guide conditions and lifecycle events, reuses
 class/race route catalogs, and simulates one representative only when every
 loaded route XP expression proves a set of sampled rates behaviorally
 identical. Counts and exact profile labels are still fanned out for all
-**17,423** branch runs and **1,364** route runs. On the local Windows
+**17,485** branch runs and **1,364** route runs. On the local Windows
 PowerShell 5.1 benchmark, a full JSON audit dropped from **522.447 seconds**
 to **216.023 seconds** (about **59% faster**) without changing its findings.
 

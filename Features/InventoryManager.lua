@@ -1,4 +1,5 @@
 local addonName,addon = ...
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local L = addon.locale.Get
 
 local inventoryManager = {}

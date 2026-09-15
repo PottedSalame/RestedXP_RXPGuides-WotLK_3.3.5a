@@ -3,6 +3,7 @@ local _, addon = ...
 if addon.gameVersion ~= 30300 then return end
 
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local warned
 
 local function Enabled(value)
@@ -54,8 +55,8 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(_, event, name)
     if event == "ADDON_LOADED" and name ~= "Questie" and
         name ~= "Questie-335" then return end
-    if _G.C_Timer and _G.C_Timer.After then
-        _G.C_Timer.After(1, addon.CheckQuestieAutomationConflict)
+    if C_Timer and C_Timer.After then
+        C_Timer.After(1, addon.CheckQuestieAutomationConflict)
     else
         addon.CheckQuestieAutomationConflict()
     end

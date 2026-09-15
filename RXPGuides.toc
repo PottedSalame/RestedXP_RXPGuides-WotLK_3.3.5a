@@ -10,6 +10,7 @@
 
 # --- Compatibility prelude: MUST load before libraries and runtime files. ---
 Compat\Bootstrap.lua
+Compat\TimerFacade335.lua
 Compat\MapFacade335.lua
 Compat\InventoryCount335.lua
 

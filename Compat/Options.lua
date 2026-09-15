@@ -15,6 +15,7 @@
 
 local addonName, addon = ...
 local _G = _G
+local C_Timer = addon.timerAPI335 or _G.C_Timer
 local L = addon.locale and addon.locale.Get or function(text) return text end
 
 -- Only meaningful on the 3.3.5a build.
