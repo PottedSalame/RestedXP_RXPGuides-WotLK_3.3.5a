@@ -1484,16 +1484,21 @@ do
         return nil
     end
 
-    local function rebuildLog()
+    local seenOnLog = {}           -- questID -> true once observed on the log (survives rebuilds)
+    local rebuildingLog = false
+    local function enumerateLog()
         wipe(logIndexByQuestID); wipe(onQuest); wipe(completeByQuestID)
         local numEntries = _G.GetNumQuestLogEntries()
+        local counted = 0
         for i = 1, numEntries do
             local _, _, _, _, isHeader, _, isComplete = _G.GetQuestLogTitle(i)
             if not legacyTrue(isHeader) then
+                counted = counted + 1
                 local qid = questIDFromIndex(i)
                 if qid then
                     logIndexByQuestID[qid] = i
                     onQuest[qid] = true
+                    seenOnLog[qid] = true
                     recentlyAccepted[qid] = nil
                     if legacyTrue(isComplete) then
                         completeByQuestID[qid] = true
@@ -1501,37 +1506,37 @@ do
                 end
             end
         end
+        return counted
     end
 
-    -- GetQuestLogIndexByID returns 0 for a missing quest on many 3.3.5
-    -- clients. Since 0 is truthy in Lua, callers must never use that return
-    -- value as a boolean. Also verify that a positive index still identifies
-    -- the requested quest before admitting it into the cache.
-    local function validatedLogIndex(questID)
-        questID = tonumber(questID)
-        if not questID or questID <= 0 then return nil end
-
-        local index = tonumber(logIndexByQuestID[questID])
-        if index and index > 0 and questIDFromIndex(index) == questID then
-            return index
-        end
-        logIndexByQuestID[questID] = nil
-        onQuest[questID] = nil
-
-        if _G.GetQuestLogIndexByID then
-            index = tonumber(_G.GetQuestLogIndexByID(questID))
-            if index and index > 0 and questIDFromIndex(index) == questID then
-                logIndexByQuestID[questID] = index
-                onQuest[questID] = true
-                return index
+    local function rebuildLog()
+        if rebuildingLog then return end
+        rebuildingLog = true
+        local counted = enumerateLog()
+        local _, numQuests = _G.GetNumQuestLogEntries()
+        -- A collapsed quest-log header hides its quests from the index-based
+        -- 3.3.5 API. Expand for the enumeration and restore the player's view.
+        if type(numQuests) == "number" and counted < numQuests and
+            _G.ExpandQuestHeader and _G.CollapseQuestHeader then
+            local collapsed = {}
+            for i = 1, _G.GetNumQuestLogEntries() do
+                local title, _, _, _, isHeader, isCollapsed = _G.GetQuestLogTitle(i)
+                if legacyTrue(isHeader) and legacyTrue(isCollapsed) then
+                    collapsed[#collapsed + 1] = title
+                end
             end
-            -- A numeric zero is an authoritative "not in the quest log".
-            if index ~= nil then return nil end
+            _G.ExpandQuestHeader(0)
+            enumerateLog()
+            for i = _G.GetNumQuestLogEntries(), 1, -1 do
+                local title, _, _, _, isHeader = _G.GetQuestLogTitle(i)
+                if legacyTrue(isHeader) then
+                    for _, t in ipairs(collapsed) do
+                        if t == title then _G.CollapseQuestHeader(i) break end
+                    end
+                end
+            end
         end
-
-        rebuildLog()
-        index = tonumber(logIndexByQuestID[questID])
-        return index and index > 0 and index or nil
+        rebuildingLog = false
     end
 
     local function rebuildCompleted()
@@ -1550,6 +1555,7 @@ do
         -- the quest-log row one event or frame later. Keep a bounded positive
         -- shadow so acceptance and objective elements cannot miss that change.
         onQuest[questID] = true
+        seenOnLog[questID] = true
         recentlyAccepted[questID] = _G.GetTime and _G.GetTime() or 0
         if index and index > 0 and questIDFromIndex(index) == questID then
             logIndexByQuestID[questID] = index
@@ -1566,6 +1572,7 @@ do
         -- settled, preserving completion for later prerequisite checks.
         logIndexByQuestID[questID] = nil
         onQuest[questID] = nil
+        seenOnLog[questID] = nil
         completeByQuestID[questID] = nil
         recentlyAccepted[questID] = nil
         completedCache[questID] = true
@@ -1646,15 +1653,29 @@ do
     questFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     questFrame:SetScript("OnEvent", function(_, event, arg1, arg2)
         if event == "QUEST_LOG_UPDATE" then
-            local before = {}
-            for qid in pairs(onQuest) do before[qid] = true end
             rebuildLog()
             local removed = false
-            for qid in pairs(before) do
-                if not onQuest[qid] and not completedCache[qid] then
-                    removedFromLog[qid] = now()
-                    removed = true
-                    debugLine("Quest %d left the log, asking the server whether it was completed", qid)
+            local t = now()
+            -- Compare against every quest ever seen on the log, not just the
+            -- previous enumeration: a transient gap (same-NPC double turn-in,
+            -- collapsed header, log settling after an accept) must not hide a
+            -- later real removal.
+            for qid in pairs(seenOnLog) do
+                if not onQuest[qid] then
+                    seenOnLog[qid] = nil
+                    local acceptedAt = recentlyAccepted[qid]
+                    if not completedCache[qid] and
+                        not (acceptedAt and t - acceptedAt <= ACCEPTED_GRACE) then
+                        removedFromLog[qid] = t
+                        removed = true
+                        debugLine("Quest %d left the log, asking the server whether it was completed", qid)
+                    end
+                end
+            end
+            for qid in pairs(removedFromLog) do
+                if onQuest[qid] then
+                    removedFromLog[qid] = nil
+                    debugLine("Quest %d is back on the log, not a turn-in", qid)
                 end
             end
             if removed then

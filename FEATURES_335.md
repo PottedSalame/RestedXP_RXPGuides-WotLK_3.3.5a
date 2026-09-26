@@ -54,8 +54,10 @@ another guide addon left the `.turnin` step unchecked until the next `/reload`
 vanishes from the log on `QUEST_LOG_UPDATE`, calls `QueryQuestsCompleted()` (throttled
 to one call per 1.5 s, half a second after the change) and, on `QUEST_QUERY_COMPLETE`,
 marks the vanished quests the server reports as completed, refreshes the guide window
-and prints a debug line when `/rxp debug` is on. Abandoned quests are simply dropped
-from the pending list.
+and prints a debug line when `/rxp debug` is on. Removals are detected against every
+quest ever seen on the log (not only the previous enumeration), collapsed quest-log
+headers are expanded for the enumeration and restored afterwards, and a pending quest
+that reappears on the log is dropped; abandoned quests expire after two minutes.
 
 `addon.comms.PrettyDebug` (the `/rxp debug` chat output) now stringifies its arguments
 and never raises: the leveling tracker's "GUID changed" message formatted a nil player
