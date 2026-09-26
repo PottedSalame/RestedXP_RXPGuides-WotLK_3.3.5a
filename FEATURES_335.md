@@ -42,3 +42,22 @@ next login and leaves the guide window and Guide Hub available. A Lua syntax
 error in a file loaded by the TOC occurs before the addon bootstrap and cannot
 be recovered by this safe mode; repository validation and final in-game tests
 remain required before publishing a release.
+
+## Turn-ins outside the guide's reward transaction (2026-09-25)
+
+Stock 3.3.5 emits no `QUEST_TURNED_IN`, and the completed-quest list is only fetched
+from the server at login. Until now the compat layer marked a quest as turned in only
+when RestedXP's own quest automation submitted the reward, so a manual "Complete Quest"
+click, an auto turn-in addon (TurnIn calls `GetQuestReward` on `QUEST_COMPLETE`) or
+another guide addon left the `.turnin` step unchecked until the next `/reload`
+(observed on ChromieCraft). `Compat/Bootstrap.lua` now remembers every quest that
+vanishes from the log on `QUEST_LOG_UPDATE`, calls `QueryQuestsCompleted()` (throttled
+to one call per 1.5 s, half a second after the change) and, on `QUEST_QUERY_COMPLETE`,
+marks the vanished quests the server reports as completed, refreshes the guide window
+and prints a debug line when `/rxp debug` is on. Abandoned quests are simply dropped
+from the pending list.
+
+`addon.comms.PrettyDebug` (the `/rxp debug` chat output) now stringifies its arguments
+and never raises: the leveling tracker's "GUID changed" message formatted a nil player
+GUID during ADDON_LOADED on 3.3.5 and aborted the initialize phase whenever debug mode
+was on.

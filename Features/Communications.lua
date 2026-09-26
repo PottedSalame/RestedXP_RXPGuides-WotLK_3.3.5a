@@ -461,7 +461,13 @@ function addon.comms.PrettyDebug(msg, ...)
     if not msg then return end
     if not addon.settings.profile.debug then return end
 
-    msg = fmt(msg, ...)
+    -- Debug output must never raise: on 3.3.5 some callers pass values that are
+    -- still nil at startup (player GUID, cached names). Stringify every argument
+    -- and fall back to a plain concatenation if the format itself is bad.
+    local args = {...}
+    for i = 1, select("#", ...) do args[i] = tostring(args[i]) end
+    local ok, formatted = pcall(fmt, msg, unpack(args, 1, select("#", ...)))
+    msg = ok and formatted or (tostring(msg) .. " " .. table.concat(args, " "))
 
     local now = GetTime()
 

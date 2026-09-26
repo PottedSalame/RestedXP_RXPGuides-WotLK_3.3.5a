@@ -171,7 +171,7 @@ function addon.tracker:SetupTracker()
     if not self.db.profile.trackedGuid then self.db.profile.trackedGuid = addon.player.guid end
 
     if self.db.profile.trackedGuid ~= addon.player.guid then
-        addon.comms.PrettyDebug("GUID changed, saving %s and resetting for %s", addon.player.name, addon.player.guid)
+        addon.comms.PrettyDebug("GUID changed, saving %s and resetting for %s", tostring(addon.player.name), tostring(addon.player.guid))
 
         -- 3.3.5a GUIDs are hex (e.g. "0x00000000000123AB") with no dashes, so the
         -- modern "3rd dash-segment" split returns nil, which then errors as a nil

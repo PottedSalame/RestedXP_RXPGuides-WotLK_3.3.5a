@@ -1573,6 +1573,71 @@ do
     end
     addon.MarkQuestTurnedIn335 = markQuestTurnedIn
 
+    -- Turn-ins that bypass the guide's reward transaction (auto turn-in
+    -- addons such as TurnIn calling GetQuestReward on QUEST_COMPLETE, manual
+    -- clicks while another step is active, another guide addon) never reach
+    -- markQuestTurnedIn, and stock 3.3.5 emits no QUEST_TURNED_IN. Track the
+    -- quests that vanish from the log and ask the server which of them were
+    -- completed; QUEST_QUERY_COMPLETE then settles them.
+    local removedFromLog = {}      -- questID -> GetTime() when it vanished, awaiting the server answer
+    local lastCompletedQuery = 0
+    local COMPLETED_QUERY_THROTTLE = 1.5
+    local PENDING_LIFETIME = 120
+    local queryScheduled = false
+    local queryRetries = 0
+    local function now() return _G.GetTime and _G.GetTime() or 0 end
+    local function debugLine(msg, ...)
+        if addon.comms and addon.comms.PrettyDebug then addon.comms.PrettyDebug(msg, ...) end
+    end
+    local function after(delay, fn)
+        if C_Timer and C_Timer.After then C_Timer.After(delay, fn) else fn() end
+    end
+    local function scheduleCompletedQuery(delay)
+        if queryScheduled then return end
+        queryScheduled = true
+        after(delay, function()
+            queryScheduled = false
+            if not next(removedFromLog) then return end
+            local wait = COMPLETED_QUERY_THROTTLE - (now() - lastCompletedQuery)
+            if wait > 0 then return scheduleCompletedQuery(wait) end
+            lastCompletedQuery = now()
+            if _G.QueryQuestsCompleted then _G.QueryQuestsCompleted() end
+            -- The answer normally arrives within a second. If the pending quests
+            -- are still unsettled after 3 s (missed answer, abandoned quest), ask
+            -- again a few times before giving up until the next removal.
+            after(3, function()
+                if next(removedFromLog) and queryRetries < 3 then
+                    queryRetries = queryRetries + 1
+                    scheduleCompletedQuery(0)
+                end
+            end)
+        end)
+    end
+    local function settleRemovedQuests()
+        local marked = false
+        local t = now()
+        for qid, since in pairs(removedFromLog) do
+            if completedCache[qid] then
+                removedFromLog[qid] = nil
+                markQuestTurnedIn(qid)
+                if type(addon.recentTurnIn) == "table" then addon.recentTurnIn[qid] = t end
+                debugLine("Quest %d left the log and the server reports it completed; marked as turned in", qid)
+                marked = true
+            elseif t - since > PENDING_LIFETIME then
+                removedFromLog[qid] = nil
+                debugLine("Quest %d left the log but the server never reported it completed (abandoned?)", qid)
+            end
+        end
+        if not next(removedFromLog) then queryRetries = 0 end
+        if marked then
+            addon.updateSteps = true
+            if addon.RXPFrame and addon.RXPFrame.RefreshQuestState then
+                addon.RXPFrame.RefreshQuestState("QUEST_LOG_UPDATE")
+            end
+            if addon.UpdateStepCompletion then addon.UpdateStepCompletion() end
+        end
+    end
+
     local questFrame = CreateFrame("Frame", "RXPCompat335QuestFrame")
     questFrame:RegisterEvent("QUEST_LOG_UPDATE")
     questFrame:RegisterEvent("QUEST_QUERY_COMPLETE")
@@ -1581,9 +1646,24 @@ do
     questFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     questFrame:SetScript("OnEvent", function(_, event, arg1, arg2)
         if event == "QUEST_LOG_UPDATE" then
+            local before = {}
+            for qid in pairs(onQuest) do before[qid] = true end
             rebuildLog()
+            local removed = false
+            for qid in pairs(before) do
+                if not onQuest[qid] and not completedCache[qid] then
+                    removedFromLog[qid] = now()
+                    removed = true
+                    debugLine("Quest %d left the log, asking the server whether it was completed", qid)
+                end
+            end
+            if removed then
+                queryRetries = 0
+                scheduleCompletedQuery(0.5)
+            end
         elseif event == "QUEST_QUERY_COMPLETE" then
             rebuildCompleted()
+            settleRemovedQuests()
         elseif event == "QUEST_ACCEPTED" then
             local index = tonumber(arg1)
             local qid = tonumber(arg2) or
