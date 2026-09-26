@@ -1539,6 +1539,37 @@ do
         rebuildingLog = false
     end
 
+    -- GetQuestLogIndexByID returns 0 for a missing quest on many 3.3.5
+    -- clients. Since 0 is truthy in Lua, callers must never use that return
+    -- value as a boolean. Also verify that a positive index still identifies
+    -- the requested quest before admitting it into the cache.
+    local function validatedLogIndex(questID)
+        questID = tonumber(questID)
+        if not questID or questID <= 0 then return nil end
+
+        local index = tonumber(logIndexByQuestID[questID])
+        if index and index > 0 and questIDFromIndex(index) == questID then
+            return index
+        end
+        logIndexByQuestID[questID] = nil
+        onQuest[questID] = nil
+
+        if _G.GetQuestLogIndexByID then
+            index = tonumber(_G.GetQuestLogIndexByID(questID))
+            if index and index > 0 and questIDFromIndex(index) == questID then
+                logIndexByQuestID[questID] = index
+                onQuest[questID] = true
+                return index
+            end
+            -- A numeric zero is an authoritative "not in the quest log".
+            if index ~= nil then return nil end
+        end
+
+        rebuildLog()
+        index = tonumber(logIndexByQuestID[questID])
+        return index and index > 0 and index or nil
+    end
+
     local function rebuildCompleted()
         if _G.GetQuestsCompleted then
             wipe(completedCache)
