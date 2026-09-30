@@ -13,8 +13,11 @@
 .aider*
 
 %SystemDrive%
-# Local architecture and refactor notes
+# Local developer handbook, architecture, and refactor notes
+DEVELOPER_GUIDE.md
+[Dd]eveloper_[Gg]uide.md
 ARCHITECTURE.md
+[Aa]rchitecture.md
 ARCHITECTURE_*.md
 REFACTOR_NOTES.md
 REFACTOR_*.md
