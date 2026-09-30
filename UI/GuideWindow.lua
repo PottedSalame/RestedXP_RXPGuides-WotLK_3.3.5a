@@ -739,7 +739,8 @@ function addon.UpdateStepCompletion()
             step.hidetip = c
             step.active = not c
         elseif completed and step.index then
-            if step.active and GetTime() - addon.lastStepUpdate > 1 then
+            if step.active and not step.completionNotified and GetTime() - addon.lastStepUpdate > 1 then
+                step.completionNotified = true
                 addon:QueueMessage("RXP_STEP_COMPLETE",step,addon.currentGuide)
             end
             if step.sticky then
@@ -748,8 +749,9 @@ function addon.UpdateStepCompletion()
                 step.active = nil
             elseif step.index >= RXPCData.currentStep then
                 local shouldAdvance = step.index == RXPCData.currentStep
+                if not step.completed then step.completionFromElements = true end
                 step.completed = true
-                if shouldAdvance then addon.loadNextStep = true end
+                if shouldAdvance then addon.guideState:QueueAdvance(step) end
 
                 -- Commit progression before touching presentation. A malformed
                 -- row must not strand an otherwise completed step. The former
@@ -789,6 +791,10 @@ function addon.SetStep(n, n2, loopback)
     if type(n) == "table" then n = n2 end
     local guide = addon.currentGuide
     if not guide then return end
+    addon.guideState:CancelAdvance()
+    if guide.steps[n] and n ~= RXPCData.currentStep then
+        guide.steps[n].completionNotified = nil
+    end
     local group = guide.group
 
     addon.lastStepUpdate = GetTime()
@@ -851,7 +857,9 @@ function addon.SetStep(n, n2, loopback)
     for i, step in ipairs(activeSteps) do
         step.active = nil
         tinsert(previousSteps,step)
-        if n < #guide.steps then step.completed = nil end
+        if n < #guide.steps then
+            step.completed, step.completionFromElements = nil, nil
+        end
     end
 
     addon:ScheduleTask(addon.RegisterGeneratedSteps)
@@ -1292,7 +1300,9 @@ function addon.GoToStep(n, n2)
         addon.speedrun.RecordDeviation then
         addon.speedrun:RecordDeviation("manual-skip", n)
     end
-    if guide.steps[n] then guide.steps[n].completed = nil end
+    if guide.steps[n] then
+        guide.steps[n].completed, guide.steps[n].completionNotified = nil, nil
+    end
     return addon.SetStep(n)
 end
 
@@ -2331,12 +2341,15 @@ end
 
 function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
     addon.loadNextStep = false
+    if addon.guideState.CancelAdvance then addon.guideState:CancelAdvance() end
     if addon.questAutomation and addon.questAutomation.ResetForGuideChange then
         addon.questAutomation:ResetForGuideChange()
     end
 
     local savedStep = OnLoad and RXPCData and RXPCData.currentStep
     local savedStepId = OnLoad and RXPCData and RXPCData.currentStepId
+    local savedFlags = OnLoad and RXPCData and {
+        stepSkip = RXPCData.stepSkip, completedWaypoints = RXPCData.completedWaypoints}
     local requestedGuide = guide
 
     local function LoadEmptyGuide()
@@ -2545,6 +2558,7 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
 
     for n, step in ipairs(guide.steps) do
         step.index = n
+        step.completionNotified = nil
         if step.completewith and step.completewith ~= "next" and
             not guide.labels[step.completewith] then
             addon.comms.PrettyDebug("Unknown #completewith label '%s' in %s; using next step",
@@ -2745,6 +2759,17 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
         RXPCData.currentStep = restoreStep or 1
     end
 
+    if addon.guideState.RestoreFlags then
+        local checkpoint = OnLoad and addon.guideState:Get(guide)
+        if OnLoad and not checkpoint then
+            checkpoint = savedFlags
+            -- Persist the recovery record through the first SaveCurrent.
+            RXPCData.guideProgress = RXPCData.guideProgress or {}
+            RXPCData.guideProgress[guide.key] = checkpoint
+        end
+        addon.guideState:RestoreFlags(guide, checkpoint)
+    end
+
     addon.SetStep(RXPCData.currentStep)
     BottomFrame.hiddenFrames = 0
     BottomFrame.UpdateFrame()
@@ -2757,6 +2782,10 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
 end
 
 function addon:ReloadGuide(keepStep)
+    -- Capture the OLD visible layout before settings rebuild/filter it.
+    -- Do not do this in LoadGuide: backup restoration uses that path and must
+    -- not overwrite the imported checkpoint with the currently open guide.
+    if keepStep and addon.guideState.SaveCurrent then addon.guideState:SaveCurrent() end
     local guide = addon.GetGuideTable(RXPCData.currentGuideGroup,
                                       RXPCData.currentGuideName)
     return guide and addon:LoadGuide(guide,keepStep)

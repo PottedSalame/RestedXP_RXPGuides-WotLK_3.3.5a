@@ -999,5 +999,6 @@ assert(loadfile(root .. "/tests/export-window.lua"))()(root)
 assert(loadfile(root .. "/tests/map-performance.lua"))()(root)
 assert(loadfile(root .. "/tests/map-lines.lua"))()(root)
 assert(loadfile(root .. "/tests/quest-manual-turnin.lua"))()(root)
+assert(loadfile(root .. "/tests/step-progression.lua"))()(root)
 if failures > 0 then os.exit(1) end
 print("Core Lua 5.1 tests passed.")

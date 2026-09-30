@@ -132,6 +132,9 @@ local function ValidateBackupPayload(payload)
             (checkpoint.step ~= nil and type(checkpoint.step) ~= "number") then
             return false
         end
+        if checkpoint.progress ~= nil and
+            (not addon.guideState.ValidateFlags or
+                not addon.guideState:ValidateFlags(checkpoint.progress)) then return false end
     end
     if payload.character.levelingArchiveRunId ~= nil and
         type(payload.character.levelingArchiveRunId) ~= "number" then return false end
@@ -391,6 +394,7 @@ function guideState:SaveCurrent()
     local step = tonumber(RXPCData.currentStep) or 1
     if not guide.steps or step < 1 or step > #guide.steps then step = 1 end
     local stepData = guide.steps and guide.steps[step]
+    local previous = RXPCData.guideProgress[key]
     RXPCData.guideProgress[key] = {
         group = guide.group,
         subgroup = guide.subgroup,
@@ -401,6 +405,8 @@ function guideState:SaveCurrent()
         completedWaypoints = CopySafe(RXPCData.completedWaypoints or {}, 0),
         lastOpened = time()
     }
+    RXPCData.guideProgress[key].progress = self:CaptureFlags(guide,
+        type(previous) == "table" and previous.progress)
 end
 
 function guideState:Get(guide)
@@ -414,7 +420,7 @@ function guideState:Get(guide)
     end
     local progress = key and RXPCData.guideProgress
     local checkpoint = progress and progress[key]
-    if checkpoint then return checkpoint, key end
+    if type(checkpoint) == "table" then return checkpoint, key end
 
     -- Schema-0 saves did not retain the subgroup. Find that one legacy entry
     -- by its stable group/name pair, then move it to the current key. This is
@@ -632,6 +638,9 @@ function roadmap:ApplyBackup(payload, replace)
     if type(payload) ~= "table" or type(payload.character) ~= "table" then
         return false, L("Backup has no character data.")
     end
+    if not ValidateBackupPayload(payload) then
+        return false, L("Unsupported backup schema.")
+    end
     self.backupRollback = {
         settings = CopySafe(addon.settings.profile, 0),
         character = CopySafe(RXPCData, 0),
@@ -646,8 +655,12 @@ function roadmap:ApplyBackup(payload, replace)
         RXPCData.recentGuides = CopySafe(payload.character.recentGuides or {}, 0)
     else
         MergeInto(addon.settings.profile, payload.settings or {})
-        MergeInto(RXPCData.guideProgress,
-                  payload.character.guideProgress or {})
+        -- A checkpoint is an atomic snapshot. Recursively mixing two layouts
+        -- can combine old numeric flags with a newer identity map.
+        RXPCData.guideProgress = RXPCData.guideProgress or {}
+        for key, checkpoint in pairs(payload.character.guideProgress or {}) do
+            RXPCData.guideProgress[key] = CopySafe(checkpoint, 0)
+        end
         RXPCData.recentGuides = CopySafe(payload.character.recentGuides or
                                             RXPCData.recentGuides, 0)
     end

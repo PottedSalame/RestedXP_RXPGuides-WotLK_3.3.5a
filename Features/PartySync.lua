@@ -368,7 +368,10 @@ function sync:CreatePanel()
     advance:SetText(L("Advance Once"))
     advance:SetScript("OnClick", function()
         sync:OverrideWaitOnce()
-        addon.loadNextStep = true
+        -- Keep the existing manual override and browse-mode semantics,
+        -- while binding the request to the guide/step the player clicked.
+        local step = addon.currentGuide and addon.currentGuide.steps[RXPCData.currentStep]
+        if step then addon.guideState:QueueAdvance(step, true) end
     end)
     frame:Hide()
     self.frame = frame

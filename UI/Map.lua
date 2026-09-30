@@ -772,6 +772,9 @@ local function generatePins(steps, numPins, startingIndex, isMiniMap)
                 element.wpHash = GetPinHash(element.x,element.y,element.zone,n,step)
                 n = n + 1
             end
+            if not isMiniMap and not skipWp and addon.guideState and addon.guideState.RestoreWaypoint then
+                addon.guideState:RestoreWaypoint(step, element)
+            end
             if not isMiniMap and step.active and not step.speedrunTemporary and
                 not skipWp then
                 local wpList = RXPCData.completedWaypoints[step.index or "tip"] or {}

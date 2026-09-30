@@ -318,7 +318,7 @@ $completionMatch = [regex]::Match(
     '(?s)elseif\s+step\.index\s*>=\s*RXPCData\.currentStep\s+then' +
         '.*?\r?\n\s*return\s*\r?\n\s*end')
 $completionBlock = if ($completionMatch.Success) { $completionMatch.Value } else { '' }
-$advanceIndex = $completionBlock.IndexOf('addon.loadNextStep = true',
+$advanceIndex = $completionBlock.IndexOf('addon.guideState:QueueAdvance(step)',
                                           [StringComparison]::Ordinal)
 $redrawIndex = $completionBlock.IndexOf(
     'pcall(updateFrame, nil, step.index, true)',
@@ -327,7 +327,7 @@ if (-not $completionMatch.Success -or
     $completionBlock -notmatch
         'local\s+shouldAdvance\s*=\s*step\.index\s*==\s*RXPCData\.currentStep' -or
     $completionBlock -notmatch
-        'if\s+shouldAdvance\s+then\s+addon\.loadNextStep\s*=\s*true\s+end' -or
+        'if\s+shouldAdvance\s+then\s+addon\.guideState:QueueAdvance\(step\)\s+end' -or
     $completionBlock -notmatch
         'local\s+updateFrame\s*=\s*bottomFrame\s+and\s+' +
             'bottomFrame\.UpdateFrame' -or

@@ -1002,6 +1002,9 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     end
 
     local guide = {}
+    -- Immutable source identity for progress flags; never derived from
+    -- translated text, numeric display positions, or mutable counters.
+    local progressSource = tostring(addon.A32((text:gsub("\r\n", "\n"):gsub("\r", "\n"))))
     if groupOrContent:sub(1, 1) == "+" then
         addon.farmGuides = addon.farmGuides + 1
         guide.farm = true
@@ -1147,9 +1150,14 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     guide.key = addon.BuildGuideKey(guide)
     for _, parsedStep in ipairs(guide.steps) do
         parsedStep.sourceGuideKey = guide.key
+        local lines = {}
         for _, element in ipairs(parsedStep.elements or {}) do
             element.sourceGuideKey = guide.key
+            lines[#lines + 1] = element.sourceLine or element.tag or ""
         end
+        parsedStep.progressIdentity = tostring(guide.key) .. "|" .. progressSource ..
+            "|" .. tostring(parsedStep.stepId) .. "|" ..
+            tostring(addon.A32(table.concat(lines, "\n")))
     end
     guide.version = tonumber(guide.version) or 0
     addon.minGuideVersion = math.min(guide.version,addon.minGuideVersion)

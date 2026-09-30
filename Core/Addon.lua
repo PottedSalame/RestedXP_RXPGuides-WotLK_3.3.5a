@@ -2957,7 +2957,7 @@ function addon.LegacyUpdateLoop()
     local holdForReward = addon.IsQuestRewardSettlementActive and
                               addon.IsQuestRewardSettlementActive()
 
-    if not holdForReward and not addon.loadNextStep then
+    if not holdForReward then
         for ref, func in pairs(addon.updateActiveQuest) do
             addon.Call("updateQuest",func,ref)
             activeQuestUpdate = activeQuestUpdate + 1
@@ -2982,10 +2982,10 @@ function addon.LegacyUpdateLoop()
         if holdForParty then
             skip = 1
         else
-            addon.loadNextStep = false
+            local canAdvance = addon.guideState:ConsumeAdvance()
             -- Browse mode (/rxp browse) freezes progression so the user can
             -- navigate back without it auto-advancing to the real position.
-            if not addon.browseMode then
+            if canAdvance and not addon.browseMode then
                 event = event .. "/loadNext"
                 addon.SetStep(RXPCData.currentStep + 1)
                 addon.questAutoAccept = true

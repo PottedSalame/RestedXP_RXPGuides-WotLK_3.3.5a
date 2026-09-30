@@ -225,6 +225,11 @@ return function(root)
     local starter = loadGuide("Guides/RestedXP Horde 1-13 Troll-Orc.lua",
         "1-6 Durotar", "HUNTER", "Orc", "Horde")
     assert(starter.next == "6-10 Durotar", "Starter route lost its Durotar continuation")
+    for _, step in ipairs(starter.steps) do
+        assert(type(step.progressIdentity) == "string" and
+            step.progressIdentity:find(starter.key, 1, true) == 1,
+            "Parsed step lacks source-qualified checkpoint identity")
+    end
     local first = starter.steps[1]
     local introAccepted, introTarget
     local wrongClassTargets = {

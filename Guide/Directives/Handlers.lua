@@ -417,6 +417,14 @@ local function IsOnQuest(id)
     return quest
 end
 
+-- Absence must be proven from a complete log, not from a collapsed header or
+-- a delayed acceptance event. This does not change the public boolean API.
+local function QuestPresence(id)
+    if IsOnQuest(id) then return true end
+    if addon.GetQuestLogPresence335 then return addon.GetQuestLogPresence335(id) end
+    return false
+end
+
 function addon.GetLogIndexForQuestID(questID)
     if C_QuestLog.GetLogIndexForQuestID then
         return C_QuestLog.GetLogIndexForQuestID(questID),C_QuestLog.IsPushableQuest(questID)
@@ -787,9 +795,11 @@ function addon.GetQuestObjectives(id, step, useCache)
             local nObj = 0
             if questID == id then
                 questFound = true
+                isComplete = isComplete == true or isComplete == 1
                 for j = 1, GetNumQuestLeaderBoards(i) do
                     local description, objectiveType, isCompleted =
                         GetQuestLogLeaderBoard(j, i)
+                    isCompleted = isCompleted == true or isCompleted == 1
                     if description then
                         nObj = nObj + 1
                         local fulfilled, required
@@ -835,10 +845,10 @@ function addon.GetQuestObjectives(id, step, useCache)
                         generated = true,
                     }
                     CacheQuest(id,questInfo)
-                    return questInfo
+                    return questInfo, true, isComplete
                 else
                     CacheQuest(id,questInfo)
-                    return questInfo
+                    return questInfo, not err, isComplete
                 end
             end
         end
@@ -976,6 +986,10 @@ function addon.SetElementIncomplete(self)
         if addon.elementState then addon.elementState:Sync(element) end
         addon.UpdateMap()
         if refreshObjectiveTargets then refreshObjectiveTargets(element) end
+        addon.updateSteps = true
+        if addon.guideState and addon.guideState.InvalidateAdvance then
+            addon.guideState:InvalidateAdvance(element.step)
+        end
     end
     if self.button then
         self.button:Enable()
@@ -1245,8 +1259,8 @@ function addon.functions.accept(self, ...)
             addon.SetElementComplete(self, true)
             -- elseif skip then
             --    addon.SetElementComplete(self)
-        elseif event == "QUEST_REMOVED" and arg1 == id and not element.skip and
-            not skippedMissingPreReq then
+        elseif not element.manualSkip and not skippedMissingPreReq and
+            QuestPresence(id) == false then
             addon.SetElementIncomplete(self)
         end
 
@@ -1434,7 +1448,8 @@ function addon.functions.turnin(self, ...)
         end
 
         if step.active then
-            if (element.skipIfMissing and not IsOnQuest(id)) or (element.skipIfIncomplete and not IsQuestComplete(id)) then
+            if (element.skipIfMissing and QuestPresence(id) == false) or
+                (element.skipIfIncomplete and QuestPresence(id) ~= nil and not IsQuestComplete(id)) then
                 addon.SetElementComplete(self, true)
                 ProcessItems(false, step, id, true)
                 addon.UpdateItemFrame()
@@ -1613,30 +1628,44 @@ function addon.UpdateQuestCompletionData(self)
     end
 
     -- local skip
-    local objectives = addon.GetQuestObjectives(id, element.step.index)
-    local useCache
+    local objectives, liveObjectives, liveComplete = addon.GetQuestObjectives(id, element.step.index)
+    local useCache = not liveObjectives
 
     if not (objectives and #objectives > 0) then
         objectives = addon.GetQuestObjectives(id, element.step.index, true)
         useCache = true
-
+    end
+    if not (objectives and #objectives > 0) then
         element.requestFromServer = true
         element.text = retrievingQuestData
         element.tooltipText = nil
 
         addon.UpdateStepText(self)
-
+        if IsQuestTurnedIn(id) then
+            addon.SetElementComplete(self, true)
+        else
+            addon.SetElementIncomplete(self)
+        end
         return
     end
 
-    local isQuestComplete = IsQuestTurnedIn(id) or IsQuestComplete(id)
+    local isQuestComplete = IsQuestTurnedIn(id) or
+                               (liveObjectives and liveComplete)
     local objtext = " "
     local completed
     local inferredMobName
     local generatedObjective
 
     if element.obj and element.obj <= #objectives then
-        local obj = objectives[element.obj]
+        -- Never write partial thresholds/counters into the shared cache.
+        local source = objectives[element.obj]
+        local obj = {}
+        for key, value in pairs(source) do obj[key] = value end
+        if not liveObjectives then
+            obj.numFulfilled, obj.finished = 0, false
+            obj.text = type(obj.text) == "string" and
+                obj.text:gsub("%d+/(%d+)", "0/%1") or obj.text
+        end
         local isGenerated = IsGeneratedObjective(obj)
 
         obj.numFulfilled = obj.numFulfilled or 0
@@ -1649,6 +1678,10 @@ function addon.UpdateQuestCompletionData(self)
         end
 
         local t = obj.text or " "
+        if element.objMax then
+            obj.numFulfilled = math.min(obj.numFulfilled, obj.numRequired)
+            t = t:gsub("%d+/%d+", tostring(obj.numFulfilled) .. "/" .. tostring(obj.numRequired))
+        end
 
         if isGenerated then
             generatedObjective = true
@@ -1703,9 +1736,9 @@ function addon.UpdateQuestCompletionData(self)
             end
 
         end
-        completed = obj.finished or
+        completed = liveObjectives and (obj.finished or
                         (element.objMax and obj.numFulfilled >=
-                            obj.numRequired)
+                            obj.numRequired))
         objtext = t
     end
 
@@ -1836,7 +1869,7 @@ function addon.functions.complete(self, ...)
             end
         end
         addon.UpdateQuestCompletionData(self)
-        if step.active and element.skipIfMissing and not IsOnQuest(element.questId) then
+        if step.active and element.skipIfMissing and QuestPresence(element.questId) == false then
             addon.SetElementComplete(self,true)
         end
         if step.active and C_SuperTrack and not step.track and not element.completed then
@@ -1859,7 +1892,7 @@ function addon.functions.complete(self, ...)
                 addon.updateActiveQuest[self] = addon.UpdateQuestCompletionData
             end
         elseif step.active and event ~= "WindowUpdate" then
-            if element.skipIfMissing and not IsOnQuest(element.questId) then
+            if element.skipIfMissing and QuestPresence(element.questId) == false then
                 addon.SetElementComplete(self,true)
             else
                 addon.updateActiveQuest[self] = addon.UpdateQuestCompletionData
@@ -2026,8 +2059,8 @@ local function QuestWP(element)
         if not addon.IsOnQuest(id) then
             element.currentObjective = 0
         else
-            local quest = addon.GetQuestObjectives(id,element.step.index)
-            local obj = quest and quest[objIndex]
+            local quest, liveObjectives = addon.GetQuestObjectives(id,element.step.index)
+            local obj = liveObjectives and quest and quest[objIndex]
             element.currentObjective = obj and obj.numFulfilled or 0
             if element.objMax and element.objMax > 0 and element.currentObjective >= element.objMax then
                 local enabled = not element.skip
@@ -3084,6 +3117,10 @@ if objFlags is omitted or set to 0, element will complete if you have the quest 
     local numRequired = element.qty
     local event = ...
     local isComplete
+    local liveQuestComplete
+    -- A zero remaining requirement temporarily hides the checkbox. Restore
+    -- the authored flag before evaluating a reset/reaccepted objective.
+    element.textOnly = bit.band(element.flags or 0, 0x1) == 0x1
     if name then
         element.requestFromServer = nil
     else
@@ -3127,14 +3164,14 @@ if objFlags is omitted or set to 0, element will complete if you have the quest 
                     tinsert(objIndex, i + 1)
                 end
             end
-            local objectives = addon.GetQuestObjectives(questId,element.step.index)
-            if objectives then
+            local objectives, liveObjectives, liveComplete = addon.GetQuestObjectives(questId,element.step.index)
+            if objectives and liveObjectives then
+                liveQuestComplete = liveComplete
                 if element.subtract then
                     for _, n in ipairs(objIndex) do
                         local obj = objectives[n]
                         if obj then
-                            obj.numFulfilled = obj.numFulfilled or 0
-                            numRequired = numRequired - obj.numFulfilled*element.multiplier
+                            numRequired = numRequired - (tonumber(obj.numFulfilled) or 0)*element.multiplier
                         end
                     end
                     if numRequired < 0 then numRequired = 0 end
@@ -3177,7 +3214,7 @@ if objFlags is omitted or set to 0, element will complete if you have the quest 
     if (numRequired > 0 and count > numRequired) or
         (questId and
             ((element.objFlags == 0 and IsOnQuest(questId)) or (not element.ignoreTurnIn and
-                (isComplete or IsQuestTurnedIn(questId) or IsQuestComplete(questId))))) then
+                (isComplete or IsQuestTurnedIn(questId) or liveQuestComplete)))) then
         count = numRequired
     end
 
@@ -4317,7 +4354,15 @@ function addon.functions.isQuestComplete(self, ...)
     local id = element.questId
     id = GetQuestId(id,nil,true)
     local event = ...
-    local isCompleted = not(IsOnQuest(id) and IsQuestComplete(id)) == not(element.reverse)
+    local presence = QuestPresence(id)
+    if presence == nil then return end
+    local ready = false
+    if presence then
+        local _, live, liveComplete = addon.GetQuestObjectives(id, step.index)
+        if not live then return end
+        ready = liveComplete
+    end
+    local isCompleted = not(presence and ready) == not(element.reverse)
     if event ~= "WindowUpdate" and isCompleted and not addon.settings.profile.debug and not addon.isHidden then
         step.completed = true
         addon.updateSteps = true
@@ -4353,6 +4398,7 @@ function addon.functions.isOnQuest(self, text, ...)
     end
     local element = self.element
     local onQuest = false
+    local unknown
     local event = text
     local step = element.step
 
@@ -4362,10 +4408,14 @@ function addon.functions.isOnQuest(self, text, ...)
     end
 
     for _,id in pairs(element.questIds) do
-        if IsOnQuest(id) then
+        local presence = QuestPresence(id)
+        if presence then
             onQuest = true
+        elseif presence == nil then
+            unknown = true
         end
     end
+    if not onQuest and unknown then return end
 
 
     if event ~= "WindowUpdate" and not addon.settings.profile.debug and (not onQuest) == not element.reverse and not addon.isHidden then
