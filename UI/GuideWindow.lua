@@ -84,6 +84,7 @@ RXPFrame.ScrollChild = ScrollChild
 RXPFrame.MenuFrame = MenuFrame
 
 function RXPFrame:UpdateVisuals()
+    addon.guideLayout:Invalidate()
     BottomFrame:ClearBackdrop()
     BottomFrame:SetBackdrop(RXPFrame.backdrop.edge)
     BottomFrame:SetBackdropColor(unpack(addon.colors.background))
@@ -2886,9 +2887,8 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             step.text = text
         end
 
-        if frame.text then
-            frame.text:SetText(text)
-        end
+        local measuredHeight = addon.guideLayout:MeasureText(
+            frame.text, text, languageRefresh, hideStep)
         frame.guideTranslationFallback = translationFallback or nil
         frame.guideTranslationMachine = translationMachine or nil
 
@@ -2896,19 +2896,12 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             fheight = 1
             frame:SetAlpha(0)
         else
-            fheight = math.ceil(frame.text:GetStringHeight() + 8)
+            fheight = measuredHeight
             frame:SetAlpha(GetStepVisualState(step) == "completed" and 0.78 or 1)
         end
         ApplyStepVisualState(frame, step, true)
 
-        local hDiff = fheight - frame:GetHeight()
-        frame:SetHeight(fheight)
-
-        for n = stepNumber + 1, #stepPos do
-            stepPos[n] = stepPos[n] + hDiff
-        end
-
-        stepPos[0] = stepPos[0] + hDiff
+        addon.guideLayout:UpdateHeight(frame, fheight, stepPos, stepNumber)
 
     else
         addon.updateBottomFrame = false
@@ -2991,12 +2984,11 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             if frame.text then
                 if hideStep then
                     --hiddenFrames = hiddenFrames + 1
-                    frame.text:SetText(text)
+                    addon.guideLayout:MeasureText(frame.text, text, true, true)
                     fheight = 1.00
                     frame:SetAlpha(0)
                 else
-                    frame.text:SetText(text)
-                    fheight = math.ceil(frame.text:GetStringHeight() + 8)
+                    fheight = addon.guideLayout:MeasureText(frame.text, text, true)
                 end
             end
             step.text = text

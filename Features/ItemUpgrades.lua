@@ -2352,6 +2352,7 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
         end
     end
 
+    if addon.PerfCount then addon.PerfCount("item cache misses") end
     local _, _, _, itemLevel, itemMinLevel, _, itemSubType, _, itemEquipLoc, _, sellPrice, _, itemSubTypeID, _, _, setID =
         GetItemInfo(itemLink)
 

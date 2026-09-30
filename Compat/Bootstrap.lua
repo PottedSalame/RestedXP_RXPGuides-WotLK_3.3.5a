@@ -295,6 +295,10 @@ do
             end
 
             function line:__redrawLine()
+                if (self.__rxpUpdateDepth or 0) > 0 then
+                    self.__rxpNeedsRedraw = true
+                    return
+                end
                 local sx, sy, ex, ey = self.__x1, self.__y1,
                                              self.__x2, self.__y2
                 if not (self.__shown and sx and sy and ex and ey) then
@@ -318,10 +322,15 @@ do
                 -- below this limit; longer ones become a fine dotted line.
                 count = math.min(count, 512)
                 local relPoint = self.__point or "TOPLEFT"
+                if addon.PerfCount then
+                    addon.PerfCount("line tile redraws")
+                    addon.PerfCount("line tile placements", count)
+                end
 
                 for i = 1, count do
                     local tile = self.__tiles[i]
                     if not tile then
+                        if addon.PerfCount then addon.PerfCount("line tiles created") end
                         tile = self.__lineParent:CreateTexture(nil,
                                                                self.__layer or
                                                                    "OVERLAY")
@@ -339,11 +348,27 @@ do
                 HideUnused(self, count + 1)
             end
 
+            -- Private batching used by the guide renderer. Ordinary callers
+            -- retain synchronous setters; no timer or deferred drawing is added.
+            function line:__RXPBeginUpdate()
+                self.__rxpUpdateDepth = (self.__rxpUpdateDepth or 0) + 1
+            end
+            function line:__RXPEndUpdate()
+                local depth = self.__rxpUpdateDepth or 0
+                if depth == 0 then return end
+                self.__rxpUpdateDepth = depth - 1
+                if depth == 1 and self.__rxpNeedsRedraw then
+                    self.__rxpNeedsRedraw = nil
+                    self:__redrawLine()
+                end
+            end
+
             local function endpoint(t, key1, key2, point, a, b, c)
                 -- Accept LineMixin's (relativePoint, x, y) and
                 -- (relativePoint, relativeTo, x, y) forms.
                 local x, y
                 if type(a) == "number" then x, y = a, b else x, y = b, c end
+                if t.__point == point and t[key1] == x and t[key2] == y then return end
                 t.__point = point
                 t[key1], t[key2] = x, y
                 t:__redrawLine()
@@ -355,20 +380,29 @@ do
                 endpoint(t, "__x2", "__y2", point, a, b, c)
             end
             line.SetThickness = function(t, th)
-                t.__thickness = th or 2
+                th = th or 2
+                if t.__thickness == th then return end
+                t.__thickness = th
                 t:__redrawLine()
             end
             line.SetColorTexture = function(t, r, g, b, a)
-                t.__color = {r or 1, g or 1, b or 1, a or 1}
+                r, g, b, a = r or 1, g or 1, b or 1, a or 1
+                local color = t.__color
+                if color[1] == r and color[2] == g and color[3] == b and color[4] == a then return end
+                color[1], color[2], color[3], color[4] = r, g, b, a
                 t:__redrawLine()
             end
             line.SetDrawLayer = function(t, newLayer, newSubLevel)
-                t.__layer = newLayer or "OVERLAY"
+                newLayer = newLayer or "OVERLAY"
+                if t.__layer == newLayer and t.__subLevel == newSubLevel then return end
+                t.__layer = newLayer
                 t.__subLevel = newSubLevel
                 t:__redrawLine()
             end
             line.SetAlpha = function(t, alpha)
-                t.__alpha = tonumber(alpha) or 1
+                alpha = tonumber(alpha) or 1
+                if t.__alpha == alpha then return end
+                t.__alpha = alpha
                 t:__redrawLine()
             end
             line.Hide = function(t)

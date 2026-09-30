@@ -964,6 +964,7 @@ local function HideReservationIcon(frame)
 end
 
 local function UpdateBagButton(button,bag,slot)
+    if addon.PerfCount then addon.PerfCount("bag buttons") end
     local id = GetContainerItemID(bag, slot)
 
     local isJunk = IsJunk(id, bag, slot)
@@ -1005,7 +1006,7 @@ end
 
 
 
-local function UpdateBag(frame,name,pattern)
+local function UpdateBagImpl(frame,name,pattern)
     if not inventoryManager.IsJunkIconEnabled() and
         not (addon.settings.profile.enableItemReservations and addon.routePreflight) then
         return
@@ -1034,6 +1035,11 @@ local function UpdateBag(frame,name,pattern)
 end
 
 --Junk icon has to hook into existing UI elements, different bag UI mods have different frame names causing compatibility issues
+
+local function UpdateBag(...)
+    if addon.PerfInvoke then return addon.PerfInvoke("bag frame", UpdateBagImpl, ...) end
+    return UpdateBagImpl(...)
+end
 
 inventoryManager.containerPattern = "%sItem%d"
 inventoryManager.containerName = "ContainerFrame%d"
@@ -1068,7 +1074,7 @@ local function DetectBagMods()
 end
 
 
-local function UpdateAllBags(self,name,i)
+local function UpdateAllBagsImpl(self,name,i)
     if not inventoryManager.IsJunkIconEnabled() then
         for _,icon in pairs(junkIcons) do
             icon:Hide()
@@ -1105,6 +1111,10 @@ local function UpdateAllBags(self,name,i)
         ref = format(name,i)
         frame = _G[ref]
     end
+end
+local function UpdateAllBags(...)
+    if addon.PerfInvoke then return addon.PerfInvoke("bag overlays", UpdateAllBagsImpl, ...) end
+    return UpdateAllBagsImpl(...)
 end
 inventoryManager.UpdateAllBags = UpdateAllBags
 

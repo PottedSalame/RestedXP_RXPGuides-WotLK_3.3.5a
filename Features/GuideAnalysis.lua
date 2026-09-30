@@ -23,6 +23,33 @@ local MAX_LOOKAHEAD = 100
 local QUEST_LOG_CAP = _G.MAX_QUESTLOG_QUESTS or 25
 local WATCH_MIN, WATCH_MAX = 30, 600
 
+-- Only reservation membership changes affect junk protection and the bag
+-- badge. Quantities, reasons and step numbers are read live by the tooltip.
+-- Retain a private set: reports may be replaced or edited by other callers.
+function preflight:RefreshReservationOverlays(report)
+    local profile = addon.settings and addon.settings.profile or {}
+    local enabled = profile.enableItemReservations == true
+    local previous = self.overlayReservationIds or {}
+    local current, changed = {}, self.overlayReservationsEnabled ~= enabled
+    if enabled then
+        for id in pairs(report.reservations or {}) do
+            current[id] = true
+            if not previous[id] then changed = true end
+        end
+    end
+    for id in pairs(previous) do
+        if not current[id] then changed = true end
+    end
+    self.overlayReservationIds = current
+    self.overlayReservationsEnabled = enabled
+    if changed and addon.inventoryManager and addon.inventoryManager.RefreshJunkIcons then
+        addon.inventoryManager.RefreshJunkIcons(0.05)
+    end
+    if addon.PerfCount then
+        addon.PerfCount(changed and "reservation refreshes" or "reservation refreshes avoided")
+    end
+end
+
 local function Clamp(value, low, high, fallback)
     value = tonumber(value) or fallback
     return max(low, min(high, floor(value + 0.5)))
@@ -229,6 +256,7 @@ function preflight:Scan(force)
     local current = tonumber(RXPCData.currentStep) or 1
     if type(guide) ~= "table" or guide.empty or type(guide.steps) ~= "table" then
         self.report = {issues = {}, reservations = {}, counts = {}, empty = true}
+        self:RefreshReservationOverlays(self.report)
         self:UpdateBadge()
         if started and addon.PerfEnd then addon.PerfEnd("route preflight", started) end
         return self.report
@@ -425,9 +453,7 @@ function preflight:Scan(force)
     self.report = report
     self:UpdateBadge()
     self:RefreshWindow()
-    if addon.inventoryManager and addon.inventoryManager.RefreshJunkIcons then
-        addon.inventoryManager.RefreshJunkIcons(0.05)
-    end
+    self:RefreshReservationOverlays(report)
     if started and addon.PerfEnd then addon.PerfEnd("route preflight", started) end
     return report
 end

@@ -82,6 +82,7 @@ end
 
 driver:SetScript("OnUpdate", function()
     local now = _G.GetTime()
+    local measured = addon.PerfBegin and addon.PerfBegin("timer batch")
     local due
 
     -- Snapshot due work so callbacks which create zero-delay timers cannot run
@@ -95,7 +96,11 @@ driver:SetScript("OnUpdate", function()
         end
     end
 
-    if not due then return end
+    if not due then
+        if measured then addon.PerfEnd("timer batch", measured) end
+        return
+    end
+    if addon.PerfCount then addon.PerfCount("timer callbacks due", #due) end
     for index = 1, #due do
         local ticker = due[index]
         if active[ticker] and not ticker._cancelled then
@@ -107,7 +112,9 @@ driver:SetScript("OnUpdate", function()
             end
 
             if type(callback) == "function" then
+                local callStarted = addon.PerfBegin and addon.PerfBegin("timer callback")
                 local ok, err = pcall(callback, ticker)
+                if callStarted then addon.PerfEnd("timer callback", callStarted) end
                 if not ok and type(_G.geterrorhandler) == "function" then
                     local gotHandler, handler = pcall(_G.geterrorhandler)
                     if gotHandler and type(handler) == "function" then
@@ -121,6 +128,7 @@ driver:SetScript("OnUpdate", function()
             if finished or ticker._cancelled then ReleaseTicker(ticker) end
         end
     end
+    if measured then addon.PerfEnd("timer batch", measured) end
 end)
 
 function timerAPI.After(delay, callback)

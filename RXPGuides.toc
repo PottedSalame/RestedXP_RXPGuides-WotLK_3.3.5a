@@ -35,6 +35,7 @@ UI\Themes.lua
 Features\Communications.lua
 Core\Addon.lua
 UI\ToolWindow.lua
+UI\GuideLayout.lua
 UI\GuideWindow.lua
 UI\Help.lua
 UI\Settings.lua

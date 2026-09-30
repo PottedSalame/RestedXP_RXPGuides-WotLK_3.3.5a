@@ -585,19 +585,27 @@ MapLinePool.creationFunc = function(framePool)
         local yAnchor = min(sY, fY) + thickness * 2 + lineHeight / 2
 
         local line = self.line
+        local batchLine = type(line.__RXPBeginUpdate) == "function" and
+                              type(line.__RXPEndUpdate) == "function"
+        if batchLine then line:__RXPBeginUpdate() end
         line:SetDrawLayer("OVERLAY", -5)
         line:SetStartPoint("TOPLEFT", sX - xAnchor, sY - yAnchor)
         line:SetEndPoint("TOPLEFT", fX - xAnchor, fY - yAnchor)
         line:SetColorTexture(unpack(addon.colors.mapPins))
         --line:SetTexture('interface/buttons/white8x8')
         line:SetThickness(thickness);
+        if batchLine then line:__RXPEndUpdate() end
 
         local lborder = self.border
+        local batchBorder = type(lborder.__RXPBeginUpdate) == "function" and
+                                type(lborder.__RXPEndUpdate) == "function"
+        if batchBorder then lborder:__RXPBeginUpdate() end
         lborder:SetDrawLayer("OVERLAY", -6)
         lborder:SetStartPoint("TOPLEFT", sX - xAnchor, sY - yAnchor)
         lborder:SetEndPoint("TOPLEFT", fX - xAnchor, fY - yAnchor)
         lborder:SetThickness(thickness + 1);
         lborder:SetAlpha(0.5)
+        if batchBorder then lborder:__RXPEndUpdate() end
 
         self:SetParent(canvas)
         self:SetFrameStrata(canvas:GetFrameStrata())
@@ -1036,6 +1044,7 @@ local function addWorldMapPins()
         if not pin.hidePin then
             local element = pin.elements[1]
             local worldMapFrame = worldMapFramePool:Acquire()
+            if addon.PerfCount then addon.PerfCount("world map pins") end
             worldMapFrame:render(pin, false)
             local map = element.step and element.step.map and (addon.GetMapId(element.step.map) or tonumber(element.step.map))
             local x,y
@@ -1056,6 +1065,7 @@ local function addWorldMapPins()
                     local x,y = HBD:GetZoneCoordinatesFromWorld(element.wx, element.wy, subzone, true)
                     if x and y and not(x < 0 or y < 0 or x > 1 or y > 1) then
                         local worldMapFrame = worldMapFramePool:Acquire()
+                        if addon.PerfCount then addon.PerfCount("world map pins") end
                         worldMapFrame:render(pin, false)
                         HBDPins:AddWorldMapIconMap(addon, worldMapFrame, subzone, x, y)
                     end
@@ -1074,6 +1084,7 @@ local function addWorldMapLines()
         local element = line.element
         local step = element.step
         local lineFrame = lineMapFramePool:Acquire()
+        if addon.PerfCount then addon.PerfCount("world map lines") end
         lineFrame.lineData = line
         lineFrame.step = step
         lineFrame.zone = element.zone
@@ -1095,6 +1106,7 @@ local function addMiniMapPins(pins)
         local element = pin.elements[1]
         if element and element.x then
             local miniMapFrame = miniMapFramePool:Acquire()
+            if addon.PerfCount then addon.PerfCount("minimap pins") end
             miniMapFrame:render(pin, true)
             local step = element.step
             HBDPins:AddMinimapIconMap(addon, miniMapFrame, element.zone,
@@ -1481,16 +1493,22 @@ local function resetMap()
 end
 
 local lastMap
+local function MeasureMapStage(label, callback, ...)
+    if addon.PerfInvoke then return addon.PerfInvoke(label, callback, ...) end
+    return callback(...)
+end
+
 function addon.UpdateMap(resetPins)
     if resetPins then
         if addon.currentGuide == nil then return end
         lastMap = nil
-        resetMap()
-        addWorldMapLines()
-        addWorldMapPins()
-        addMiniMapPins()
-        updateArrowData()
-        addon.DisplayLines(true)
+        if addon.PerfCount then addon.PerfCount("map rebuilds") end
+        MeasureMapStage("map reset", resetMap)
+        MeasureMapStage("map lines", addWorldMapLines)
+        MeasureMapStage("map world pins", addWorldMapPins)
+        MeasureMapStage("map minimap pins", addMiniMapPins)
+        MeasureMapStage("map arrow", updateArrowData)
+        MeasureMapStage("map visibility", addon.DisplayLines, true)
     else
         addon.updateMap = true
         --[[if GetTime() - gt > 10 then

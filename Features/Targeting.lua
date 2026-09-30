@@ -267,6 +267,7 @@ function addon.targeting:DiscoverLegacyNameplates()
     legacyScanner.nextFullDiscovery = now + legacyScanner.discoveryInterval
 
     local children = {WorldFrame:GetChildren()}
+    if addon.PerfCount then addon.PerfCount("nameplate children", #children) end
     for index = 1, #children do
         local frame = children[index]
         if frame and not legacyScanner.knownPlates[frame] and frame.GetRegions then

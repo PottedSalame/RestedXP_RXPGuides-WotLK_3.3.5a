@@ -687,11 +687,14 @@ function addon.comms.OpenBrandedExport(title, description, content, width, heigh
         editbox:DisableButton(true)
         editbox:SetCallback("OnTextChanged", function() editbox:SetText(content) end)
 
-        editbox.editBox:SetScript("OnMouseUp", function()
-            editbox:HighlightText()
+        editbox.editBox:SetScript("OnMouseUp", function(nativeEditBox)
+            -- Legacy AceGUI's MultiLineEditBox has no HighlightText method;
+            -- selection belongs to its native EditBox (including Ctrl+A).
+            nativeEditBox:SetFocus()
+            nativeEditBox:HighlightText()
 
             -- Only highlight text on first enter
-            editbox.editBox:SetScript("OnMouseUp", nil)
+            nativeEditBox:SetScript("OnMouseUp", nil)
         end)
     end
 
