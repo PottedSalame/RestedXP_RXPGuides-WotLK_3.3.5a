@@ -999,6 +999,13 @@ local QUEST_AUTOMATION_OWNER = "quest-engine"
 local questSettlement = addon.questRewardTransaction
 local questSettlementCallbacks = {}
 
+local function IsQuestAutomationCurrentlyDisabled()
+    return not addon.settings or not addon.settings.profile or
+               not addon.settings.profile.enableQuestAutomation or
+               addon.isHidden or addon.speedrunPracticeActive or
+               (_G.IsControlKeyDown and _G.IsControlKeyDown())
+end
+
 local function IsQuestRewardPanelShown()
     return _G.QuestFrameRewardPanel and
                _G.QuestFrameRewardPanel:IsShown() or
@@ -1039,7 +1046,7 @@ end
 -- QUEST_COMPLETE dispatch before calling the live global GetQuestReward, then
 -- keeps every RXP quest consumer behind the transaction barrier until secure
 -- post-hooks and authoritative quest events have settled.
-local function SubmitAutomatedQuestReward(choice, questId, numChoices)
+local function BeginQuestRewardTransaction(choice, questId, numChoices)
     local order = addon.automationOrder
     if not questSettlement or not order or not order.MarkQuestSubmitted then
         return false
@@ -1079,11 +1086,22 @@ local function SubmitAutomatedQuestReward(choice, questId, numChoices)
         numChoices = numChoices,
     }, now)
     if not serial or not created then return false end
+    local active = questSettlement:Get(serial)
+    active.wasOnQuest = addon.IsOnQuest and addon.IsOnQuest(questId) == true
+    active.wasCompleted = C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted and
+                             C_QuestLog.IsQuestFlaggedCompleted(questId) == true
+    return active
+end
 
+local function SubmitAutomatedQuestReward(choice, questId, numChoices)
+    local request = BeginQuestRewardTransaction(choice, questId, numChoices)
+    if not request then return false end
+    local serial, order = request.serial, addon.automationOrder
     addon.scheduler:After(QUEST_AUTOMATION_OWNER, "turnin-submit", 0,
                           function()
         local active = questSettlement:Get(serial)
-        if not active or not IsRewardTransactionContextCurrent(active) then
+        if IsQuestAutomationCurrentlyDisabled() or not active or
+            not IsRewardTransactionContextCurrent(active) then
             questSettlementCallbacks.Cancel(serial, "stale-reward-context")
             return
         end
@@ -1143,8 +1161,93 @@ local function ResolveDisplayedTurnInQuestID()
     return id
 end
 
+local lastManualCompletionQuery = 0
+local manualRewardObserverEnabled = false
+local function RequestManualCompletionRefresh()
+    if not manualRewardObserverEnabled or addon.gameVersion ~= 30300 or
+        type(_G.QueryQuestsCompleted) ~= "function" then return end
+    addon.scheduler:After(QUEST_AUTOMATION_OWNER, "manual-completed-query",
+                          math.max(0.10, 1 - (GetTime() - lastManualCompletionQuery)), function()
+        lastManualCompletionQuery = GetTime()
+        _G.QueryQuestsCompleted()
+    end)
+end
+
+-- Observe, never replace, the stock reward button/API. PreClick establishes
+-- the same barrier as automation before the player's OnClick runs, including
+-- when quest automation is disabled. Post-hooks only schedule reconciliation;
+-- no guide advance or NPC selection occurs inside another addon's reward hook.
+function addon.InstallManualQuestRewardObserver335()
+    if addon.gameVersion ~= 30300 then return end
+    manualRewardObserverEnabled = true
+    local button = _G.QuestFrameCompleteQuestButton
+    if button and button.HookScript and not addon.manualQuestRewardButton335 then
+        addon.manualQuestRewardButton335 = button
+        button:HookScript("PreClick", function()
+            if not manualRewardObserverEnabled or not addon.addonLoaded or
+                not IsQuestRewardPanelShown() then return end
+            local count = tonumber(GetNumQuestChoices()) or 0
+            local choice = _G.QuestInfoFrame and tonumber(_G.QuestInfoFrame.itemChoice) or 0
+            if count > 0 and (choice < 1 or choice > count) then return end
+            local cost = _G.GetQuestMoneyToGet and _G.GetQuestMoneyToGet()
+            -- The stock button opens another confirmation for costly quests.
+            -- Those/custom buttons still receive the completed-query fallback.
+            if type(cost) == "number" and cost > 0 then return end
+            local questId = tonumber(ResolveDisplayedTurnInQuestID())
+            if not questId or not addon.IsOnQuest or not addon.IsOnQuest(questId) then return end
+            local previous = questSettlement:Get()
+            if previous then
+                if previous.phase ~= "queued" then return end
+                questSettlementCallbacks.Cancel(previous.serial, "manual-reward-choice")
+            end
+            questRewardRetrySerial = questRewardRetrySerial + 1
+            addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "reward-item-retry")
+            local active = BeginQuestRewardTransaction(math.max(1, choice), questId, count)
+            if not active then return end
+            if not IsRewardTransactionContextCurrent(active) then
+                questSettlementCallbacks.Cancel(active.serial, "stale-manual-context")
+                return
+            end
+            local submitted, reservation = addon.automationOrder:MarkQuestSubmitted(
+                "turnin", questId, GetTime(), active.title)
+            if not submitted then
+                questSettlementCallbacks.Cancel(active.serial, "manual-reservation-mismatch")
+                return
+            end
+            active.manual = true
+            questSettlement:SetReservation(active.serial, reservation)
+            questSettlement:SetPhase(active.serial, "submitting", GetTime())
+            -- If OnClick never reaches GetQuestReward, do not retain a barrier.
+            addon.scheduler:After(QUEST_AUTOMATION_OWNER, "manual-reward-click", 0, function()
+                local current = questSettlement:Get(active.serial)
+                if current and current.phase == "submitting" then
+                    questSettlementCallbacks.Cancel(active.serial, "manual-reward-not-submitted")
+                end
+            end)
+        end)
+    end
+    if not addon.manualQuestRewardHook335 and type(_G.hooksecurefunc) == "function" and
+        type(_G.GetQuestReward) == "function" then
+        addon.manualQuestRewardHook335 = true
+        _G.hooksecurefunc("GetQuestReward", function(choice)
+            if not manualRewardObserverEnabled or not addon.addonLoaded then return end
+            local active = questSettlement:Get()
+            if active and active.manual and active.phase == "submitting" then
+                addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "manual-reward-click")
+                if math.max(1, tonumber(choice) or 0) ~= active.choice then
+                    questSettlementCallbacks.Cancel(active.serial, "manual-choice-mismatch")
+                else
+                    questSettlement:SetPhase(active.serial, "settling", GetTime())
+                    questSettlementCallbacks.Schedule(active, active.reservation)
+                end
+            end
+            if not active or active.manual then RequestManualCompletionRefresh() end
+        end)
+    end
+end
+
 local function handleQuestComplete(retryAttempt)
-    if addon.IsQuestRewardSettlementActive() then return end
+    if IsQuestAutomationCurrentlyDisabled() or addon.IsQuestRewardSettlementActive() then return end
     hideRewardChoiceIcons()
     local id = tonumber(ResolveDisplayedTurnInQuestID())
     if not id or id < 0 or type(addon.questTurnIn) ~= "table" or
@@ -1183,8 +1286,12 @@ local function handleQuestComplete(retryAttempt)
         if (retryAttempt or 0) < 5 then
             questRewardRetrySerial = questRewardRetrySerial + 1
             local serial = questRewardRetrySerial
-            C_Timer.After(0.20, function()
+            local guide, title = addon.currentGuide, _G.GetTitleText and _G.GetTitleText()
+            addon.scheduler:After(QUEST_AUTOMATION_OWNER, "reward-item-retry", 0.20, function()
                 if serial ~= questRewardRetrySerial then return end
+                if addon.currentGuide ~= guide or IsQuestAutomationCurrentlyDisabled() or
+                    (_G.GetTitleText and _G.GetTitleText()) ~= title or
+                    tonumber(ResolveDisplayedTurnInQuestID()) ~= id then return end
                 local rewardVisible = _G.QuestFrameRewardPanel and
                                           _G.QuestFrameRewardPanel:IsShown() or
                                           _G.QuestFrameCompleteButton and
@@ -1510,13 +1617,6 @@ local TURN_IN_SETTLEMENT_DELAYS = {0.05, 0.20, 0.50, 1.00, 2.00, 4.50}
 local TURN_IN_SETTLEMENT_TIMEOUT = 5.00
 local TURN_IN_RELEASE_DELAY = 0.05
 
-local function IsQuestAutomationCurrentlyDisabled()
-    return not addon.settings or not addon.settings.profile or
-               not addon.settings.profile.enableQuestAutomation or
-               addon.isHidden or addon.speedrunPracticeActive or
-               (_G.IsControlKeyDown and _G.IsControlKeyDown())
-end
-
 local function CancelQuestSettlementTimers(includeRelease)
     addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "turnin-submit")
     addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "turnin-barrier-refresh")
@@ -1542,6 +1642,11 @@ questSettlementCallbacks.Cancel = function(serial, reason)
 end
 
 function addon.CancelQuestRewardTransaction(reason)
+    -- Cache retries can exist before a transaction has been created.
+    questRewardRetrySerial = questRewardRetrySerial + 1
+    addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "reward-item-retry")
+    addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "manual-reward-click")
+    addon.scheduler:Cancel(QUEST_AUTOMATION_OWNER, "manual-completed-query")
     local active = questSettlement and questSettlement:Get()
     if not active then return false end
     return questSettlementCallbacks.Cancel(active.serial,
@@ -1566,10 +1671,18 @@ questSettlementCallbacks.Reconcile = function(disabled)
     end
 
     local questId = active.questId
-    local removedFromLog = questId and addon.IsOnQuest and
-                               not addon.IsOnQuest(questId)
+    local presence
+    if addon.GetQuestLogPresence335 then
+        presence = addon.GetQuestLogPresence335(questId)
+    elseif addon.IsOnQuest then
+        presence = addon.IsOnQuest(questId)
+    end
+    local removedFromLog = active.wasOnQuest and presence == false
+    local confirmedCompleted = not active.wasCompleted and C_QuestLog and
+        C_QuestLog.IsQuestFlaggedCompleted and
+        C_QuestLog.IsQuestFlaggedCompleted(questId) == true
     if not questSettlement:HasAuthoritativeConfirmation(active.serial) and
-        not removedFromLog then return false end
+        not removedFromLog and not confirmedCompleted then return false end
 
     questSettlement:SetPhase(active.serial, "releasing", GetTime())
     CancelQuestSettlementTimers(false)
@@ -1754,7 +1867,7 @@ function addon:QuestAutomation(event, arg1, arg2, arg3)
         end
         if addon.lore then addon.lore:MarkSeen(questId) end
         return
-    elseif event == "QUEST_LOG_UPDATE" then
+    elseif event == "QUEST_LOG_UPDATE" or event == "QUEST_QUERY_COMPLETE" then
         ScheduleQuestStateRefresh(disabled)
         local delay = tonumber(QuestEventQuirks().questLogUpdateDelay) or 0
         if delay > 0 then
@@ -2398,6 +2511,7 @@ function addon:OnEnable()
         addon.LoadAllGuides()
     end
     addon.addonLoaded = true
+    addon.InstallManualQuestRewardObserver335()
     if addon.guideHub and addon.guideHub.setup and
         addon.guideHub.OnGuidesReady then
         addon.guideHub:OnGuidesReady()
@@ -2459,6 +2573,7 @@ function addon:OnEnable()
     questFrame:RegisterEvent("QUEST_AUTOCOMPLETE")
     questFrame:RegisterEvent("QUEST_ACCEPTED")
     questFrame:RegisterEvent("QUEST_LOG_UPDATE")
+    if addon.gameVersion == 30300 then questFrame:RegisterEvent("QUEST_QUERY_COMPLETE") end
 
     if C_QuestLog.RequestLoadQuestByID then
         self:RegisterEvent("QUEST_DATA_LOAD_RESULT")
@@ -2513,6 +2628,7 @@ function addon:OnEnable()
 end
 
 function addon:OnDisable()
+    manualRewardObserverEnabled = false
     addon.scheduler:CancelOwner(CORE_TICKER_OWNER)
     if addon.questAutomation and addon.questAutomation.ResetTransient then
         addon.questAutomation:ResetTransient()
@@ -2636,8 +2752,8 @@ function addon:GET_ITEM_INFO_RECEIVED(_, itemNumber, success)
 end
 
 function addon:ZONE_CHANGED()
-    if addon.IsQuestRewardSettlementActive and
-        addon.IsQuestRewardSettlementActive() and addon.questAutomation and
+    if ((addon.IsQuestRewardSettlementActive and addon.IsQuestRewardSettlementActive()) or
+        addon.scheduler:Has(QUEST_AUTOMATION_OWNER, "reward-item-retry")) and addon.questAutomation and
         addon.questAutomation.ResetTransient then
         addon.questAutomation:ResetTransient()
     end

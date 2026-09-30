@@ -1504,6 +1504,8 @@ do
     local completedCache    = {}   -- questID -> true (finished, account/char)
     local recentlyAccepted  = {}   -- questID -> acceptance time while log settles
     local ACCEPTED_GRACE = 5
+    local logSnapshotComplete = false
+    local visibleQuestIDs = {}
 
     local function questIDFromIndex(index)
         -- AzerothCore's 3.3.5a client returns the questID as the 9th value of
@@ -1519,19 +1521,33 @@ do
     end
 
     local function rebuildLog()
-        wipe(logIndexByQuestID); wipe(onQuest); wipe(completeByQuestID)
+        wipe(logIndexByQuestID); wipe(visibleQuestIDs)
+        logSnapshotComplete = true
         local numEntries = _G.GetNumQuestLogEntries()
         for i = 1, numEntries do
-            local _, _, _, _, isHeader, _, isComplete = _G.GetQuestLogTitle(i)
+            local title, _, _, _, isHeader, isCollapsed, isComplete = _G.GetQuestLogTitle(i)
+            if not title or legacyTrue(isHeader) and legacyTrue(isCollapsed) then
+                logSnapshotComplete = false
+            end
             if not legacyTrue(isHeader) then
                 local qid = questIDFromIndex(i)
                 if qid then
+                    visibleQuestIDs[qid] = true
                     logIndexByQuestID[qid] = i
                     onQuest[qid] = true
                     recentlyAccepted[qid] = nil
-                    if legacyTrue(isComplete) then
-                        completeByQuestID[qid] = true
-                    end
+                    completeByQuestID[qid] = legacyTrue(isComplete) or nil
+                elseif title then
+                    logSnapshotComplete = false
+                end
+            end
+        end
+        -- Hidden entries are unknown, not removed. Retain positive knowledge
+        -- until a complete scan or an authoritative turn-in replaces it.
+        if logSnapshotComplete then
+            for qid in pairs(onQuest) do
+                if not visibleQuestIDs[qid] then
+                    onQuest[qid], completeByQuestID[qid] = nil, nil
                 end
             end
         end
@@ -1550,7 +1566,6 @@ do
             return index
         end
         logIndexByQuestID[questID] = nil
-        onQuest[questID] = nil
 
         if _G.GetQuestLogIndexByID then
             index = tonumber(_G.GetQuestLogIndexByID(questID))
@@ -1559,13 +1574,24 @@ do
                 onQuest[questID] = true
                 return index
             end
-            -- A numeric zero is an authoritative "not in the quest log".
-            if index ~= nil then return nil end
+            -- Zero also occurs for entries hidden under collapsed headers.
+            -- Only a complete visible scan can prove absence.
         end
 
         rebuildLog()
         index = tonumber(logIndexByQuestID[questID])
         return index and index > 0 and index or nil
+    end
+
+    -- Private tri-state evidence for reward settlement. Never infer a turn-in
+    -- merely because collapsing a header hid its quest-log row.
+    addon.GetQuestLogPresence335 = function(questID)
+        questID = tonumber(questID)
+        if not questID or questID <= 0 then return nil end
+        rebuildLog()
+        if visibleQuestIDs[questID] then return true end
+        if logSnapshotComplete then return false end
+        return nil
     end
 
     local function rebuildCompleted()
@@ -1675,6 +1701,7 @@ do
             recentlyAccepted[questID] = nil
             return true
         end
+        if not logSnapshotComplete and onQuest[questID] then return true end
         local acceptedAt = recentlyAccepted[questID]
         if acceptedAt and (_G.GetTime and _G.GetTime() or 0) - acceptedAt <=
             ACCEPTED_GRACE then

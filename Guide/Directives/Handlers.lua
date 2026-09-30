@@ -301,7 +301,19 @@ local GetItemCooldown = addon.GetItemCooldown
 addon.recentTurnIn = {}
 addon.recentAccept = {}
 
+local questLogWindows335 = {"QuestLogFrame", "QuestLogExFrame", "QuestLogEx", "ClassicQuestLog", "QuestGuru"}
 function addon.ExpandQuestHeaders()
+    -- A quest-data read must not fight a header click in the visible log.
+    -- Expanding here can synchronously refresh/reindex the same buttons that
+    -- Blizzard is handling. Leave visible headers entirely under user control.
+    if addon.gameVersion == 30300 then
+        for _, name in ipairs(questLogWindows335) do
+            local frame = _G[name]
+            if frame and type(frame.IsShown) == "function" and frame:IsShown() then
+                return
+            end
+        end
+    end
     for i = 1, GetNumQuests() do
         local isCollapsed
         if GetQuestLogTitle then

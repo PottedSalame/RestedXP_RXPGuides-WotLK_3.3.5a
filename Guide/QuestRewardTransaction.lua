@@ -137,7 +137,9 @@ end
 
 function transaction:HasAuthoritativeConfirmation(serial)
     local active = self:Get(serial)
-    return active and (active.turnInConfirmed or active.questFinished) or false
+    -- QUEST_FINISHED also means closing/cancelling a dialog. It requests a
+    -- refresh, but cannot prove that the server awarded the quest.
+    return active and active.turnInConfirmed or false
 end
 
 function transaction:Finish(serial)

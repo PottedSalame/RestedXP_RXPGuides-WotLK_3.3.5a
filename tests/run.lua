@@ -617,9 +617,12 @@ local questiePostHookTitle = displayedTitle
 addon.questRewardTransaction:SetPhase(rewardSerial, "settling", 202)
 check(nestedSelections == 0 and
           questiePostHookTitle == rewardRequest.title and
-          addon.questRewardTransaction:HasAuthoritativeConfirmation(
+          not addon.questRewardTransaction:HasAuthoritativeConfirmation(
               rewardSerial),
       "nested reward events changed the quest panel before a Questie-style post-hook")
+addon.questRewardTransaction:Observe("QUEST_TURNED_IN", rewardElement.questId, nil, 202)
+check(addon.questRewardTransaction:HasAuthoritativeConfirmation(rewardSerial),
+      "matching reward confirmation was lost")
 check(addon.questRewardTransaction:Finish(rewardSerial) and
           not addon.questRewardTransaction:IsActive(),
       "confirmed reward transaction did not release")
@@ -995,5 +998,6 @@ assert(loadfile(root .. "/tests/performance.lua"))()(root)
 assert(loadfile(root .. "/tests/export-window.lua"))()(root)
 assert(loadfile(root .. "/tests/map-performance.lua"))()(root)
 assert(loadfile(root .. "/tests/map-lines.lua"))()(root)
+assert(loadfile(root .. "/tests/quest-manual-turnin.lua"))()(root)
 if failures > 0 then os.exit(1) end
 print("Core Lua 5.1 tests passed.")
