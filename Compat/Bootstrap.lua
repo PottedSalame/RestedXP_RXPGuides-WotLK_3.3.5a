@@ -1539,7 +1539,7 @@ do
                     completeByQuestID[qid] = legacyTrue(isComplete) or nil
                 elseif title then
                     logSnapshotComplete = false
-                end
+        end
             end
         end
         -- Hidden entries are unknown, not removed. Retain positive knowledge
@@ -1551,7 +1551,7 @@ do
                 end
             end
         end
-    end
+            end
 
     -- GetQuestLogIndexByID returns 0 for a missing quest on many 3.3.5
     -- clients. Since 0 is truthy in Lua, callers must never use that return
@@ -1918,25 +1918,57 @@ do
     end)
 
     def(C_GossipInfo, "GetAvailableQuests", function()
-        local quests = {}
-        if not _G.GetGossipAvailableQuests then return quests end
-        local data, num, stride = gossipGroups(_G.GetGossipAvailableQuests,
-                                               _G.GetNumGossipAvailableQuests)
-        for g = 0, num - 1 do
-            local i = g * stride + 1
-            local title = data[i]
-            quests[g + 1] = {
-                title = title,
-                questLevel = data[i + 1],
-                isTrivial = data[i + 2],
-                frequency = 1,
-                repeatable = false,
-                questID = title, -- title stands in for the (absent) quest ID
-                index = g + 1,
-            }
-        end
-        return quests
-    end)
+            local quests = {}
+            if not _G.GetGossipAvailableQuests then return quests end
+            local data, num, stride = gossipGroups(_G.GetGossipAvailableQuests,
+                                                   _G.GetNumGossipAvailableQuests)
+
+            -- Build a localized-title -> numeric quest-ID reverse index from the
+            -- persisted and session quest-name caches so offered (not-yet-accepted)
+            -- quests can report a numeric questID instead of only a title.
+            local reverseIndex = {}
+            local function addReverseEntry(id, localizedName)
+                id = tonumber(id)
+                if not id or id <= 0 or type(localizedName) ~= "string" then return end
+                local key = localizedName:lower():gsub("[%s%p]+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+                if key == "" then return end
+                if reverseIndex[key] == nil then
+                    reverseIndex[key] = id
+                elseif reverseIndex[key] ~= id then
+                    reverseIndex[key] = false -- ambiguous
+                end
+            end
+            local persistent = type(_G.RXPData) == "table" and _G.RXPData.questNames
+            if type(persistent) == "table" then
+                for questId, name in pairs(persistent) do
+                    addReverseEntry(questId, name)
+                end
+            end
+            local session = type(_G.RXPCData) == "table" and _G.RXPCData.questNameCache
+            if type(session) == "table" then
+                for questId, name in pairs(session) do
+                    addReverseEntry(questId, name)
+                end
+            end
+
+            for g = 0, num - 1 do
+                local i = g * stride + 1
+                local title = data[i]
+                local normalizedTitle = title and title:lower():gsub("[%s%p]+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+                local resolvedId = normalizedTitle and reverseIndex[normalizedTitle]
+                if resolvedId == false then resolvedId = nil end
+                quests[g + 1] = {
+                    title = title,
+                    questLevel = data[i + 1],
+                    isTrivial = data[i + 2],
+                    frequency = 1,
+                    repeatable = false,
+                    questID = resolvedId or title,
+                    index = g + 1,
+                }
+            end
+            return quests
+        end)
 
     def(C_GossipInfo, "SelectActiveQuest", function(indexOrTitle)
         if not _G.SelectGossipActiveQuest then return end

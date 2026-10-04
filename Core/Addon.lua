@@ -352,6 +352,41 @@ local function GetQuestAcceptAutomationElement(titleOrId)
             end
         end
     end
+
+    -- Last resort: scan every active guide step whose .accept text contains
+    -- the offered title. This is deliberately conservative: it only fires
+    -- for strings (not numeric IDs), only walks the current guide, and only
+    -- matches elements whose authored accept title exactly agrees with the
+    -- localized gossip string. Ambiguous multi-element matches are refused.
+    if not matched then
+        local steps = addon.currentGuide and addon.currentGuide.steps
+        local activeStep = steps and RXPCData and
+                               steps[tonumber(RXPCData.currentStep)]
+        local candidates = {activeStep, activeStep and steps and
+                                steps[activeStep.index - 1]}
+        local lastResort
+        for _, s in ipairs(candidates) do
+            if type(s) == "table" and type(s.elements) == "table" then
+                for _, el in ipairs(s.elements) do
+                    if type(el) == "table" and not el.completed and
+                        el.tag == "accept" and not el.frame and
+                        not seen[el] and IsQuestAutoAcceptEligible(el) then
+                        seen[el] = true
+                        local authored = addon.GetGuideAcceptTitle(el)
+                        authored = authored and TrimQuestAutomationText(authored)
+                        if authored and string.lower(authored) == offered then
+                            if lastResort and lastResort ~= el then
+                                return -- ambiguous last-resort match
+                            end
+                            lastResort = el
+                        end
+                    end
+                end
+            end
+        end
+        matched = lastResort
+    end
+
     if matched then return CacheQuestAcceptTitle(titleOrId, matched, true) end
 end
 
