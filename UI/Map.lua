@@ -1503,6 +1503,20 @@ end
 
 function addon.UpdateMap(resetPins)
     if resetPins then
+        -- Skip expensive map rebuild when world map is not visible
+        -- But still build waypoints for arrow navigation
+        local showMap = _G.WorldMapFrame and _G.WorldMapFrame:IsShown()
+        if not showMap then
+            -- Rebuild pins/lines but don't add to world map frames
+            -- This ensures addon.activeWaypoints is populated for arrow navigation
+            if addon.currentGuide == nil then return end
+            resetMap()
+            addWorldMapLines()
+            addMiniMapPins(nil)  -- Pass nil, we're not actually adding frames
+            MeasureMapStage("map arrow", updateArrowData)
+            MeasureMapStage("map visibility", addon.DisplayLines, true)
+            return
+        end
         if addon.currentGuide == nil then return end
         lastMap = nil
         if addon.PerfCount then addon.PerfCount("map rebuilds") end
