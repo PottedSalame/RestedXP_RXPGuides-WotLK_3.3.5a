@@ -1512,7 +1512,8 @@ function addon.UpdateMap(resetPins)
             if addon.currentGuide == nil then return end
             resetMap()
             addWorldMapLines()
-            addMiniMapPins(nil)  -- Pass nil, we're not actually adding frames
+            -- Populate activeWaypoints directly (isMiniMap=false) without adding world-map frames
+            generatePins(addon.currentGuide.steps, addon.settings.profile.numMapPins, RXPCData.currentStep, false)
             MeasureMapStage("map arrow", updateArrowData)
             MeasureMapStage("map visibility", addon.DisplayLines, true)
             return
