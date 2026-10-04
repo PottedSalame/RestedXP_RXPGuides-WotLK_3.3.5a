@@ -98,6 +98,7 @@ luacov.*.out
 coverage/
 
 # Build and package output
+Hardcore_Workbench/
 build/
 dist/
 .release/

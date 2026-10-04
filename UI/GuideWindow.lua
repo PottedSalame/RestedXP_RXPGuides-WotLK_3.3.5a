@@ -1374,6 +1374,9 @@ function CurrentStepFrame.UpdateText(languageRefresh)
     if not languageRefresh then addon.updateStepText = false end
     local guide = addon.currentGuide
     if not guide then return end
+    
+    -- Debounce UpdateText during resize operations to prevent micro-freezes
+    if isResizing then return end
 
     -- StepScroll(n)
     local totalHeight, frameHeight = 0, 0
