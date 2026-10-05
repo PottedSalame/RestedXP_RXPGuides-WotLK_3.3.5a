@@ -1,4 +1,4 @@
-﻿-- Execute the real refresh coordinator without constructing client map frames.
+-- Execute the real refresh coordinator without constructing client map frames.
 return function(root)
     local file = assert(io.open(root .. "/UI/Map.lua", "rb"))
     local source = file:read("*a"):gsub("\r\n", "\n")
