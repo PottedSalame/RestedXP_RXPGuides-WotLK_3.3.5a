@@ -83,9 +83,9 @@ check(timerAddon.timer and timerAddon.timer ~= foreignTimer and
       "private timer facade was not created beside a foreign C_Timer")
 
 local afterCalls, nestedCalls = 0, 0
-addon.timer.After(0, function()
+timerAddon.timer.After(0, function()
     afterCalls = afterCalls + 1
-    addon.timer.After(0, function() nestedCalls = nestedCalls + 1 end)
+    timerAddon.timer.After(0, function() nestedCalls = nestedCalls + 1 end)
 end)
 check(afterCalls == 0, "zero-delay timer ran synchronously")
 timerDriver.callback(timerDriver, 0)
@@ -95,7 +95,7 @@ timerDriver.callback(timerDriver, 0)
 check(nestedCalls == 1, "nested private timer did not run on the next update")
 
 local finiteCalls = 0
-local finiteTicker = addon.timer.NewTicker(1, function()
+local finiteTicker = timerAddon.timer.NewTicker(1, function()
     finiteCalls = finiteCalls + 1
 end, 2)
 mockTime = 1
@@ -105,10 +105,10 @@ timerDriver.callback(timerDriver, 1)
 check(finiteCalls == 2 and finiteTicker:IsCancelled(),
       "finite private ticker did not stop after its requested iterations")
 
-local staleHandle = addon.timer.NewTimer(0, function() end)
+local staleHandle = timerAddon.timer.NewTimer(0, function() end)
 timerDriver.callback(timerDriver, 0)
 local laterTimerCalls = 0
-local laterHandle = addon.timer.NewTimer(1, function()
+local laterHandle = timerAddon.timer.NewTimer(1, function()
     laterTimerCalls = laterTimerCalls + 1
 end)
 staleHandle:Cancel()
@@ -120,7 +120,7 @@ check(laterTimerCalls == 1,
       "a stale completed handle prevented a later timer from firing")
 
 local cancelledCalls = 0
-local cancelledTimer = addon.timer.NewTimer(1, function()
+local cancelledTimer = timerAddon.timer.NewTimer(1, function()
     cancelledCalls = cancelledCalls + 1
 end)
 cancelledTimer:Cancel()
@@ -134,8 +134,8 @@ local savedErrorHandler = _G.geterrorhandler
 _G.geterrorhandler = function()
     return function() timerErrors = timerErrors + 1 end
 end
-addon.timer.After(0, function() error("timer fixture") end)
-addon.timer.After(0, function()
+timerAddon.timer.After(0, function() error("timer fixture") end)
+timerAddon.timer.After(0, function()
     survivingCallbacks = survivingCallbacks + 1
 end)
 timerDriver.callback(timerDriver, 0)
@@ -144,8 +144,8 @@ check(timerErrors == 1 and survivingCallbacks == 1,
 
 local callbacksAfterBrokenReporter = 0
 _G.geterrorhandler = function() error("broken error handler fixture") end
-addon.timer.After(0, function() error("reported fixture") end)
-addon.timer.After(0, function()
+timerAddon.timer.After(0, function() error("reported fixture") end)
+timerAddon.timer.After(0, function()
     callbacksAfterBrokenReporter = callbacksAfterBrokenReporter + 1
 end)
 timerDriver.callback(timerDriver, 0)
@@ -153,7 +153,7 @@ check(callbacksAfterBrokenReporter == 1,
       "a broken error handler interrupted private timer cleanup")
 _G.geterrorhandler = savedErrorHandler
 
-local privateSchedulerAddon = {timer = addon.timer}
+local privateSchedulerAddon = {timer = timerAddon.timer}
 privateSchedulerAddon.services = {
     Register = function(_, _, instance, alias)
         if alias then privateSchedulerAddon[alias] = instance end
