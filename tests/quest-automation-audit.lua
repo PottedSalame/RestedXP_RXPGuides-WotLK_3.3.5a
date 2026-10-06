@@ -104,8 +104,7 @@ local function fixture()
     env.GetAvailableTitle = function(i) return s.available[i].title end
     env.SelectActiveQuest = function(i) call("greeting-turnin", i) end
     env.SelectAvailableQuest = function(i) call("greeting-accept", i) end
-    env.C_QuestLog = {GetQuestIDForLogIndex = function(i) return s.logIndex and s.logIndex[i] end,
-        GetNumQuestLogEntries = function() return 0 end}
+    env.C_QuestLog = {GetQuestIDForLogIndex = function(i) return s.logIndex and s.logIndex[i] end}
     env.RXPCData, env.RXPData = {currentStep = 1}, {}
     local timer = {}
     function timer.NewTimer(delay, callback)
