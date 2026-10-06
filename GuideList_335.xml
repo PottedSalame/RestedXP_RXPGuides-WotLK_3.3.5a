@@ -53,14 +53,4 @@
 
     <!-- Upstream route snapshots. These use isolated guide groups so players
          can compare them with the validated 3.3.5 routes without overwriting
-         character progress or guide metadata. -->
-    <Script file="Guides\Original\Upstream-Classic-Wrath.lua"/>
-    <Script file="Guides\Original\TBC\Alliance-Leveling.lua"/>
-    <Script file="Guides\Original\TBC\Horde-Leveling.lua"/>
-    <Script file="Guides\Original\TBC\Alliance-Dungeons.lua"/>
-    <Script file="Guides\Original\TBC\Horde-Dungeons.lua"/>
-    <Script file="Guides\Original\TBC\Reputation.lua"/>
-    <Script file="Guides\Original\TBC\Attunements.lua"/>
-    <Script file="Guides\Original\WotLK\Alliance-Leveling.lua"/>
-    <Script file="Guides\Original\WotLK\Horde-Leveling.lua"/>
-</Ui>
+         </Ui>

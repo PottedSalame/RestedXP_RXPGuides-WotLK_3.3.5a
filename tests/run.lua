@@ -78,14 +78,14 @@ check(_G.C_Timer == foreignTimer and getmetatable(_G.C_Timer) == foreignMeta and
           _G.C_Timer.NewTimer == foreignNewTimer and
           _G.C_Timer.NewTicker == foreignNewTicker,
       "foreign C_Timer ownership, metatable, or function identity was overwritten")
-check(timerAddon.timerAPI335 and timerAddon.timerAPI335 ~= foreignTimer and
+check(addon.timer and addon.timer ~= foreignTimer and
           not timerAddon._ownsGlobalCTimer335,
       "private timer facade was not created beside a foreign C_Timer")
 
 local afterCalls, nestedCalls = 0, 0
-timerAddon.timerAPI335.After(0, function()
+addon.timer.After(0, function()
     afterCalls = afterCalls + 1
-    timerAddon.timerAPI335.After(0, function() nestedCalls = nestedCalls + 1 end)
+    addon.timer.After(0, function() nestedCalls = nestedCalls + 1 end)
 end)
 check(afterCalls == 0, "zero-delay timer ran synchronously")
 timerDriver.callback(timerDriver, 0)
@@ -95,7 +95,7 @@ timerDriver.callback(timerDriver, 0)
 check(nestedCalls == 1, "nested private timer did not run on the next update")
 
 local finiteCalls = 0
-local finiteTicker = timerAddon.timerAPI335.NewTicker(1, function()
+local finiteTicker = addon.timer.NewTicker(1, function()
     finiteCalls = finiteCalls + 1
 end, 2)
 mockTime = 1
@@ -105,10 +105,10 @@ timerDriver.callback(timerDriver, 1)
 check(finiteCalls == 2 and finiteTicker:IsCancelled(),
       "finite private ticker did not stop after its requested iterations")
 
-local staleHandle = timerAddon.timerAPI335.NewTimer(0, function() end)
+local staleHandle = addon.timer.NewTimer(0, function() end)
 timerDriver.callback(timerDriver, 0)
 local laterTimerCalls = 0
-local laterHandle = timerAddon.timerAPI335.NewTimer(1, function()
+local laterHandle = addon.timer.NewTimer(1, function()
     laterTimerCalls = laterTimerCalls + 1
 end)
 staleHandle:Cancel()
@@ -120,7 +120,7 @@ check(laterTimerCalls == 1,
       "a stale completed handle prevented a later timer from firing")
 
 local cancelledCalls = 0
-local cancelledTimer = timerAddon.timerAPI335.NewTimer(1, function()
+local cancelledTimer = addon.timer.NewTimer(1, function()
     cancelledCalls = cancelledCalls + 1
 end)
 cancelledTimer:Cancel()
@@ -134,8 +134,8 @@ local savedErrorHandler = _G.geterrorhandler
 _G.geterrorhandler = function()
     return function() timerErrors = timerErrors + 1 end
 end
-timerAddon.timerAPI335.After(0, function() error("timer fixture") end)
-timerAddon.timerAPI335.After(0, function()
+addon.timer.After(0, function() error("timer fixture") end)
+addon.timer.After(0, function()
     survivingCallbacks = survivingCallbacks + 1
 end)
 timerDriver.callback(timerDriver, 0)
@@ -144,8 +144,8 @@ check(timerErrors == 1 and survivingCallbacks == 1,
 
 local callbacksAfterBrokenReporter = 0
 _G.geterrorhandler = function() error("broken error handler fixture") end
-timerAddon.timerAPI335.After(0, function() error("reported fixture") end)
-timerAddon.timerAPI335.After(0, function()
+addon.timer.After(0, function() error("reported fixture") end)
+addon.timer.After(0, function()
     callbacksAfterBrokenReporter = callbacksAfterBrokenReporter + 1
 end)
 timerDriver.callback(timerDriver, 0)
@@ -153,7 +153,7 @@ check(callbacksAfterBrokenReporter == 1,
       "a broken error handler interrupted private timer cleanup")
 _G.geterrorhandler = savedErrorHandler
 
-local privateSchedulerAddon = {timerAPI335 = timerAddon.timerAPI335}
+local privateSchedulerAddon = {timer = addon.timer}
 privateSchedulerAddon.services = {
     Register = function(_, _, instance, alias)
         if alias then privateSchedulerAddon[alias] = instance end
@@ -178,17 +178,17 @@ check(standaloneTimerAddon._ownsGlobalCTimer335 and
           type(_G.C_Timer.After) == "function" and
           type(_G.C_Timer.NewTimer) == "function" and
           type(_G.C_Timer.NewTicker) == "function" and
-          _G.C_Timer ~= standaloneTimerAddon.timerAPI335,
+          _G.C_Timer ~= standaloneTimerAddon.timer,
       "standalone client did not receive a separate global timer facade")
-local privateNewTimer = standaloneTimerAddon.timerAPI335.NewTimer
+local privateNewTimer = standaloneTimerAddon.timer.NewTimer
 _G.C_Timer.NewTimer = function() error("foreign replacement") end
-check(standaloneTimerAddon.timerAPI335.NewTimer == privateNewTimer,
+check(standaloneTimerAddon.timer.NewTimer == privateNewTimer,
       "later global timer replacement mutated the private timer facade")
 
 _G.C_Timer = false
 local malformedGlobalTimerAddon = {}
 loadAddonFile("Compat/TimerFacade335.lua", malformedGlobalTimerAddon)
-check(_G.C_Timer == false and malformedGlobalTimerAddon.timerAPI335 and
+check(_G.C_Timer == false and malformedGlobalTimerAddon.timer and
           not malformedGlobalTimerAddon._ownsGlobalCTimer335,
       "a non-table foreign C_Timer value was overwritten")
 _G.C_Timer = foreignTimer

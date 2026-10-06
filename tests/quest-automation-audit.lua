@@ -114,7 +114,7 @@ local function fixture()
         return handle
     end
     function timer.After(delay, callback) timer.NewTimer(delay, callback) end
-    local addon = {locale = {Get = function(text) return text end}, timerAPI335 = timer,
+    local addon = {locale = {Get = function(text) return text end}, timer = timer,
         services = {Register = noop}, facade = {ExposeGlobal = function(_, k, v) env[k] = v end,
             Register = noop}, RegisterMessage = noop, SendMessage = noop}
     local function load(path)
