@@ -104,7 +104,10 @@ local function fixture()
     env.GetAvailableTitle = function(i) return s.available[i].title end
     env.SelectActiveQuest = function(i) call("greeting-turnin", i) end
     env.SelectAvailableQuest = function(i) call("greeting-accept", i) end
-    env.C_QuestLog = {GetQuestIDForLogIndex = function(i) return s.logIndex and s.logIndex[i] end}
+    env.C_QuestLog = {GetQuestIDForLogIndex = function(i) return s.logIndex and s.logIndex[i] end,
+        GetNumQuestLogEntries = function() return 0 end,
+        IsOnQuest = function(id) return not not s.log[id] end,
+        IsComplete = function(id) return s.done[id] end}
     env.RXPCData, env.RXPData = {currentStep = 1}, {}
     local timer = {}
     function timer.NewTimer(delay, callback)
@@ -225,8 +228,10 @@ local function fixture()
             end
             return result
         end}
-        env.C_QuestLog.IsOnQuest = env.C_QuestLog.IsOnQuest or function(id) return not not s.log[id] end
-        env.C_QuestLog.IsComplete = env.C_QuestLog.IsComplete or function(id) return s.done[id] end
+        env.C_QuestLog.GetNumQuestLogEntries = env.C_QuestLog.GetNumQuestLogEntries or
+            function() return 0 end
+        env.C_QuestLog.HasActiveQuest = env.C_QuestLog.HasActiveQuest or
+            function() return false end
         env.C_QuestLog.IsQuestFlaggedCompleted = env.C_QuestLog.IsQuestFlaggedCompleted or
             function(id) return s.turnedIn and s.turnedIn[id] end
         addon.colors = {tooltip = ""}
