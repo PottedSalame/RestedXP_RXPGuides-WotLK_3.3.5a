@@ -222,7 +222,7 @@ if ($timerFacadeText -notmatch
     $timerFacadeText -notmatch
         'local\s+ownsGlobalTimer\s*=\s*inheritedTimer\s*==\s*nil' -or
     $timerFacadeText -notmatch
-        'addon\.timerAPI335\s*=\s*timerAPI' -or
+        'addon\.timer\s*=\s*timerAPI' -or
     $timerFacadeText -notmatch 'if\s+ownsGlobalTimer\s+then' -or
     $timerFacadeText -match
         '(?s)if\s+not\s+_G\.C_Timer\s+then.*function\s+C_Timer\.' -or
@@ -271,7 +271,7 @@ foreach ($loadedPath in $loadedFiles) {
 foreach ($relative in ($privateTimerConsumers | Sort-Object)) {
     $text = [IO.File]::ReadAllText((Join-Path $root $relative))
     if ($text -notmatch
-            'local\s+C_Timer\s*=\s*addon\.timerAPI335\s+or\s+_G\.C_Timer' -or
+            'local\s+C_Timer\s*=\s*addon\.timer(\s+or\s+_G\.C_Timer)?' -or
         $text -match '_G\.C_Timer\.(?:After|NewTimer|NewTicker)') {
         Add-ValidationError (
             "3.3.5 timer consumer bypasses the private timer facade: $relative")

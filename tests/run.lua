@@ -78,7 +78,7 @@ check(_G.C_Timer == foreignTimer and getmetatable(_G.C_Timer) == foreignMeta and
           _G.C_Timer.NewTimer == foreignNewTimer and
           _G.C_Timer.NewTicker == foreignNewTicker,
       "foreign C_Timer ownership, metatable, or function identity was overwritten")
-check(addon.timer and addon.timer ~= foreignTimer and
+check(timerAddon.timer and timerAddon.timer ~= foreignTimer and
           not timerAddon._ownsGlobalCTimer335,
       "private timer facade was not created beside a foreign C_Timer")
 

@@ -51,6 +51,4 @@
     
 	<Script file="Guides\Dailies\Argent Tournament Grounds.lua"/>
 
-    <!-- Upstream route snapshots. These use isolated guide groups so players
-         can compare them with the validated 3.3.5 routes without overwriting
-         </Ui>
+    </Ui>
