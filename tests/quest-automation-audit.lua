@@ -117,6 +117,11 @@ local function fixture()
     local addon = {locale = {Get = function(text) return text end}, timer = timer,
         services = {Register = noop}, facade = {ExposeGlobal = function(_, k, v) env[k] = v end,
             Register = noop}, RegisterMessage = noop, SendMessage = noop}
+    addon.questLog = env.C_QuestLog
+    addon.gossip = {}
+    addon.container = {}
+    addon.map = {}
+    addon.GetSpellInfo = _G.GetSpellInfo
     local function load(path)
         local file = assert(io.open(root .. "/" .. path, "rb"))
         local source = file:read("*a")
