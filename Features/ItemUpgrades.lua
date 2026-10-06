@@ -4002,6 +4002,23 @@ local function calculate(itemLink, scanData)
         return false
     end
 
+    -- On 3.3.5 GetItemData returns a cached stub without totalWeight for
+    -- weapons, shields and armor whose proficiency it could not verify
+    -- (unusable = true, proficiencyUnknown = true). The AH filter already
+    -- limited the scan to "usable" items, so treat such an item as not an
+    -- upgrade instead of dividing nil by the price.
+    if not itemData.totalWeight then
+        scanData.totalWeight = 0
+        scanData.weightPerCopper = 0
+        scanData.itemEquipLoc = itemData.itemEquipLoc
+        scanData.comparison = nil
+        scanData.state = itemData.unusable and "unusable" or "unknown"
+        scanData.ratio = 0
+        scanData.relativeWeightPerCopper = nil
+        scanData.weightIncrease = 0
+        return true
+    end
+
     scanData.totalWeight = itemData.totalWeight
     scanData.weightPerCopper = itemData.totalWeight / scanData.lowestPrice
     scanData.itemEquipLoc = itemData.itemEquipLoc
