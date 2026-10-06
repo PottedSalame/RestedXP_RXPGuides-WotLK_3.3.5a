@@ -1707,7 +1707,7 @@ do
         end
     end)
 
-    def(C_QuestLog, "GetNumQuestLogEntries", _G.GetNumQuestLogEntries)
+    def(C_QuestLog, "GetNumQuestLogEntries", function(...) return _G.GetNumQuestLogEntries(...) end)
 
     def(C_QuestLog, "GetInfo", function(questLogIndex)
         local title, level, questTag, suggestedGroup, isHeader, isCollapsed,

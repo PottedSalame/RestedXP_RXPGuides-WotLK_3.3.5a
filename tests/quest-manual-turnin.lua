@@ -200,6 +200,7 @@ local function wipe(t) for k in pairs(t) do t[k] = nil end end
         local s = fixture()
         local collapsed, expands = true, 0
         s.env.GetNumQuestLogEntries = function() return 1 end
+        s.addon.questLog.GetNumQuestLogEntries = s.env.GetNumQuestLogEntries
         s.env.RXPCompatGetQuestLogTitle = function()
             return "Valley of Trials", 4, 0, true, collapsed
         end
