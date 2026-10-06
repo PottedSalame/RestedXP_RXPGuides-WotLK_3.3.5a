@@ -226,7 +226,7 @@ local function fixture()
             return result
         end}
         env.C_QuestLog.GetNumQuestLogEntries = env.C_QuestLog.GetNumQuestLogEntries or
-            function() return 0 end
+            function(...) return env.GetNumQuestLogEntries and env.GetNumQuestLogEntries(...) or 0 end
         env.C_QuestLog.HasActiveQuest = env.C_QuestLog.HasActiveQuest or
             function() return false end
         env.C_QuestLog.IsOnQuest = env.C_QuestLog.IsOnQuest or function(id) return not not s.log[id] end

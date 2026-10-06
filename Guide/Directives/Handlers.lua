@@ -352,9 +352,10 @@ local GetRecentTurnIn = function(id)
     return addon.recentTurnIn[id]
 end
 
-local IsTurnedIn = addon.questLog.IsQuestFlaggedCompleted or
-                    _G.IsQuestFlaggedCompleted or
-                        function(id) return _G.GetQuestsCompleted()[id] end
+local IsTurnedIn = function(id)
+    return (addon.questLog.IsQuestFlaggedCompleted or _G.IsQuestFlaggedCompleted or
+            function(qid) return _G.GetQuestsCompleted()[qid] end)(id)
+end
 
 local IsQuestTurnedIn = function(id,accountWide)
     id = tonumber(id)
