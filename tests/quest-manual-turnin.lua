@@ -27,7 +27,7 @@ local function def(t, k, value) if t[k] == nil then t[k] = value end end
 local function legacyTrue(value) return value == true or value == 1 end
 local function wipe(t) for k in pairs(t) do t[k] = nil end end
 ]]
-        env.C_QuestLog = {}
+        env.C_QuestLog = env.C_QuestLog or {}
         env.GetNumQuestLogEntries = function() return #s.rows end
         env.GetQuestLogTitle = function(index)
             local row = s.rows[index]
