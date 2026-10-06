@@ -145,7 +145,7 @@ function timerAPI.NewTicker(interval, callback, iterations)
     return NewTicker(interval, callback, iterations)
 end
 
-addon.timerAPI335 = timerAPI
+addon.timer = timerAPI
 SetDriverActive(false)
 
 if ownsGlobalTimer then

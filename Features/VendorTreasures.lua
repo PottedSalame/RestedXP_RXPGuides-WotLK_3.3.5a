@@ -5,17 +5,17 @@ Derived from https://www.curseforge.com/wow/addons/cpt-stadics-map-of-vendor-tre
 Creative Commons Attribution-NonCommercial 3.0 Unported https://creativecommons.org/licenses/by-nc/3.0/
 ]] local _, addon = ...
 
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local L = addon.locale.Get
 local build = select(4, GetBuildInfo())
 local legacy335 = build == 30300
 if build > 40000 then return end
-local C_Map = addon.mapAPI335 or _G.C_Map
+local C_Map = addon.map
 local HBD = LibStub("HereBeDragons-2.0")
 local HBDPins = LibStub("HereBeDragons-Pins-2.0")
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
-local GetItemQualityColor = C_Item and C_Item.GetItemQualityColor or _G.GetItemQualityColor
+local GetItemInfo = _G.GetItemInfo
+local GetItemQualityColor = _G.GetItemQualityColor
 
 local GameTooltip, WorldMapFrame = _G.GameTooltip, _G.WorldMapFrame
 local VendorTooltip = legacy335 and (_G.WorldMapTooltip or GameTooltip) or

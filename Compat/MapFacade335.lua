@@ -5,9 +5,9 @@ local _G = _G
 -- Bind RXPGuides to its private map implementation and publish that
 -- implementation globally only when Compat/Bootstrap created the namespace.
 -- The boolean return is intentionally useful to the pure-Lua ownership test.
-function addon.PublishMapAPI335(api)
+function addon.PublishMap(api)
     if type(api) ~= "table" then return false end
-    addon.mapAPI335 = api
+    addon.map = api
     if not addon._ownsGlobalCMap335 then return false end
 
     local globalMap = _G.C_Map

@@ -2,7 +2,7 @@ local _, addon = ...
 local L = addon.locale.Get
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local format = string.format
 local GetItemCount = _G.GetItemCount
 
@@ -529,8 +529,8 @@ function supplies:Setup()
     self.eventFrame = CreateFrame("Frame")
     self.eventFrame:RegisterEvent("MERCHANT_SHOW")
     self.eventFrame:RegisterEvent("MERCHANT_CLOSED")
-    local bagEvent = C_EventUtils and C_EventUtils.IsEventValid and
-                         C_EventUtils.IsEventValid("BAG_UPDATE_DELAYED") and
+    local bagEvent = addon.events and addon.events.IsEventValid and
+                         addon.events.IsEventValid("BAG_UPDATE_DELAYED") and
                          "BAG_UPDATE_DELAYED" or "BAG_UPDATE"
     self.eventFrame:RegisterEvent(bagEvent)
     self.eventFrame:RegisterEvent("UNIT_PET")

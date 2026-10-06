@@ -1,5 +1,5 @@
 local _,addon = ...
-local C_Map = addon.mapAPI335 or _G.C_Map
+local C_Map = addon.map
 local RXPFrame = addon.RXPFrame
 local candy = LibStub("LibCandyBar-3.0")
 
@@ -168,7 +168,7 @@ function addon:TAXIMAP_OPENED(event)
         table.wipe(nodeHash)
         table.wipe(flightInfo)
         flightInfo.nodeHash = nodeHash
-        local FPList = C_TaxiMap.GetAllTaxiNodes(mapID)
+        local FPList = addon.taxiMap and addon.taxiMap.GetAllTaxiNodes(mapID) or {}
         for _, v in pairs(FPList) do
             local id = v.nodeID
             if id then

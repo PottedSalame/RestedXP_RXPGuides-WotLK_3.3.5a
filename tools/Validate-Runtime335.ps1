@@ -189,8 +189,8 @@ $astrolabeText = [IO.File]::ReadAllText(
 if ($bootstrapText -notmatch
         'addon\._ownsGlobalCMap335\s*=\s*type\(_G\.C_Map\)\s*~=\s*"table"' -or
     $hbdText -notmatch 'local\s+C_Map\s*=\s*\{\}' -or
-    $hbdText -notmatch 'addon\.mapAPI335\s*=\s*C_Map' -or
-    $hbdText -notmatch 'addon\.PublishMapAPI335\(C_Map\)' -or
+    $hbdText -notmatch 'addon\.map\s*=\s*C_Map' -or
+    $hbdText -notmatch 'addon\.PublishMap\(C_Map\)' -or
     $mapFacadeText -notmatch 'if\s+not\s+addon\._ownsGlobalCMap335\s+then' -or
     $hbdText -match 'local\s+C_Map\s*=\s*_G\.C_Map') {
     Add-ValidationError (
@@ -208,7 +208,7 @@ $privateMapConsumers = @(
 foreach ($relative in $privateMapConsumers) {
     $text = [IO.File]::ReadAllText((Join-Path $root $relative))
     if ($text -notmatch
-            'local\s+C_Map\s*=\s*addon\.mapAPI335\s+or\s+_G\.C_Map') {
+            'local\s+C_Map\s*=\s*addon\.map(\s+or\s+_G\.C_Map)?') {
         Add-ValidationError (
             "3.3.5 map consumer bypasses the private map facade: $relative")
     }

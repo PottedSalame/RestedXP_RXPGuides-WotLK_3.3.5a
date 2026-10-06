@@ -1,5 +1,5 @@
 local addonName,addon = ...
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local L = addon.locale.Get
 
 local inventoryManager = {}
@@ -7,20 +7,20 @@ addon.inventoryManager = inventoryManager
 
 local gameVersion = select(4, GetBuildInfo())
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
-local GetContainerNumFreeSlots = C_Container and C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
+local GetItemInfo = _G.GetItemInfo
+local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots
+local GetContainerNumSlots = _G.GetContainerNumSlots
 
-local GetContainerItemID = C_Container and C_Container.GetContainerItemID or _G.GetContainerItemID
+local GetContainerItemID = _G.GetContainerItemID
 
-local PickupContainerItem = C_Container and C_Container.PickupContainerItem or _G.PickupContainerItem
+local PickupContainerItem = _G.PickupContainerItem
 
-local UseContainerItem = C_Container and C_Container.UseContainerItem or _G.UseContainerItem
-local GetItemSpell = C_Item and C_Item.GetItemSpell or _G.GetItemSpell
-local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local GetItemCount = C_Item and C_Item.GetItemCount or _G.GetItemCount
+local UseContainerItem = _G.UseContainerItem
+local GetItemSpell = _G.GetItemSpell
+local GetContainerItemLink = _G.GetContainerItemLink
+local GetItemCount = _G.GetItemCount
 
-local GetCoinTextureString = C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString or _G.GetCoinTextureString
+local GetCoinTextureString = _G.GetCoinTextureString
 
 inventoryManager.bagHook = _G.ContainerFrame_Update
 
@@ -28,9 +28,9 @@ local GetContainerItemInfo
 local SOUL_SHARD_ID = 6265
 local SOUL_BAG_FAMILY = 0x4
 
-if C_Container and C_Container.GetContainerItemInfo then
+if addon.container and addon.container.GetContainerItemInfo then
     GetContainerItemInfo = function(...)
-        local itemTable = C_Container.GetContainerItemInfo(...)
+        local itemTable = addon.container.GetContainerItemInfo(...)
         if itemTable then
             return itemTable.texture,
                     itemTable.stackCount,
@@ -69,15 +69,11 @@ end
 function inventoryManager.IsJunkIconEnabled()
     local enabled = addon.settings and addon.settings.profile and
                         addon.settings.profile.showJunkIcon
-    if gameVersion == 30300 then
-        -- Stock bags are supported directly below. Do not make their overlay
-        -- depend on ContainerFrame_Update already existing at file-load time.
-        -- AceDB supplies the true default, while this nil fallback also covers
-        -- the short interval before the profile has been attached.
-        return enabled ~= false
-    end
-    if not inventoryManager.bagHook then return false end
-    return enabled
+    -- Stock bags are supported directly below. Do not make their overlay
+    -- depend on ContainerFrame_Update already existing at file-load time.
+    -- AceDB supplies the true default, while this nil fallback also covers
+    -- the short interval before the profile has been attached.
+    return enabled ~= false
 end
 
 function inventoryManager.GetModKey()
@@ -130,7 +126,7 @@ end
 
 local function SortQuiver()
 --Makes sure you only have 1 partial stack at the left most quiver slot for each ammo type
-    if gameVersion > 30300 or UnitIsDead('player') or InCombatLockdown() then
+    if UnitIsDead('player') or InCombatLockdown() then
         return
     end
     organizeQuiver = false
@@ -683,8 +679,7 @@ end
 -- INTERACTMOUSEOVER command instead. The override is reversible and leaves the
 -- player's original binding intact whenever this feature is disabled.
 function inventoryManager.RefreshMouseoverCorpseLootBinding()
-    if addon.gameVersion ~= 30300 or
-        type(_G.ClearOverrideBindings) ~= "function" or
+    if type(_G.ClearOverrideBindings) ~= "function" or
         type(_G.SetOverrideBinding) ~= "function" then
         return false
     end
@@ -748,8 +743,8 @@ corpseLootBindingOwner:SetScript("OnEvent", function(_, event)
 end)
 
 local function IsEventSupported(event)
-    return not (C_EventUtils and C_EventUtils.IsEventValid) or
-               C_EventUtils.IsEventValid(event)
+    return not (addon.events and addon.events.IsEventValid) or
+               addon.events.IsEventValid(event)
 end
 
 local function RegisterSupportedEvent(frame, event)
@@ -819,8 +814,8 @@ f:SetScript("OnEvent",function(self)
         pcall(_G.SetCVar, "autoLootDefault", 1)
     end
     self:RegisterEvent(bagEvent)
-    local lootEvent = C_EventUtils and C_EventUtils.IsEventValid and
-        C_EventUtils.IsEventValid("LOOT_READY") and "LOOT_READY" or "LOOT_OPENED"
+    local lootEvent = addon.events and addon.events.IsEventValid and
+        addon.events.IsEventValid("LOOT_READY") and "LOOT_READY" or "LOOT_OPENED"
     self:RegisterEvent(lootEvent)
     self:RegisterEvent("UI_ERROR_MESSAGE")
 
@@ -1091,7 +1086,7 @@ local function UpdateAllBagsImpl(self,name,i)
     DetectBagMods()
     i = i or inventoryManager.containerIndex
     name = name or inventoryManager.containerName
-    if gameVersion == 30300 and name == "ContainerFrame%d" then
+    if name == "ContainerFrame%d" then
         -- All thirteen stock frames exist up front and are recycled between
         -- bags. Only their shown instances have a meaningful current bag ID.
         for index = 1, (_G.NUM_CONTAINER_FRAMES or 13) do
@@ -1136,9 +1131,7 @@ if bagEvent ~= "BAG_UPDATE" then
     RegisterSupportedEvent(invUpdate, bagEvent)
 end
 RegisterSupportedEvent(invUpdate, "BAG_UPDATE")
-if gameVersion == 30300 then
-    RegisterSupportedEvent(invUpdate, "ITEM_PUSH")
-end
+RegisterSupportedEvent(invUpdate, "ITEM_PUSH")
 RegisterSupportedEvent(invUpdate, "GET_ITEM_INFO_RECEIVED")
 RegisterSupportedEvent(invUpdate, "PLAYER_EQUIPMENT_CHANGED")
 RegisterSupportedEvent(invUpdate, "LOOT_CLOSED")

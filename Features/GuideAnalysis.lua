@@ -6,14 +6,13 @@ local _, addon = ...
 -- so class/race/server compatibility conditions have already been applied.
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local format = string.format
 local floor, max, min = math.floor, math.max, math.min
 local L = addon.locale.Get
 local tinsert = table.insert
 local GetTime = _G.GetTime
-local GetItemCount = addon.GetItemCount or
-                         (C_Item and C_Item.GetItemCount) or _G.GetItemCount
+local GetItemCount = addon.GetItemCount or _G.GetItemCount
 local toolWindows = addon.toolWindows
 
 addon.routePreflight = addon.routePreflight or {}
@@ -169,8 +168,8 @@ end
 local function GetLiveQuestRewardXP(questId)
     if type(_G.GetQuestLogRewardXP) ~= "function" or
         type(_G.SelectQuestLogEntry) ~= "function" then return end
-    local index = C_QuestLog and C_QuestLog.GetLogIndexForQuestID and
-                      C_QuestLog.GetLogIndexForQuestID(questId) or
+    local index = addon.questLog and addon.questLog.GetLogIndexForQuestID and
+                      addon.questLog.GetLogIndexForQuestID(questId) or
                       (_G.GetQuestLogIndexByID and _G.GetQuestLogIndexByID(questId))
     index = tonumber(index)
     if not index or index < 1 then return end
@@ -485,8 +484,8 @@ end
 local function QuestObjectiveSignature(questId, requestedObjective)
     questId = tonumber(questId)
     if not questId then return "" end
-    local index = C_QuestLog and C_QuestLog.GetLogIndexForQuestID and
-                      C_QuestLog.GetLogIndexForQuestID(questId) or
+    local index = addon.questLog and addon.questLog.GetLogIndexForQuestID and
+                      addon.questLog.GetLogIndexForQuestID(questId) or
                       (_G.GetQuestLogIndexByID and
                            _G.GetQuestLogIndexByID(questId))
     index = tonumber(index)

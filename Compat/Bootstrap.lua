@@ -1274,9 +1274,58 @@ do
                         local localized = addon.LocalizeLegacyLocationName(data.name)
                         if localized ~= data.name then
                             addTaxiName(exact, short, records, localized, id)
-                        end
-                    end
-                end
+end
+    end
+end
+
+--=========================================================================
+-- Publish C_* abstractions as addon.* aliases for native-3.3.5 consumers
+--=========================================================================
+addon.questLog = _G.C_QuestLog
+addon.gossip = _G.C_GossipInfo
+addon.container = _G.C_Container
+addon.spells = _G.C_Spell
+addon.spellBook = _G.C_SpellBook
+addon.unitAuras = _G.C_UnitAuras
+addon.events = _G.C_EventUtils
+addon.dateAndTime = _G.C_DateAndTime
+addon.reputation = _G.C_Reputation
+addon.currencyInfo = _G.C_CurrencyInfo
+addon.chatInfo = _G.C_ChatInfo
+addon.superTrack = _G.C_SuperTrack
+addon.playerInteraction = _G.C_PlayerInteractionManager
+addon.namePlate = _G.C_NamePlate
+addon.gameRules = _G.C_GameRules
+addon.seasons = _G.C_Seasons
+addon.pvp = _G.C_PvP
+addon.playerInfo = _G.C_PlayerInfo
+addon.toyBox = _G.C_ToyBox
+addon.mountJournal = _G.C_MountJournal
+addon.petJournal = _G.C_PetJournal
+addon.scenarioInfo = _G.C_ScenarioInfo
+addon.scenario = _G.C_Scenario
+addon.taskQuest = _G.C_TaskQuest
+addon.engraving = _G.C_Engraving
+addon.chromieTime = _G.C_ChromieTime
+addon.playerChoice = _G.C_PlayerChoice
+addon.actionBar = _G.C_ActionBar
+addon.taxiMap = _G.C_TaxiMap
+addon.deathInfo = _G.C_DeathInfo
+addon.tradeSkillUI = _G.C_TradeSkillUI
+addon.adventureMap = _G.C_AdventureMap
+addon.scrappingMachineUI = _G.C_ScrappingMachineUI
+addon.areaPoiInfo = _G.C_AreaPoiInfo
+addon.specializationInfo = _G.C_SpecializationInfo
+addon.texture = _G.C_Texture
+addon.partyInfo = _G.C_PartyInfo
+addon.itemCompat = _G.C_Item
+addon.addOns = _G.C_AddOns
+
+--=========================================================================
+-- Ensure runtime version contract is available before Core domain files load
+--=========================================================================
+addon.gameVersion = 30300
+addon.build = 30300
             end
         end
         if type(_G.RXPCData) == "table" and type(_G.RXPCData.flightPaths) == "table" then
@@ -1311,7 +1360,7 @@ do
             id = partialID
         end
         if not id and nodeType == "CURRENT" and addon and addon.FPbyZone and faction then
-            local mapAPI = addon.mapAPI335 or _G.C_Map
+            local mapAPI = addon.map or _G.C_Map
             local mapID = mapAPI and mapAPI.GetBestMapForUnit and
                 mapAPI.GetBestMapForUnit("player")
             id = mapID and addon.FPbyZone[faction] and addon.FPbyZone[faction][mapID]
@@ -2016,3 +2065,47 @@ if _G.LibStub then
         end
     end
 end
+
+
+--=========================================================================
+-- Publish C_* abstractions as addon.* aliases for native-3.3.5 consumers
+--=========================================================================
+addon.questLog = _G.C_QuestLog
+addon.gossip = _G.C_GossipInfo
+addon.container = _G.C_Container
+addon.spells = _G.C_Spell
+addon.spellBook = _G.C_SpellBook
+addon.unitAuras = _G.C_UnitAuras
+addon.events = _G.C_EventUtils
+addon.dateAndTime = _G.C_DateAndTime
+addon.reputation = _G.C_Reputation
+addon.currencyInfo = _G.C_CurrencyInfo
+addon.chatInfo = _G.C_ChatInfo
+addon.superTrack = _G.C_SuperTrack
+addon.playerInteraction = _G.C_PlayerInteractionManager
+addon.namePlate = _G.C_NamePlate
+addon.gameRules = _G.C_GameRules
+addon.seasons = _G.C_Seasons
+addon.pvp = _G.C_PvP
+addon.playerInfo = _G.C_PlayerInfo
+addon.toyBox = _G.C_ToyBox
+addon.mountJournal = _G.C_MountJournal
+addon.petJournal = _G.C_PetJournal
+addon.scenarioInfo = _G.C_ScenarioInfo
+addon.scenario = _G.C_Scenario
+addon.taskQuest = _G.C_TaskQuest
+addon.engraving = _G.C_Engraving
+addon.chromieTime = _G.C_ChromieTime
+addon.playerChoice = _G.C_PlayerChoice
+addon.actionBar = _G.C_ActionBar
+addon.taxiMap = _G.C_TaxiMap
+addon.deathInfo = _G.C_DeathInfo
+addon.tradeSkillUI = _G.C_TradeSkillUI
+addon.adventureMap = _G.C_AdventureMap
+addon.scrappingMachineUI = _G.C_ScrappingMachineUI
+addon.areaPoiInfo = _G.C_AreaPoiInfo
+addon.specializationInfo = _G.C_SpecializationInfo
+addon.texture = _G.C_Texture
+addon.partyInfo = _G.C_PartyInfo
+addon.itemCompat = _G.C_Item
+addon.addOns = _G.C_AddOns

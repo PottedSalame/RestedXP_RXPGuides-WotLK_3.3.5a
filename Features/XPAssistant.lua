@@ -545,7 +545,7 @@ end
 function assistant:RefreshFooter()
     local footer = addon.RXPFrame and addon.RXPFrame.Footer
     if not (footer and footer.text) then return end
-    local enabled = addon.gameVersion == 30300 and addon.settings and
+    local enabled = addon.settings and
                         addon.settings.profile.showXPRemaining ~= false
     if not enabled then
         footer.text:SetText(self:GetReleaseText())

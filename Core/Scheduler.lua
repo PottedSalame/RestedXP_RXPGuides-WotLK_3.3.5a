@@ -1,7 +1,7 @@
 local _, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local scheduler = addon.scheduler or {}
 addon.scheduler = scheduler
 

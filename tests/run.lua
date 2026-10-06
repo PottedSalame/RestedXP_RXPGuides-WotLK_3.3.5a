@@ -196,7 +196,7 @@ _G.C_Timer = foreignTimer
 -- Continue the general runtime fixture with the same TOC-style private timer
 -- service. This ensures Scheduler and optional compatibility modules below do
 -- not silently fall back to the deliberately foreign C_Timer test double.
-addon.timerAPI335 = timerAddon.timerAPI335
+addon.timer = timerAddon.timer
 
 -- The 3.3.5 map facade must remain private when another addon already owns
 -- C_Map, while standalone RXPGuides still publishes its compatibility API.
@@ -207,15 +207,15 @@ _G.C_Map = foreignMap
 local mapAddon = {_ownsGlobalCMap335 = false}
 loadAddonFile("Compat/MapFacade335.lua", mapAddon)
 local privateMap = {GetBestMapForUnit = function() return 1 end}
-check(not mapAddon.PublishMapAPI335(privateMap) and
-          mapAddon.mapAPI335 == privateMap and _G.C_Map == foreignMap and
+check(not mapAddon.PublishMap(privateMap) and
+          mapAddon.map == privateMap and _G.C_Map == foreignMap and
           _G.C_Map.GetBestMapForUnit == foreignBestMap,
       "foreign C_Map ownership or method identity was overwritten")
 
 local standaloneMap = {}
 _G.C_Map = standaloneMap
 mapAddon._ownsGlobalCMap335 = true
-check(mapAddon.PublishMapAPI335(privateMap) and
+check(mapAddon.PublishMap(privateMap) and
           _G.C_Map == standaloneMap and
           _G.C_Map.GetBestMapForUnit == privateMap.GetBestMapForUnit,
       "standalone C_Map facade was not published")

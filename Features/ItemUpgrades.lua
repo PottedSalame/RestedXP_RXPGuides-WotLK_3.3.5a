@@ -10,16 +10,16 @@ local fmt, tinsert, ipairs, pairs, next, type, wipe, tonumber, strlower, smatch 
                                                                                   pairs, next, type, wipe, tonumber,
                                                                                   strlower, string.match
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
-local GetItemInfoInstant = C_Item and C_Item.GetItemInfoInstant or _G.GetItemInfoInstant
-local NativeIsEquippedItem = C_Item and C_Item.IsEquippedItem or _G.IsEquippedItem
-local NativeIsUsableItem = C_Item and C_Item.IsUsableItem or _G.IsUsableItem
-local GetItemStats = C_Item and C_Item.GetItemStats or _G.GetItemStats
+local GetItemInfo = _G.GetItemInfo
+local GetItemInfoInstant = _G.GetItemInfoInstant
+local NativeIsEquippedItem = _G.IsEquippedItem
+local NativeIsUsableItem = _G.IsUsableItem
+local GetItemStats = _G.GetItemStats
 local UnitLevel = _G.UnitLevel
 local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or _G.GetContainerItemLink
-local PickupContainerItem = C_Container and C_Container.PickupContainerItem or _G.PickupContainerItem
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetContainerItemLink = _G.GetContainerItemLink
+local PickupContainerItem = _G.PickupContainerItem
 local PickupInventoryItem = _G.PickupInventoryItem
 
 local ItemArmorSubclass, ItemWeaponSubclass = Enum.ItemArmorSubclass, Enum.ItemWeaponSubclass
@@ -872,7 +872,7 @@ local function TooltipSetItem(tooltip, ...)
     -- print("TooltipSetItem", tooltip:GetName(), itemLink)
 
     local clientUsable
-    if addon.gameVersion == 30300 and tooltip.GetOwner then
+    if tooltip.GetOwner then
         local owner = tooltip:GetOwner()
         local choice = owner and owner.type == "choice" and owner.GetID and
                            owner:GetID()
@@ -1078,12 +1078,12 @@ function addon.itemUpgrades:Setup()
     -- events and use the delayed event as an additional signal when available.
     if addon.gameVersion == 30300 then
         self:RegisterEvent("BAG_UPDATE", "UPGRADE_INVENTORY_CHANGED")
-        if C_EventUtils and C_EventUtils.IsEventValid and
-            C_EventUtils.IsEventValid("BAG_UPDATE_DELAYED") then
+        if addon.events and addon.events.IsEventValid and
+            addon.events.IsEventValid("BAG_UPDATE_DELAYED") then
             self:RegisterEvent("BAG_UPDATE_DELAYED", "UPGRADE_INVENTORY_CHANGED")
         end
-        if C_EventUtils and C_EventUtils.IsEventValid and
-            C_EventUtils.IsEventValid("ITEM_PUSH") then
+        if addon.events and addon.events.IsEventValid and
+            addon.events.IsEventValid("ITEM_PUSH") then
             self:RegisterEvent("ITEM_PUSH", "UPGRADE_INVENTORY_CHANGED")
         end
         self:RegisterEvent("LOOT_CLOSED", "UPGRADE_INVENTORY_CHANGED")
@@ -1894,7 +1894,7 @@ end
 
 local function ScanLegacyWeaponSkills()
     local learned = {}
-    if addon.gameVersion ~= 30300 or not _G.GetNumSkillLines or
+    if not _G.GetNumSkillLines or
         not _G.GetSkillLineInfo then
         return learned, false
     end
@@ -1941,7 +1941,7 @@ local function ScanLegacyWeaponSkills()
 end
 
 local function AddAuctionSubclasses(classIndex, map, validIDs)
-    if addon.gameVersion ~= 30300 or not _G.GetAuctionItemSubClasses then return end
+    if not _G.GetAuctionItemSubClasses then return end
     local values = {pcall(_G.GetAuctionItemSubClasses, classIndex)}
     if not values[1] then return end
     table.remove(values, 1)
@@ -1992,7 +1992,7 @@ RefreshWeaponProficiencies = function()
 
     for subclassID, spellID in pairs(WEAPON_PROFICIENCY_SPELL) do
         local knownBySpell = IsKnownProficiencySpell(spellID)
-        if addon.gameVersion == 30300 and hasLegacyWeaponSkillData and
+        if hasLegacyWeaponSkillData and
             subclassID ~= ItemWeaponSubclass.Unarmed then
             session.trainedWeapons[subclassID] =
                 legacyWeaponSkills[subclassID] == true
@@ -2063,7 +2063,7 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink,
     -- 3.3.5 client supplies a subtype name that the lookup table does not know.
     -- Returning early on a missing numeric subtype used to let those shields
     -- bypass the proficiency test entirely.
-    if addon.gameVersion == 30300 and itemEquipLoc == "INVTYPE_SHIELD" then
+    if itemEquipLoc == "INVTYPE_SHIELD" then
         if session.trainedShield == true then return true end
         if session.trainedShield == false then return false end
         -- A class table says only that the character may train Shields; it is
@@ -2130,7 +2130,7 @@ local function IsUsableForClass(itemSubTypeID, itemEquipLoc, itemLink,
     else
         if not session.equippableArmor[itemSubTypeID] then return false end
         local proficiencySpell = ARMOR_PROFICIENCY_SPELL[itemSubTypeID]
-        if addon.gameVersion == 30300 and proficiencySpell then
+        if proficiencySpell then
             -- The level-gated class map means only "trainable now". Prefer the
             -- learned passive, then accept a positive result for this exact
             -- armor item on cores which omit that hidden passive. Nil remains
@@ -2408,7 +2408,7 @@ function addon.itemUpgrades:GetItemData(itemLink, tooltip, clientUsable)
     local requiresVerifiedProficiency = IsWeaponSlot(itemEquipLoc) or
         itemEquipLoc == "INVTYPE_SHIELD" or
         ARMOR_PROFICIENCY_SPELL[itemSubTypeID] ~= nil
-    if addon.gameVersion == 30300 and requiresVerifiedProficiency and
+    if requiresVerifiedProficiency and
         classUsability ~= true then
         itemData = {
             unusable = true,
@@ -3137,7 +3137,7 @@ function addon.itemUpgrades:GetComparisonIncrease(comparison)
 end
 
 local function ConfirmPendingUpgradeEquip(inventorySlot, itemLink)
-    if addon.gameVersion ~= 30300 or type(_G.EquipPendingItem) ~= "function" then return false end
+    if type(_G.EquipPendingItem) ~= "function" then return false end
 
     local which, popup = GetVisibleBindConfirmation()
     if not which then return false end
@@ -3731,7 +3731,7 @@ function addon.itemUpgrades.AH:SearchForBuyoutItem(itemData)
 
     if _G.BrowseResetButton then _G.BrowseResetButton:Click() end
 
-    _G.BrowseName:SetText(addon.gameVersion == 30300 and itemData.Name or
+    _G.BrowseName:SetText(itemData.Name or
                               ('"' .. itemData.Name .. '"'))
 
     if itemData.ItemLevel then
@@ -4195,7 +4195,7 @@ end
 
 local function getColorizedName(itemLink, itemName)
     if not (itemLink and itemName) then return end
-    local quality = C_Item.GetItemQualityByID(itemLink)
+    local quality = addon.itemCompat and addon.itemCompat.GetItemQualityByID and addon.itemCompat.GetItemQualityByID(itemLink)
     if quality then
         local h = ITEM_QUALITY_COLORS[quality].hex
 

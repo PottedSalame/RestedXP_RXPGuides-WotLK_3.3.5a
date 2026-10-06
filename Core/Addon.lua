@@ -1,33 +1,19 @@
 ﻿local addonName, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local UnitInRaid = UnitInRaid
 local fmt = string.format
 
 local RegisterMessage_OLD = addon.RegisterMessage
 local rand, tinsert, select = math.random, table.insert, _G.select
-local IsAddOnLoadOnDemand = C_AddOns and C_AddOns.IsAddOnLoadOnDemand or _G.IsAddOnLoadOnDemand
-local GetSpellInfo
-if C_Spell and C_Spell.GetSpellInfo then
-    addon.GetSpellInfo = function(...)
-        local id = ...
-        if not id then return end
-        local t = C_Spell.GetSpellInfo(...)
-        --local rank = C_Spell.GetSpellSubtext(...)
-        if t then
-            return t.name, t.rank, t.iconID, t.castTime, t.minRange, t.maxRange, t.spellID, t.originalIconID
-        end
-    end
-    GetSpellInfo = addon.GetSpellInfo
-else
-    GetSpellInfo = _G.GetSpellInfo
-end
-local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or _G.GetSpellTexture
-local GetSpellSubtext = C_Spell and C_Spell.GetSpellSubtext or _G.GetSpellSubtext
-local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
-local IsSpellKnown = C_Spell and C_Spell.IsSpellKnown or _G.IsSpellKnown
-local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
+local IsAddOnLoadOnDemand = _G.IsAddOnLoadOnDemand
+local GetSpellInfo = _G.GetSpellInfo
+local GetSpellTexture = _G.GetSpellTexture
+local GetSpellSubtext = _G.GetSpellSubtext
+local IsCurrentSpell = _G.IsCurrentSpell
+local IsSpellKnown = _G.IsSpellKnown
+local IsPlayerSpell = _G.IsPlayerSpell
 local CORE_TICKER_OWNER = "core-update-loops"
 local messageList = {}
 
@@ -97,7 +83,7 @@ function addon.ProcessMessageQueue()
     return true
 end
 
-local GetAddOnMetadata = C_AddOns and C_AddOns.GetAddOnMetadata or _G.GetAddOnMetadata
+local GetAddOnMetadata = _G.GetAddOnMetadata
 addon.release = GetAddOnMetadata(addonName, "Version")
 addon.title = GetAddOnMetadata(addonName, "Title")
 local cacheVersion = 35
@@ -579,9 +565,9 @@ function addon.UpdateSkillData()
     addon.GetProfessionLevel()
 end
 
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetContainerItemID = C_Container and C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetItemSpell = C_Item and C_Item.GetItemSpell or _G.GetItemSpell
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetContainerItemID = _G.GetContainerItemID
+local GetItemSpell = _G.GetItemSpell
 
 function addon.GetSkillLevel(skill, useMaxValue)
     addon.UpdateSkillData()
@@ -886,7 +872,7 @@ if addon.gameVersion < 40000 then
     createLogRewardChoiceIcons()
 end
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
+local GetItemInfo = _G.GetItemInfo
 
 local GetQuestLogSelection, GetNumQuestLogChoices = _G.GetQuestLogSelection,
                                                     _G.GetNumQuestLogChoices

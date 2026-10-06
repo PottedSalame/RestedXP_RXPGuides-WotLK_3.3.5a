@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local fmt, strsub, tinsert, srep, mmax, abs = string.format, string.sub,
                                               tinsert, string.rep, math.max,
                                               abs
@@ -43,8 +43,7 @@ local MAX_IMPORT_BYTES = 256 * 1024
 local MAX_REPORT_LEVELS = 100
 
 local function IsLegacyWorldMapOpen()
-    return addon.gameVersion == 30300 and _G.WorldMapFrame and
-               _G.WorldMapFrame:IsShown()
+    return _G.WorldMapFrame and _G.WorldMapFrame:IsShown()
 end
 
 -- Silence our /played yellow text
@@ -247,8 +246,7 @@ end
 function addon.tracker:SetupInspections()
     if not self.enabled then return end
     local profile = addon.settings.profile
-    if addon.gameVersion == 30300 and
-        not profile.levelingInspectionConsent then
+    if not profile.levelingInspectionConsent then
         profile.enableLevelingReportInspections = false
     end
     if profile.enableLevelingReportInspections and profile.enableBetaFeatures then
@@ -537,7 +535,7 @@ function addon.tracker:CommitManualLevelSplit(request, totalTime,
         addon.comms.PrettyPrint(L("Unable to reconstruct that level split from played time."))
         return false
     end
-    local date = C_DateAndTime.GetCurrentCalendarTime()
+    local date = addon.dateAndTime.GetCurrentCalendarTime()
     duration = self:CommitLevelSplit(completedLevel, level, duration,
                                      finishedTotal, date)
     if not duration then
@@ -595,7 +593,7 @@ function addon.tracker:PLAYER_LEVEL_UP(_, level)
     local levelTime, totalTime = addon.tracker:GetElapsedTimes()
     local duration = mmax(1, math.floor(levelTime + 0.5))
     totalTime = mmax(duration, math.floor(totalTime + 0.5))
-    local date = C_DateAndTime.GetCurrentCalendarTime()
+    local date = addon.dateAndTime.GetCurrentCalendarTime()
     local committed = addon.tracker:CommitLevelSplit(level - 1, level,
                                                       duration, totalTime,
                                                       date)
@@ -645,7 +643,7 @@ end
 function addon.tracker:PLAYER_ENTERING_WORLD()
     addon.tracker.waitingForTimePlayed = {
         event = 'PLAYER_ENTERING_WORLD',
-        date = C_DateAndTime.GetCurrentCalendarTime()
+        date = addon.dateAndTime.GetCurrentCalendarTime()
     }
 
     RequestTimePlayed()
@@ -1561,8 +1559,7 @@ function addon.tracker:CreateLevelSplits()
         addon.tracker:UpdateLevelSplits("full")
     end)
 
-    if addon.gameVersion == 30300 and _G.WorldMapFrame and
-        _G.WorldMapFrame.HookScript then
+    if _G.WorldMapFrame and _G.WorldMapFrame.HookScript then
         _G.WorldMapFrame:HookScript("OnShow", function()
             if f:IsShown() then
                 f.hiddenForLegacyMap = true

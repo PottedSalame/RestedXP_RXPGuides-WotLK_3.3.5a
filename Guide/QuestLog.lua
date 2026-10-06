@@ -1,12 +1,12 @@
 local addonName, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
-local GetNumQuests = C_QuestLog.GetNumQuestLogEntries or
+local GetNumQuests = addon.questLog.GetNumQuestLogEntries or
                          _G.GetNumQuestLogEntries
 local LegacyGetQuestLogTitle = _G.RXPCompatGetQuestLogTitle
-local GetQuestLogTitle = C_QuestLog.GetInfo or LegacyGetQuestLogTitle or
+local GetQuestLogTitle = addon.questLog.GetInfo or LegacyGetQuestLogTitle or
                              _G.GetQuestLogTitle
 
 local function PositiveQuestID(value)
@@ -409,12 +409,12 @@ local function getQuestData(questLogIndex)
     local questInfo, questLogTitleText, level, isHeader, isComplete, frequency,
           questID
 
-    if C_QuestLog.GetInfo then
-        questInfo = C_QuestLog.GetInfo(questLogIndex) or {}
+    if addon.questLog.GetInfo then
+        questInfo = addon.questLog.GetInfo(questLogIndex) or {}
         questID = tonumber(questInfo.questID)
         isComplete = questInfo.isComplete
-        if questID and type(C_QuestLog.IsComplete) == "function" then
-            isComplete = C_QuestLog.IsComplete(questID)
+        if questID and type(addon.questLog.IsComplete) == "function" then
+            isComplete = addon.questLog.IsComplete(questID)
         end
 
         data = {
@@ -488,8 +488,8 @@ function addon.GetOrphanedQuests()
 end
 
 
-local SetAbandonQuest = C_QuestLog.SetAbandonQuest or _G.SetAbandonQuest
-local AbandonQuest = C_QuestLog.AbandonQuest or _G.AbandonQuest
+local SetAbandonQuest = addon.questLog.SetAbandonQuest or _G.SetAbandonQuest
+local AbandonQuest = addon.questLog.AbandonQuest or _G.AbandonQuest
 
 function addon.AbandonOrphanedQuests(orphans)
     -- Likely addon.orphanedList but re-create if empty
@@ -498,8 +498,8 @@ function addon.AbandonOrphanedQuests(orphans)
     local function abandonQuest(questInfo)
         addon.comms.PrettyPrint("Abandoning %s", questInfo.questLogTitleText)
 
-        if C_QuestLog.SetSelectedQuest then
-            C_QuestLog.SetSelectedQuest(questInfo.questID)
+        if addon.questLog.SetSelectedQuest then
+            addon.questLog.SetSelectedQuest(questInfo.questID)
         else
             _G.SelectQuestLogEntry(questInfo.questLogIndex)
         end
@@ -515,7 +515,7 @@ function addon.AbandonOrphanedQuests(orphans)
     for i = #orphans, 1, -1 do
         questData = orphans[i]
 
-        if C_QuestLog.SetSelectedQuest then
+        if addon.questLog.SetSelectedQuest then
             abandonQuest(questData)
         else
             id = GetLegacyQuestIDAtIndex(questData.questLogIndex)
@@ -638,20 +638,20 @@ function addon.BeginAbandonOrphans(orphans)
         local q = orphans[i]
         i = i - 1
 
-        if C_QuestLog and C_QuestLog.SetSelectedQuest then
-            C_QuestLog.SetSelectedQuest(q.questID)
+        if addon.questLog and addon.questLog.SetSelectedQuest then
+            addon.questLog.SetSelectedQuest(q.questID)
         else
             _G.SelectQuestLogEntry(q.questLogIndex)
         end
 
-        if C_QuestLog and C_QuestLog.SetAbandonQuest then
-            C_QuestLog.SetAbandonQuest()
+        if addon.questLog and addon.questLog.SetAbandonQuest then
+            addon.questLog.SetAbandonQuest()
         else
             _G.SetAbandonQuest()
         end
 
-        if C_QuestLog and C_QuestLog.AbandonQuest then
-            C_QuestLog.AbandonQuest()
+        if addon.questLog and addon.questLog.AbandonQuest then
+            addon.questLog.AbandonQuest()
         else
             _G.AbandonQuest()
         end

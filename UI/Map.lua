@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
 local HBD = LibStub("HereBeDragons-2.0")
 local HBDPins = LibStub("HereBeDragons-Pins-2.0")
@@ -1206,13 +1206,13 @@ function addon.GetCorpseWorldPosition()
     if not HBD then return end
     local zone = HBD:GetPlayerZone()
     local corpse
-    if C_DeathInfo and C_DeathInfo.GetCorpseMapLocation then
-        local corpseZone, position = C_DeathInfo.GetCorpseMapLocation()
+    if addon.deathInfo and addon.deathInfo.GetCorpseMapLocation then
+        local corpseZone, position = addon.deathInfo.GetCorpseMapLocation()
         if position then zone, corpse = corpseZone, position end
     end
-    if not corpse and type(zone) == "number" and C_DeathInfo and
-        C_DeathInfo.GetCorpseMapPosition then
-        corpse = C_DeathInfo.GetCorpseMapPosition(zone)
+    if not corpse and type(zone) == "number" and addon.deathInfo and
+        addon.deathInfo.GetCorpseMapPosition then
+        corpse = addon.deathInfo.GetCorpseMapPosition(zone)
     end
     if corpse and corpse.x and corpse.y and type(zone) == "number" then
         local wx, wy, instance =
@@ -1368,14 +1368,14 @@ local function updateArrowData()
             if not deathskipResolved then
                 local zone = HBD:GetPlayerZone()
                 local corpse
-                if C_DeathInfo.GetCorpseMapLocation then
-                    local corpseZone, corpsePosition = C_DeathInfo.GetCorpseMapLocation()
+                if addon.deathInfo.GetCorpseMapLocation then
+                    local corpseZone, corpsePosition = addon.deathInfo.GetCorpseMapLocation()
                     if corpsePosition then
                         zone, corpse = corpseZone, corpsePosition
                     end
                 end
                 if not corpse and type(zone) == "number" then
-                    corpse = C_DeathInfo.GetCorpseMapPosition(zone)
+                    corpse = addon.deathInfo.GetCorpseMapPosition(zone)
                 end
                 if corpse and corpse.x then
                     local wx, wy, inst = HBD:GetWorldCoordinatesFromZone(corpse.x, corpse.y, zone)
@@ -1546,7 +1546,7 @@ local function DisplayLines(self)
         local currentStep = addon.currentGuide and addon.currentGuide.steps and
                                 addon.currentGuide.steps[RXPCData.currentStep]
         for line in lineMapFramePool:EnumerateActive() do
-            if addon.gameVersion == 30300 and line.lineData and width > 0 and
+            if line.lineData and width > 0 and
                 height > 0 and
                 (line.pendingLineRender or line.renderWidth ~= width or
                     line.renderHeight ~= height) then
@@ -1573,20 +1573,18 @@ hooksecurefunc(_G.WorldMapFrame, "OnMapChanged", DisplayLines);
 -- the hook onto it. The active-line set is small, so force a re-evaluation on
 -- every event rather than trusting the lastMap throttle (which can be stale when
 -- a step changed while the map was closed, freezing lines hidden).
-if addon.gameVersion and addon.gameVersion < 40000 then
-    local lineMapWatcher = CreateFrame("Frame")
-    lineMapWatcher:RegisterEvent("WORLD_MAP_UPDATE")
-    lineMapWatcher:SetScript("OnEvent", function()
-        -- WORLD_MAP_UPDATE arrives in bursts while the legacy map changes
-        -- detail textures. One next-frame refresh covers the complete burst.
-        if lineMapWatcher.refreshPending then return end
-        lineMapWatcher.refreshPending = true
-        C_Timer.After(0, function()
+local lineMapWatcher = CreateFrame("Frame")
+lineMapWatcher:RegisterEvent("WORLD_MAP_UPDATE")
+lineMapWatcher:SetScript("OnEvent", function()
+    -- WORLD_MAP_UPDATE arrives in bursts while the legacy map changes
+    -- detail textures. One next-frame refresh covers the complete burst.
+    if lineMapWatcher.refreshPending then return end
+    lineMapWatcher.refreshPending = true
+    C_Timer.After(0, function()
             lineMapWatcher.refreshPending = nil
             DisplayLines(true)
         end)
     end)
-end
 
 function addon.RefreshNavigationLanguage()
     af.distance = nil
@@ -1936,32 +1934,18 @@ function addon.GetMapInfo(zone,x,y)
     if not (x and y and zone) then
         return
     elseif zone == "StormwindClassic" then
-        if addon.gameVersion > 30000 then
-            local c = addon.classicToWrathSW
-            x = x*c[1]+c[2]
-            y = y*c[3]+c[4]
-        end
+        local c = addon.classicToWrathSW
+        x = x*c[1]+c[2]
+        y = y*c[3]+c[4]
         return addon.GetMapId("Stormwind City"),x,y
     elseif zone == "EPLClassic" then
-        if addon.gameVersion > 30000 then
-            local c = addon.classicToWrathEPL
-            x = x*c[1]+c[2]
-            y = y*c[3]+c[4]
-        end
+        local c = addon.classicToWrathEPL
+        x = x*c[1]+c[2]
+        y = y*c[3]+c[4]
         return addon.GetMapId("Eastern Plaguelands"),x,y
     elseif zone == "StormwindNew" then
-        if addon.gameVersion < 30000 then
-            local c = addon.wrathToClassicSW
-            x = x*c[1]+c[2]
-            y = y*c[3]+c[4]
-        end
         return addon.GetMapId("Stormwind City"),x,y
     elseif zone == "EPLNew" then
-        if addon.gameVersion < 30000 then
-            local c = addon.wrathToClassicEPL
-            x = x*c[1]+c[2]
-            y = y*c[3]+c[4]
-        end
         return addon.GetMapId("Eastern Plaguelands"),x,y
     else
         return addon.GetMapId(zone) or tonumber(zone),x,y

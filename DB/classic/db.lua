@@ -1,7 +1,7 @@
 local addonName, addon = ...
 local faction = UnitFactionGroup("player")
 if addon.game ~= "CLASSIC" then return end
-local C_Map = addon.mapAPI335 or _G.C_Map
+local C_Map = addon.map
 
 addon.skipPreReq = {
     [9573] = 1,

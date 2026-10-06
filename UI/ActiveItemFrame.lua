@@ -4,45 +4,25 @@ local _G = _G
 local L = addon.locale.Get
 
 local BackdropTemplate = BackdropTemplateMixin and "BackdropTemplate"
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetContainerItemID = C_Container and C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
-local GetContainerItemCooldown = C_Container and C_Container.GetContainerItemCooldown or _G.GetContainerItemCooldown
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetContainerItemID = _G.GetContainerItemID
+local GetContainerItemInfo = addon.container and addon.container.GetContainerItemInfo or _G.GetContainerItemInfo
+local GetContainerItemCooldown = _G.GetContainerItemCooldown
 local GameTooltip = _G.GameTooltip
-local PickupContainerItem = C_Container and C_Container.PickupContainerItem or _G.PickupContainerItem
-local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
-local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or _G.GetSpellTexture
-local GetSpellSubtext = C_Spell and C_Spell.GetSpellSubtext or _G.GetSpellSubtext
-local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
-local IsSpellKnown = C_Spell and C_Spell.IsSpellKnown or _G.IsSpellKnown
-local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
+local PickupContainerItem = _G.PickupContainerItem
+local GetSpellInfo = addon.GetSpellInfo or _G.GetSpellInfo
+local GetSpellTexture = _G.GetSpellTexture
+local GetSpellSubtext = _G.GetSpellSubtext
+local IsCurrentSpell = _G.IsCurrentSpell
+local IsSpellKnown = _G.IsSpellKnown
+local IsPlayerSpell = _G.IsPlayerSpell
+local GetItemInfo = _G.GetItemInfo
 --local GetItemCount = C_Item and C_Item.GetItemCount or _G.GetItemCount
 
 -- start, duration, enabled, modRate = GetSpellCooldown(spell)
-local GetSpellCooldown = _G.GetSpellCooldown or function(spellIdentifier)
-    if C_Spell and C_Spell.GetSpellCooldown then
-        local info = C_Spell.GetSpellCooldown(spellIdentifier)
-        return info.startTime, info.start, info.duration, info.enabled, info.modRate
-    end
-end
+local GetSpellCooldown = _G.GetSpellCooldown
 
-local GetItemCooldown = (C_Container and C_Container.GetItemCooldown or _G.GetItemCooldown) or function(searchItemID)
-	local searchItemName = GetItemInfo(searchItemID);
-	if not searchItemName then return end
-	for bagID = _G.BACKPACK_CONTAINER, _G.NUM_BAG_FRAMES do
-		local slots = GetContainerNumSlots(bagID) or 0;
-		for slot = 1, slots do
-			local itemInfo = GetContainerItemInfo(bagID, slot);
-			if itemInfo and itemInfo.itemID then
-				local startTime, duration, isEnabled = GetContainerItemCooldown(bagID, slot);
-				if searchItemID == itemInfo.itemID and startTime ~= nil and startTime > 0 then
-                    return startTime, duration, isEnabled;
-				end
-			end
-		end
-	end
-end
+local GetItemCooldown = _G.GetItemCooldown
 
 addon.GetItemCooldown = GetItemCooldown
 
@@ -137,12 +117,12 @@ local function GetActiveItemList(ref)
     end
 
     for id,arg in pairs(ref.activeItems) do
-        local toy = C_ToyBox and PlayerHasToy(id)
+        local toy = addon.toyBox and PlayerHasToy(id)
         if not activeItems[id] and (arg == "p" or toy) then
             activeItems[id] = true
             local name,icon
             if toy then
-             _, name, icon = C_ToyBox.GetToyInfo(id)
+             _, name, icon = addon.toyBox.GetToyInfo(id)
             else
                 name, _, _, _, _, _, _, _, _, icon =
                     GetItemInfo(id)

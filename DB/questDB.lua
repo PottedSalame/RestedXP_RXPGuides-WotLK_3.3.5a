@@ -1,22 +1,15 @@
 local _,addon = ...
 
 local showAllQs
-local GetItemCount = C_Item and C_Item.GetItemCount or _G.GetItemCount
+local GetItemCount = _G.GetItemCount
 local QUEST_LOG_SIZE = 25
 local reloadTimer = 0
-
-if addon.gameVersion < 20000 then
-    QUEST_LOG_SIZE = 20
-end
 
 local function GetXPMods()
     if addon.player.season == 2 then
         return 1.5
-    elseif addon.gameVersion < 40000 then
-        return addon.GetXPBonuses(false,80)
-    else
-        return addon.GetXPBonuses(true,85)
     end
+    return addon.GetXPBonuses(false,80)
 end
 
 local function IsPreReqComplete(quest, group, QuestDB)
@@ -123,12 +116,10 @@ function addon.GetQuestPreReqState(id, group, state)
     -- The complete AzerothCore table is authoritative on 3.3.5.  Per-guide
     -- metadata is deliberately retained as a fallback for custom/modern
     -- guides, but it cannot represent signed or alternative predecessors.
-    if addon.gameVersion == 30300 then
-        local prerequisite = addon.QuestPrerequisites335 and
-                                 addon.QuestPrerequisites335[id]
-        if prerequisite then
-            return EvaluateStandalonePrerequisite(prerequisite, state)
-        end
+    local prerequisite = addon.QuestPrerequisites335 and
+                             addon.QuestPrerequisites335[id]
+    if prerequisite then
+        return EvaluateStandalonePrerequisite(prerequisite, state)
     end
 
     group = group or addon.currentGuide and addon.currentGuide.group

@@ -2,7 +2,7 @@ local _, addon = ...
 local L = addon.locale.Get
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 local GetTime = _G.GetTime
 local format = string.format
 local PROTOCOL = 1

@@ -1,8 +1,8 @@
 local _, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
-local C_Map = addon.mapAPI335 or _G.C_Map
+local C_Timer = addon.timer
+local C_Map = addon.map
 
 local fmt, mrand, smatch, sbyte, tostr = string.format, math.random, string.match, string.byte, tostring
 local concat = table.concat
@@ -13,7 +13,7 @@ local function UnitClassToken(unit)
     return select(2, _G.UnitClass(unit))
 end
 
-local SendChatMessage = C_ChatInfo and C_ChatInfo.SendChatMessage or _G.SendChatMessage
+local SendChatMessage = addon.chatInfo and addon.chatInfo.SendChatMessage or _G.SendChatMessage
 
 local L = addon.locale.Get
 
@@ -94,14 +94,9 @@ function addon.comms:Setup()
 
     -- Leave addon or guide version checks even if max level. Stock 3.3.5a uses
     -- roster-change events instead of the modern GROUP_FORMED/GROUP_LEFT pair.
-    if addon.gameVersion == 30300 then
-        self.state.wasGrouped = _G.IsInGroup()
-        self:RegisterEvent("PARTY_MEMBERS_CHANGED", "GROUP_ROSTER_CHANGED")
-        self:RegisterEvent("RAID_ROSTER_UPDATE", "GROUP_ROSTER_CHANGED")
-    else
-        self:RegisterEvent("GROUP_FORMED")
-        self:RegisterEvent("GROUP_LEFT")
-    end
+self.state.wasGrouped = _G.IsInGroup()
+    self:RegisterEvent("PARTY_MEMBERS_CHANGED", "GROUP_ROSTER_CHANGED")
+    self:RegisterEvent("RAID_ROSTER_UPDATE", "GROUP_ROSTER_CHANGED")
     self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     self:RegisterComm(self._commPrefix)
@@ -134,16 +129,12 @@ function addon.comms:UpgradeDB()
 end
 
 function addon.comms:PLAYER_ENTERING_WORLD(_, isInitialLogin, isReloadingUi)
-    if addon.gameVersion == 30300 then
-        local grouped = _G.IsInGroup()
-        if grouped and (not self.state.enteredWorld or not self.state.wasGrouped) then
-            ScheduleLegacyAnnouncement(self)
-        end
-        self.state.wasGrouped = grouped
-        self.state.enteredWorld = true
-    elseif isInitialLogin or isReloadingUi then
-        self:AnnounceSelf("ANNOUNCE")
+    local grouped = _G.IsInGroup()
+    if grouped and (not self.state.enteredWorld or not self.state.wasGrouped) then
+        ScheduleLegacyAnnouncement(self)
     end
+    self.state.wasGrouped = grouped
+    self.state.enteredWorld = true
 end
 
 function addon.comms:GROUP_FORMED() C_Timer.After(5 + mrand(5), function() self:AnnounceSelf("ANNOUNCE") end) end
@@ -791,7 +782,7 @@ function addon.comms.grouping:ShareQuest(questId)
         return
     end
 
-    if addon.gameVersion == 30300 and _G.SelectQuestLogEntry then
+    if _G.SelectQuestLogEntry then
         local previous = _G.GetQuestLogSelection and _G.GetQuestLogSelection()
         _G.SelectQuestLogEntry(questLogIndex)
         local ok, result = pcall(_G.QuestLogPushQuest)

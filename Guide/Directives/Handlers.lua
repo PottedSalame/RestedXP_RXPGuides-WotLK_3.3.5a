@@ -5,26 +5,20 @@ local addonName, addon = ...
 -- catalogs loaded after this file.
 
 local localizedClass, class = UnitClass("player")
-local gameVersion = select(4, GetBuildInfo())
-local C_Map = addon.mapAPI335 or _G.C_Map
+local gameVersion = 30300
+local C_Map = addon.map
 local fmt, tinsert = string.format,tinsert
-local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or _G.LoadAddOn
-local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
-local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or _G.GetSpellTexture
-local GetSpellSubtext = C_Spell and C_Spell.GetSpellSubtext or _G.GetSpellSubtext
-local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
-local IsSpellKnown = C_SpellBook and C_SpellBook.IsSpellKnown or _G.IsSpellKnown
-local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
-local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
+local LoadAddOn = _G.LoadAddOn
+local IsAddOnLoaded = _G.IsAddOnLoaded
+local GetItemInfo = _G.GetItemInfo
+local GetSpellTexture = _G.GetSpellTexture
+local GetSpellSubtext = _G.GetSpellSubtext
+local IsCurrentSpell = _G.IsCurrentSpell
+local IsSpellKnown = _G.IsSpellKnown
+local IsPlayerSpell = _G.IsPlayerSpell
+local GetSpellInfo = addon.GetSpellInfo or _G.GetSpellInfo
 
--- start, duration, enabled, modRate = GetSpellCooldown(spell)
-local GetSpellCooldown = _G.GetSpellCooldown or function(spellIdentifier)
-    if C_Spell and C_Spell.GetSpellCooldown then
-        local info = C_Spell.GetSpellCooldown(spellIdentifier)
-        return info.startTime, info.start, info.duration, info.enabled, info.modRate
-    end
-end
+local GetSpellCooldown = _G.GetSpellCooldown
 
 addon.GetFactionInfoByID = _G.GetFactionInfoByID or function(factionID)
     local name, description, standingID, barMin, barMax, barValue
@@ -67,8 +61,7 @@ if not (UnitAura and UnitBuff and UnitDebuff) then
     addon.UnitBuff = UnitBuff
 end
 
-local GetItemCount = addon.GetItemCount or
-                         (C_Item and C_Item.GetItemCount) or _G.GetItemCount
+local GetItemCount = addon.GetItemCount or _G.GetItemCount
 
 local function LoremasterEnabled()
     local loremaster
@@ -279,7 +272,7 @@ end
 
 local _G = _G
 
-local GetNumQuests = C_QuestLog.GetNumQuestLogEntries or
+local GetNumQuests = addon.questLog.GetNumQuestLogEntries or
                          _G.GetNumQuestLogEntries
 -- 3.3.5a (AzerothCore) GetQuestLogTitle returns an extra questTag field, shifting
 -- isComplete/questID positions. The compat wrapper reshapes it to the order the
@@ -290,12 +283,12 @@ local GetDayEvent = _G.C_Calendar and _G.C_Calendar.GetDayEvent
 local GetCurrentCalendarTime = _G.C_DateAndTime.GetCurrentCalendarTime
 --local OpenCalendar = _G.C_Calendar and _G.C_Calendar.OpenCalendar
 local GossipSelectOption = _G.SelectGossipOption
-local GossipGetOptions = C_GossipInfo and C_GossipInfo.GetOptions or _G.GetGossipOptions
-local PickupContainerItem = C_Container and C_Container.PickupContainerItem or _G.PickupContainerItem
-local GetContainerNumFreeSlots =  C_Container and C_Container.GetContainerNumFreeSlots or _G.GetContainerNumFreeSlots
-local GetContainerNumSlots =  C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetContainerItemID = C_Container and C_Container.GetContainerItemID or _G.GetContainerItemID
-local GetContainerItemInfo = C_Container and C_Container.GetContainerItemInfo or _G.GetContainerItemInfo
+local GossipGetOptions = addon.gossip.GetOptions or _G.GetGossipOptions
+local PickupContainerItem = _G.PickupContainerItem
+local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetContainerItemID = _G.GetContainerItemID
+local GetContainerItemInfo = addon.container.GetContainerItemInfo
 local GetItemCooldown = addon.GetItemCooldown
 
 addon.recentTurnIn = {}
@@ -319,7 +312,7 @@ function addon.ExpandQuestHeaders()
         if GetQuestLogTitle then
             _, _, _, _, isCollapsed = GetQuestLogTitle(i)
         else
-            local qInfo = C_QuestLog.GetInfo(i)
+            local qInfo = addon.questLog.GetInfo(i)
             isCollapsed = qInfo and qInfo.isCollapsed
         end
         if isCollapsed then
@@ -329,9 +322,9 @@ function addon.ExpandQuestHeaders()
     end
 end
 
-if C_GossipInfo and C_GossipInfo.SelectOptionByIndex then
+if addon.gossip and addon.gossip.SelectOptionByIndex then
     GossipSelectOption = function(index)
-        local gossipOptions = C_GossipInfo.GetOptions()
+        local gossipOptions = addon.gossip.GetOptions()
 
         if not gossipOptions or not gossipOptions[index] then
             return
@@ -339,13 +332,13 @@ if C_GossipInfo and C_GossipInfo.SelectOptionByIndex then
 
         local gossipOptionID = gossipOptions[index].gossipOptionID
         if gossipOptionID then
-            C_GossipInfo.SelectOption(gossipOptionID,"",true)
+            addon.gossip.SelectOption(gossipOptionID,"",true)
             return
         end
 
         local orderIndex = gossipOptions[index].orderIndex
         if orderIndex then
-            C_GossipInfo.SelectOptionByIndex(orderIndex,"",true)
+            addon.gossip.SelectOptionByIndex(orderIndex,"",true)
         end
     end
 end
@@ -359,7 +352,7 @@ local GetRecentTurnIn = function(id)
     return addon.recentTurnIn[id]
 end
 
-local IsTurnedIn = C_QuestLog.IsQuestFlaggedCompleted or
+local IsTurnedIn = addon.questLog.IsQuestFlaggedCompleted or
                     _G.IsQuestFlaggedCompleted or
                         function(id) return _G.GetQuestsCompleted()[id] end
 
@@ -369,8 +362,8 @@ local IsQuestTurnedIn = function(id,accountWide)
 
     local recentTurnIn = GetRecentTurnIn(id)
     local turnedIn
-    if accountWide and C_QuestLog.IsQuestFlaggedCompletedOnAccount then
-        turnedIn = C_QuestLog.IsQuestFlaggedCompletedOnAccount(id)
+    if accountWide and addon.questLog.IsQuestFlaggedCompletedOnAccount then
+        turnedIn = addon.questLog.IsQuestFlaggedCompletedOnAccount(id)
         addon.comms.PrettyDebug("CompletedOnAccount(%d) = %s", id, tostring(turnedIn))
     else
         turnedIn = IsTurnedIn(id)
@@ -389,8 +382,8 @@ function addon.IsQuestComplete(id)
     id = tonumber(id)
     if not id or id <= 0 then return end
 
-    if C_QuestLog.IsComplete then
-        return C_QuestLog.IsComplete(id)
+    if addon.questLog.IsComplete then
+        return addon.questLog.IsComplete(id)
     else
         addon.ExpandQuestHeaders()
         for i = 1, GetNumQuests() do
@@ -407,7 +400,7 @@ local IsQuestComplete = addon.IsQuestComplete
 local function IsOnQuest(id)
     id = tonumber(id)
     if not id or id <= 0 then return end
-    local quest = C_QuestLog.IsOnQuest(id)
+    local quest = addon.questLog.IsOnQuest(id)
     local recent = addon.recentAccept[id]
     if quest then
         addon.recentAccept[id] = nil
@@ -426,8 +419,8 @@ local function QuestPresence(id)
 end
 
 function addon.GetLogIndexForQuestID(questID)
-    if C_QuestLog.GetLogIndexForQuestID then
-        return C_QuestLog.GetLogIndexForQuestID(questID),C_QuestLog.IsPushableQuest(questID)
+    if addon.questLog.GetLogIndexForQuestID then
+        return addon.questLog.GetLogIndexForQuestID(questID),addon.questLog.IsPushableQuest(questID)
     else
         addon.ExpandQuestHeaders()
         for i = 1, GetNumQuests() do
@@ -594,8 +587,8 @@ local function RequestQuestData(id)
     if nrequests < N_REQUESTS or requests[id] == 0 then
         local isLoaded
 
-        --[[if C_QuestLog.RequestLoadQuestByID and not requests[id] then
-            C_QuestLog.RequestLoadQuestByID(id)
+        --[[if addon.questLog.RequestLoadQuestByID and not requests[id] then
+            addon.questLog.RequestLoadQuestByID(id)
             requests[id] = GetTime()
         end]]
 
@@ -608,7 +601,7 @@ local function RequestQuestData(id)
         if isLoaded then
             requests[id] = 0
             -- print(id,GetTime()-base)
-            local ok, questInfo = pcall(C_QuestLog.GetQuestObjectives, id)
+            local ok, questInfo = pcall(addon.questLog.GetQuestObjectives, id)
             if not ok or type(questInfo) ~= "table" then
                 requests[id] = GetTime()
                 return questObjectivesCache[id]
@@ -712,7 +705,7 @@ function addon.GetQuestName(id)
                 end
             end
         else
-            local getTitle = C_QuestLog and C_QuestLog.GetTitleForQuestID
+            local getTitle = addon.questLog and addon.questLog.GetTitleForQuestID
             if type(getTitle) == "function" then
                 local ok
                 ok, name = pcall(getTitle, id)
@@ -731,8 +724,8 @@ function addon.GetQuestName(id)
         if nrequests < N_REQUESTS or requests[id] == 0 then
             local isLoaded
 
-            --[[if C_QuestLog.RequestLoadQuestByID and not requests[id] then
-                C_QuestLog.RequestLoadQuestByID(id)
+            --[[if addon.questLog.RequestLoadQuestByID and not requests[id] then
+                addon.questLog.RequestLoadQuestByID(id)
                 requests[id] = GetTime()
             end]]
 
@@ -744,8 +737,8 @@ function addon.GetQuestName(id)
 
             if isLoaded then
                 requests[id] = 0
-                local getInfo = C_QuestLog and C_QuestLog.GetQuestInfo
-                local getTitle = C_QuestLog and C_QuestLog.GetTitleForQuestID
+                local getInfo = addon.questLog and addon.questLog.GetQuestInfo
+                local getTitle = addon.questLog and addon.questLog.GetTitleForQuestID
                 local query = type(getInfo) == "function" and getInfo or
                                   type(getTitle) == "function" and getTitle
                 if query then
@@ -786,10 +779,10 @@ function addon.GetQuestObjectives(id, step, useCache)
             if GetQuestLogTitle then
                 _, _, _, _, _, isComplete, _, questID = GetQuestLogTitle(i);
             else
-                local qInfo = C_QuestLog.GetInfo(i) or {}
+                local qInfo = addon.questLog.GetInfo(i) or {}
                 questID = qInfo.questID
                 if questID then
-                    isComplete = C_QuestLog.IsComplete(questID)
+                    isComplete = addon.questLog.IsComplete(questID)
                 end
             end
             local nObj = 0
@@ -2601,7 +2594,7 @@ end
 local homeText = strupper(_G.HOME or "%")
 function addon.SelectGossipType(gossipType,noOp)
     if addon.speedrunPracticeActive then return end
-    if C_GossipInfo.GetOptions then
+    if addon.gossip.GetOptions then
         local options = GossipGetOptions()
         for i,option in ipairs(options) do
             --print(option.type,option.icon)
@@ -5596,9 +5589,9 @@ function addon.functions.buy(self, ...)
     end
 end
 
-local GossipGetNumActiveQuests = C_GossipInfo.GetNumActiveQuests or
+local GossipGetNumActiveQuests = addon.gossip.GetNumActiveQuests or
                                  _G.GetNumGossipActiveQuests
-local GossipGetNumAvailableQuests = C_GossipInfo.GetNumAvailableQuests or
+local GossipGetNumAvailableQuests = addon.gossip.GetNumAvailableQuests or
                                     _G.GetNumGossipAvailableQuests
 --local GossipSelectOption = _G.SelectGossipOption
 local GossipGetNumOptions = addon.GossipGetNumOptions
@@ -5735,7 +5728,7 @@ function addon.functions.gossip(self, text, npc, length, flags)
 end
 
 function addon.functions.skipgossipid(self, text, ...)
-    if not (C_GossipInfo and C_GossipInfo.GetOptions) then
+    if not (addon.gossip and addon.gossip.GetOptions) then
         return
     elseif type(self) == "string" then
         local element = {textOnly = true, text = text}
@@ -5783,7 +5776,7 @@ function addon.functions.skipgossipid(self, text, ...)
             for _, v in pairs(gossipOptions) do
                 --print(v.gossipOptionID, gossipId)
                 if v.gossipOptionID == gossipId then
-                    C_GossipInfo.SelectOption(v.gossipOptionID,"",true)
+                    addon.gossip.SelectOption(v.gossipOptionID,"",true)
                     element.select = true
                     return
                 end
@@ -5794,11 +5787,11 @@ function addon.functions.skipgossipid(self, text, ...)
             addon.StartTimer(element.timer, element.timerText)
         end
         element.select = false
-    elseif event == "GOSSIP_CONFIRM" and C_GossipInfo then
+    elseif event == "GOSSIP_CONFIRM" and addon.gossip then
         --gossip_confirm
         for _,gossipId in ipairs(args) do
             if gossipId == arg1 then
-                C_GossipInfo.SelectOption(gossipId,nil,true)
+                addon.gossip.SelectOption(gossipId,nil,true)
             end
         end
     elseif not event then
@@ -5808,7 +5801,7 @@ function addon.functions.skipgossipid(self, text, ...)
 end
 
 function addon.functions.gossipoption(self, ...)
-    if not (C_GossipInfo and C_GossipInfo.GetOptions) then
+    if not (addon.gossip and addon.gossip.GetOptions) then
         return
     elseif type(self) == "string" then
         local element = {icon = addon.icons.gossip}
@@ -5842,7 +5835,7 @@ function addon.functions.gossipoption(self, ...)
     local matched = false
     local options = GossipGetOptions()
     if event == "GOSSIP_CONFIRM" and element.gossipId == arg1 then
-        C_GossipInfo.SelectOption(arg1,nil,true)
+        addon.gossip.SelectOption(arg1,nil,true)
         return
     elseif not options then
         return
@@ -5852,7 +5845,7 @@ function addon.functions.gossipoption(self, ...)
         if v.gossipOptionID == element.gossipId then
             if not addon.speedrunPracticeActive and
                 addon.settings.profile.enableGossipAutomation and not IsShiftKeyDown() then
-                C_GossipInfo.SelectOption(v.gossipOptionID,"",true)
+                addon.gossip.SelectOption(v.gossipOptionID,"",true)
                 --print('??')
             end
             --GossipSelectOption(i)
@@ -6798,7 +6791,7 @@ function addon.CanPlayerFly(zoneOrContinent)
     if not continentId then
         return
     elseif WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-        local shFlying = C_QuestLog.IsQuestFlaggedCompleted(63893)
+        local shFlying = addon.questLog.IsQuestFlaggedCompleted(63893)
         --local _, _, _, bfaFlying = GetAchievementInfo(13250)
         local dragonRiding = C_MountJournal.GetCollectedDragonridingMounts and C_MountJournal.GetCollectedDragonridingMounts()
         dragonRiding = type(dragonRiding) == "table" and #dragonRiding > 0
@@ -8002,7 +7995,7 @@ function addon.functions.isQuestOffered(self, text, npc, ...)
             title = frame:IsShown() and frame.TitleContainer.TitleText:GetText()
         end
         if element.currentNPC == element.npc and title == element.name then
-            local quests = C_GossipInfo.GetAvailableQuests()
+            local quests = addon.gossip.GetAvailableQuests()
             local match
             for _,q in pairs(quests) do
                 if element.ids[q.questID] then
@@ -8177,7 +8170,7 @@ end
 local function ScrapItems(ids)
     --PLAYER_INTERACTION_MANAGER_FRAME_SHOW 40
     local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-    local PickupContainerItem = C_Container and C_Container.PickupContainerItem or _G.PickupContainerItem
+    local PickupContainerItem = _G.PickupContainerItem
 
     C_ScrappingMachineUI.RemoveAllScrapItems()
 

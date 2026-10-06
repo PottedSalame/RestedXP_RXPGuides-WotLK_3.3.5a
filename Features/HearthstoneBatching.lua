@@ -1,6 +1,6 @@
 local _, addon = ...
 
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
 -- Allows you to set your hearthstone as you teleport away to your previous location at the end of the hearthstone cast.
 -- Only works if the binding confirmation and the HS spell cast are processed in the same batch (<10ms as of patch 1.14)
@@ -10,7 +10,7 @@ local HSstart = 0
 local barLabel = "Hearthstone"
 local batchingWindow = 0.006
 local bindConfirmation = string.gsub(CONFIRM_BINDER,"%%s",".-")
-local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
+local IsCurrentSpell = _G.IsCurrentSpell
 local fpsRestored = true
 
 local ConfirmBinder

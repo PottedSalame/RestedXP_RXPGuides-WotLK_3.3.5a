@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
 local fmt, tinsert, tremove, mmax, mmin, ceil = string.format, table.insert,
     table.remove, math.max, math.min, math.ceil
@@ -13,7 +13,7 @@ local GetRaidTargetIndex, SetRaidTarget = GetRaidTargetIndex, SetRaidTarget
 local GetTime, FlashClientIcon, PlaySound = GetTime, FlashClientIcon, PlaySound
 local wipe = wipe
 local GetRealZoneText = GetRealZoneText
-local GetNamePlates = C_NamePlate.GetNamePlates
+local GetNamePlates = addon.namePlate.GetNamePlates
 
 local HBD = LibStub("HereBeDragons-2.0")
 
@@ -57,7 +57,7 @@ local targetList = {}
 local targetPlaceholder = "Interface\\GossipFrame\\GossipGossipIcon"
 
 local function IsLegacyWorldMapOpen()
-    return addon.gameVersion == 30300 and _G.WorldMapFrame and
+    return _G.WorldMapFrame and
                _G.WorldMapFrame:IsShown()
 end
 
@@ -123,7 +123,7 @@ local legacyScanner = {
 local legacyOwnedMarkers = {}
 
 local function ClearLegacyOwnedMarker(unit)
-    if addon.gameVersion ~= 30300 or InCombatLockdown() or
+    if InCombatLockdown() or
         type(UnitGUID) ~= "function" then return end
     local guid = UnitGUID(unit)
     local markerId = guid and legacyOwnedMarkers[guid]
@@ -1111,7 +1111,7 @@ function addon.targeting:GOSSIP_SHOW()
             -- actually completes. A single gossip interaction can contain a
             -- turn-in followed by another accept, and removing it here made the
             -- legacy scanner/macro lose that NPC between those two actions.
-            if addon.gameVersion == 30300 and currentStepTargets[targetUnit] then
+            if currentStepTargets[targetUnit] then
                 self:RecordSeenTarget(targetUnit, nil, GetTime(), "target")
                 self:UpdateTargetFrame("target")
                 self:UpdateMacro()
@@ -1527,7 +1527,7 @@ function addon.targeting:CanCreateMacro()
     if GetMacroInfo(self.macroName) then return true end
     local accountMacros = GetNumMacros()
     local maximum = _G.MAX_ACCOUNT_MACROS or
-                        (addon.gameVersion == 30300 and 36 or 120)
+                        (36 or 120)
     return (accountMacros or 0) < maximum
 end
 
@@ -1624,7 +1624,7 @@ function addon.targeting:CreateTargetFrame()
     f:SetHeight(40)
     f:SetScale(addon.settings.profile.activeTargetScale)
 
-    if addon.gameVersion == 30300 and _G.WorldMapFrame and
+    if _G.WorldMapFrame and
         _G.WorldMapFrame.HookScript then
         _G.WorldMapFrame:HookScript("OnShow", function()
             if InCombatLockdown() then
@@ -1738,7 +1738,7 @@ function addon.targeting:UpdateMarker(kind, unitId, index)
     local existingMarker = GetRaidTargetIndex(unitId)
     if markerId and (existingMarker == nil or existingMarker == 0) then
         SetRaidTarget(unitId, markerId)
-        if addon.gameVersion == 30300 and type(UnitGUID) == "function" then
+        if type(UnitGUID) == "function" then
             local guid = UnitGUID(unitId)
             if guid then legacyOwnedMarkers[guid] = markerId end
         end
@@ -1889,7 +1889,7 @@ function addon.targeting:UpdateTargetFrame(selector)
     if not targetFrame then return end
 
     local selectorName = selector and UnitName(selector)
-    if addon.gameVersion == 30300 and selectorName then
+    if selectorName then
         if legacyScanner.wantedDirty then self:RebuildLegacyWanted() end
         self:RecordSeenTarget(selectorName, nil, GetTime(), selector)
     end

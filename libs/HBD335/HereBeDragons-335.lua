@@ -23,7 +23,7 @@
 
 local addonName, addon = ...
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
 -- Obtain the Astrolabe instance (registered through DongleStub).
 local Astrolabe
@@ -284,7 +284,7 @@ end
 -- happened to load first.
 --=========================================================================
 local C_Map = {}
-addon.mapAPI335 = C_Map
+addon.map = C_Map
 
 function C_Map.GetBestMapForUnit(unit)
     if unit ~= "player" then return nil end
@@ -591,9 +591,9 @@ end
 
 -- Preserve the historical standalone facade only when Bootstrap created it.
 -- If another addon owns C_Map, leave both the table and every method identity
--- untouched; all RXPGuides consumers use addon.mapAPI335 below this point.
-if addon.PublishMapAPI335 then
-    addon.PublishMapAPI335(C_Map)
+-- untouched; all RXPGuides consumers use addon.map below this point.
+if addon.PublishMap then
+    addon.PublishMap(C_Map)
 end
 
 -- WorldMapFrame:GetMapID() -> the uiMapID currently displayed on the world map.

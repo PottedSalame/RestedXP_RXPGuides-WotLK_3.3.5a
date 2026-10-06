@@ -11,6 +11,7 @@
 .gemini/
 .fleet/
 .aider*
+.kilo/
 
 %SystemDrive%
 # Local developer handbook, architecture, and refactor notes

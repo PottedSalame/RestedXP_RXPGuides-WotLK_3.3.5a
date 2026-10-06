@@ -2,7 +2,7 @@ local _, addon = ...
 local L = addon.locale.Get
 
 local _G = _G
-local C_Map = addon.mapAPI335 or _G.C_Map
+local C_Map = addon.map
 local format = string.format
 local GetTime = _G.GetTime
 
@@ -353,7 +353,7 @@ function recorder:SnapshotObjectives()
     for logIndex = 1, GetNumQuestLogEntries() do
         local _, _, _, _, isHeader = GetQuestLogTitle(logIndex)
         if isHeader ~= true and isHeader ~= 1 then
-            local questId = C_QuestLog.GetQuestIDForLogIndex(logIndex)
+            local questId = addon.questLog.GetQuestIDForLogIndex(logIndex)
             if questId and questId > 0 then
                 for objective = 1, GetNumQuestLeaderBoards(logIndex) do
                     local text, objectiveType, finished =
@@ -476,8 +476,8 @@ function recorder:HandleEvent(event, arg1, arg2, arg3)
                     {spell = spellName,
                      id = tonumber(arg3) or KnownSpellIDByName(spellName)})
     elseif event == "GOSSIP_SHOW" then
-        local options = C_GossipInfo and C_GossipInfo.GetOptions and
-                            C_GossipInfo.GetOptions() or {}
+        local options = addon.gossip and addon.gossip.GetOptions and
+                            addon.gossip.GetOptions() or {}
         local labels = {}
         for _, option in ipairs(options) do
             labels[#labels + 1] = tostring(option.name or option.gossipText or "")

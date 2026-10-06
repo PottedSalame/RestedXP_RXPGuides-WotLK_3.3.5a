@@ -841,8 +841,8 @@ function addon.SetStep(n, n2, loopback)
             end
         end
         local trackId = tonumber(step.track)
-        if C_SuperTrack and trackId then
-            C_SuperTrack.SetSuperTrackedQuestID(trackId)
+        if addon.superTrack and trackId then
+            addon.superTrack.SetSuperTrackedQuestID(trackId)
         end
         addon:SendEvent("RXP_STEP_ACTIVATED",step,guide)
     end
@@ -1580,7 +1580,7 @@ Footer:SetHeight(20)
 Footer.text = GuideName:CreateFontString(nil, "OVERLAY")
 -- GuideName.text:SetFontObject(GameFontNormalSmall)
 Footer.text:ClearAllPoints()
-Footer.text:SetPoint("LEFT", Footer, addon.gameVersion == 30300 and 113 or 92, 1)
+Footer.text:SetPoint("LEFT", Footer, 113, 1)
 Footer.text:SetPoint("RIGHT", Footer, -16, 1)
 Footer.text:SetJustifyH("LEFT")
 Footer.text:SetJustifyV("MIDDLE")
@@ -1687,7 +1687,7 @@ Footer.preflight:SetFrameLevel(Footer:GetFrameLevel() + 1)
 Footer.preflight:SetSize(25, 18)
 Footer.preflight:SetPoint("LEFT", Footer.browse, "RIGHT", 1, 0)
 Footer.preflight:SetText("?")
-if addon.gameVersion ~= 30300 then Footer.preflight:Hide() end
+
 Footer.preflight:SetScript("OnClick", function()
     if addon.routePreflight then addon.routePreflight:Toggle() end
 end)
@@ -2193,7 +2193,7 @@ end
 -- that dependency and move back one chapter.  Normal #next transitions and
 -- saved-character restoration deliberately bypass it.
 local function GetMissingGuideEntryQuest(guide)
-    if addon.gameVersion ~= 30300 or type(guide) ~= "table" or guide.empty then
+    if type(guide) ~= "table" or guide.empty then
         return
     end
 
@@ -2303,7 +2303,7 @@ local function ResolveGuideNext(guide)
 
         local nextGuide = addon.GetGuideTable(group, name)
         local active = nextGuide and addon.IsGuideActive(nextGuide)
-        if active and addon.gameVersion == 30300 then
+        if active then
             local profile = addon.settings and addon.settings.profile or {}
             active = not (nextGuide.hardcore and not profile.hardcore or
                               nextGuide.softcore and profile.hardcore)
@@ -2393,7 +2393,7 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail)
         savedStep = nil
         savedStepId = nil
     end
-    if loadSource == "manual" and addon.gameVersion == 30300 then
+    if loadSource == "manual" then
         redirectTrail = redirectTrail or {}
         local guideKey = guide.key or fmt("%s|%s", guide.group or "",
                                           guide.name or "")
@@ -3151,8 +3151,7 @@ function RXPFrame:GenerateMenuTable(menu)
         local firstChar = group:sub(1, 1)
         if RXPCData and RXPCData.GA then
             if firstChar == "+" then
-                if addon.gameVersion == 30300 and
-                    group:sub(2, #originalGroupPrefix + 1) ==
+                if group:sub(2, #originalGroupPrefix + 1) ==
                         originalGroupPrefix then
                     tinsert(originalFarmGuides, group)
                 else
@@ -3161,16 +3160,14 @@ function RXPFrame:GenerateMenuTable(menu)
             end
         elseif firstChar ~= "+" then
             if firstChar ~= "*" then
-                if addon.gameVersion == 30300 and
-                    group:sub(1, #originalGroupPrefix) ==
+                if group:sub(1, #originalGroupPrefix) ==
                         originalGroupPrefix then
                     tinsert(originalGroupList, group)
                 else
                     tinsert(groupList, group)
                 end
             else
-                if addon.gameVersion == 30300 and
-                    group:sub(2, #originalGroupPrefix + 1) ==
+                if group:sub(2, #originalGroupPrefix + 1) ==
                         originalGroupPrefix then
                     tinsert(originalUnusedGuides, group)
                 else
@@ -3268,13 +3265,12 @@ function RXPFrame:GenerateMenuTable(menu)
         local groupName = group:gsub("^%*","")
         local flatGroupName = groupName:gsub(
                                   "^Original Guides %- ", "")
-        local flattenLegacyLeveling = addon.gameVersion == 30300 and
-            (flatGroupName == "RestedXP Speedrun Guide (A)" or
+        local flattenLegacyLeveling = flatGroupName == "RestedXP Speedrun Guide (A)" or
              flatGroupName == "RestedXP Speedrun Guide (H)" or
              flatGroupName == "RestedXP TBC Guide (A)" or
              flatGroupName == "RestedXP TBC Guide (H)" or
              flatGroupName == "RestedXP WotLK Guide (A)" or
-             flatGroupName == "RestedXP WotLK Guide (H)")
+             flatGroupName == "RestedXP WotLK Guide (H)"
         -- Stock 3.3.5 EasyMenu has no scrolling.  Keeping every imported TBC
         -- chapter on one flattened menu can make the last bracket extend
         -- underneath other UI frames (or off-screen), leaving visible rows
@@ -3435,7 +3431,7 @@ function RXPFrame:GenerateMenuTable(menu)
             isTitle = 1,
             notCheckable = 1
         })
-        if addon.gameVersion == 30300 and #originalGroupList > 0 then
+        if #originalGroupList > 0 then
             local validatedMenu = {}
             for _, group in ipairs(groupList) do
                 createMenu(group, validatedMenu)
@@ -3471,7 +3467,7 @@ function RXPFrame:GenerateMenuTable(menu)
             notCheckable = 1,
             isTitle = 1
         })
-        if addon.gameVersion == 30300 and #originalFarmGuides > 0 then
+        if #originalFarmGuides > 0 then
             local validatedFarmMenu = {}
             for _, group in ipairs(farmGuides) do
                 createMenu(group, validatedFarmMenu)
@@ -3505,7 +3501,7 @@ function RXPFrame:GenerateMenuTable(menu)
         (#unusedGuides > 0 or #originalUnusedGuides > 0) then
         tinsert(menuList,
                      {text = L("Unused Guides"), notCheckable = 1, isTitle = 1})
-        if addon.gameVersion == 30300 and #originalUnusedGuides > 0 then
+        if #originalUnusedGuides > 0 then
             local validatedUnusedMenu = {}
             for _, group in ipairs(unusedGuides) do
                 createMenu(group, validatedUnusedMenu)

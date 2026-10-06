@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local _G = _G
-local C_Timer = addon.timerAPI335 or _G.C_Timer
+local C_Timer = addon.timer
 
 local AceConfig = LibStub("AceConfig-3.0")
 local LibDBIcon = LibStub("LibDBIcon-1.0")
@@ -17,11 +17,11 @@ local EasyMenu = function(...)
     end
 end
 
-local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or _G.IsAddOnLoaded
-local GetNumAddOns =  C_AddOns and C_AddOns.GetNumAddOns or _G.GetNumAddOns
-local GetAddOnInfo = C_AddOns and C_AddOns.GetAddOnInfo or _G.GetAddOnInfo
+local IsAddOnLoaded = _G.IsAddOnLoaded
+local GetNumAddOns = _G.GetNumAddOns
+local GetAddOnInfo = _G.GetAddOnInfo
 
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
+local GetItemInfo = _G.GetItemInfo
 
 local fmt, tostr, next, GetTime = string.format, tostring, next, GetTime
 
@@ -158,7 +158,7 @@ end
 -- copy of every option.
 local localizedAceConfigOptions = setmetatable({}, {__mode = "k"})
 local function NormalizeLegacyAceConfigOptions(option)
-    if addon.gameVersion ~= 30300 or type(option) ~= "table" then return end
+    if type(option) ~= "table" then return end
 
     -- AceConfig option tables are a strict public schema. Keep translation
     -- provenance in a side table: attaching a private field to the option made
@@ -476,7 +476,7 @@ local settingsDBDefaults = {
         showDangerousMobsMap = false,
         showDangerousUnitscan = false,
         showDangerousMobWarning = false,
-        soundOnFind = addon.gameVersion == 30300 and "MapPing" or 3175,
+        soundOnFind = "MapPing" or 3175,
         soundOnFindChannel = 'Master',
         scanForRares = true,
         notifyOnRares = true,
@@ -865,7 +865,7 @@ local function SetProfileOption(info, value)
             addon.CheckQuestieAutomationConflict()
         end
     end
-    if addon.gameVersion == 30300 and targetingRefreshOptions[key] and
+    if targetingRefreshOptions[key] and
         addon.targeting and addon.targeting.RefreshLegacyTargets then
         addon.targeting:RefreshLegacyTargets()
     end
@@ -5247,12 +5247,12 @@ function addon.GetXPBonuses(ignoreBuffs,playerLevel)
     end
 
     if addon.game == "RETAIL" then
-        local cloakBonus = C_CurrencyInfo.GetCurrencyInfo(3001).quantity
+        local cloakBonus = addon.currencyInfo.GetCurrencyInfo(3001).quantity
         local warModeBonus = (C_PvP.IsWarModeActive() or CheckBuff(282559) or CheckBuff(269083) or CheckBuff(289954)) and C_PvP.GetWarModeRewardBonus() or 0
-        local warbandBuff = C_UnitAuras.GetPlayerAuraBySpellID(430191)
+        local warbandBuff = addon.unitAuras.GetPlayerAuraBySpellID(430191)
         --1,2: xp buff, 3: max level
         local warbandBonus = warbandBuff and warbandBuff.points[1] or 0
-        local legionRemix = C_UnitAuras.GetPlayerAuraBySpellID(1232454)
+        local legionRemix = addon.unitAuras.GetPlayerAuraBySpellID(1232454)
         legionRemix = legionRemix and legionRemix.points[10] or 0
         calculatedRate = calculatedRate + (cloakBonus + warModeBonus + warbandBonus + legionRemix)/100
         return calculatedRate
@@ -5349,7 +5349,7 @@ function addon.settings:DetectXPRate(softUpdate)
         local season = addon.GetSeason() or CheckBuff(362859) and 1
 
         --Anniversary realms
-        local realm = C_Seasons and C_Seasons.HasActiveSeason() and C_Seasons.GetActiveSeason() or 0
+        local realm = addon.seasons and addon.seasons.HasActiveSeason() and addon.seasons.GetActiveSeason() or 0
         if realm == 11 or realm == 12 then
             addon.settings.profile.phase = 1
         else

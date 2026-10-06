@@ -1,24 +1,22 @@
 local _, addon = ...
 
-if addon.gameVersion > 60000 then return end
-
-local C_Timer = addon.timerAPI335 or _G.C_Timer
-local C_Map = addon.mapAPI335 or _G.C_Map
-local GetItemInfo = C_Item and C_Item.GetItemInfo or _G.GetItemInfo
-local GetSpellInfo = C_Spell and C_Spell.GetSpellInfo and addon.GetSpellInfo or _G.GetSpellInfo
-local GetSpellTexture = C_Spell and C_Spell.GetSpellTexture or _G.GetSpellTexture
-local GetSpellSubtext = C_Spell and C_Spell.GetSpellSubtext or _G.GetSpellSubtext
-local IsCurrentSpell = C_Spell and C_Spell.IsCurrentSpell or _G.IsCurrentSpell
-local IsSpellKnown = C_Spell and C_Spell.IsSpellKnown or _G.IsSpellKnown
-local IsPlayerSpell = C_Spell and C_Spell.IsPlayerSpell or _G.IsPlayerSpell
+local C_Timer = addon.timer
+local C_Map = addon.map
+local GetItemInfo = _G.GetItemInfo
+local GetSpellInfo = addon.GetSpellInfo or _G.GetSpellInfo
+local GetSpellTexture = _G.GetSpellTexture
+local GetSpellSubtext = _G.GetSpellSubtext
+local IsCurrentSpell = _G.IsCurrentSpell
+local IsSpellKnown = _G.IsSpellKnown
+local IsPlayerSpell = _G.IsPlayerSpell
 local GetTime, GetMirrorTimerProgress = _G.GetTime, _G.GetMirrorTimerProgress
 local FlashClientIcon = _G.FlashClientIcon
 local UnitHealth, UnitHealthMax, UnitIsDead = _G.UnitHealth, _G.UnitHealthMax, _G.UnitIsDead
 local GetInventoryItemID, IsPlayerSpell = GetInventoryItemID, IsPlayerSpell
 local HasAction, GetActionInfo, GetMacroSpell = HasAction, GetActionInfo, GetMacroSpell
-local IsOnBarOrSpecialBar = C_ActionBar.IsOnBarOrSpecialBar
-local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
-local GetContainerItemID = C_Container and C_Container.GetContainerItemID or _G.GetContainerItemID
+local IsOnBarOrSpecialBar = addon.actionBar.IsOnBarOrSpecialBar
+local GetContainerNumSlots = _G.GetContainerNumSlots
+local GetContainerItemID = _G.GetContainerItemID
 local tinsert, fmt = tinsert, string.format
 local GetRealZoneText = GetRealZoneText
 local UIErrorsFrame = _G.UIErrorsFrame
@@ -357,11 +355,7 @@ function addon.tips.CheckEvents()
                 UIErrorsFrame:AddMessage(STRING_ENVIRONMENTAL_DAMAGE_DROWNING, 1.0, 0.1, 0.1, session.alertFrequency);
 
                 if addon.settings.profile.enableDrowningWarningSound then
-                    if addon.gameVersion == 30300 then
-                        PlaySound(_G.SOUNDKIT.RAID_WARNING)
-                    else
-                        PlaySound(_G.SOUNDKIT.RAID_WARNING, "Master")
-                    end
+                    PlaySound(_G.SOUNDKIT.RAID_WARNING)
                 end
                 session.lastAlert = now
             end
@@ -707,8 +701,6 @@ local function IsStepActive(self)
     if self.dangerous then
         active = self.isUnitscan and profile.showDangerousUnitscan or
                      profile.showDangerousMobsMap
-    elseif addon.gameVersion < 20000 then
-        active = profile.showDangerousMobsMap
     else
         active = profile.showRares and self.rare or profile.showTreasures and self.treasure
     end
@@ -789,12 +781,7 @@ function addon.tips:LoadDangerousMobs(reloadData)
                                     step.alternateIcon = mobData.AltIcon
                                     prefix = ""
 
-                                    if addon.gameVersion < 20000 then
-                                        prefix = _G.VOICEMACRO_1_Sc_0
-                                        step.mapTooltip = fmt("%s %s (%d)", prefix, name, mobData.MaxLevel) -- Tooltip title
-                                    else
-                                        step.mapTooltip = name -- Tooltip title
-                                    end
+                                    step.mapTooltip = name -- Tooltip title
 
                                     -- Tooltip description:
                                     if mobData.Movement then

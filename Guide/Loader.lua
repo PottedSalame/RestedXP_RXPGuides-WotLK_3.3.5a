@@ -78,7 +78,7 @@ local function applies(textEntry,customClass)
                     elseif faction == "Neutral" and not customClass and (entry == "Alliance" or entry == "Horde") then
                         entry = faction
                     end
-                    local ac335 = uppercase == "AC335" and addon.gameVersion == 30300
+                    local ac335 = uppercase == "AC335"
                     v = (not(gendercheck or ac335 or uppercase == class or entry == race or
                              entry == faction or playerLevel >= level or uppercase == addon.game or entry == customClass) ==
                              state)
