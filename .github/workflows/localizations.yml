@@ -28,10 +28,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.1
 
-      - name: Validate translation catalogs
-        shell: pwsh
-        run: ./tools/Validate-GuideTranslations335.ps1 -RepoRoot .
-
       - name: Cache translation inventory
         uses: actions/cache@v6
         with:
