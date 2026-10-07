@@ -60,19 +60,11 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Validate pinned multilingual catalogs
-        shell: pwsh
-        run: ./.release-localizations/tools/Validate-GuideTranslations335.ps1 -RepoRoot .release-localizations
-
-      - name: Cache deterministic translation inventory
-        uses: actions/cache@v6
-        with:
-          path: .release-localizations/.validation-cache/translation-source.json
-          key: translation-source-v4-${{ runner.os }}-${{ hashFiles('LOCALIZATIONS.lock') }}
-
-      - name: Validate deterministic translation packs
-        shell: pwsh
-        run: ./.release-localizations/tools/Validate-TranslationPacks335.ps1 -RepoRoot .release-localizations -SourceCatalog .validation-cache/translation-source.json -RequireLua
+      # The localization branch distributes compiled artifacts, not compiler inputs.
+      # Validate with this addon's libraries/loader, not stale tools in that branch.
+      - name: Validate pinned locale artifacts against runtime
+        shell: bash
+        run: lua5.1 tools/validate-locale-artifacts.lua .release-localizations .
 
       - name: Validate locale release packaging
         shell: bash
