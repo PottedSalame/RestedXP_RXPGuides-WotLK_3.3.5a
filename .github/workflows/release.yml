@@ -64,6 +64,10 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
+      - name: Validate pinned multilingual catalogs
+        shell: pwsh
+        run: ./.release-localizations/tools/Validate-GuideTranslations335.ps1 -RepoRoot .release-localizations
+
       - name: Validate quest flow, talents, roadmap, and privacy
         shell: pwsh
         run: |
