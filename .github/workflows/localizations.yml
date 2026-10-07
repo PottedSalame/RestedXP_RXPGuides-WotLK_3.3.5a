@@ -7,33 +7,53 @@ on:
     branches: [localizations]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: translations-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
-    name: Validate translation catalogs and packs
+    name: Validate compiled locale artifacts and packaging
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-      - name: Check out repository
+      - name: Check out localization artifacts
         uses: actions/checkout@v7
         with:
-          fetch-depth: 1
+          persist-credentials: false
 
-      - name: Install Lua 5.1
+      - name: Resolve pinned addon test runtime
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision="$(tr -d '\r\n[:space:]' < RUNTIME.lock)"
+          [[ "${revision}" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid RUNTIME.lock"; exit 1; }
+          echo "revision=${revision}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out addon libraries and packaging tools
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.runtime.outputs.revision }}
+          path: .runtime
+          persist-credentials: false
+
+      - name: Install validation tools
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install -y lua5.1
+          sudo apt-get install -y lua5.1 zip unzip
 
-      - name: Cache translation inventory
-        uses: actions/cache@v6
-        with:
-          path: .validation-cache/translation-source.json
-          key: translation-source-v5-${{ runner.os }}-${{ github.sha }}
+      - name: Validate compiled artifacts
+        shell: bash
+        run: lua5.1 tools/validate-locale-artifacts.lua . .runtime
 
-      - name: Validate translation packs
-        shell: pwsh
-        run: ./tools/Validate-TranslationPacks335.ps1 -RepoRoot . -SourceCatalog .validation-cache/translation-source.json -RequireLua
+      - name: Validate companion packaging
+        shell: bash
+        run: |
+          bash .runtime/tools/Build-LocalePackages335.sh \
+            --source . --output .locale-release --version v0-ci \
+            --revision "${{ github.sha }}"

@@ -1,0 +1,4 @@
+.runtime/
+.locale-release/
+.validation-cache/
+.release-localizations/
