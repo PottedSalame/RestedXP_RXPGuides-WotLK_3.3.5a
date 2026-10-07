@@ -56,12 +56,14 @@ jobs:
           echo "commit=${commit}" >> "${GITHUB_OUTPUT}"
 
       - name: Check out pinned localization sources
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ steps.localizations.outputs.commit }}
-          path: .release-localizations
-          fetch-depth: 1
-          persist-credentials: false
+        shell: bash
+        run: |
+          mkdir -p .release-localizations
+          cd .release-localizations
+          git init
+          git remote add origin ${{ github.server_url }}/${{ github.repository }}.git
+          git fetch --depth 1 origin ${{ steps.localizations.outputs.commit }}
+          git checkout FETCH_HEAD
 
       - name: Validate pinned multilingual catalogs
         shell: pwsh
