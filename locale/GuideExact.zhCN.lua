@@ -1082,7 +1082,6 @@ local exact = {
     ["Kill Quillboars in the area"] = "杀死该区域中的野猪人",
     ["Kill Raptors that you see. Loot them for some Raptor Heads - you'll get more later"] = "击杀你看到的迅猛龙。拾取迅猛龙的头颅—你稍后会获得更多",
     ["Kill Razorfang Hatchlings and Razorfang Ravagers, then skin them"] = "击杀 Razorfang Hatchlings 和 Razorfang Ravagers,then skin them",
-    ["Kill Razormanes while getting the Crates and killing Kreenig"] = "在收集补给箱和击杀克雷尼格的同时，顺便击杀钢鬃野猪人",
     ["Kill Savannah Prowlers in the area. Loot them for their Tusks"] = "击杀该区域内的草原徘徊者。拾取它们的獠牙",
     ["Kill Serena Bloodfeather. Loot her for her Head"] = "击杀塞瑞娜·血羽。拾取她的头颅",
     ["Kill some Plainstriders en route if you have time on Flawed Power Stone. Loot them for Beaks"] = "如果在进行有瑕疵的能量石任务时时间充裕，顺路击杀一些陆行鸟。拾取它们的喙",
