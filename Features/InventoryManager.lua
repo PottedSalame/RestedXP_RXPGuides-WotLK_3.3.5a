@@ -1297,7 +1297,7 @@ function inventoryManager.ResetJunk()
     RXPCData.discardPile = {}
     RXPCData.manualJunkOverrides = {}
     inventoryManager.UpdateAllBags()
-    inventoryManager.RefreshJunkIcons(0.05)
+    inventoryManager.RefreshJunkIcons(0.250)
     addon:SendEvent("RXP_JUNK")
 end
 
