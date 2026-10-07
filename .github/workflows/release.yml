@@ -27,9 +27,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
         with:
-          # Packaging and validation use only GITHUB_SHA; release notes are
-          # generated server-side by gh, so repository history is unnecessary.
-          fetch-depth: 1
+          # Fetch all refs for localization checkout (orphan branch)
+          fetch-depth: 0
 
       - name: Install Lua 5.1 test runtime
         shell: bash
