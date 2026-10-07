@@ -301,4 +301,4 @@ All quest, item, NPC, and spell IDs are numeric values. Use these resources:
 - Use quoted strings `'...'` for player-facing text, comments `-- ...` for author notes
 - Test coordinates before submitting — use an in-game coordinate addon
 - Quest IDs are realm-specific. Verify on the target server/realm
-- Use `.goto` for navigation, `.target` with optional label for mobs", "filePath": "E:\\PersonalStuff\\GamesUtils\\Games\\World of Warcraft Azerothcore\\Interface\\AddOns\\RXPGuides\\CustomGuides\\GUIDE_AUTHORING.md"}
+- Use `.goto` for navigation, `.target` with optional label for mobs
