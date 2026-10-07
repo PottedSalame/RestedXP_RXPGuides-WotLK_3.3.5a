@@ -281,10 +281,10 @@ Directives start with `>>` and tell the addon what action to perform or conditio
 
 All quest, item, NPC, and spell IDs are numeric values. Use these resources:
 
-- **Quests**: [Wowhead Classic Quests](https://www.wowhead.com/classic/quests) — the ID is in the URL
-- **Items**: [Wowhead Classic Items](https://www.wowhead.com/classic/items)
-- **NPCs**: [Wowhead Classic NPCs](https://www.wowhead.com/classic/npcs)
-- **Spells**: [Wowhead Classic Spells](https://www.wowhead.com/classic/spells)
+- **Quests**: [Wowhead WotLK Quests](https://www.wowhead.com/wotlk/quests) — the ID is in the URL
+- **Items**: [Wowhead WotLK Items](https://www.wowhead.com/wotlk/items)
+- **NPCs**: [Wowhead WotLK NPCs](https://www.wowhead.com/wotlk/npcs)
+- **Spells**: [Wowhead WotLK Spells](https://www.wowhead.com/wotlk/spells)
 - **Achievements**: [Wowhead WotLK Achievements](https://www.wowhead.com/wotlk/achievements)
 
 ## Testing
