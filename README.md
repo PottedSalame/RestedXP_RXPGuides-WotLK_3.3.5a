@@ -347,19 +347,30 @@ For development changes, `/reload` is normally sufficient for Lua-only edits. Fu
 
 ## Guide Profiles
 
-Two broad guide profiles are included:
+### Bundled guides
 
-### Validated 3.3.5a routes
+The addon includes validated 3.3.5a routes for Alliance and Horde through level 80.
+These routes include local fixes for legacy quest flow, prerequisites, coordinates,
+targets, map names, taxi destinations, route transitions, and unsupported modern content.
 
-These are the default backport routes. They include local fixes for legacy quest flow, prerequisites, coordinates, targets, map names, taxi destinations, route transitions, and unsupported modern content.
+Guide availability always depends on the current character's faction, race, class,
+level, XP rate, and route conditions.
 
-### Original upstream snapshots
+## Custom Guides
 
-Original guide snapshots are exposed in isolated **Original** guide groups for comparison and fallback use. Their guide keys are separate from the validated routes, so switching profiles does not overwrite the corresponding progress record.
+The [custom-guides](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides) branch hosts community-contributed custom guide routes for farming, leveling, professions, dungeons, and more. These guides are not included in the main addon download — import them individually via the in-game `/rxp import` command.
 
-Original snapshots intentionally retain more upstream behavior and may be less suitable for a particular 3.3.5a server than the validated routes.
+### How to use custom guides
 
-Guide availability always depends on the current character's faction, race, class, level, XP rate, and route conditions.
+1. Browse the [custom-guides branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides)
+2. Open the `.lua` file for the guide you want and copy its entire content
+3. In-game, type `/rxp import`
+4. Paste the guide text into the import box
+5. The guide appears under the **CustomGuides** category in your Guide Hub
+
+### How to contribute a custom guide
+
+See the [custom-guides README](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/CustomGuides/README.md) for directory structure, naming conventions, and PR guidelines. Guide authors should follow the [GUIDE_AUTHORING.md](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/CustomGuides/GUIDE_AUTHORING.md) DSL reference when writing guides.
 
 ## Notes
 
@@ -376,9 +387,8 @@ Guide availability always depends on the current character's faction, race, clas
 - Passive target discovery is limited to visible nameplates, the current target, and mouseover units because the stock client cannot enumerate arbitrary rendered entities.
 - Localized or custom taxi-node names may require manual selection when no unique destination can be resolved.
 - Custom server quest chains can diverge from the AzerothCore data used for offline validation.
-- Converted or original guide routes may contain encounters that require manual vehicle, gossip, or scripted-event interaction.
+- Converted guide routes may contain encounters that require manual vehicle, gossip, or scripted-event interaction.
 - Other map and waypoint addons can compete for arrows, pins, or fullscreen-map anchors.
-- Original upstream snapshots receive compatibility guards, but are not as heavily corrected as the validated 3.3.5a routes.
 
 ## Q&A
 
@@ -401,10 +411,6 @@ Yes. The loaded guide set includes Alliance and Horde Classic, TBC, and WotLK pr
 **Why does a fresh character not automatically select a guide?**
 
 The blank state prevents progress from another character being copied accidentally. Select a guide once and that character's guide and step will be restored afterward.
-
-**Can I use the original routes instead of the corrected routes?**
-
-Yes. They are available under separate Original guide groups, although the validated routes are recommended for normal 3.3.5a play.
 
 **Can the addon automatically target every rendered creature?**
 
