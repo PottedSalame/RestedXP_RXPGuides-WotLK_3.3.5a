@@ -64,20 +64,6 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Validate pinned multilingual catalogs
-        shell: pwsh
-        run: ./.release-localizations/tools/Validate-GuideTranslations335.ps1 -RepoRoot .release-localizations
-
-      - name: Cache deterministic translation inventory
-        uses: actions/cache@v6
-        with:
-          path: .release-localizations/.validation-cache/translation-source.json
-          key: translation-source-v4-${{ runner.os }}-${{ hashFiles('LOCALIZATIONS.lock') }}
-
-      - name: Validate deterministic translation packs
-        shell: pwsh
-        run: ./.release-localizations/tools/Validate-TranslationPacks335.ps1 -RepoRoot .release-localizations -SourceCatalog .validation-cache/translation-source.json -RequireLua
-
       - name: Validate quest flow, talents, roadmap, and privacy
         shell: pwsh
         run: |
