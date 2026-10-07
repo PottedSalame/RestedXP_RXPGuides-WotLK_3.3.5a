@@ -1,0 +1,3807 @@
+{
+  "schema": 1,
+  "locale": "zhTW",
+  "sourceRevision": "706a420a",
+  "revision": "machine-706a420a",
+  "source": "Unreviewed offline machine-translation draft",
+  "units": [
+    {
+      "id": "84c74b8f",
+      "english": "Error parsing guide",
+      "translation": "解析指南錯誤",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26de55ef",
+      "english": "60-70",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26a80c2a",
+      "english": "30-50",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26cc3d4d",
+      "english": "50-60",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a75f3d66",
+      "english": ".",
+      "translation": ".",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268698cb",
+      "english": "15-30",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "95aa1d5f",
+      "english": "Requires Reload to take effect",
+      "translation": "需要重新加載才能生效",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c5c3fff",
+      "english": "Missing pre-requisites",
+      "translation": "缺少先決條件",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a53e195d",
+      "english": "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the eastern|r |cRXP_PICK_Kirin'Var Rune|r",
+      "translation": "{rxpcolor_b}使用{colorend_e}{texture_a}【符文啟動裝置】{rxpcolor_c}東方旁邊{colorend_f}{rxpcolor_d}麒麟瓦爾符文{colorend_g}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e68b6048",
+      "english": "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the northeastern|r |cRXP_PICK_Kirin'Var Rune|r",
+      "translation": "{rxpcolor_b}使用{colorend_e}{texture_a}【符文啟動裝置】{rxpcolor_c}東北方旁邊{colorend_f}{rxpcolor_d}麒麟瓦爾符文{colorend_g}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "125adbf3",
+      "english": "|cRXP_WARN_Use the|r |T135734:0|t[Rune Activation Device] |cRXP_WARN_next to the western|r |cRXP_PICK_Kirin'Var Rune|r",
+      "translation": "{rxpcolor_b}使用{colorend_e}{texture_a}【符文啟動裝置】{rxpcolor_c}西邊{colorend_f}{rxpcolor_d}麒麟瓦爾符文{colorend_g}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfab4205",
+      "english": "Export",
+      "translation": "出口",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32e9cdea",
+      "english": "Level Time",
+      "translation": "等級時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29999bdf",
+      "english": "second",
+      "translation": "第二",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5ccd1832",
+      "english": "seconds",
+      "translation": "秒",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f5520706",
+      "english": "Too low for %s",
+      "translation": "{format_a} 太低",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e42497a7",
+      "english": "Unavailable",
+      "translation": "不可用",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c6b8004",
+      "english": "Available",
+      "translation": "可用的",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e3ddf79c",
+      "english": "Die and respawn at the graveyard",
+      "translation": "死亡並在墓地重生",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "93fd6c4b",
+      "english": "Enable Leveling Report Inspections",
+      "translation": "啟用調平報告檢查",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1bf2456",
+      "english": "Give Feedback for step",
+      "translation": "提供步驟回饋",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0daec15c",
+      "english": "Go to",
+      "translation": "前往",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c838d6fe",
+      "english": "Import",
+      "translation": "進口",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92be075a",
+      "english": "Level Splits",
+      "translation": "等級分割",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "24f994b3",
+      "english": "Make background transparent",
+      "translation": "使背景透明",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1be92c95",
+      "english": "minute",
+      "translation": "分分鐘",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "990ebfa8",
+      "english": "minutes",
+      "translation": "分分鐘",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0446b7b7",
+      "english": "Missing data",
+      "translation": "缺失資料",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "213c11d7",
+      "english": "Objective Complete",
+      "translation": "目標完成",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "536747ee",
+      "english": "Open Feedback Form",
+      "translation": "開啟回饋表",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "381b23cc",
+      "english": "Profile changed, Reload UI for settings to take effect",
+      "translation": "設定檔已更改，重新載入 UI 以使設定生效",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "509fe0cf",
+      "english": "Stable your pet",
+      "translation": "安定你的寵物",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b28ff74",
+      "english": "Too high for %s",
+      "translation": "{format_a} 太高",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3ae2436",
+      "english": "Total Time",
+      "translation": "總時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fdfcaef",
+      "english": "Vendor Treasures",
+      "translation": "商人寶藏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7dee09",
+      "english": "Welcome to RestedXP Guides\nRight click to pick a guide",
+      "translation": "歡迎使用 RestedXP 指南{newline_a}右鍵選擇指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dde34114",
+      "english": "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
+      "translation": "{enemy_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de0feb3d",
+      "english": "18. Dire Maul (East)",
+      "translation": "{number_a}。厄運之槌（東部）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e14a13",
+      "english": "Adjusts the size of the world map pins",
+      "translation": "調整世界地圖圖釘的大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ee92de5",
+      "english": "Available Guides",
+      "translation": "可用指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e825af33",
+      "english": "Choose active theme",
+      "translation": "選擇活動主題",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1ab6b2c0",
+      "english": "Click the |cRXP_PICK_Bash'ir Crystalforge|r",
+      "translation": "點選 {rxpcolor_a}Bash'ir Crystalforge{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "322a3016",
+      "english": "Click to view the link",
+      "translation": "點擊看連結",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05ea962a",
+      "english": "Compare",
+      "translation": "比較",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b537f07b",
+      "english": "current step has no configured targets",
+      "translation": "目前步驟沒有配置目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e81196",
+      "english": "Describe your issue:",
+      "translation": "描述您的問題：",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1f822a06",
+      "english": "Development",
+      "translation": "發展",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec649906",
+      "english": "Do not edit below this line",
+      "translation": "請勿在該行下方進行編輯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f110f46",
+      "english": "Dungeons",
+      "translation": "地下城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "418c0833",
+      "english": "Emergency Actions",
+      "translation": "緊急行動",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c75b287",
+      "english": "Enable embedded Cpt. Stadics' Vendor Treasures",
+      "translation": "啟用嵌入 Cpt。Stadics 的供應商寶藏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90e45bc7",
+      "english": "Enable Talent Previews",
+      "translation": "啟用人才預覽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac956066",
+      "english": "Enable Talents Guides",
+      "translation": "啟用人才指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88da1440",
+      "english": "Enable Warning",
+      "translation": "啟用警告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "506a6ff6",
+      "english": "Favorites",
+      "translation": "收藏夾",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d72e1578",
+      "english": "Go to step",
+      "translation": "轉到步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6beb605c",
+      "english": "Grind to 10 at the troggs",
+      "translation": "在穴居人處磨到 {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f9091760",
+      "english": "Grind to 14 at the troggs",
+      "translation": "在穴居人處磨到 {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6108811a",
+      "english": "Guide Author Recorder",
+      "translation": "指引作者錄音機",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "030e52cb",
+      "english": "Guide has no name",
+      "translation": "導遊沒有名字",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e6388a2",
+      "english": "Guides to import",
+      "translation": "導入指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2745fac1",
+      "english": "hour",
+      "translation": "小時",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10055354",
+      "english": "hours",
+      "translation": "小時",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "144c767c",
+      "english": "Hunter Pet Assistant",
+      "translation": "獵人寵物助理",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88977644",
+      "english": "Incomplete or invalid encoded string",
+      "translation": "編碼字串不完整或無效",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b46095c",
+      "english": "In-progress",
+      "translation": "進行中",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de43b509",
+      "english": "J_3.2AT_Sunreavers_Daily_Quests",
+      "translation": "J_{number_a}AT_Sunreavers_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67d22af8",
+      "english": "Kill and loot murlocs. Idols drop from Seers and Oracles. Knives from the melee murlocs.",
+      "translation": "殺死並掠奪魚人。神像從先知和神諭中掉落。近戰魚人的刀。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e052bfb",
+      "english": "Level",
+      "translation": "等級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "42343710",
+      "english": "Map Pin Scale",
+      "translation": "地圖圖釘比例",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2037f7c9",
+      "english": "Max",
+      "translation": "最大限度",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1e7b3fd",
+      "english": "Once he gets to around 60% hp, you can use Levitate to kite him back to Booty Bay",
+      "translation": "一旦他的生命值達到 {number_a}% 左右，你就可以使用懸浮將他風箏回藏寶海灣",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed6a1a3e",
+      "english": "Open Performance Inspector",
+      "translation": "打開性能檢查器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b2eb3e9",
+      "english": "Open Route Preflight",
+      "translation": "開放航線預檢",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8e86f04",
+      "english": "Polymorph Old Icebeard, then loot the meats",
+      "translation": "變形老冰須，然後掠奪肉",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8509e46d",
+      "english": "Rare Found! %s is nearby.",
+      "translation": "罕見發現！{format_a} 就在附近。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0991e3a7",
+      "english": "Reached Level",
+      "translation": "達到等級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "00be6c9a",
+      "english": "Reached maximum level for guide",
+      "translation": "已達嚮導最高等級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dc9f34a4",
+      "english": "Recent",
+      "translation": "最近的",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08e6a38c",
+      "english": "Reload guides and UI",
+      "translation": "重新載入指南和 UI",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51e1edd7",
+      "english": "Send or receive inspection requests for other Leveling Reports",
+      "translation": "發送或接收其他水準報告的檢驗請求",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0a64ae8",
+      "english": "Step %d",
+      "translation": "步驟{format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb71ed9b",
+      "english": "Step List Background",
+      "translation": "步驟清單背景",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01a45a01",
+      "english": "Talk to the Squad Leader. He may not be here if someone else started the quest and has a roughly 6 minute respawn time, and respawns about 10 yards to the right of Koup",
+      "translation": "與班長交談。如果其他人開始任務並且有大約 {number_a} 分鐘的重生時間，並且在 Koup 右側約 {number_b} 碼處重生，他可能不在這裡",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cbed58b3",
+      "english": "Talk to the Squad Leader. He may not be here if someone else started the quest and has a roughly 6 minute respawn time, and respawns about 10 yards to the right of Koup. You may skip this if you don't want to wait or check later",
+      "translation": "與班長交談。如果其他人開始任務並且有大約 {number_a} 分鐘的重生時間，並且在 Koup 右側約 {number_b} 碼處重生，他可能不在這裡。如果您不想等待或稍後查看，可以跳過此步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9da5e90",
+      "english": "Threshold",
+      "translation": "臨界點",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c6765491",
+      "english": "Use the emote /raise on the Abandoned Pack Mules - They look like mules with a bunch of supplies tied to them around this area",
+      "translation": "對被遺棄的馱包騾子使用表情 /raise - 它們看起來就像騾子，在該區域周圍綁著一堆補給品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7b66d92",
+      "english": "(Skip this step if you are level %d or above)",
+      "translation": "（如果您的等級為{format_a}或以上，請跳過此步驟）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9503b55c",
+      "english": "|c%sDeleting %sx%s|r",
+      "translation": "|c{format_b}刪除{format_c}x{format_d}{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2475a7e5",
+      "english": "|c%sInventory is full, deleting %sx%s|r",
+      "translation": "|c{format_b}庫存已滿，刪除{format_c}x{format_d}{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3f94d9f",
+      "english": "|c%sInventory is full, sorting arrows/bullets|r",
+      "translation": "|c{format_b}庫存已滿，正在排序箭頭/項目符號{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e94f93f8",
+      "english": "|c%sSet %s as junk|r",
+      "translation": "|c{format_b}將 {format_c} 設為垃圾{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f3075634",
+      "english": "|c%sSet %s as useful|r",
+      "translation": "|c{format_b}將 {format_c} 設定為有用{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "af325713",
+      "english": "|c%sSold junk items for|r %s",
+      "translation": "|c{format_b}以{colorend_a} {format_c} 的價格出售垃圾物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a1ce216",
+      "english": "|c%sSorting arrows/bullets|r",
+      "translation": "|c{format_b}排序箭頭/項目符號{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9050c1db",
+      "english": "3.3.5a",
+      "translation": "{number_a}.{number_b}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9aaa7400",
+      "english": "A macro has been automatically built to aid in leveling. Please move %s to your action bars.",
+      "translation": "已自動建立巨集以幫助平整。請將{format_a}移至您的操作欄。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7be5c6cc",
+      "english": "Abandon the following quests?",
+      "translation": "放棄以下任務？",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14c7c0d9",
+      "english": "Account mismatch, import string does not apply to current account",
+      "translation": "帳戶不匹配，導入字串不適用於當前帳戶",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f2fdc1",
+      "english": "Activate Hardcore mode",
+      "translation": "啟動硬核模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "34f9659a",
+      "english": "Activate the Gold Assistant mode",
+      "translation": "啟動金牌助手模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "58c0203a",
+      "english": "Activate the Quest Guide mode",
+      "translation": "啟動任務指南模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96ee5056",
+      "english": "Active Item Scale",
+      "translation": "活動項目規模",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b7bc69a1",
+      "english": "Active Items",
+      "translation": "活躍專案",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbd3b659",
+      "english": "Active Targets",
+      "translation": "活躍目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08fe4f81",
+      "english": "Active Targets Scale",
+      "translation": "主動目標規模",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "851d3420",
+      "english": "Add main options menu to minimap",
+      "translation": "將主選項選單新增至小地圖",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ca91a22e",
+      "english": "Add options menu to map",
+      "translation": "將選項選單新增至地圖",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96ce70f7",
+      "english": "Adjust the leveling routes to the current season",
+      "translation": "調整當季的練級路線",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f6cf16cc",
+      "english": "Adjust the leveling routes to the deathless ruleset",
+      "translation": "調整練等路線至不死規則集",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a3ff7600",
+      "english": "Adjust the routes to include almost every quest in the Northrend zones",
+      "translation": "調整路線以包含諾森德地區的幾乎所有任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52ddcdd0",
+      "english": "Adjust the routes to include more quests",
+      "translation": "調整路線以包含更多任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d638c303",
+      "english": "Adjusts the batching window tolerance, used for hearthstone batching. Increase this value if you're experiencing framerate drops when using your Hearthstone",
+      "translation": "調整批次窗口容差，用於爐石批次處理。如果您在使用《爐石戰記》時遇到幀速率下降的情況，請增加此值",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9dd95a03",
+      "english": "Adjusts the guide routes to match increased xp rate bonuses",
+      "translation": "調整引導路線以符合增加的經驗值獎勵",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b637322c",
+      "english": "Adjusts the guide routes to match the content phase\nPhase 2: Dire Maul quests\nPhase 3: 100% quest XP (SoM)\nPhase 4: ZG/Silithus quests\nPhase 5: AQ quests\nPhase 6: Eastern Plaguelands quests",
+      "translation": "調整引導路線以符合內容階段{newline_a}階段{number_f}：厄運之槌任務{newline_b}階段{number_g}：{number_h}％任務XP（SoM）{newline_c}階段{number_i}：ZG/希利蘇斯任務{newline_d}階段{number_j}：AQ任務{newline_e}階段{number_k}：東瘟疫之地任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1aedb32a",
+      "english": "Advanced Settings",
+      "translation": "進階設定",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d20e0771",
+      "english": "Advertises and compares addon versions with all RXP users in party",
+      "translation": "與派對中的所有 RXP 用戶進行廣告和比較插件版本",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "363bbd1d",
+      "english": "All guides",
+      "translation": "所有指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c935ef7d",
+      "english": "Allows guides to choose quest rewards automatically",
+      "translation": "允許嚮導自動選擇任務獎勵",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1cb7d05c",
+      "english": "Allows the guide to automatically fly you to your destination",
+      "translation": "讓導遊自動帶您前往目的地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "59a214a9",
+      "english": "Allows the guide to automatically set your home at an Innkeeper",
+      "translation": "允許導遊自動將您的家設置在旅館老闆處",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "86ffbd87",
+      "english": "Allows the guide to automatically skip gossip for NPCs",
+      "translation": "允許導遊自動跳過 NPC 的八卦",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "77459e2d",
+      "english": "Allows the guide to buy useful leveling spells automatically",
+      "translation": "允許指南自動購買有用的升級法術",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d555bd2f",
+      "english": "Allows you to toggle items as junk by clicking on it with CTRL+RightClick or ALT+RightClick",
+      "translation": "允許您透過使用 CTRL+右鍵或 ALT+右鍵單擊來將項目切換為垃圾",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2f99331",
+      "english": "Always Open Leveling Report With Character Panel",
+      "translation": "始終使用字元面板開啟調平報告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32feafb3",
+      "english": "Announce Flying Step timers",
+      "translation": "宣布 Flying Step 計時器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1db0a552",
+      "english": "Announce in guild chat when you level up",
+      "translation": "當你升級時在公會聊天中宣布",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "21ae246e",
+      "english": "Announce in party chat when you collect all the items relevant to a quest (.collect)",
+      "translation": "當您收集與任務相關的所有物品時在團隊聊天中宣布 (.collect)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7f72ac",
+      "english": "Announce in party chat when you complete certain quests (.complete)",
+      "translation": "當您完成某些任務時在隊伍聊天中宣布（.complete）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31d8734d",
+      "english": "Announce in party chat when you level up",
+      "translation": "當你升級時在隊伍聊天中宣布",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92440ee3",
+      "english": "Announce in party chat where you're flying and how long until you arrive",
+      "translation": "在群組聊天中宣布您的航班目的地以及抵達時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b748c35",
+      "english": "Announce Level Ups (Emote)",
+      "translation": "宣布升級（表情）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a2e08e50",
+      "english": "Announce Level Ups (Guild Chat)",
+      "translation": "宣布升級（公會聊天）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4532eb",
+      "english": "Announce Level Ups (Party Chat)",
+      "translation": "宣布升級（派對聊天）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e647da6a",
+      "english": "Announce when all Step items are collected",
+      "translation": "收集完所有步驟物品後宣布",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52939e13",
+      "english": "Announce when Quest Step is completed",
+      "translation": "任務步驟完成時宣布",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01f58481",
+      "english": "Announcements",
+      "translation": "公告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90d31626",
+      "english": "Any items marked as junk will display a gold coin icon on the top left corner of the item icon within your bags",
+      "translation": "任何標記為垃圾的物品都會在您的包內物品圖標的左上角顯示一個金幣圖標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c0fcb496",
+      "english": "Arrow Scale",
+      "translation": "箭頭比例",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8449c2e",
+      "english": "Arrow Text Size",
+      "translation": "箭頭文字大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b646bb3b",
+      "english": "Attempting to deposit",
+      "translation": "嘗試存款",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "44b7c3ed",
+      "english": "Attempting to withdraw",
+      "translation": "正在嘗試撤回",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd634264",
+      "english": "Auto Sell Junk",
+      "translation": "汽車銷售垃圾",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e5a8b500",
+      "english": "Autohide in Raids",
+      "translation": "突襲中自動隱藏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "401e9548",
+      "english": "Automatic quest sharing",
+      "translation": "自動任務共享",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1e3373b",
+      "english": "Automatically attempts to discard the cheapest junk item from your bags if your inventory is full",
+      "translation": "如果您的庫存已滿，會自動嘗試丟棄包包中最便宜的垃圾物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ab3c4c8",
+      "english": "Automatically chooses the best calculated quest reward",
+      "translation": "自動選擇計算出的最佳任務獎勵",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb718f08",
+      "english": "Automatically create a targeting macro",
+      "translation": "自動建立定位宏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "47196619",
+      "english": "Automatically hide when in a raid, and unhide when you leave a raid",
+      "translation": "在突襲中自動隱藏，離開突襲時取消隱藏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d49218bc",
+      "english": "Automatically scan nearby targets",
+      "translation": "自動掃描附近目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94f70650",
+      "english": "Automatically sell all gray items and all other items that you set as junk",
+      "translation": "自動出售所有灰色物品和您設定為垃圾的所有其他物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e7e4524",
+      "english": "Automation",
+      "translation": "自動化",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "891bb02c",
+      "english": "Backup / Restore",
+      "translation": "備份/恢復",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76944b27",
+      "english": "Batching window size (ms)",
+      "translation": "批次視窗大小（毫秒）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac4cc79c",
+      "english": "Battle.net unreachable, please exit your client, restart Battle.net, and try again",
+      "translation": "戰網無法訪問，請退出客戶端，重新啟動戰網，然後重試",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2037cb93",
+      "english": "Buy",
+      "translation": "買",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a516198d",
+      "english": "Buy Missing",
+      "translation": "購買缺失",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f7f6d5",
+      "english": "Calculates item upgrades with Tactics' effective power weights",
+      "translation": "使用戰術的有效功率權重計算物品升級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbf228f7",
+      "english": "Change font size of the Guide Window",
+      "translation": "更改指南視窗的字體大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e4d29f",
+      "english": "Check for Addon Incompatibility",
+      "translation": "檢查插件不相容",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f79edd85",
+      "english": "Check if targets are nearby\nWarning: This relies on ADDON_ACTION_FORBIDDEN errors from TargetUnit() to function.",
+      "translation": "檢查目標是否在附近{newline_a}警告：這依賴來自 TargetUnit() 的 ADDON_ACTION_FORBIDDEN 錯誤來運行。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c9c14683",
+      "english": "Check loaded addons for known compatibility issues with RXP",
+      "translation": "檢查載入的插件是否存在與 RXP 的已知相容性問題",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4cee6be",
+      "english": "Checks for heirlooms and experience buffs",
+      "translation": "檢查傳家寶和經驗愛好者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "968a1e42",
+      "english": "Checks for nearby rare spawns",
+      "translation": "檢查附近的稀有生成點",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "97237957",
+      "english": "Choose Theme",
+      "translation": "選擇主題",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3ecbb7ee",
+      "english": "Class Supplies",
+      "translation": "課堂用品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "360402b5",
+      "english": "Cleanup obsolete or leftover quests",
+      "translation": "清理過時或剩餘的任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b01b081",
+      "english": "Cleanup Orphaned Quests",
+      "translation": "清理孤兒任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec49815f",
+      "english": "Click to set a keybind",
+      "translation": "點擊以設定按鍵綁定",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fc303097",
+      "english": "Collect the following items:",
+      "translation": "收集以下物品：",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78d21c3c",
+      "english": "Collected step %d - %s",
+      "translation": "收集的步驟 {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9f7e01ec",
+      "english": "Communications",
+      "translation": "通訊",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "acb2ae81",
+      "english": "Compare Next Level",
+      "translation": "比較下一個級別",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0b1968a",
+      "english": "Completed step %d - %s",
+      "translation": "已完成步驟 {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "19f6870f",
+      "english": "Content phase",
+      "translation": "內容階段",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5df3a88",
+      "english": "Continue",
+      "translation": "繼續",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "62a5ec6e",
+      "english": "Create Targeting Macro",
+      "translation": "建立定位宏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b0cc608",
+      "english": "Current step frame anchor",
+      "translation": "當前步驟框架錨點",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d42957d9",
+      "english": "Currently loaded imported guides",
+      "translation": "目前載入的導入指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f1a0f",
+      "english": "Dangerous Mobs Tracking",
+      "translation": "危險的怪物追蹤",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "203859a1",
+      "english": "day",
+      "translation": "天",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27438e34",
+      "english": "days",
+      "translation": "天",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4faac8a",
+      "english": "Deactivate Hardcore mode",
+      "translation": "停用硬核模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1ad1f7ca",
+      "english": "Delete Cheapest Junk Item",
+      "translation": "刪除最便宜的垃圾物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "60f2b150",
+      "english": "Delete Cheapest Junk Item Keybind",
+      "translation": "刪除最便宜的垃圾項目鍵綁定",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f1da3b88",
+      "english": "Delete imported guide",
+      "translation": "刪除導入的指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "87b06988",
+      "english": "Detect Rate",
+      "translation": "檢測率",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eed73cac",
+      "english": "Diagnose Current Step",
+      "translation": "診斷目前步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "91453a89",
+      "english": "Disable Colors",
+      "translation": "停用顏色",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e4c2517",
+      "english": "Disable dragging/resizing, use alt+left click on the main window to resize it",
+      "translation": "停用拖曳/調整大小，使用 alt+左鍵點選主視窗來調整大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f92d6adf",
+      "english": "Discard junk items if bag is full",
+      "translation": "如果袋子已滿，請丟棄垃圾物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3bbd55f9",
+      "english": "Displays dangerous mobs and patrols on the targeting window (WIP)",
+      "translation": "在目標視窗上顯示危險的生物和巡邏隊（WIP）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5f1cb7e8",
+      "english": "Displays dangerous mobs and patrols on your map (WIP)",
+      "translation": "在地圖上顯示危險的怪物和巡邏隊（WIP）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d22dc03",
+      "english": "Displays guides that are not applicable for your class/race such as starting zones for other races",
+      "translation": "顯示不適用於您的班級/比賽的指南，例如其他比賽的出發區",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70549c64",
+      "english": "Displays the best calculated item upgrade",
+      "translation": "顯示最佳計算的物品升級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a28e816",
+      "english": "Displays the best sellable quest reward",
+      "translation": "顯示最暢銷的任務獎勵",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c48d6972",
+      "english": "Distance Between Pins",
+      "translation": "引腳之間的距離",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2cf81379",
+      "english": "Do the Blasted Lands collection quests",
+      "translation": "完成詛咒之地收集任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1591ed00",
+      "english": "Enable Active Targets",
+      "translation": "啟用活動目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "09bcb407",
+      "english": "Enable Addon Version Checks",
+      "translation": "啟用插件版本檢查",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0199855d",
+      "english": "Enable Animations",
+      "translation": "啟用動畫",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d9a245",
+      "english": "Enable Beta Features",
+      "translation": "啟用測試版功能",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f60bbb1",
+      "english": "Enable Debug",
+      "translation": "啟用偵錯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2a9942fe",
+      "english": "Enable Item Reservations",
+      "translation": "啟用商品預訂",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a606841",
+      "english": "Enable Level Splits",
+      "translation": "啟用級別分割",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb4f8aec",
+      "english": "Enable Leveling Tracker",
+      "translation": "啟用調平追蹤器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8675b851",
+      "english": "Enable Minimap Button",
+      "translation": "啟用小地圖按鈕",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7db7119e",
+      "english": "Enable Route Preflight",
+      "translation": "啟用航線預檢",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c50400fd",
+      "english": "Enable Talent Plan",
+      "translation": "啟用人才計劃",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "593a52ea",
+      "english": "Enable Tips",
+      "translation": "啟用提示",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0c35015",
+      "english": "Enable Tips Frame",
+      "translation": "啟用提示框",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "606a2889",
+      "english": "Enable Warning Sound",
+      "translation": "啟用警告聲",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "04e2d04c",
+      "english": "Enable World Map Button",
+      "translation": "啟用世界地圖按鈕",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a4b1e40",
+      "english": "Enables new features, forces reload to take effect",
+      "translation": "啟用新功能，強制重新載入生效",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7e7e972",
+      "english": "Enables or disables the chromie time guides. Note that freshly created accounts without a level 60 character cannot access chromie time",
+      "translation": "啟用或停用 chromie 時間指南。請注意，沒有等級 {number_a} 字元的新建立帳戶無法存取 chromie 時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c1d11265",
+      "english": "Enables the automation of the innkeeper prompt, where you can set your home location in the same server tick you're teleporting away",
+      "translation": "啟用旅館老闆提示的自動化，您可以在您要傳送的同一伺服器上設定您的家庭位置",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a47bdb6c",
+      "english": "Enables the RestedXP Leveling Report when you open your character panel",
+      "translation": "當您開啟角色面板時啟用 RestedXP 等級報告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9ef04a81",
+      "english": "Error parsing",
+      "translation": "解析錯誤",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "35576df8",
+      "english": "Experience rate change detected, reloading guide for %.2fx",
+      "translation": "偵測到經驗值變化，{format_a}x 充值指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f301684a",
+      "english": "Experience rates",
+      "translation": "經驗率",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8770830f",
+      "english": "Experience Sources",
+      "translation": "經驗來源",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfad7e1a",
+      "english": "Extras",
+      "translation": "附加功能",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8be393fa",
+      "english": "Failed to Import Guides: Invalid Import String",
+      "translation": "導入指南失敗：導入字串無效",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78eab215",
+      "english": "Failed to ReadCacheData",
+      "translation": "讀取快取資料失敗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6180b559",
+      "english": "Flash Client Icon",
+      "translation": "Flash 用戶端圖標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4642f265",
+      "english": "Flashes the game icon on taskbar when enemy target found",
+      "translation": "當發現敵方目標時，工作列上的遊戲圖示會閃爍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8d29c303",
+      "english": "Flashes the screen corners when an emergency action is recommended",
+      "translation": "建議採取緊急措施時螢幕四角閃爍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10bb8cd9",
+      "english": "Flashes the screen corners when enemy target found",
+      "translation": "當發現敵方目標時螢幕四角閃爍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "236d5cdd",
+      "english": "Flashes the screen corners when in danger of drowning",
+      "translation": "有溺水危險時屏幕四角閃爍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbe4a06f",
+      "english": "Flight Path automation",
+      "translation": "飛行路徑自動化",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c12ae431",
+      "english": "Fly to",
+      "translation": "飛往",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da0cd2d9",
+      "english": "Flying to %s ETA %s",
+      "translation": "飛往 {format_a} 預計抵達時間 {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273354fa",
+      "english": "Font",
+      "translation": "字體",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da021ba7",
+      "english": "Font Path",
+      "translation": "字體路徑",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "243a765a",
+      "english": "Gear Advisor",
+      "translation": "裝備顧問",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ccb82047",
+      "english": "Get the %s flight path",
+      "translation": "取得{format_a}飛行路徑",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f6ba34a3",
+      "english": "Gold Assistant",
+      "translation": "金牌助理",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d0601ae",
+      "english": "Gold Farming Guides",
+      "translation": "黃金種植指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9db3691",
+      "english": "Grind until you are %.0f%% into %s with %s",
+      "translation": "研磨至 {format_a}%% 變成 {format_b} 和 {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e65e375",
+      "english": "Grind until you are %.0f%% into level %s",
+      "translation": "研磨直到{format_a}%%達到{format_b}級別",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7328ff3",
+      "english": "Grind until you are %d away from %s with %s",
+      "translation": "研磨直到與 {format_c} 距離 {format_b} {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1020bbf",
+      "english": "Grind until you are %d xp away from level %s",
+      "translation": "研磨直到距離 {format_b} {format_a} xp",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7bcba56",
+      "english": "Grind until you are %s into %s with %s",
+      "translation": "研磨至 {format_a} 變成 {format_b} 和 {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b2b9202",
+      "english": "Grind until you are %s xp into level %s",
+      "translation": "磨練直到你的{format_a}xp達到{format_b}等級",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "025e8783",
+      "english": "Guide Font Size",
+      "translation": "指南字體大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bd6e51ac",
+      "english": "Guide Import",
+      "translation": "引導導入",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "250c0cf9",
+      "english": "Guide Routing",
+      "translation": "引導路線",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ddcce089",
+      "english": "Guide Window",
+      "translation": "引導窗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7e45c72",
+      "english": "Guides Loaded Successfully",
+      "translation": "指南載入成功",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d2f01a30",
+      "english": "Hardcore mode",
+      "translation": "硬核模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a02d588",
+      "english": "Hearthstone batching",
+      "translation": "《爐石戰記》批處理",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb575c60",
+      "english": "Hide Active Item window",
+      "translation": "隱藏活動項目窗口",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "50c96afd",
+      "english": "Hide Background",
+      "translation": "隱藏背景",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70289269",
+      "english": "Hide completed steps",
+      "translation": "隱藏已完成的步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab7e05e2",
+      "english": "Hide Mini Map Pins",
+      "translation": "隱藏迷你地圖圖釘",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "841a22bc",
+      "english": "Hide Splits Background",
+      "translation": "隱藏分割背景",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aeb779b7",
+      "english": "Hide Targets Background",
+      "translation": "隱藏目標背景",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14c01e9d",
+      "english": "Hide tips",
+      "translation": "隱藏提示",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4a266b23",
+      "english": "Hide waypoint arrow",
+      "translation": "隱藏航點箭頭",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "019b55d5",
+      "english": "Hide Window",
+      "translation": "隱藏視窗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9f869ee",
+      "english": "Hides the main window",
+      "translation": "隱藏主視窗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac9fb56f",
+      "english": "Highlight active map pins",
+      "translation": "突出顯示活動地圖圖釘",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc3d3503",
+      "english": "Highlight or list levels for each talent",
+      "translation": "突出顯示或列出每個人才的級別",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2475ae84",
+      "english": "Historical levels to show",
+      "translation": "顯示歷史水平",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3df4e4f9",
+      "english": "Holding the Control key modifier also toggles the quest auto accept feature on and off",
+      "translation": "按住 Control 鍵修飾符還可以開啟和關閉任務自動接受功能",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29be66b",
+      "english": "I just leveled from %d to %d in %s",
+      "translation": "我剛剛在{format_c}中從{format_a}升級到{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fedea7e4",
+      "english": "I just leveled up to %d",
+      "translation": "我剛剛升級到{format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "226f041f",
+      "english": "If this option is enabled, it disables all steps involving trading or Auction House",
+      "translation": "如果啟用此選項，它將停用涉及交易或拍賣行的所有步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90017172",
+      "english": "If two or more steps are very close together, this addon will group them into a single pin on the map. Adjust this range to determine how close together two steps must be to form a group.",
+      "translation": "如果兩個或多個步驟非常接近，此外掛程式會將它們分組到地圖上的單一圖釘。調整此範圍以確定兩個步驟必須距離多近才能形成一組。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "71ba64c5",
+      "english": "Ignore Questie announcements",
+      "translation": "忽略 Questie 公告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f37881cc",
+      "english": "Import guide",
+      "translation": "進口指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a7ce282",
+      "english": "Innkeeper Bind automation",
+      "translation": "Innkeeper 綁定自動化",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d7544fb",
+      "english": "Join Discord",
+      "translation": "加入不和諧",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38a7e760",
+      "english": "Join our support discord at discord.gg/RestedXP and copy paste this form into #bug-report",
+      "translation": "加入我們的 Discord 支援 Discord.gg/RestedXP 並將此表單複製並貼上到 #bug-report 中",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1682d518",
+      "english": "Left click to apply talents",
+      "translation": "左鍵點擊申請人才",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f430b313",
+      "english": "Level %d time",
+      "translation": "等級{format_a}時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f43dbe0c",
+      "english": "Level Splits Font Size",
+      "translation": "水平分割字體大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f780a30c",
+      "english": "Level Splits History",
+      "translation": "級別分裂歷史",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "215d43f3",
+      "english": "Level Splits Opacity",
+      "translation": "級別分割不透明度",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e17e09b5",
+      "english": "Leveling report",
+      "translation": "調平報告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29290e85",
+      "english": "Leveling Tracker",
+      "translation": "練等追蹤器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e632dd44",
+      "english": "Loaded %d characters into import buffer",
+      "translation": "已將 {format_a} 個字元載入到導入緩衝區中",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d6ed968",
+      "english": "Loaded %d characters into import buffer, %d shown",
+      "translation": "已將 {format_a} 個字元載入到匯入緩衝區中，顯示為 {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c2a8d59d",
+      "english": "Loaded next guide, %s",
+      "translation": "已載入下一個指南，{format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4e00b322",
+      "english": "Loading Guides",
+      "translation": "裝載指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d504bca",
+      "english": "Lock Frames",
+      "translation": "鎖框",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab705347",
+      "english": "Look and Feel",
+      "translation": "外觀和感覺",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "59d0e6c6",
+      "english": "Loremaster Mode",
+      "translation": "博學者模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4c29f052",
+      "english": "Lower number to make Level Splits more transparent",
+      "translation": "較低的數字使級別分割更加透明",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a508816f",
+      "english": "Macro capacity reached",
+      "translation": "宏容量已達到",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81fa18e7",
+      "english": "Make a public emote when you level up",
+      "translation": "升級時做出公開表情",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5b60c81",
+      "english": "Map Pin Background Opacity",
+      "translation": "地圖圖釘背景不透明度",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "435c82e7",
+      "english": "Map Pin color",
+      "translation": "地圖圖釘顏色",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96eb41b",
+      "english": "Map Pins",
+      "translation": "地圖圖釘",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b11b4ddd",
+      "english": "Mark Enemy Mobs",
+      "translation": "標記敵人小怪",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abb93f4a",
+      "english": "Mark enemy mobs with skull, cross, and square",
+      "translation": "用骷髏、十字和正方形標記敵人小怪",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05397dc6",
+      "english": "Mark Enemy Targets",
+      "translation": "標記敵人目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8995f45",
+      "english": "Mark Friendly Targets",
+      "translation": "標記友善目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83786a36",
+      "english": "Mark friendly targets with star, circle, diamond, and triangle",
+      "translation": "用星形、圓形、菱形和三角形標記友善目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "826bf4dc",
+      "english": "Mark special enemy targets with moon",
+      "translation": "用月亮標記特殊的敵方目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8a30749",
+      "english": "Maximize Nameplate Distance",
+      "translation": "最大化銘牌距離",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d6fb555",
+      "english": "Northrend Loremaster",
+      "translation": "諾森德博學者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e69379d",
+      "english": "Notice: Changing experience rates beyond 1x may cause some chapters to become hidden and certain steps may automatically skip as you out level them",
+      "translation": "注意：將經驗率變更為超過{number_a}x可能會導致某些章節被隱藏，並且某些步驟可能會在您升級時自動跳過",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "840f1c6a",
+      "english": "Notify on new target",
+      "translation": "通知新目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d71256",
+      "english": "Notify on Rares",
+      "translation": "通知稀有情況",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1467843b",
+      "english": "Notify when a new rare is found",
+      "translation": "發現新稀有時通知",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c87aa05",
+      "english": "Notify when a new target is loaded",
+      "translation": "載入新目標時發出通知",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b24bf99",
+      "english": "Number of Map Pins",
+      "translation": "地圖圖釘數量",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63b82d6c",
+      "english": "Number of map pins shown on the world map",
+      "translation": "世界地圖上顯示的地圖圖釘數量",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fdfc2fc",
+      "english": "Only show when in range",
+      "translation": "僅在範圍內時顯示",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4ea04927",
+      "english": "Only shows current and future steps on the step list window",
+      "translation": "僅在步驟清單視窗上顯示目前和未來的步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f320f380",
+      "english": "Open Class Supplies",
+      "translation": "公開課用品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f18affb8",
+      "english": "Open Daily Planner",
+      "translation": "開啟每日計畫表",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9087a56c",
+      "english": "Open Gear Advisor",
+      "translation": "開式齒輪顧問",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83e4e6c2",
+      "english": "Open Guide Hub",
+      "translation": "開啟指南中心",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b42f6a7c",
+      "english": "Paste encoded strings",
+      "translation": "貼上編碼字串",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dfe7ed0f",
+      "english": "Pick Up",
+      "translation": "撿起",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67034562",
+      "english": "Play Sound",
+      "translation": "播放聲音",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9fa01cfc",
+      "english": "Please restart your game client and try again",
+      "translation": "請重新啟動遊戲用戶端並重試",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc2ee3be",
+      "english": "Preview Changes",
+      "translation": "預覽更改",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "923620b1",
+      "english": "Preview theme changes",
+      "translation": "預覽主題更改",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "72234a79",
+      "english": "Purge All Data",
+      "translation": "清除所有數據",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "949a380d",
+      "english": "Quest auto accept/turn in",
+      "translation": "任務自動接受/上交",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "225303c6",
+      "english": "Quest auto rewards",
+      "translation": "任務自動獎勵",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ae63d0bd",
+      "english": "Quest Cleanup",
+      "translation": "任務清理",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4035c0",
+      "english": "Quest is being picked up at",
+      "translation": "任務領取地點為",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a9fbf74",
+      "english": "Quest is being turned in at",
+      "translation": "任務提交時間為",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6cc26fb",
+      "english": "Quest Reward Automation",
+      "translation": "任務獎勵自動化",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbe1a32f",
+      "english": "Quest Reward Recommendation",
+      "translation": "任務獎勵推薦",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c40c46ae",
+      "english": "Quest Sellable Recommendation",
+      "translation": "尋求可售推薦",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70c30d92",
+      "english": "Refresh",
+      "translation": "重新整理",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eeb0dc88",
+      "english": "Reload Guide",
+      "translation": "儲值指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca4dbf1",
+      "english": "Remove",
+      "translation": "消除",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca7f07f",
+      "english": "Rescan",
+      "translation": "重新掃描",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e71b246",
+      "english": "Reset",
+      "translation": "重置",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76c9ba66",
+      "english": "Reset Arrow Position",
+      "translation": "重置箭頭位置",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6a676ab",
+      "english": "RestedXP Feedback Form",
+      "translation": "RestedXP 回饋表",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa585cee",
+      "english": "Retrieving quest data",
+      "translation": "檢索任務數據",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd9c795d",
+      "english": "RGB hex color code",
+      "translation": "RGB 十六進位顏色碼",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52cd7676",
+      "english": "Right Click Modifier",
+      "translation": "右鍵單擊修改器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "28c62be9",
+      "english": "Route Planning",
+      "translation": "路線規劃",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec320617",
+      "english": "Route Preflight",
+      "translation": "航線預檢",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e106ebb9",
+      "english": "Run Guide Configurator",
+      "translation": "運行指南配置器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e56364b",
+      "english": "RXPGuides Guide Hub",
+      "translation": "RXPGuides 指南中心",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0a36d637",
+      "english": "Scale of the Active Item frame",
+      "translation": "活動項框架的比例",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5671aca2",
+      "english": "Scale of the Active Targets frame",
+      "translation": "活動目標框架的規模",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "282d93a1",
+      "english": "Scale of the Main Window, use alt+left click on the main window to resize it",
+      "translation": "主視窗的比例，使用 alt+左鍵點選主視窗來調整其大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d0b33827",
+      "english": "Scale of the Waypoint Arrow",
+      "translation": "航點箭頭的比例",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9c0d3e0",
+      "english": "Scan Enemy Targets",
+      "translation": "掃描敵人目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad48a108",
+      "english": "Scan for dangerous mobs",
+      "translation": "掃描危險的生物",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8678d27",
+      "english": "Scan for enemy targets",
+      "translation": "掃描敵方目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0b6bb306",
+      "english": "Scan for friendly targets",
+      "translation": "掃描友方目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fabe0a8d",
+      "english": "Scan for Nearby Rares",
+      "translation": "掃描附近的稀有物品",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32f7371f",
+      "english": "Scan Friendly Targets",
+      "translation": "掃描友善目標",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "def3802c",
+      "english": "Season",
+      "translation": "季節",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bee063d2",
+      "english": "Select a guide",
+      "translation": "選擇指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f63c2",
+      "english": "Select another guide",
+      "translation": "選擇另一個指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "feb357fe",
+      "english": "Sell junk/resupply",
+      "translation": "出售垃圾/補給",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f3dd33cd",
+      "english": "Send announcements without another RXP user in group",
+      "translation": "在群組中沒有其他 RXP 用戶的情況下發送公告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7dfc3f16",
+      "english": "Send quest and collect step announcements even if Questie is enabled",
+      "translation": "即使啟用了 Questie，也可以發送任務並收集步驟公告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "45383bc7",
+      "english": "Sends sound on enemy target found",
+      "translation": "向發現的敵方目標發出聲音",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5698845c",
+      "english": "Set current profile as default",
+      "translation": "將目前設定檔設定為預設設定檔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f049a593",
+      "english": "Set primary background",
+      "translation": "設定主要背景",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bf85ee06",
+      "english": "Set your Hearthstone to",
+      "translation": "將你的《爐石戰記》設定為",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d1a57a",
+      "english": "Sets maximum number of talents to layout",
+      "translation": "設定佈局的最大人才數量",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "deb600ba",
+      "english": "Sets the current step frame to grow from bottom to top or top to bottom",
+      "translation": "將當前步框設定為從下到上或從上到下成長",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9c65ced9",
+      "english": "Show a targeting circle around active map pins",
+      "translation": "在活動地圖圖釘周圍顯示目標圓圈",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb3d7106",
+      "english": "Show all Enabled Frames",
+      "translation": "顯示所有啟用的框架",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65af9e7b",
+      "english": "Show Chromie Time Guides",
+      "translation": "顯示克羅米時間指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "12a847d6",
+      "english": "Show Flight Timers",
+      "translation": "顯示飛行計時器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "07fb29d6",
+      "english": "Show Group Quests",
+      "translation": "顯示小組任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96d3fe8",
+      "english": "Show junk item indicator",
+      "translation": "顯示垃圾項目指示器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8c31b05c",
+      "english": "Show step list",
+      "translation": "顯示步驟列表",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65204f43",
+      "english": "Show Total Time Split",
+      "translation": "顯示總時間分割",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "836f5f59",
+      "english": "Show unused guides",
+      "translation": "顯示未使用的指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d10a1918",
+      "english": "Show/Hide the bottom frame listing all the steps of the current guide",
+      "translation": "顯示/隱藏列出目前指南的所有步驟的底部框架",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fce3fa1f",
+      "english": "Size of the waypoint arrow text",
+      "translation": "航路點箭頭文字的大小",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d0ba26f",
+      "english": "Skip Gossip",
+      "translation": "跳過八卦",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ecedb8a6",
+      "english": "Skip overleveled steps",
+      "translation": "跳過過高的步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abe0ea17",
+      "english": "Skip quests with missing pre-requisites",
+      "translation": "跳過缺少先決條件的任務",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "986e2888",
+      "english": "Skip steps you're overleveled for",
+      "translation": "跳過你等級過高的步驟",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3eb5a755",
+      "english": "Skip to step %d if you are level %d or above",
+      "translation": "如果您的等級為{format_b}或以上，請跳至步驟{format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cda3c4eb",
+      "english": "Solo Self Found Mode",
+      "translation": "單人自發現模式",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17a73c25",
+      "english": "Sound Channel",
+      "translation": "聲音頻道",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8a8932b7",
+      "english": "Step Highlight",
+      "translation": "步驟亮點",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ecaf31b",
+      "english": "Step mouseover highlight color",
+      "translation": "步驟滑鼠懸停突出顯示顏色",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d98cfff",
+      "english": "Talent Plan Number",
+      "translation": "人才計畫編號",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "521f0df6",
+      "english": "Talented detected, please disable for talent guide functionality",
+      "translation": "偵測到人才，請停用人才引導功能",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81d227da",
+      "english": "Targeting Macro",
+      "translation": "瞄準宏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bad4496f",
+      "english": "Targeting macro updated with:%s",
+      "translation": "目標巨集更新為：{format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55adf36d",
+      "english": "Teamwork",
+      "translation": "團隊合作",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c26fe068",
+      "english": "Temporarily hide, use '/rxp splits' to show again",
+      "translation": "暫時隱藏，使用“/rxp splits”再次顯示",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ffabb527",
+      "english": "Text Color",
+      "translation": "文字顏色",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "80c519ef",
+      "english": "The opacity of the black circles on the map and mini map",
+      "translation": "地圖和小地圖上黑圈的不透明度",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "617d8d36",
+      "english": "There's a new addon version (%s) available",
+      "translation": "有一個新的插件版本（{format_a}）可用",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9d083af",
+      "english": "There's a new version (%s) available for %s",
+      "translation": "{format_b} 有新版本 ({format_a})",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f405ce0",
+      "english": "This action will remove ALL guides from the database\nAre you sure?",
+      "translation": "此操作將從資料庫中刪除所有指南{newline_a}您確定嗎？",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd687188",
+      "english": "This requires a reload to take effect, continue?",
+      "translation": "這需要重新加載才能生效，繼續嗎？",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b8ea719",
+      "english": "Throw away %s%s from your bags",
+      "translation": "扔掉包包裡的{format_a}{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b84cadc",
+      "english": "Time spent",
+      "translation": "花費的時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14828ed5",
+      "english": "Time to",
+      "translation": "時間到",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273ae903",
+      "english": "Tips",
+      "translation": "尖端",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e4f59e",
+      "english": "Toggle junk with modified right click",
+      "translation": "使用修改後的右鍵切換垃圾",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d5d9cc0e",
+      "english": "Toggles all addon frames on or off",
+      "translation": "開啟或關閉所有插件框架",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "22aaee2e",
+      "english": "Tooltip",
+      "translation": "工具提示",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "944eb65b",
+      "english": "Total guides loaded: %d/%s",
+      "translation": "載入的指南總數：{format_a}/{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70391ac4",
+      "english": "Track Mobs on Map",
+      "translation": "在地圖上追蹤怪物",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7feeacf3",
+      "english": "Train skills",
+      "translation": "訓練技能",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d89259",
+      "english": "Trainer automation",
+      "translation": "培訓師自動化",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3e4cb56e",
+      "english": "Unable to decode cached guide (%s), removed",
+      "translation": "無法解碼快取指南 ({format_a})，已刪除",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e512de66",
+      "english": "Unable to retrieve report for",
+      "translation": "無法檢索報告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fdd63ab8",
+      "english": "Unused Guides",
+      "translation": "未使用的指南",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9289fb9",
+      "english": "Warning",
+      "translation": "警告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "54bb1fd2",
+      "english": "Warning: Changing this setting mid-guide may cause quest pre-requisite failures.\nGuides were optimized for experience, disabling this option will result in a disjointed guide steps.",
+      "translation": "警告：在指南中變更此設定可能會導致任務先決條件失敗。 {newline_a}指南針對體驗進行了最佳化，停用此選項將導致指南步驟脫節。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84d2dce9",
+      "english": "Waypoint Arrow",
+      "translation": "航點箭頭",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8446e462",
+      "english": "When comparing, show next level's time",
+      "translation": "比較時，顯示下一層的時間",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea3a91a0",
+      "english": "When comparing, show total time difference",
+      "translation": "比較時，顯示總時間差",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05f68812",
+      "english": "Whenever you accept a quest in the guide, the addon tries to share it with your group",
+      "translation": "每當您接受指南中的任務時，插件都會嘗試與您的團隊分享",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29c1883",
+      "english": "Window Scale",
+      "translation": "窗秤",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1df8d271",
+      "english": "Without this checked we will only send announcements if another RestedXP User is in your group",
+      "translation": "如果沒有選取此選項，我們只會在您的群組中有其他 RestedXP 用戶時發送公告",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb451566",
+      "english": "XP Shortfall Predictor",
+      "translation": "XP 短缺預測器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "553232db",
+      "english": "Zones & Dungeons",
+      "translation": "區域和地下城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    }
+  ]
+}

@@ -1,0 +1,3465 @@
+{
+  "schema": 1,
+  "locale": "zhCN",
+  "sourceRevision": "706a420a",
+  "revision": "machine-706a420a",
+  "source": "Unreviewed offline machine-translation draft",
+  "units": [
+    {
+      "id": "26de55ef",
+      "english": "60-70",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26a80c2a",
+      "english": "30-50",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26cc3d4d",
+      "english": "50-60",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a75f3d66",
+      "english": ".",
+      "translation": ".",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268698cb",
+      "english": "15-30",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9104635e",
+      "english": "1 Frigid Abomination Attacker",
+      "translation": "{number_a} 冰冷憎恶攻击者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7d2cb491",
+      "english": "12 Frigid Ghoul Attackers",
+      "translation": "{number_a} 寒冷食尸鬼攻击者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb656891",
+      "english": "59-61 Hellfire Peninsula",
+      "translation": "{number_a} {number_b} 地狱火半岛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac740550",
+      "english": "61-63 Zangarmarsh",
+      "translation": "{number_a} {number_b} 赞加沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "23077c92",
+      "english": "64-65 Nagrand",
+      "translation": "{number_a} {number_b} 已记录",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7d4b4659",
+      "english": "67-69 Netherstorm",
+      "translation": "{number_a} {number_b} 虚空风暴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a20ae6c7",
+      "english": "69-70 Shadowmoon Valley (Aldor)",
+      "translation": "{number_a} {number_b} 影月谷（奥尔多）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "39043cad",
+      "english": "69-70 Shadowmoon Valley (Scryer)",
+      "translation": "{number_a} {number_b} 影月谷（占卜者）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "99822fa6",
+      "english": "70-72 Northrend",
+      "translation": "{number_a} {number_b} 诺森德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1abc0d6a",
+      "english": "72-74 Northrend",
+      "translation": "{number_a} {number_b} 诺森德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9bf5eb2e",
+      "english": "74-76 Northrend",
+      "translation": "{number_a} {number_b} 诺森德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d2fc8f2",
+      "english": "76-78 Northrend",
+      "translation": "{number_a} {number_b} 诺森德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "99bdef8d",
+      "english": "78-80 Northrend",
+      "translation": "{number_a} {number_b} 诺森德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "846ddd03",
+      "english": "8 Frigid Geist Attackers",
+      "translation": "{number_a} 冰冷神魂攻击者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7474582f",
+      "english": "Identify 3 Shango Tracks",
+      "translation": "识别 {number_a} Shano 曲目",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3ddca685",
+      "english": "Warlord Sriss'tiz",
+      "translation": "督军斯里斯提兹",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "30c872da",
+      "english": "|cRXP_ENEMY_Ambassador Infernus|r |cRXP_WARN_is on the lower level|r",
+      "translation": "{enemy_a} {rxpcolor_b}在下层{colorend_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dde34114",
+      "english": "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
+      "translation": "{enemy_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ebed9385",
+      "english": "|cRXP_ENEMY_Soul Eaters|r |cRXP_WARN_are on the 2nd level.|r |cRXP_ENEMY_Berserkers|r |cRXP_WARN_are on the 3rd level.|r |cRXP_ENEMY_Blood Drinkers|r |cRXP_WARN_and|r |cRXP_ENEMY_Shadow Hunters|r |cRXP_WARN_are on the 4th and 5th levels|r",
+      "translation": "{enemy_a} {rxpcolor_e} 位于 {number_m} 级别。{colorend_i} {enemy_b} {rxpcolor_f} 位于 {number_n} 级别。{colorend_j} {enemy_c} {rxpcolor_g} 和 {colorend_k} {enemy_d} {rxpcolor_h} 位于 {number_o} 和 {number_p} 级别{colorend_l}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3bb79dee",
+      "english": "|cRXP_FRIENDLY_Fei Fei|r will dig up the |cRXP_PICK_Dirt Mound|r containing the |cRXP_LOOT_Draenei Prayer Beads|r after a couple minutes",
+      "translation": "几分钟后，{friendly_a} 将挖出包含 {rxpcolor_c}Draenei 念珠 {colorend_e} 的 {rxpcolor_b}Dirt Mound{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "16649dd6",
+      "english": "|cRXP_FRIENDLY_Nekthar|r |cRXP_WARN_may patrol around slightly|r",
+      "translation": "{friendly_a} {rxpcolor_b}可能会稍微巡逻{colorend_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "caa954fa",
+      "english": "|cRXP_LOOT_Alterac Granite|r |cRXP_WARN_spawns throughout the entire Cave|r",
+      "translation": "{rxpcolor_a}奥特兰克花岗岩{colorend_c} {rxpcolor_b}在整个洞穴中生成{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c31f5b95",
+      "english": "|cRXP_WARN_3 Gorillas (level 43)|r",
+      "translation": "{rxpcolor_a} {number_c} 大猩猩（等级 {number_d}）{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "36a62529",
+      "english": "|cRXP_WARN_3 Yetis (level 46)|r",
+      "translation": "{rxpcolor_a} {number_c} Yetis (等级 {number_d}){colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a1c7cf7a",
+      "english": "|cRXP_WARN_4 Gnolls (level 41-43)|r",
+      "translation": "{rxpcolor_a} {number_c} 豺狼人 (等级 {number_d} {number_e}){colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e41f217b",
+      "english": "|cRXP_WARN_A pack of 3 level 46-47|r |cRXP_ENEMY_Scorpions|r |cRXP_WARN_will spawn at the next mountain chain|r",
+      "translation": "{number_f} 级别的 {rxpcolor_b}A 包 {number_g} {number_h} {colorend_d} {enemy_a} {rxpcolor_c} 将在下一个山脉 {colorend_e} 生成",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b93616d3",
+      "english": "|cRXP_WARN_Be very careful of Jaedenar Adepts; they have blink, as well as a strong fireball and fire blast|r",
+      "translation": "{rxpcolor_a}要非常小心加德纳尔行者；他们有眨眼，以及强烈的火球和火焰爆炸{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e02ea3cc",
+      "english": "|cRXP_WARN_Chapter.1: 1,4,6,8|r",
+      "translation": "{rxpcolor_a}章节.{number_c}: {number_d},{number_e},{number_f},{number_g} {colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "867546a9",
+      "english": "|cRXP_WARN_Chapter.2: 10,11,14,16|r",
+      "translation": "{rxpcolor_a}章节.{number_c}: {number_d},{number_e},{number_f},{number_g} {colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "efcebe6f",
+      "english": "|cRXP_WARN_Chapter.3: 18,20,21,24|r",
+      "translation": "{rxpcolor_a}章节.{number_c}: {number_d},{number_e},{number_f},{number_g} {colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5c551b68",
+      "english": "|cRXP_WARN_Chapter.4: 25,26,27|r",
+      "translation": "{rxpcolor_a}章节.{number_c}: {number_d},{number_e},{number_f} {colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8091c75a",
+      "english": "|cRXP_WARN_Grind the |cRXP_ENEMY_Syndicate|r in Alterac Mountains while looking for a group for Scarlet Monastery|r",
+      "translation": "{rxpcolor_b}在奥特兰克山脉磨砺{enemy_a}，同时寻找血色修道院的队伍{colorend_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0bda5592",
+      "english": "|cRXP_WARN_He hits extremely hard and should be kited|r",
+      "translation": "{rxpcolor_a}他击球非常重，应该被风筝{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aef340e0",
+      "english": "|cRXP_WARN_He uses|r |T132362:0|t[Shield Wall] |cRXP_WARN_(-75% damage for 10s) and|r |T132357:0|t[Shield Bash] |cRXP_WARN_(interrupt)|r",
+      "translation": "{rxpcolor_c}他使用{colorend_f} {texture_a}[盾墙] {rxpcolor_d}({number_j}的{number_i}%伤害)和{colorend_g} {texture_b}[盾击] {rxpcolor_e}(打断){colorend_h}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "58c35fd2",
+      "english": "|cRXP_WARN_It has a 60 yard range|r",
+      "translation": "{rxpcolor_a}它有{number_c}码范围{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2cb9192a",
+      "english": "|cRXP_WARN_The |cRXP_LOOT_Mark of the Nexus-King|r is not a gaurenteed drop|r",
+      "translation": "{rxpcolor_a}{rxpcolor_b} Nexus-King的标记{colorend_c}不是保证掉落{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e547299",
+      "english": "|cRXP_WARN_The |cRXP_LOOT_Shattered Necklace Ruby|r is looted from a |cRXP_PICK_Chest|r in |cRXP_ENEMY_Galgann Firehammer's|r room|r",
+      "translation": "{rxpcolor_b}{rxpcolor_c}破碎项链红宝石{colorend_e}是从{enemy_a}房间{colorend_g}的{rxpcolor_d}胸部{colorend_f}中抢劫的",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ba1286a",
+      "english": "|cRXP_WARN_The |cRXP_PICK_Supply Crate|r can spawn in a few locations at Camp Kosh|r",
+      "translation": "{rxpcolor_a}{rxpcolor_b}补给箱{colorend_c}可以在科什营地的几个位置生成{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c81e720a",
+      "english": "|cRXP_WARN_They patrol around|r",
+      "translation": "{rxpcolor_a}他们在{colorend_b}周围巡逻",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac91e269",
+      "english": "|T132888:0|t[Felcloth]",
+      "translation": "{texture_a}[Felcloth]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17d93bec",
+      "english": "|T133434:0|t[Burning Charm]",
+      "translation": "{texture_a}[Burning Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84784670",
+      "english": "|T133435:0|t[Thundering Charm]",
+      "translation": "{texture_a}[Thundering Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b609145a",
+      "english": "|T133438:0|t[Cresting Charm]",
+      "translation": "{texture_a}[Cresting Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5aa8ce4e",
+      "english": "|T134413:0|t[Liferoot]",
+      "translation": "{texture_a}[Liferoot]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4acd70ad",
+      "english": "|T134564:0|t[Blue Pearl]",
+      "translation": "{texture_a}[Blue Pearl]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33c5367c",
+      "english": "|T134800:0|t[Frost Oil]",
+      "translation": "{texture_a}[Frost Oil]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd488129",
+      "english": "|T134815:0|t[Filled Vial Labeled #1]",
+      "translation": "{texture_a}[Filled Vial Labeled #{number_b}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f48e1a68",
+      "english": "|T134822:0|t[Filled Vial Labeled #2]",
+      "translation": "{texture_a}[Filled Vial Labeled #{number_b}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e697242e",
+      "english": "|T134836:0|t[Filled Vial Labeled #3]",
+      "translation": "{texture_a}[Filled Vial Labeled #{number_b}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "efe5c712",
+      "english": "|T134857:0|t[Filled Vial Labeled #4]",
+      "translation": "{texture_a}[Filled Vial Labeled #{number_b}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31b30a1e",
+      "english": "|T135434:0|t[|cRXP_LOOT_Burning Bleeding Hollow Torches|r] |cRXP_WARN_have a 5 minute duration. Focus on Burning the buildings|r",
+      "translation": "{texture_a}[{rxpcolor_b}燃烧的血空火把{colorend_d}] {rxpcolor_c}有{number_f}分钟的持续时间。专注于燃烧建筑物{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7000d56a",
+      "english": "|T136183:0|t[Fear] |cRXP_WARN_does not work on|r |cRXP_ENEMY_Banthar|r",
+      "translation": "{texture_a}[恐惧] {rxpcolor_c} 不适用于 {colorend_d} {enemy_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "04b7e64e",
+      "english": "0_Ogrila Unlock",
+      "translation": "{number_a}_奥格里拉解锁",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7288a66",
+      "english": "0_Shatari Skyguard Unlock",
+      "translation": "{number_a}_沙塔里天空卫士解锁",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6588840f",
+      "english": "01. The Deadmines",
+      "translation": "{number_a}。死亡矿井",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b6880cc",
+      "english": "02. Shadowfang Keep",
+      "translation": "{number_a}。影牙要塞",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84e87b33",
+      "english": "03. Blackfathom Deeps",
+      "translation": "{number_a}。黑暗深渊",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fb68b616",
+      "english": "04. The Stockade",
+      "translation": "{number_a}。栅栏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd08378b",
+      "english": "05. Gnomeregan",
+      "translation": "{number_a}。在侏儒中",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a08f0190",
+      "english": "06a. Razorfen Kraul",
+      "translation": "{number_a}a。剃刀沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d08c1f9a",
+      "english": "07. Scarlet Monastery",
+      "translation": "{number_a}。血色修道院",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cefd63dd",
+      "english": "08. Razorfen Downs",
+      "translation": "{number_a}。剃刀高地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab4e842e",
+      "english": "09. Uldaman",
+      "translation": "{number_a}。奥达曼",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bdbc4811",
+      "english": "1 x |T133004:0|t[Adamantite Frame]",
+      "translation": "{number_b} x {texture_a}[精金框架]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a573768",
+      "english": "1 x |T133018:0|t[Khorium Power Core]",
+      "translation": "{number_b} x {texture_a}[钍动力核心]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f5cd06bc",
+      "english": "1. Shattrath City (Scryers)",
+      "translation": "{number_a}。沙塔斯城（占星者）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "df62222d",
+      "english": "1. Terokkar Forest (Aldor)",
+      "translation": "{number_a}。泰罗卡森林（奥尔多）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fad5e7d3",
+      "english": "10 Frostberries",
+      "translation": "{number_a} 霜莓",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ceec65d",
+      "english": "10. Zul'Farrak",
+      "translation": "{number_a}。祖尔法拉克",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eaa0cad8",
+      "english": "101 Ragefire Chasm",
+      "translation": "{number_a} 怒火峡谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfe9a13b",
+      "english": "10-12 Eversong Woods",
+      "translation": "{number_a} {number_b} 永歌森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "02d7a488",
+      "english": "10-13 Durotar",
+      "translation": "{number_a} {number_b} 杜隆塔尔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b732be22",
+      "english": "10-13 Mulgore",
+      "translation": "{number_a} {number_b} 莫高雷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9c31d25",
+      "english": "102 Wailing Caverns",
+      "translation": "{number_a} 哀嚎洞穴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d242d61e",
+      "english": "103. Shadowfang Keep",
+      "translation": "{number_a}。影牙要塞",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "969e5017",
+      "english": "104 Blackfathom Deeps",
+      "translation": "{number_a} 黑暗深渊",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c387311",
+      "english": "105 Razorfen Kraul",
+      "translation": "{number_a} 剃刀沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33082caf",
+      "english": "106 Gnomeregan",
+      "translation": "侏儒中的 {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9422cadf",
+      "english": "107 Razorfen Downs",
+      "translation": "{number_a} 剃刀沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "750ed3fe",
+      "english": "108 Scarlet Monastery",
+      "translation": "{number_a} 血色修道院",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0da4fa51",
+      "english": "109 Uldaman",
+      "translation": "{number_a} 奥达曼",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b0a231c",
+      "english": "11. Maraudon",
+      "translation": "{number_a}。玛拉东",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "be348aa0",
+      "english": "110 Zul'Farrak",
+      "translation": "{number_a} 祖尔法拉克",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2ce62128",
+      "english": "1-11 Dun Morogh",
+      "translation": "{number_a} {number_b} 邓莫罗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9ca9c665",
+      "english": "1-11 Elwynn Forest",
+      "translation": "{number_a} {number_b} 艾尔文森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9729d67f",
+      "english": "111 Maraudon",
+      "translation": "{number_a} 玛拉顿",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "215f5abc",
+      "english": "11-12 Loch Modan",
+      "translation": "{number_a} {number_b} 洛克莫丹",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "596851cc",
+      "english": "11-14 Darkshore",
+      "translation": "{number_a} {number_b} 黑海岸",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8ac6377",
+      "english": "1-12 Azuremyst Isle",
+      "translation": "{number_a} {number_b} 秘蓝岛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5dd97e89",
+      "english": "1-12 Dun Morogh",
+      "translation": "{number_a} {number_b} 邓莫罗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32c84244",
+      "english": "112 Sunken Temple",
+      "translation": "{number_a} 沉没的寺庙",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b01f8dcc",
+      "english": "11-20 Bloodmyst (Draenei)",
+      "translation": "{number_a} {number_b} 秘血 (德莱尼)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eed055fe",
+      "english": "113 Blackrock Depths",
+      "translation": "{number_a} 黑石深渊",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6cc4ba43",
+      "english": "114 Lower Blackrock Spire",
+      "translation": "{number_a} 黑石塔下层",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "049d8a27",
+      "english": "115 Upper Blackrock Spire",
+      "translation": "{number_a} 黑石塔上层",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a0b4b0f9",
+      "english": "116 Scholomance",
+      "translation": "{number_a} 通灵学院",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea1cabb1",
+      "english": "117 Stratholme",
+      "translation": "{number_a} 斯坦索姆",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b1dfb121",
+      "english": "12. Sunken Temple",
+      "translation": "{number_a}。沉没的寺庙",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8a68a1fe",
+      "english": "121 Hellfire Ramparts",
+      "translation": "{number_a} 地狱火城墙",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268d833f",
+      "english": "12-14 Loch Modan",
+      "translation": "{number_a} {number_b} 洛克莫丹",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ae0ceb5",
+      "english": "12-14 Loch Modan Gnome",
+      "translation": "{number_a} {number_b} 洛克莫丹侏儒",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6cc9b243",
+      "english": "12-16 Ghostlands",
+      "translation": "{number_a} {number_b} 幽灵之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2125f5be",
+      "english": "122 Blood Furnace",
+      "translation": "{number_a}血炉",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4efde661",
+      "english": "123 Underbog",
+      "translation": "{number_a}子书",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7ac08add",
+      "english": "124 Slave Pens",
+      "translation": "{number_a} 从属笔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a3b6a10f",
+      "english": "125 Mana Tombs",
+      "translation": "{number_a} 法力坟墓",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9c2a0291",
+      "english": "126 Auchenai Crypts",
+      "translation": "{number_a} 奥金尼墓穴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c163e412",
+      "english": "127 Sethekk Halls",
+      "translation": "{number_a} 塞泰克大厅",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9a885f03",
+      "english": "128 Shadow Labyrinth",
+      "translation": "{number_a} 暗影迷宫",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51060380",
+      "english": "129 Old Hillsbrad (Escape from Durnholde)",
+      "translation": "{number_a} 旧希尔斯布莱德（逃离敦霍尔德）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa1677db",
+      "english": "13. Blackrock Depths",
+      "translation": "{number_a}。黑石深渊",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e2732f8",
+      "english": "13-22 The Barrens",
+      "translation": "{number_a} {number_b} 贫瘠之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "283f6660",
+      "english": "14. Lower Blackrock Spire",
+      "translation": "{number_a}。黑石塔下层",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0b28feaf",
+      "english": "14-14 Darkshore",
+      "translation": "{number_a} {number_b} 黑海岸",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "85de3006",
+      "english": "14-20 Bloodmyst",
+      "translation": "{number_a} {number_b} 秘血",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90d360bf",
+      "english": "1-450 Skinning (A)",
+      "translation": "{number_a} {number_b} 剥皮 (A)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90d361a6",
+      "english": "1-450 Skinning (H)",
+      "translation": "{number_a} {number_b} 剥皮 (H)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c6cc0e64",
+      "english": "15. Upper Blackrock Spire",
+      "translation": "{number_a}。黑石塔上层",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2dff403",
+      "english": "1-6 Coldridge Valley",
+      "translation": "{number_a} {number_b} 冷脊谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9d757aea",
+      "english": "1-6 Durotar",
+      "translation": "{number_a} {number_b} 杜隆塔尔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d435b3e",
+      "english": "1-6 Eversong Woods",
+      "translation": "{number_a} {number_b} 永歌森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51d09484",
+      "english": "1-6 Mulgore",
+      "translation": "{number_a} {number_b} 莫高雷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31c8aff5",
+      "english": "1-6 Shadowglen",
+      "translation": "{number_a} {number_b} 暗影谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1ce84637",
+      "english": "1-6 Tirisfal Glades",
+      "translation": "{number_a} {number_b} 提瑞斯法林地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4dfd8516",
+      "english": "16. Scholomance",
+      "translation": "{number_a}。通灵学院",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "23924282",
+      "english": "16-20 Ghostlands",
+      "translation": "{number_a} {number_b} 幽灵之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dc89c4e",
+      "english": "17. Stratholme",
+      "translation": "{number_a}。斯坦索姆",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "778b587a",
+      "english": "2 x |T133231:0|t[Felsteel Bar]",
+      "translation": "{number_b} x {texture_a}[魔钢锭]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dcbc373",
+      "english": "2. Netherstorm (Aldor)",
+      "translation": "{number_a}。虚空风暴（奥尔多）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8f693ac",
+      "english": "2. Netherstorm (Scryers)",
+      "translation": "{number_a}。虚空风暴（占星者）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "624cc38a",
+      "english": "20-21 Darkshore",
+      "translation": "{number_a} {number_b} 黑海岸",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "daabbaf3",
+      "english": "20-21 Darkshore (Draenei)",
+      "translation": "{number_a} {number_b} 黑海岸（德莱尼）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81d6c172",
+      "english": "20-23 Darkshore/Ashenvale",
+      "translation": "{number_a} {number_b} 黑海岸/灰谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "72ef362d",
+      "english": "20-23 Stonetalon / The Barrens",
+      "translation": "{number_a} {number_b} 石爪 / 贫瘠之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fcbf3b5b",
+      "english": "21. Hellfire Ramparts",
+      "translation": "{number_a}。地狱火城墙",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d759afa1",
+      "english": "21-23 Ashenvale",
+      "translation": "{number_a} {number_b} 灰谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8123efca",
+      "english": "21-23 Ashenvale (Draenei)",
+      "translation": "{number_a} {number_b} 灰谷（德莱尼）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "143ea28a",
+      "english": "22-25 Hillsbrad Foothills JJ",
+      "translation": "{number_a} {number_b} 希尔斯布莱德丘陵 JJ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61b11fbf",
+      "english": "23. The Underbog",
+      "translation": "{number_a}。幽暗沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ce39a52f",
+      "english": "23-24 Wetlands",
+      "translation": "{number_a} {number_b} 湿地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "690e185b",
+      "english": "24. The Slave Pens",
+      "translation": "{number_a}。奴隶围栏",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "919906b6",
+      "english": "24-27 Redridge/Duskwood",
+      "translation": "{number_a} {number_b} 赤脊山/暮色森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94bf79b9",
+      "english": "25. Mana-Tombs",
+      "translation": "{number_a}。法力坟墓",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b5387038",
+      "english": "25-26 Stonetalon",
+      "translation": "{number_a} {number_b} 石爪",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd70987d",
+      "english": "25-27 Ashenvale JJ",
+      "translation": "{number_a} {number_b} 灰谷 JJ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6e8de14e",
+      "english": "26. Auchenai Crypts",
+      "translation": "{number_a}。奥金尼墓穴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "46805119",
+      "english": "26-30 Ashenvale / Thousand Needles",
+      "translation": "{number_a} {number_b} 灰谷/千针石林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3c4a7af",
+      "english": "27. Sethekk Halls",
+      "translation": "{number_a}。塞泰克大厅",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bc40d70e",
+      "english": "27-28 Southern Barrens JJ",
+      "translation": "{number_a} {number_b} 南贫瘠之地 JJ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d601bd4",
+      "english": "27-30 Wetlands/Hillsbrad",
+      "translation": "{number_a} {number_b} 湿地/希尔斯布莱德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1235c57c",
+      "english": "28. Old Hillsbrad (Escape from Durnholde)",
+      "translation": "{number_a}。老希尔斯布莱德（逃离敦霍尔德）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14ad199f",
+      "english": "28-30 Duskwood",
+      "translation": "{number_a} {number_b} 暮色森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0bf5ca29",
+      "english": "28-30 Thousand Needles JJ",
+      "translation": "{number_a} {number_b} 千针JJ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3096db7c",
+      "english": "3 Glacial Splinters",
+      "translation": "{number_a} 冰川碎片",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5f2d6d15",
+      "english": "3 Magic-Bound Splinters",
+      "translation": "{number_a} 魔法束缚碎片",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "79304ba5",
+      "english": "3. Shadowmoon Valley (Aldor)",
+      "translation": "{number_a}。影月谷（奥尔多）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8f9df05e",
+      "english": "3. Shadowmoon Valley (Scryers)",
+      "translation": "{number_a}。影月谷（占星者）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "844499f9",
+      "english": "30. Shadow Labyrinth",
+      "translation": "{number_a}。暗影迷宫",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "40b18886",
+      "english": "30-32 Duskwood/STV",
+      "translation": "{number_a} {number_b} 暮色森林/STV",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "24592b5f",
+      "english": "30-32 Hillsbrad",
+      "translation": "{number_a} {number_b} 希尔斯布莱德",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a58bd1d0",
+      "english": "30-33 Hillsbrad/Arathi part 1",
+      "translation": "{number_a} {number_b} 希尔斯布莱德/阿拉希部分 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a2dcc940",
+      "english": "31 The Steamvault",
+      "translation": "{number_a} 蒸汽地窖",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbc18ace",
+      "english": "31. The Steamvault",
+      "translation": "{number_a}。蒸汽地窖",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0393577a",
+      "english": "32-33 Shimmering Flats",
+      "translation": "{number_a} {number_b} 闪光平底鞋",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "42b6741c",
+      "english": "33-34 Shimmering Flats",
+      "translation": "{number_a} {number_b} 闪光平底鞋",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "074f9ff8",
+      "english": "33-35 Hillsbrad/Arathi/Alterac",
+      "translation": "{number_a} {number_b} 希尔斯布莱德/阿拉希/奥特兰克",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "706c57ed",
+      "english": "34-36 Stranglethorn Vale part 1",
+      "translation": "{number_a} {number_b} 荆棘谷部分 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aff68c31",
+      "english": "35-37 STV",
+      "translation": "{number_a}{number_b} STV",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "40b6a18f",
+      "english": "36-38 Dustwallow Marsh part 1",
+      "translation": "{number_a} {number_b} 尘泥沼泽部分 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c9a3554e",
+      "english": "37-39 Dustwallow",
+      "translation": "{number_a} {number_b} 尘泥",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7520902",
+      "english": "38-40 Hillsbrad/Alterac/Arathi part 2",
+      "translation": "{number_a} {number_b} 希尔斯布莱德/奥特兰克/阿拉希部分 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "93451b57",
+      "english": "39-41 Arathi/Alterac",
+      "translation": "{number_a} {number_b} 阿拉希/奥特兰克",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2f093df",
+      "english": "39-42 Arathi Highlands",
+      "translation": "{number_a} {number_b} 阿拉希高地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9a94bf84",
+      "english": "40-41 Badlands",
+      "translation": "{number_a} {number_b} 荒地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "edfe5a26",
+      "english": "41-42 Badlands",
+      "translation": "{number_a} {number_b} 荒地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5c6fa448",
+      "english": "41-43 Dustwallow Marsh part 2",
+      "translation": "{number_a} {number_b} 尘泥沼泽部分 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61cc5dad",
+      "english": "42-44 STV",
+      "translation": "{number_a}{number_b} STV",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6583b66e",
+      "english": "43-45 Lower Stranglethorn Vale",
+      "translation": "{number_a} {number_b} 下荆棘谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27f1ddf9",
+      "english": "43-46 STV part 2",
+      "translation": "{number_a} {number_b} STV 零件 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8aa26884",
+      "english": "44-45 Dustwallow Marsh",
+      "translation": "{number_a} {number_b} 尘泥沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b7ab206",
+      "english": "45-45 Tanaris",
+      "translation": "{number_a} {number_b} 塔纳利斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4a97207a",
+      "english": "45-46 Badlands/Searing Gorge",
+      "translation": "{number_a} {number_b} 荒地/灼热峡谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4afe9d6f",
+      "english": "45-46 Tanaris Part 1",
+      "translation": "{number_a} {number_b} 塔纳利斯零件 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "841b9d5f",
+      "english": "46-47 STV/Swamp of Sorrows",
+      "translation": "{number_a} {number_b} STV/悲伤沼泽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ddd0f9d6",
+      "english": "46-48 Feralas",
+      "translation": "{number_a} {number_b} 菲拉斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "af5330cc",
+      "english": "47-49 Tanaris",
+      "translation": "{number_a} {number_b} 塔纳利斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ccd255f6",
+      "english": "48-49 Tanaris part 2",
+      "translation": "{number_a} {number_b} 塔纳利斯零件 {number_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94b84e71",
+      "english": "49-50 The Hinterlands",
+      "translation": "{number_a} {number_b} 辛特兰",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27923072",
+      "english": "49-51 The Hinterlands",
+      "translation": "{number_a} {number_b} 辛特兰",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "311caaca",
+      "english": "50-51 Searing Gorge",
+      "translation": "{number_a} {number_b} 灼热峡谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4e39a348",
+      "english": "51-52 Burning Steppes",
+      "translation": "{number_a} {number_b} 燃烧平原",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2a74e694",
+      "english": "51-52 Searing Gorge/Burning Steppes",
+      "translation": "{number_a} {number_b} 灼热峡谷/燃烧平原",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "269e75c1",
+      "english": "52-53 Felwood",
+      "translation": "{number_a} {number_b} 费伍德森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8cd77754",
+      "english": "52-54 Un'goro Crater",
+      "translation": "{number_a} {number_b} 安戈洛环形山",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "921b3575",
+      "english": "53-54 Un'Goro Crater",
+      "translation": "{number_a} {number_b} 安戈洛环形山",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70c598da",
+      "english": "54-56 Azshara/Felwood/Winterspring",
+      "translation": "{number_a} {number_b} 艾萨拉/费伍德森林/冬泉谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2c454421",
+      "english": "54-56 Felwood/Winterspring",
+      "translation": "{number_a} {number_b} 费伍德森林/冬泉谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c663db26",
+      "english": "55-58 The Scarlet Enclave",
+      "translation": "{number_a} {number_b} 猩红飞地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e948ce6b",
+      "english": "56-59 Plaguelands",
+      "translation": "{number_a} {number_b} 瘟疫之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "40c04ad4",
+      "english": "56-59 Western/Eastern Plaguelands",
+      "translation": "{number_a} {number_b} 西瘟疫/东瘟疫之地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c92aac62",
+      "english": "59-60 Silithus (Optional)",
+      "translation": "{number_a} {number_b} 希利苏斯（可选）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1cae3459",
+      "english": "59-60 Winterspring (Optional)",
+      "translation": "{number_a} {number_b} 冬泉谷（可选）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f0dd17a",
+      "english": "60-60 Silithus (Optional)",
+      "translation": "{number_a} {number_b} 希利苏斯（可选）",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8683a97a",
+      "english": "6-10 Durotar",
+      "translation": "{number_a} {number_b} 杜隆塔尔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53d987ce",
+      "english": "6-10 Eversong Woods",
+      "translation": "{number_a} {number_b} 永歌森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3adec314",
+      "english": "6-10 Mulgore",
+      "translation": "{number_a} {number_b} 莫高雷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5d4b45ed",
+      "english": "6-11 Dun Morogh",
+      "translation": "{number_a} {number_b} 邓莫罗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4573e751",
+      "english": "6-11 Teldrassil",
+      "translation": "{number_a} {number_b} 泰达希尔",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "077948f8",
+      "english": "63-64 Terokkar",
+      "translation": "{number_a} {number_b} 泰罗卡",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "73a8162b",
+      "english": "63-64 Terokkar Forest",
+      "translation": "{number_a} {number_b} 泰罗卡森林",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63d5c781",
+      "english": "65-125 [Route 2]",
+      "translation": "{number_a}{number_b} [Route {number_c}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "328eca41",
+      "english": "65-67 Blade's Edge",
+      "translation": "{number_a} {number_b} 刀锋",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "158ee5d5",
+      "english": "65-67 Blade's Edge Mts",
+      "translation": "{number_a} {number_b} 刀锋山",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "03192143",
+      "english": "67-67 Blade's Edge Turn-ins",
+      "translation": "{number_a} {number_b} 刀刃上交",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1e8d0967",
+      "english": "A_1_AT_Start",
+      "translation": "A_{number_a}_AT_开始",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "156700aa",
+      "english": "Accompany Brann Bronzebeard to Frosthold",
+      "translation": "陪伴布莱恩·铜须前往霜冻堡",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "35890b41",
+      "english": "Administer Peppy's Mix To The Vrykul Prisoner",
+      "translation": "将 Peppy 的混合物给予维库囚犯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1aca2a5",
+      "english": "All around this area:",
+      "translation": "该区域周围：",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad107347",
+      "english": "Also to 55,23.4",
+      "translation": "也适用于 {number_a}、{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "57bd921d",
+      "english": "Arrive at Silvermoon City",
+      "translation": "抵达银月城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f12580ef",
+      "english": "Atoph is level 19, proceed with caution",
+      "translation": "Atoph 等级为 {number_a}，谨慎行事",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4918dfe",
+      "english": "B_2_AT_Exodar",
+      "translation": "B_{number_a}_AT_埃索达",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b185578b",
+      "english": "B_2_AT_Orgrimmar",
+      "translation": "B_{number_a}_AT_奥格瑞玛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "afbe7a43",
+      "english": "Bank here if you need to",
+      "translation": "如果您需要的话，可以在这里存钱",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f8e93ecc",
+      "english": "Bank things if you need to",
+      "translation": "如果需要，请将物品存入银行",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9498431",
+      "english": "Be very careful not to die here",
+      "translation": "小心别死在这里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5e4debc4",
+      "english": "Begin Flying to Westguard Keep",
+      "translation": "开始飞往西部守卫要塞",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aeb84bf5",
+      "english": "Bind 6 Imperial Eagles' sight",
+      "translation": "绑定{number_a}帝国之鹰的视线",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "247ff1aa",
+      "english": "Blood Is Thicker -- 13833",
+      "translation": "血更浓——{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "364a4f30",
+      "english": "Bluff Lebronski",
+      "translation": "布拉夫·勒布朗斯基",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd32f46f",
+      "english": "Bombard 5 New Hearthglen Ballistas",
+      "translation": "轰炸 {number_a} 新壁炉谷弩炮",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b2d6fea",
+      "english": "C_2_AT_Sen'jin",
+      "translation": "C_{number_a}_AT_森金",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d04f9fa3",
+      "english": "C_2_AT_Stormwind",
+      "translation": "C_{number_a}_AT_暴风城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7ce1d2aa",
+      "english": "Careful, the Moonkin in the area enrage and call for help, very deadly!",
+      "translation": "小心，该地区的枭兽会激怒并呼救，非常致命！",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1e19469",
+      "english": "Collapse the Nerubian tunnels",
+      "translation": "摧毁蛛魔隧道",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8d102511",
+      "english": "Compendium of the Fallen",
+      "translation": "堕落者概要",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63f3a569",
+      "english": "Cross Wyrmskull Bridge",
+      "translation": "穿越龙头桥",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "662079f6",
+      "english": "Curse & port 6 Fizzcrank Gnomes",
+      "translation": "诅咒与端口 {number_a} 菲兹兰克侏儒",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d4d2608",
+      "english": "D_2_AT_Ironforge",
+      "translation": "D_{number_a}_AT_铁炉堡",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d05b5366",
+      "english": "D_2_AT_Thunder Bluff",
+      "translation": "D_{number_a}_AT_雷霆崖",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f7d9063",
+      "english": "Dangerously Delicious -- 13834",
+      "translation": "危险的美味——{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5187bfee",
+      "english": "Deathskip to Cenarion Hold",
+      "translation": "死亡跳跃前往塞纳里奥要塞",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "95a3dced",
+      "english": "Defend the Warsong Battle Standard",
+      "translation": "捍卫战歌战旗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d24b6bc1",
+      "english": "Die and respawn to Thelsamar",
+      "translation": "死亡并重生到塞尔萨玛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6865abe1",
+      "english": "Disarmed! -- 13836",
+      "translation": "解除武装！-- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cef53dee",
+      "english": "Divine Farseer Grimwalker's fate",
+      "translation": "神圣先知冷面行者的命运",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "75da4ba2",
+      "english": "Do Alien Predators/A Favorite Treat while you grind",
+      "translation": "磨练时做外星掠食者/最喜欢的款待",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "72c78d2f",
+      "english": "Do Limits of Physical Exhaustion if you still need XP",
+      "translation": "如果您仍需要 XP，请尝试极限体力消耗",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8846ae0c",
+      "english": "Do the Test of Mettle",
+      "translation": "进行勇气测试",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7633104",
+      "english": "Do Villains of Darrowshire if you still need xp",
+      "translation": "如果你还需要经验，就去做达隆郡的恶棍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b6882e4d",
+      "english": "Drop Off the 7th Legion Elite",
+      "translation": "放下 {number_a}th 军团精英",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "80a4a5e1",
+      "english": "E_2_AT_Gnomeregan",
+      "translation": "E_{number_a}_AT_诺莫瑞根",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "db63a775",
+      "english": "E_2_AT_Undercity",
+      "translation": "E_{number_a}_AT_幽暗城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67b33f63",
+      "english": "Engineering",
+      "translation": "工程",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7308c4f",
+      "english": "Escape from Silverbrook",
+      "translation": "逃离银溪",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6225a6cf",
+      "english": "Exterminate 20 Plagued Vrykul",
+      "translation": "消灭 {number_a} 受瘟疫的维库人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "75808d33",
+      "english": "F_2_AT_Darnassus",
+      "translation": "F_{number_a}_AT_达纳苏斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed9a4b6d",
+      "english": "F_2_AT_Silvermoon",
+      "translation": "F_{number_a}_AT_银月",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8becbdb5",
+      "english": "Finish grinding nagas",
+      "translation": "完成打磨纳迦",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "972d27cc",
+      "english": "Finish looting the rest of the Raptor Horns",
+      "translation": "完成掠夺猛禽角的其余部分",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "506f8859",
+      "english": "Finish off Fen Creepers in the rivers",
+      "translation": "干掉河里的沼泽爬行者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7076d910",
+      "english": "Finish off Nightstalkers/Moongraze Bucks",
+      "translation": "消灭夜行者/月光雄鹿",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8b05d28",
+      "english": "Finish off Root Trappers/Stags.",
+      "translation": "干掉根部捕猎者/雄鹿。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "600b1bb4",
+      "english": "Finish off Seek Redemption!",
+      "translation": "完成寻求救赎！",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2a6970e3",
+      "english": "Finish off the Ravagers and Tanglers",
+      "translation": "消灭掠夺者和缠扰者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f22cb503",
+      "english": "Finish off the Tanglers and Ravagers",
+      "translation": "消灭缠扰者和掠夺者",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "241985ba",
+      "english": "Finish off Zenn's Bidding",
+      "translation": "完成泽恩的竞标",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2cb029c",
+      "english": "Fish Bloodtooth Frenzys from this Pool of Blood",
+      "translation": "来自这血池的鱼血牙狂潮",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7ad26e5d",
+      "english": "Fish for the Phantom Ghostfish in River's Heart",
+      "translation": "在河心钓幽灵鱼",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f37cf1bc",
+      "english": "Fly down into the valley below",
+      "translation": "飞落到下面的山谷里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6e3b34c0",
+      "english": "Fly over to K3",
+      "translation": "飞往K{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ff52f8db",
+      "english": "Go back and forth between the two camps killing Gnolls. Be aware of Snagglespear, a level 9 rare that hits hard.",
+      "translation": "在两个营地之间来回杀死豺狼人。请注意 Snagglespear，它是 {number_a} 级别的稀有物品，攻击力极强。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2181e8a3",
+      "english": "Go Harpoon Surfing",
+      "translation": "去鱼叉冲浪",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e66fbe19",
+      "english": "Go up here if you're not done with troggs by now",
+      "translation": "如果你现在还没有处理完穴居人就上这里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51111bbc",
+      "english": "Go up this path here",
+      "translation": "沿着这条路走这里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e3b19a3",
+      "english": "Goblin Transponder",
+      "translation": "哥布林应答器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d6f94f1",
+      "english": "Grind |cRXP_LOOT_Boars|r you see for |T133970:0|t|cRXP_LOOT_[Chunks of Boar Meat]|r en route",
+      "translation": "研磨 {rxpcolor_b}BBoars{colorend_d} 您在途中看到的 {texture_a} {rxpcolor_c}[大块野猪肉]{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "734f6015",
+      "english": "Grind a bit en route to here",
+      "translation": "在到这里的路上磨一点",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01431846",
+      "english": "Grind the |cRXP_ENEMY_Stonescythes|r to 61",
+      "translation": "磨削{enemy_a}至{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b21be8fd",
+      "english": "Grind the |cRXP_ENEMY_Syndicate|r in Alterac Mountains while looking for a group for Scarlet Monastery",
+      "translation": "在奥特兰克山脉磨{enemy_a}，同时寻找血色修道院的队伍",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67b02c64",
+      "english": "Grind while looking for piles of purple leaves on the outskirts of Odesyus' Landing",
+      "translation": "在奥德修斯登陆的郊区寻找成堆的紫色叶子时进行研磨",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c1ddfd27",
+      "english": "H_3_AT_Champion_Daily_Quests",
+      "translation": "H_{number_a}_AT_Champion_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e3d5e4f1",
+      "english": "Hand over 3 Scarlet Onslaught Warhorse reins",
+      "translation": "交出{number_a} 猩红猛攻战马缰绳",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "401653ee",
+      "english": "He leads you to a cave",
+      "translation": "他带你到一个山洞",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d5d3bfc",
+      "english": "He puts you in the world of shadows",
+      "translation": "他把你带入阴影的世界",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fab9a257",
+      "english": "Head back onto the land from this ramp",
+      "translation": "从这个坡道返回陆地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38522864",
+      "english": "Head southeast to Ashenvale",
+      "translation": "向东南方向前往灰谷",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65f18c88",
+      "english": "He's at the back of the camp very far to the southwest of Cenarion Hold/northwest of Ahn'Qiraj",
+      "translation": "他位于营地后方，距离塞纳里奥要塞西南/安其拉西北很远",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "985b52b1",
+      "english": "I_3.1_AT_Crusader_Daily_Quests",
+      "translation": "I_{number_a}_AT_Crusader_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "47b34d68",
+      "english": "If she's not here someone else is escorting her, grind til she respawns.",
+      "translation": "如果她不在这里，就会有其他人护送她，那就磨磨蹭蹭直到她重生。",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "496e5255",
+      "english": "In Favor of Spirituality",
+      "translation": "有利于灵性",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63d921a9",
+      "english": "In the window underwater",
+      "translation": "在水下的窗户里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33c69efc",
+      "english": "Insult Bjorn Halgurdsson",
+      "translation": "侮辱比约恩·哈尔格森",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b1eb2fe0",
+      "english": "It won't work on all of them",
+      "translation": "它不适用于所有人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "147f42ac",
+      "english": "J_3.2_AT_Silver_Covenant_Daily_Quests",
+      "translation": "J_{number_a}_AT_Silver_Covenant_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de43b509",
+      "english": "J_3.2AT_Sunreavers_Daily_Quests",
+      "translation": "J_{number_a}AT_夺日者_每日_任务",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b5057f9",
+      "english": "Jewel Of The Sewers -- 13832",
+      "translation": "下水道宝石 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65b3f4c5",
+      "english": "Jump up the side of the tree",
+      "translation": "从树的侧面跳上去",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fe9c0e86",
+      "english": "Keep doing this",
+      "translation": "继续这样做",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "828187d9",
+      "english": "Keep in mind the harpies here can do an aoe silence",
+      "translation": "请记住，这里的鹰身女妖可以造成 AOE 沉默",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "daf05a5b",
+      "english": "Keep killing owlbeasts",
+      "translation": "继续杀戮枭兽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0d21829",
+      "english": "Keep running through the mine",
+      "translation": "继续穿过矿井",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d5432d3",
+      "english": "Killed 10 Coldarra Spellweavers",
+      "translation": "杀死 {number_a} Coldarra Spelleavers",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2434fb39",
+      "english": "Lead it on top of a Reef Cow on the other side of the coastline",
+      "translation": "将它带到海岸线另一边的礁牛顶上",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9a8c3483",
+      "english": "loop1",
+      "translation": "循环{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0fad6293",
+      "english": "Mark the Eastern Cannon",
+      "translation": "标记东方大炮",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "77ad95e9",
+      "english": "Mark the Western Cannon",
+      "translation": "标记西方正典",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d06a4d28",
+      "english": "Master Rocket Jump",
+      "translation": "火箭跳跃大师",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f15bf65a",
+      "english": "Master the Storm",
+      "translation": "掌控风暴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "afe3583b",
+      "english": "Maxnar Must Die!",
+      "translation": "麦克斯纳尔必须死！",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "86f4554f",
+      "english": "Mount Icefang right next to Brijana",
+      "translation": "冰牙山 (Mount Icefang) 就在布里贾纳 (Brijana) 旁边",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f3ec1cdf",
+      "english": "Obliterate 100 Scourge Units",
+      "translation": "消灭 {number_a} 天灾部队",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a0f6532a",
+      "english": "Pick 15 Scarlet Onslaught corpses clean",
+      "translation": "拾取{number_a}猩红猛攻尸体干净",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "144a89d4",
+      "english": "Pick pocket Sethir the Ancient, he walks along the big tree branch",
+      "translation": "扒窃古人塞希尔，他沿着大树枝行走",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d88c8b43",
+      "english": "Redeem the Forgotten",
+      "translation": "救赎被遗忘的人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c08b35e5",
+      "english": "Repeat this 2 more time",
+      "translation": "重复此 {number_a} 多次",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c4261a46",
+      "english": "Reprogram 15 Robots",
+      "translation": "重新编程 {number_a} 机器人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96c2fa12",
+      "english": "Rewire 5 Harvest Collectors",
+      "translation": "重新接线 {number_a} 收获收集器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61840a21",
+      "english": "Rocket Jump to the Lower Level",
+      "translation": "火箭跳到下层",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e6687e2",
+      "english": "Run along the side of the river",
+      "translation": "沿着河边跑",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f8e1df89",
+      "english": "Run along the side of the river to here",
+      "translation": "沿着河边跑到这里",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "35d17e3f",
+      "english": "Run around on this ship",
+      "translation": "在这艘船上到处乱跑",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0340f056",
+      "english": "Run down to Sen'jin",
+      "translation": "跑到森金",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "828c7544",
+      "english": "Run out toward Tirisfal Glades",
+      "translation": "跑向提瑞斯法林地",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7db3b1de",
+      "english": "Run under the Gazebo in the middle of the lake",
+      "translation": "在湖中央的凉亭下奔跑",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9f828d32",
+      "english": "Run up out of the crypt",
+      "translation": "跑出地穴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67e3ab4f",
+      "english": "Search around for Infected Kodo Beasts",
+      "translation": "四处搜寻受感染的科多兽",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ecfcb1cf",
+      "english": "Search their bodies for the pilot's emergency toolkit",
+      "translation": "在他们的身上搜寻飞行员的应急工具包",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b64f2715",
+      "english": "Search their bodies for their Insignia",
+      "translation": "在他们的尸体中搜寻他们的徽章",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "585bd001",
+      "english": "Send 10 Abandoned Pack Mules Packing",
+      "translation": "送{number_a} 废弃包穆勒鞋打包",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ace43d4",
+      "english": "Shatter 5 Blood Globes",
+      "translation": "粉碎 {number_a} 血球",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3227e2f",
+      "english": "She flies in the sky above town",
+      "translation": "她飞翔在城镇上空",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "849673e9",
+      "english": "Shipment: Blood Jade Amulet -- 12958",
+      "translation": "货物：血玉护身符 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "85f39508",
+      "english": "Shipment: Bright Armor Relic -- 12962",
+      "translation": "货物：亮甲遗物 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0693a7e7",
+      "english": "Shipment: Glowing Ivory Figurine -- 12959",
+      "translation": "发货：发光象牙雕像 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a3860657",
+      "english": "Shipment: Intricate Bone Figurine -- 12961",
+      "translation": "发货：精致的骨雕像 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "df0dcdcd",
+      "english": "Shipment: Shifting Sun Curio -- 12963",
+      "translation": "发货： Shifting Sun Curio -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9a2f2bc0",
+      "english": "Shipment: Wicked Sun Brooch -- 12960",
+      "translation": "货物：邪恶太阳胸针 -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e5a9ccc9",
+      "english": "Sires share their spawns with Bears, and Matriarchs share their spawns with Foreststriders",
+      "translation": "父辈与熊共享出生点，女族长与森林陆行鸟共享出生点",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cfb060f7",
+      "english": "Spray 10 Plagued Vrykul",
+      "translation": "喷雾 {number_a} 瘟疫维库人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ce87c153",
+      "english": "Start killing |cRXP_LOOT_Boars|r you see for |T133970:0|t|cRXP_LOOT_[Chunks of Boar Meat]|r",
+      "translation": "开始杀死 {rxpcolor_b}BBoars{colorend_d} 你看到的 {texture_a} {rxpcolor_c}[大块野猪肉]{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38a28887",
+      "english": "Start killing crocodiles for the Amulet",
+      "translation": "开始杀死鳄鱼以获得护身符",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53e02f65",
+      "english": "Steal an Onslaught Raven Priest's image",
+      "translation": "窃取突袭乌鸦牧师的图像",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29e1f368",
+      "english": "Step onto the Gnomeregan Transponder",
+      "translation": "踏上诺莫瑞根转发器",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a1e39fab",
+      "english": "Successfully assist Longrunner Proudhoof's assault",
+      "translation": "成功协助长跑者傲蹄的进攻",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "022346b7",
+      "english": "Swim toward |cRXP_FRIENDLY_Nat Pagle|r",
+      "translation": "游向{friendly_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "45aae1d1",
+      "english": "Take their clothing",
+      "translation": "拿走他们的衣服",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5f8bcef1",
+      "english": "Teleport: Orgrimmar",
+      "translation": "传送：奥格瑞玛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8519cefe",
+      "english": "Tell Walt \"I'm ready to go.\"",
+      "translation": "告诉沃尔特“我准备好了。”",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4940720e",
+      "english": "Test Nokoma's Horn",
+      "translation": "测试诺科玛的号角",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "98b486d9",
+      "english": "Test the Flask of Blight",
+      "translation": "测试枯萎合剂",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b6d0b21c",
+      "english": "The correct book's pages has a lighter shade of grey and sometimes the correct book won't spawn",
+      "translation": "正确的书的页面有较浅的灰色阴影，有时正确的书不会生成",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ca08721",
+      "english": "The Ghostfish -- 13830",
+      "translation": "幽灵鱼——{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "82a817d8",
+      "english": "The Gryphon RP takes roughly 1min40sec",
+      "translation": "Gryphon RP 大约需要 {number_a}min{number_b}sec",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "89d96985",
+      "english": "They both share respawns",
+      "translation": "他们都共享重生",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b53d9f0d",
+      "english": "They're all around town in Agmar's Hammer",
+      "translation": "他们遍布阿格玛之锤镇的各处",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7bf802a6",
+      "english": "Throw away the |T134939:0|t[Library Scrip] you don't need it",
+      "translation": "扔掉你不需要的 {texture_a}[图书馆凭证]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "235afd80",
+      "english": "Torch 10 Fallen Caravan Guards & Workers",
+      "translation": "火炬 {number_a} 倒下的商队守卫和工人",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "408b49ec",
+      "english": "Travel northeast to Valormok",
+      "translation": "向东北方向行驶至瓦洛尔莫克",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "46a52291",
+      "english": "Travel southeast to Shadra'Alor",
+      "translation": "向东南方向前往沙德拉阿洛",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "58b69db6",
+      "english": "Travel up to Firewatch Ridge",
+      "translation": "前往Firewatch Ridge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a383c9c0",
+      "english": "Travel up to Tanaris",
+      "translation": "前往塔纳利斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3f6b3b2",
+      "english": "Treebole Must Know",
+      "translation": "树骨必须知道",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e91c21f9",
+      "english": "Underwater",
+      "translation": "水下",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "50f7b791",
+      "english": "Uproot 8 Wolfsbane Roots",
+      "translation": "连根拔起 {number_a} 狼毒根",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "21aa9f10",
+      "english": "Withdraw |T132761:0|t[|cRXP_LOOT_Shipment of Iron|r]",
+      "translation": "提现{texture_a}[{rxpcolor_b}铁件出货{colorend_c}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "196bad46",
+      "english": "Witness the Reckoning",
+      "translation": "见证清算",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2fa597c2",
+      "english": "You'll need 95c, if you don't have the money yet, grind a little bit",
+      "translation": "你需要{number_a}c，如果你还没有钱，就磨一点",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5d42f17f",
+      "english": "|cRXP_WARN_Don't defend|r |cRXP_FRIENDLY_Koltira Deathweaver|r",
+      "translation": "{rxpcolor_b}不防守{colorend_c} {friendly_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b11e075b",
+      "english": "|cRXP_WARN_Drop down below again|r",
+      "translation": "{rxpcolor_a}再次跌破{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9050c1db",
+      "english": "3.3.5a",
+      "translation": "{number_a}.{number_b}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "810c98f5",
+      "english": "MiningHerbalism16",
+      "translation": "采矿草药{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "810c98f6",
+      "english": "MiningHerbalism17",
+      "translation": "采矿草药{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6c01cfdd",
+      "english": "RestedXP Death Knight Start",
+      "translation": "RestedXP 死亡骑士 开始",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9e3e8d53",
+      "english": "Ride all the way to |cRXP_FRIENDLY_General Abbendis|r on the beach",
+      "translation": "一路骑行到海滩上的{friendly_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d708e17f",
+      "english": "Select All Dungeons",
+      "translation": "选择所有地下城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c869ccc9",
+      "english": "Select Recommended Dungeons",
+      "translation": "选择推荐的地下城",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d00e5cb",
+      "english": "Take one of the Scourge Gryphons back up to Acherus",
+      "translation": "将一只天灾狮鹫带回阿彻鲁斯",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b4cb061",
+      "english": "Travel down into the Crypt of Remembrance",
+      "translation": "前往纪念墓穴",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    }
+  ]
+}

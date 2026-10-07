@@ -1,0 +1,2664 @@
+{
+  "schema": 1,
+  "locale": "esES",
+  "sourceRevision": "706a420a",
+  "revision": "machine-706a420a",
+  "source": "Unreviewed offline machine-translation draft",
+  "units": [
+    {
+      "id": "84c74b8f",
+      "english": "Error parsing guide",
+      "translation": "Guía de análisis de errores",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26de55ef",
+      "english": "60-70",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26a80c2a",
+      "english": "30-50",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26cc3d4d",
+      "english": "50-60",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e6ede7d",
+      "english": "RestedXP TBC Guide (A)",
+      "translation": "Guía TBC de RestedXP (A)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a75f3d66",
+      "english": ".",
+      "translation": ".",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a0431af",
+      "english": "Hearth to Tranquillien",
+      "translation": "Hogar a Tranquillien",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e6edf64",
+      "english": "RestedXP TBC Guide (H)",
+      "translation": "Guía TBC de RestedXP (H)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268698cb",
+      "english": "15-30",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d487dfda",
+      "english": "Hearth to Nesingwary Base Camp",
+      "translation": "Del hogar al campamento base de Nesingwary",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d70e9b6e",
+      "english": "|cRXP_LOOT_OR",
+      "translation": "{rxpcolor_a}O",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05c8cd30",
+      "english": "Nagrand",
+      "translation": "nagrand",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e2a3743a",
+      "english": "Borean Tundra",
+      "translation": "Tundra boreal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1fdfef92",
+      "english": "Head to Borean Tundra",
+      "translation": "Dirígete a la tundra boreal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "79b761c3",
+      "english": "Head to Wintergrasp",
+      "translation": "Dirígete a Conquista del Invierno",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "36a6ee21",
+      "english": "Shadowmoon Valley",
+      "translation": "Valle Sombraluna",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "41019c6b",
+      "english": "Wintergrasp",
+      "translation": "Conquista del Invierno",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ae88352b",
+      "english": "Terokkar Forest",
+      "translation": "Bosque de Terokkar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0f846b22",
+      "english": "Exit Orgrimmar",
+      "translation": "Salir de Orgrimmar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29441e50",
+      "english": "Netherstorm",
+      "translation": "tormenta abisal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbd1f439",
+      "english": "Zul'Drak",
+      "translation": "Zul'Drak",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7df5073",
+      "english": "Blades Edge Mountains",
+      "translation": "Montañas Blades Edge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4b23ae2a",
+      "english": "Dragonblight",
+      "translation": "Cementerio de dragones",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10288334",
+      "english": "Hearth to Darkshire",
+      "translation": "Hogar a Villa Oscura",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "edc97ad7",
+      "english": "Hearth to Taunka'le Village",
+      "translation": "Hogar a la aldea Taunka'le",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e336821",
+      "english": "RXP TBC Reputation Guide",
+      "translation": "Guía de reputación de RXP TBC",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "881c55db",
+      "english": "+RestedXP Northrend Daily Quests",
+      "translation": "+Misiones diarias de XP descansado de Rasganorte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "751996cc",
+      "english": "Grizzly Hills",
+      "translation": "Colinas Pardas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7136385a",
+      "english": "Hearth to Crossroads",
+      "translation": "Del hogar a la encrucijada",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e621ba42",
+      "english": "Hearth to Ratchet",
+      "translation": "Hogar a trinquete",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1516c1a8",
+      "english": "|T134105:0|t[Green Power Crystal]",
+      "translation": "{texture_a}[Green Power Crystal]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1c844070",
+      "english": "|T134130:0|t[Red Power Crystal]",
+      "translation": "{texture_a}[Red Power Crystal]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88c0f0a0",
+      "english": "|T134133:0|t[Blue Power Crystal]",
+      "translation": "{texture_a}[Blue Power Crystal]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e599bc40",
+      "english": "|T134527:0|t[Violet Tragan]",
+      "translation": "{texture_a}[Violet Tragan]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2ec9b0a9",
+      "english": "Head to Sun Rock Retreat",
+      "translation": "Dirígete al retiro Sun Rock",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "241d94ae",
+      "english": "Hearth to Kharanos",
+      "translation": "Desde Heartath a Kharnos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b159eba3",
+      "english": "Hearth to Stonebreaker Hold",
+      "translation": "Desde el hogar hasta el Bastión Rompepiedras",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a5964e01",
+      "english": "Hearth to Venomspite",
+      "translation": "Desde el hogar hasta el rencor del veneno",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5291d8d2",
+      "english": "Hearth to Westguard Keep",
+      "translation": "Del hogar a la Fortaleza de la Guardia Oeste",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c2a4879",
+      "english": "Hearth to Wetlands",
+      "translation": "Del hogar a los humedales",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b5dd5d0f",
+      "english": "Icecrown",
+      "translation": "corona de hielo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "15d85c92",
+      "english": "|T133021:0|t[Mithril Casing]",
+      "translation": "{texture_a}[Mithril Casing]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad44c538",
+      "english": "|T134200:0|t[Sanguine Hibiscus]",
+      "translation": "{texture_a}[Sanguine Hibiscus]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f823d486",
+      "english": "|T134324:0|t[Bog Lord Tendril]",
+      "translation": "{texture_a}[Bog Lord Tendril]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e3c26d9",
+      "english": "|T134523:0|t[Glowcap]",
+      "translation": "{texture_a}[Glowcap]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "60ae85c1",
+      "english": "+Azeroth Farming",
+      "translation": "+Agricultura en Azeroth",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2e1eddd",
+      "english": "Exit Ironforge",
+      "translation": "Salir de Forjaz",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a03ca0c2",
+      "english": "Grind boars north-east to Kharanos",
+      "translation": "Moler jabalíes al noreste de Kharanos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b7e9c367",
+      "english": "Head to Hellfire Peninsula",
+      "translation": "Dirígete a la Península del Fuego Infernal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2cd0e683",
+      "english": "Head to Terokkar Forest",
+      "translation": "Dirígete al bosque de Terokkar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b69bbeeb",
+      "english": "Head to Zangarmarsh",
+      "translation": "Dirígete a la Marisma de Zangar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "450d6371",
+      "english": "Hearth to Freewind Post",
+      "translation": "Puesto de hogar a viento libre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbec73f1",
+      "english": "Hearth to Grom'gol Base Camp",
+      "translation": "Del hogar al campamento base de Grom'gol",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ff94cae4",
+      "english": "Hearth to Honor Hold",
+      "translation": "Bastión del Hogar al Honor",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da787010",
+      "english": "Netherwing",
+      "translation": "Ala Abisal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "618324da",
+      "english": "Ogri'la",
+      "translation": "Ogri'la",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4e7dc32",
+      "english": "Sha'tari Skyguard",
+      "translation": "Guardia del cielo Sha'tari",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7de5f993",
+      "english": "Zangarmarsh",
+      "translation": "Marisma de Zangar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c5c3fff",
+      "english": "Missing pre-requisites",
+      "translation": "Faltan requisitos previos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a15400d5",
+      "english": "RestedXP WotLK Guide (A)",
+      "translation": "Guía RestedXP WotLK (A)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a15401bc",
+      "english": "RestedXP WotLK Guide (H)",
+      "translation": "Guía RestedXP WotLK (H)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bffab97b",
+      "english": "RXP TBC Attunement Guide",
+      "translation": "Guía de sintonización RXP TBC",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6f5c2161",
+      "english": "/cast Bluff",
+      "translation": "/lanzar Engañar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "694124ed",
+      "english": "/cast Destabilize Azure Dragonshrine",
+      "translation": "/cast Desestabilizar el Santuario del Dragón Azur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5186e85b",
+      "english": "/cast Flaming Arrow",
+      "translation": "/lanzar Flecha llameante",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c212dac7",
+      "english": "/cast Flaming Harpoon",
+      "translation": "/lanzar Arpón llameante",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "48193574",
+      "english": "/cast Gather Lumber",
+      "translation": "/cast Reunir madera",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "82c8bdf4",
+      "english": "/cast Gather Snow",
+      "translation": "/cast Reunir nieve",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b1a2dbc",
+      "english": "/cast Hand Over Mammoth",
+      "translation": "/cast Entregar mamut",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cf9ba18a",
+      "english": "/cast Hand Over Reins",
+      "translation": "/cast Entregar las riendas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "866c7e75",
+      "english": "/cast Ice Shard",
+      "translation": "/lanzar fragmento de hielo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d88e29ef",
+      "english": "/cast Land Flying Machine",
+      "translation": "/cast Máquina voladora terrestre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8cf30cff",
+      "english": "|T134116:0|t[Sample Elven Gem]",
+      "translation": "{texture_a}[Sample Elven Gem]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d98294f",
+      "english": "Abandon Destroy Naberius!",
+      "translation": "¡Abandonar, destruir a Naberio!",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92e07830",
+      "english": "Abandon Gahz'rilla",
+      "translation": "Abandonar a Gahz'rilla",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d7aaef2",
+      "english": "Abandon Greed",
+      "translation": "Abandonar la codicia",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab1a0b2b",
+      "english": "Abandon Report to Gryan Stoutmantle",
+      "translation": "Informe de abandono a Gryan Stoutmantle",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c45af509",
+      "english": "Abandon Washed Ashore",
+      "translation": "Abandono arrastrado a la costa",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2db00fe5",
+      "english": "Abandon Wildmane Totem",
+      "translation": "Abandonar el tótem Melena Salvaje",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7f20684",
+      "english": "Beat Dashel Stonefist",
+      "translation": "Derrota a Dashel Puño de Piedra",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "184d349a",
+      "english": "Blow Up the Scourge Enclosure",
+      "translation": "Explotar el recinto de la Plaga",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8255e86e",
+      "english": "Defeat Kirgaraak",
+      "translation": "Derrota a Kirgaraak",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "74618edc",
+      "english": "Exit Durnholde Keep",
+      "translation": "Salir del Torreón de Durnholde",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfab4205",
+      "english": "Export",
+      "translation": "Exportar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "671a19f1",
+      "english": "Free 3 Captive Footmen",
+      "translation": "Gratis {number_a} Lacayos cautivos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f54eea18",
+      "english": "Head to Ironforge",
+      "translation": "Dirígete a Forjaz",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0f993c41",
+      "english": "Hearth to Brackenwall Village",
+      "translation": "Hogar a Brackenwall Village",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b1087bf0",
+      "english": "Hearth to Conquest Hold",
+      "translation": "Bastión del hogar a la conquista",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "15e8772b",
+      "english": "Hearth to Darnassus",
+      "translation": "Hogar a Darnassus",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8f3f8af",
+      "english": "Hearth to Westfall Brigade Encampment",
+      "translation": "Del Hogar al Campamento de la Brigada de los Páramos de Poniente",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "77910c2c",
+      "english": "Lure Malygos",
+      "translation": "Señuelo Malygos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "361159f4",
+      "english": "Lure Veranus",
+      "translation": "Señuelo Veranus",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29999bdf",
+      "english": "second",
+      "translation": "second",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5ccd1832",
+      "english": "seconds",
+      "translation": "artículos de segunda clase",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4b5bd241",
+      "english": "Sewer Stew",
+      "translation": "Estofado de alcantarilla",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "60058767",
+      "english": "STAY DEAD",
+      "translation": "STAY DEAD",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e42497a7",
+      "english": "Unavailable",
+      "translation": "Indisponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3ddca685",
+      "english": "Warlord Sriss'tiz",
+      "translation": "Señor de la guerra Sriss'tiz",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c6b8004",
+      "english": "Available",
+      "translation": "Disponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e3ddf79c",
+      "english": "Die and respawn at the graveyard",
+      "translation": "Muere y reaparece en el cementerio.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1bf2456",
+      "english": "Give Feedback for step",
+      "translation": "Dar comentarios sobre el paso",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0daec15c",
+      "english": "Go to",
+      "translation": "Ir a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1be92c95",
+      "english": "minute",
+      "translation": "minuto",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "990ebfa8",
+      "english": "minutes",
+      "translation": "minutos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "213c11d7",
+      "english": "Objective Complete",
+      "translation": "Objetivo completado",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "509fe0cf",
+      "english": "Stable your pet",
+      "translation": "Estabiliza a tu mascota",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7dee09",
+      "english": "Welcome to RestedXP Guides\nRight click to pick a guide",
+      "translation": "Bienvenido a RestedXP Guides{newline_a}Haga clic derecho para elegir una guía",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b3921e18",
+      "english": "/cast Drop Off Gnome",
+      "translation": "/cast Dejar Gnomo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e66eb54",
+      "english": "/cast Drop Off Soldier",
+      "translation": "/cast Dejar Soldado",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "42b8d038",
+      "english": "/cast Drop Off Villager",
+      "translation": "/cast Dejar Aldeano",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b82b2334",
+      "english": "/cast EMP",
+      "translation": "/emitir EMP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fcc8eea7",
+      "english": "/cast Grappling Hook",
+      "translation": "/lanzar gancho de agarre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "837ff476",
+      "english": "/cast Rocket Jump",
+      "translation": "/lanzar Salto con Cohete",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6238629e",
+      "english": "/cast Scavenge",
+      "translation": "/cast Recolectar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bd97ca47",
+      "english": "/cast Soar",
+      "translation": "/emitir elevarse",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dde34114",
+      "english": "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
+      "translation": "{enemy_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d0e57fbe",
+      "english": "|cRXP_WARN_Skip this quest for now if there is too much competition|r",
+      "translation": "{rxpcolor_a}Sáltate esta misión por ahora si hay demasiada competencia{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac91e269",
+      "english": "|T132888:0|t[Felcloth]",
+      "translation": "{texture_a}[Felcloth]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17d93bec",
+      "english": "|T133434:0|t[Burning Charm]",
+      "translation": "{texture_a}[Burning Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84784670",
+      "english": "|T133435:0|t[Thundering Charm]",
+      "translation": "{texture_a}[Thundering Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b609145a",
+      "english": "|T133438:0|t[Cresting Charm]",
+      "translation": "{texture_a}[Cresting Charm]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5aa8ce4e",
+      "english": "|T134413:0|t[Liferoot]",
+      "translation": "{texture_a}[Liferoot]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4acd70ad",
+      "english": "|T134564:0|t[Blue Pearl]",
+      "translation": "{texture_a}[Blue Pearl]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b6880cc",
+      "english": "02. Shadowfang Keep",
+      "translation": "{number_a}.Fortaleza de Colmillo Oscuro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84e87b33",
+      "english": "03. Blackfathom Deeps",
+      "translation": "{number_a}.Profundidades de Brazanegra",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd08378b",
+      "english": "05. Gnomeregan",
+      "translation": "{number_a}.Gnomeregan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a08f0190",
+      "english": "06a. Razorfen Kraul",
+      "translation": "{number_a}a.Kraul del Fenófilo Navajo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cefd63dd",
+      "english": "08. Razorfen Downs",
+      "translation": "{number_a}.Bajadas de Razorfen",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab4e842e",
+      "english": "09. Uldaman",
+      "translation": "{number_a}.Uldman",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fe08b444",
+      "english": "1. Karazhan",
+      "translation": "{number_a}.Karazhan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f5cd06bc",
+      "english": "1. Shattrath City (Scryers)",
+      "translation": "{number_a}.Ciudad de Shattrath (Arúspices)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "df62222d",
+      "english": "1. Terokkar Forest (Aldor)",
+      "translation": "{number_a}.Bosque de Terokkar (Aldor)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fad5e7d3",
+      "english": "10 Frostberries",
+      "translation": "{number_a} Fresas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ceec65d",
+      "english": "10. Zul'Farrak",
+      "translation": "{number_a}.Zul'Farrak",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eaa0cad8",
+      "english": "101 Ragefire Chasm",
+      "translation": "{number_a} Abismo de fuego furioso",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9c31d25",
+      "english": "102 Wailing Caverns",
+      "translation": "{number_a} Cavernas de los Lamentos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d242d61e",
+      "english": "103. Shadowfang Keep",
+      "translation": "{number_a}.Fortaleza de Colmillo Oscuro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9422cadf",
+      "english": "107 Razorfen Downs",
+      "translation": "{number_a} Bajadas de Razorfen",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b0a231c",
+      "english": "11. Maraudon",
+      "translation": "{number_a}.Maraudon",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea1cabb1",
+      "english": "117 Stratholme",
+      "translation": "{number_a} Stratholme",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4efde661",
+      "english": "123 Underbog",
+      "translation": "{number_a} Libro mayor auxiliar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa1677db",
+      "english": "13. Blackrock Depths",
+      "translation": "{number_a}.Profundidades de Roca Negra",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4dfd8516",
+      "english": "16. Scholomance",
+      "translation": "{number_a}.Escolomancia",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dc89c4e",
+      "english": "17. Stratholme",
+      "translation": "{number_a}.estratolme",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90323c14",
+      "english": "19. Dire Maul (West)",
+      "translation": "{number_a}.Masacre terrible (Oeste)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dcbc373",
+      "english": "2. Netherstorm (Aldor)",
+      "translation": "{number_a}.Tormenta Abisal (Aldor)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8f693ac",
+      "english": "2. Netherstorm (Scryers)",
+      "translation": "{number_a}.Tormenta Abisal (Arúspices)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fcbf3b5b",
+      "english": "21. Hellfire Ramparts",
+      "translation": "{number_a}.Murallas del Fuego Infernal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94bf79b9",
+      "english": "25. Mana-Tombs",
+      "translation": "{number_a}.Tumbas de maná",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6e8de14e",
+      "english": "26. Auchenai Crypts",
+      "translation": "{number_a}.Criptas de Auchenai",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3c4a7af",
+      "english": "27. Sethekk Halls",
+      "translation": "{number_a}.Salas Sethekk",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1235c57c",
+      "english": "28. Old Hillsbrad (Escape from Durnholde)",
+      "translation": "{number_a}.Viejo Trabalomas (Escape de Durnholde)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "79304ba5",
+      "english": "3. Shadowmoon Valley (Aldor)",
+      "translation": "{number_a}.Valle Sombraluna (Aldor)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8f9df05e",
+      "english": "3. Shadowmoon Valley (Scryers)",
+      "translation": "{number_a}.Valle Sombraluna (Arúspices)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de2f4102",
+      "english": "4. Mount Hyjal",
+      "translation": "{number_a}.Monte Hyjal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "582edf8a",
+      "english": "Abandon Anok'suten",
+      "translation": "Abandonar Anok'suten",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ff6a5442",
+      "english": "Abandon Arcane Runes",
+      "translation": "Abandonar runas arcanas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e1856bd8",
+      "english": "Abandon Broken Alliances",
+      "translation": "Abandonar alianzas rotas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ebb12c8a",
+      "english": "Abandon Clefthoof Mastery",
+      "translation": "Abandonar el dominio de uñagrieta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f53f0974",
+      "english": "Abandon Divino-matic Rod",
+      "translation": "Abandonar la vara Divino-matic",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "250212d2",
+      "english": "Abandon Encrusted Tail Fins",
+      "translation": "Abandonar las aletas de cola incrustadas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51a6b0c0",
+      "english": "Abandon Fly to Silvermoon City",
+      "translation": "Abandonar el vuelo a Lunargenta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3a8c8bd9",
+      "english": "Abandon Legends of Maraudon",
+      "translation": "Abandonar las leyendas de Maraudon",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1dbcc5e6",
+      "english": "Abandon Manhunt",
+      "translation": "Abandonar la caza humana",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4d5b385",
+      "english": "Abandon Matis the Cruel",
+      "translation": "Abandon Matis the Cruel",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9af9f60a",
+      "english": "Abandon Skymistress Gloaming",
+      "translation": "Abandonar Skymistress Crepúsculo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01e6e021",
+      "english": "Abandon Supervisor Fizsprocket",
+      "translation": "Abandonar supervisor Fizsprocket",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "09bcd933",
+      "english": "Abandon Talbuk Mastery",
+      "translation": "Abandonar el dominio del talbuk",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5d9c9edd",
+      "english": "Abandon Vengeful Souls",
+      "translation": "Abandonar las almas vengativas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10b9df9b",
+      "english": "Abandon Wanted: Blacktalon the Savage",
+      "translation": "Abandon Wanted: Blacktalon the Savage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "871a773e",
+      "english": "Attain Spiritual Insight cocnerning Indu'le Village",
+      "translation": "Obtenga conocimiento espiritual sobre la aldea Indu'le",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d0d4c09e",
+      "english": "Attain Spiritual Insight concerning Indu'le Village",
+      "translation": "Obtenga conocimiento espiritual sobre la aldea Indu'le",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ee92de5",
+      "english": "Available Guides",
+      "translation": "Guías disponibles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aeb84bf5",
+      "english": "Bind 6 Imperial Eagles' sight",
+      "translation": "Vincular la mira de las Águilas Imperiales {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "364a4f30",
+      "english": "Bluff Lebronski",
+      "translation": "Bluff Lebronski",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84f71b45",
+      "english": "Click Dead Caravan mob corpses",
+      "translation": "Haga clic en los cadáveres de la mafia Dead Caravan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "322a3016",
+      "english": "Click to view the link",
+      "translation": "Haga clic para ver el enlace",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63f3a569",
+      "english": "Cross Wyrmskull Bridge",
+      "translation": "Cruzar el puente Wyrmskull",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76164766",
+      "english": "Defeat Bjorn Halgurdsson",
+      "translation": "Derrota a Bjorn Halgurdsson",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e81196",
+      "english": "Describe your issue:",
+      "translation": "Describe tu problema:",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1f822a06",
+      "english": "Development",
+      "translation": "Desarrollo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec649906",
+      "english": "Do not edit below this line",
+      "translation": "No editar debajo de esta línea",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a269597f",
+      "english": "Escort Bonker Togglevolt to safety",
+      "translation": "Escolta a Bonker Togglevolt a un lugar seguro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "436cb19c",
+      "english": "Escort the |cRXP_FRIENDLY_Protectorate Demolitionist|r through the Staging Grounds",
+      "translation": "Escolta al {friendly_a} a través del escenario",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "361679ee",
+      "english": "Escort the |cRXP_FRIENDLY_Small Bird Companion|r back to Sylvanaar",
+      "translation": "Escolta al {friendly_a} de regreso a Sylvanaar.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a6584e8b",
+      "english": "Escort the |cRXP_FRIENDLY_The Defias Traitor|r to The Deadmines",
+      "translation": "Escolta al {friendly_a} a The Deadmines",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96863b4b",
+      "english": "Exit Falconwing Square",
+      "translation": "Salga de la plaza Falconwing",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9405e768",
+      "english": "Exit Underbog",
+      "translation": "Salir de la turbera",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "74b62571",
+      "english": "Exit Undercity into Tirisfal Glades",
+      "translation": "Sal de Entrañas hacia los Claros de Tirisfal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "506a6ff6",
+      "english": "Favorites",
+      "translation": "Favorites",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ddb5aa4",
+      "english": "Fully Question Torturer LeCraft",
+      "translation": "Cuestiona plenamente al torturador LeCraft",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2181e8a3",
+      "english": "Go Harpoon Surfing",
+      "translation": "Practica surf con arpones",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d72e1578",
+      "english": "Go to step",
+      "translation": "ir al paso",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e3b19a3",
+      "english": "Goblin Transponder",
+      "translation": "Transpondedor duende",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6beb605c",
+      "english": "Grind to 10 at the troggs",
+      "translation": "Muela a {number_a} en los troggs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f9091760",
+      "english": "Grind to 14 at the troggs",
+      "translation": "Muela a {number_a} en los troggs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2ab08668",
+      "english": "Grind to level 3.",
+      "translation": "Muela hasta el nivel {number_a}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6108811a",
+      "english": "Guide Author Recorder",
+      "translation": "Grabador de autor de guía",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "030e52cb",
+      "english": "Guide has no name",
+      "translation": "La guía no tiene nombre.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5d09a602",
+      "english": "Head into the Dwarven District",
+      "translation": "Dirígete al distrito de los enanos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dee54f4b",
+      "english": "Head to Azure Watch",
+      "translation": "Dirígete a Azure Watch",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fa4dbb18",
+      "english": "Head to Ratchet",
+      "translation": "Dirígete a Trinquete",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "caf4348a",
+      "english": "Hearth to Camp Narache",
+      "translation": "Hogar al Campamento Narache",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "28d1949a",
+      "english": "Hearth to Fairbreeze Village",
+      "translation": "Hogar a Fairbreeze Village",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "28788f41",
+      "english": "Hearth to Shadowprey Village",
+      "translation": "Del hogar a la aldea Shadowprey",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fa8b309",
+      "english": "Hearth to Tanaris",
+      "translation": "Hogar a Tanaris",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2745fac1",
+      "english": "hour",
+      "translation": "hora",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10055354",
+      "english": "hours",
+      "translation": "horas",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "144c767c",
+      "english": "Hunter Pet Assistant",
+      "translation": "Asistente de mascotas cazador",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ef8ae328",
+      "english": "Impale Gunnar Thorvardsson",
+      "translation": "Empalar a Gunnar Thorvardsson",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88977644",
+      "english": "Incomplete or invalid encoded string",
+      "translation": "Cadena codificada incompleta o no válida",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33c69efc",
+      "english": "Insult Bjorn Halgurdsson",
+      "translation": "Insulto a Bjorn Halgurdsson",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de43b509",
+      "english": "J_3.2AT_Sunreavers_Daily_Quests",
+      "translation": "J_{number_a}AT_Sunreavers_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "994d5113",
+      "english": "Karazhan",
+      "translation": "Karazhan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d06a4d28",
+      "english": "Master Rocket Jump",
+      "translation": "Salto de cohete maestro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "872f328e",
+      "english": "Mount Hyjal",
+      "translation": "Monte Hyjal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "899737a3",
+      "english": "Ogri'la Dailies",
+      "translation": "Ogri'la Hermosa",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed6a1a3e",
+      "english": "Open Performance Inspector",
+      "translation": "Open Performance Inspector",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b2eb3e9",
+      "english": "Open Route Preflight",
+      "translation": "Verificación previa de ruta abierta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f1eace54",
+      "english": "Portal: Orgrimmar",
+      "translation": "Portal: Orgrimmar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dc9f34a4",
+      "english": "Recent",
+      "translation": "Reciente",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d88c8b43",
+      "english": "Redeem the Forgotten",
+      "translation": "Redimir a los olvidados",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0626f8aa",
+      "english": "Restock on food/water",
+      "translation": "Reabastecerse de comida/agua",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61840a21",
+      "english": "Rocket Jump to the Lower Level",
+      "translation": "Salto con cohete al nivel inferior",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e57f6201",
+      "english": "Sabotage 6 Plague Wagons",
+      "translation": "Sabotaje {number_a} Vagones de plaga",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c01e3c4b",
+      "english": "Scuttle a Eastern Wreck",
+      "translation": "Hundir un naufragio oriental",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "755c2eac",
+      "english": "Scuttle a Northwestern Wreck",
+      "translation": "Hundir un naufragio del noroeste",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f68d191",
+      "english": "Scuttle a Southern Wreck",
+      "translation": "Hundir un naufragio del sur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f380f5b",
+      "english": "Set Hearthstone to Auberdine",
+      "translation": "Establecer Hearthstone en Auberdine",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a1d2287b",
+      "english": "Sha'tari Skyguard Dailies",
+      "translation": "Diarios de Sha'tari Skyguard",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "481813c8",
+      "english": "Skip the follow up",
+      "translation": "Saltar el seguimiento",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "02fd941a",
+      "english": "Skip the follow up quest",
+      "translation": "Saltar la misión de seguimiento",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cfb060f7",
+      "english": "Spray 10 Plagued Vrykul",
+      "translation": "Aerosol {number_a} Vrykul plagado",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0a64ae8",
+      "english": "Step %d",
+      "translation": "Paso {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f5fe283",
+      "english": "Summon Imp, rebuff",
+      "translation": "Invocar diablillo, rechazar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f90f68c",
+      "english": "Tame a Strigid Hunter",
+      "translation": "Domar a un cazador rígido",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f2fdc1",
+      "english": "Activate Hardcore mode",
+      "translation": "Activar el modo extremo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "363bbd1d",
+      "english": "All guides",
+      "translation": "Todas las guías",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b646bb3b",
+      "english": "Attempting to deposit",
+      "translation": "Intentando depositar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "44b7c3ed",
+      "english": "Attempting to withdraw",
+      "translation": "Intentando retirarse",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "891bb02c",
+      "english": "Backup / Restore",
+      "translation": "Copia de seguridad / Restaurar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a516198d",
+      "english": "Buy Missing",
+      "translation": "Comprar Falta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3ecbb7ee",
+      "english": "Class Supplies",
+      "translation": "Suministros de clase",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fc303097",
+      "english": "Collect the following items:",
+      "translation": "Recoge los siguientes artículos:",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78d21c3c",
+      "english": "Collected step %d - %s",
+      "translation": "Paso recopilado {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0b1968a",
+      "english": "Completed step %d - %s",
+      "translation": "Paso completado {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5df3a88",
+      "english": "Continue",
+      "translation": "Continuar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "203859a1",
+      "english": "day",
+      "translation": "día",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27438e34",
+      "english": "days",
+      "translation": "días",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4faac8a",
+      "english": "Deactivate Hardcore mode",
+      "translation": "Desactivar el modo extremo",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eed73cac",
+      "english": "Diagnose Current Step",
+      "translation": "Diagnosticar el paso actual",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2a9942fe",
+      "english": "Enable Item Reservations",
+      "translation": "Habilitar reservas de artículos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7db7119e",
+      "english": "Enable Route Preflight",
+      "translation": "Habilitar verificación previa de ruta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8be393fa",
+      "english": "Failed to Import Guides: Invalid Import String",
+      "translation": "Error al importar guías: cadena de importación no válida",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78eab215",
+      "english": "Failed to ReadCacheData",
+      "translation": "No se pudo leer CacheData",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c12ae431",
+      "english": "Fly to",
+      "translation": "volar a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da0cd2d9",
+      "english": "Flying to %s ETA %s",
+      "translation": "Volando a {format_a} ETA {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "243a765a",
+      "english": "Gear Advisor",
+      "translation": "Gear Advisor",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ccb82047",
+      "english": "Get the %s flight path",
+      "translation": "Obtener la ruta de vuelo {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f6ba34a3",
+      "english": "Gold Assistant",
+      "translation": "Asistente de oro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d0601ae",
+      "english": "Gold Farming Guides",
+      "translation": "Guías de cultivo de oro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1020bbf",
+      "english": "Grind until you are %d xp away from level %s",
+      "translation": "Muele hasta que estés a {format_a} xp del nivel {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7e45c72",
+      "english": "Guides Loaded Successfully",
+      "translation": "Guías cargadas exitosamente",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29be66b",
+      "english": "I just leveled from %d to %d in %s",
+      "translation": "Acabo de subir de nivel de {format_a} a {format_b} en {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fedea7e4",
+      "english": "I just leveled up to %d",
+      "translation": "Acabo de subir de nivel a {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38a7e760",
+      "english": "Join our support discord at discord.gg/RestedXP and copy paste this form into #bug-report",
+      "translation": "Únase a nuestro soporte de discordia en discord.gg/RestedXP y copie y pegue este formulario en #bug-report",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4e00b322",
+      "english": "Loading Guides",
+      "translation": "Guías de carga",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8a30749",
+      "english": "Maximize Nameplate Distance",
+      "translation": "Maximizar la distancia de la placa de identificación",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f320f380",
+      "english": "Open Class Supplies",
+      "translation": "Suministros de clase abierta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f18affb8",
+      "english": "Open Daily Planner",
+      "translation": "Planificador diario abierto",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9087a56c",
+      "english": "Open Gear Advisor",
+      "translation": "Asesor de engranajes abiertos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83e4e6c2",
+      "english": "Open Guide Hub",
+      "translation": "Centro de guía abierto",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9fa01cfc",
+      "english": "Please restart your game client and try again",
+      "translation": "Reinicia tu cliente de juego e inténtalo de nuevo.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4035c0",
+      "english": "Quest is being picked up at",
+      "translation": "La misión se está recogiendo en",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a9fbf74",
+      "english": "Quest is being turned in at",
+      "translation": "La misión se está entregando en",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70c30d92",
+      "english": "Refresh",
+      "translation": "Refrescar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eeb0dc88",
+      "english": "Reload Guide",
+      "translation": "Guía de recarga",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca7f07f",
+      "english": "Rescan",
+      "translation": "Volver a escanear",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e71b246",
+      "english": "Reset",
+      "translation": "Reiniciar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6a676ab",
+      "english": "RestedXP Feedback Form",
+      "translation": "Formulario de comentarios de RestedXP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa585cee",
+      "english": "Retrieving quest data",
+      "translation": "Recuperando datos de la misión",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "28c62be9",
+      "english": "Route Planning",
+      "translation": "Planificación de ruta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec320617",
+      "english": "Route Preflight",
+      "translation": "Vuelo previo a la ruta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e56364b",
+      "english": "RXPGuides Guide Hub",
+      "translation": "Centro de guía RXPGuides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bee063d2",
+      "english": "Select a guide",
+      "translation": "Seleccione una guía",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f63c2",
+      "english": "Select another guide",
+      "translation": "Selecciona otra guía",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "feb357fe",
+      "english": "Sell junk/resupply",
+      "translation": "Vender chatarra/reabastecimiento",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bf85ee06",
+      "english": "Set your Hearthstone to",
+      "translation": "Configura tu Hearthstone en",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3eb5a755",
+      "english": "Skip to step %d if you are level %d or above",
+      "translation": "Salta al paso {format_a} si estás en el nivel {format_b} o superior",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "617d8d36",
+      "english": "There's a new addon version (%s) available",
+      "translation": "Hay una nueva versión adicional ({format_a}) disponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9d083af",
+      "english": "There's a new version (%s) available for %s",
+      "translation": "Hay una nueva versión ({format_a}) disponible para {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b8ea719",
+      "english": "Throw away %s%s from your bags",
+      "translation": "Tira {format_a}{format_b} de tus bolsos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "944eb65b",
+      "english": "Total guides loaded: %d/%s",
+      "translation": "Total de guías cargadas: {format_a}/{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7feeacf3",
+      "english": "Train skills",
+      "translation": "Entrenar habilidades",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb451566",
+      "english": "XP Shortfall Predictor",
+      "translation": "Predictor de déficit de XP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    }
+  ]
+}

@@ -1,0 +1,4194 @@
+{
+  "schema": 1,
+  "locale": "frFR",
+  "sourceRevision": "706a420a",
+  "revision": "machine-706a420a",
+  "source": "Unreviewed offline machine-translation draft",
+  "units": [
+    {
+      "id": "84c74b8f",
+      "english": "Error parsing guide",
+      "translation": "Guide d'analyse des erreurs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26de55ef",
+      "english": "60-70",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26a80c2a",
+      "english": "30-50",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26cc3d4d",
+      "english": "50-60",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a75f3d66",
+      "english": ".",
+      "translation": ".",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268698cb",
+      "english": "15-30",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05c8cd30",
+      "english": "Nagrand",
+      "translation": "Nagrand",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9671236e",
+      "english": "Grind en route",
+      "translation": "Grind en route",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbd1f439",
+      "english": "Zul'Drak",
+      "translation": "Zul’Drak",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "95aa1d5f",
+      "english": "Requires Reload to take effect",
+      "translation": "Nécessite un rechargement pour prendre effet",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad44c538",
+      "english": "|T134200:0|t[Sanguine Hibiscus]",
+      "translation": "{texture_a}[Sanguine Hibiscus]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "618324da",
+      "english": "Ogri'la",
+      "translation": "Ogri'la",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4e7dc32",
+      "english": "Sha'tari Skyguard",
+      "translation": "Garde-ciel Sha'tari",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "30f484d7",
+      "english": "Un'Goro Crater",
+      "translation": "Cratère d'Un'Goro",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "11773ef8",
+      "english": "%d to %d",
+      "translation": "{format_a} à {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c5c3fff",
+      "english": "Missing pre-requisites",
+      "translation": "Pré-requis manquants",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8cf30cff",
+      "english": "|T134116:0|t[Sample Elven Gem]",
+      "translation": "{texture_a}[Sample Elven Gem]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8d4491b5",
+      "english": "Abandon Buzzbox 411",
+      "translation": "Abandonner Buzzbox {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92e07830",
+      "english": "Abandon Gahz'rilla",
+      "translation": "Abandonner Gahz'rilla",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d7aaef2",
+      "english": "Abandon Greed",
+      "translation": "Abandonner la cupidité",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfab4205",
+      "english": "Export",
+      "translation": "Exporter",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d6e46c2",
+      "english": "Fight Ice Heart Jormungar Feeders",
+      "translation": "Combattez les mangeoires Jormungar Ice Heart",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32e9cdea",
+      "english": "Level Time",
+      "translation": "Temps de niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "77910c2c",
+      "english": "Lure Malygos",
+      "translation": "Leurre Malygos",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "361159f4",
+      "english": "Lure Veranus",
+      "translation": "Leurre Véranus",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29999bdf",
+      "english": "second",
+      "translation": "second",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5ccd1832",
+      "english": "seconds",
+      "translation": "seconds",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "111aa5bf",
+      "english": "Trap 8 Nesingwary Trappers",
+      "translation": "Piège {number_a} Trappeurs Nesingwary",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e42497a7",
+      "english": "Unavailable",
+      "translation": "Indisponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c6b8004",
+      "english": "Available",
+      "translation": "Disponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e3ddf79c",
+      "english": "Die and respawn at the graveyard",
+      "translation": "Mourir et réapparaître au cimetière",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "93fd6c4b",
+      "english": "Enable Leveling Report Inspections",
+      "translation": "Activer les inspections du rapport de nivellement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1bf2456",
+      "english": "Give Feedback for step",
+      "translation": "Donner votre avis sur l'étape",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0daec15c",
+      "english": "Go to",
+      "translation": "Aller à",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c838d6fe",
+      "english": "Import",
+      "translation": "Importer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92be075a",
+      "english": "Level Splits",
+      "translation": "Divisions de niveaux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "24f994b3",
+      "english": "Make background transparent",
+      "translation": "Rendre l'arrière-plan transparent",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0446b7b7",
+      "english": "Missing data",
+      "translation": "Données manquantes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "213c11d7",
+      "english": "Objective Complete",
+      "translation": "Objectif atteint",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "536747ee",
+      "english": "Open Feedback Form",
+      "translation": "Ouvrir le formulaire de commentaires",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "509fe0cf",
+      "english": "Stable your pet",
+      "translation": "Stable votre animal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3ae2436",
+      "english": "Total Time",
+      "translation": "Durée totale",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7dee09",
+      "english": "Welcome to RestedXP Guides\nRight click to pick a guide",
+      "translation": "Bienvenue dans RestedXP Guides{newline_a}Cliquez avec le bouton droit pour choisir un guide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8df3a489",
+      "english": "* Group: %.2f%%",
+      "translation": "* Groupe : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f360546",
+      "english": "* Killing: %.2f%%",
+      "translation": "* Tuerie : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ff162041",
+      "english": "* Quests: %.2f%%",
+      "translation": "* Quêtes : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dde34114",
+      "english": "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
+      "translation": "{enemy_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ce40c99",
+      "english": "|cRXP_ENEMY_Shadowmaw Panthers|r |cRXP_WARN_are in|r |T132320:0|t[Stealth]",
+      "translation": "{enemy_b} {rxpcolor_c}sont en{colorend_d} {texture_a}[Furtif]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c294ff7b",
+      "english": "|cRXP_ENEMY_Stromgarde Defenders|r |cRXP_WARN_have Shield Bash|r",
+      "translation": "{enemy_a} {rxpcolor_b}avoir un Shield Bash{colorend_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32eeea03",
+      "english": "|cRXP_ENEMY_Wastewander Rogues|r |cRXP_WARN_are in|r |T132320:0|t[Stealth]",
+      "translation": "{enemy_b} {rxpcolor_c}sont en{colorend_d} {texture_a}[Furtif]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5aa8ce4e",
+      "english": "|T134413:0|t[Liferoot]",
+      "translation": "{texture_a}[Liferoot]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84e87b33",
+      "english": "03. Blackfathom Deeps",
+      "translation": "{number_a}.Profondeurs de Fondnoire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd08378b",
+      "english": "05. Gnomeregan",
+      "translation": "{number_a}.Gnomeregan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a08f0190",
+      "english": "06a. Razorfen Kraul",
+      "translation": "{number_a}a.Kraul de Tranchebauge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cefd63dd",
+      "english": "08. Razorfen Downs",
+      "translation": "{number_a}.Vallées de Tranchebauge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab4e842e",
+      "english": "09. Uldaman",
+      "translation": "{number_a}.homme âgé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fe08b444",
+      "english": "1. Karazhan",
+      "translation": "{number_a}.Karajan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "969e5017",
+      "english": "104 Blackfathom Deeps",
+      "translation": "{number_a} Profondeurs de Fondnoire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c387311",
+      "english": "105 Razorfen Kraul",
+      "translation": "{number_a} Kraul de Tranchebauge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33082caf",
+      "english": "106 Gnomeregan",
+      "translation": "{number_a}Gnomeregan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9422cadf",
+      "english": "107 Razorfen Downs",
+      "translation": "{number_a} Les Bas de Tranchebauge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0da4fa51",
+      "english": "109 Uldaman",
+      "translation": "{number_a} homme âgé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b0a231c",
+      "english": "11. Maraudon",
+      "translation": "{number_a}.Maraudon",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "be348aa0",
+      "english": "110 Zul'Farrak",
+      "translation": "{number_a} Zul'Farrak",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9729d67f",
+      "english": "111 Maraudon",
+      "translation": "{number_a} Maraudon",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a0b4b0f9",
+      "english": "116 Scholomance",
+      "translation": "{number_a} Scholomance See More",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea1cabb1",
+      "english": "117 Stratholme",
+      "translation": "{number_a} Stratholme",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4dfd8516",
+      "english": "16. Scholomance",
+      "translation": "{number_a}.Scholomance",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dc89c4e",
+      "english": "17. Stratholme",
+      "translation": "{number_a}.Stratholme",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dcbc373",
+      "english": "2. Netherstorm (Aldor)",
+      "translation": "{number_a}.Tempête du Néant (Aldor)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94bf79b9",
+      "english": "25. Mana-Tombs",
+      "translation": "{number_a}.Mana-Tombes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6e8de14e",
+      "english": "26. Auchenai Crypts",
+      "translation": "{number_a}.Cryptes Auchenaï",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b5fb9905",
+      "english": "Abandon Troll Temper",
+      "translation": "Abandonner le tempérament troll",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6a85632",
+      "english": "Abandon Vyletongue Corruption",
+      "translation": "Abandonner la corruption de Vylelangue",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e14a13",
+      "english": "Adjusts the size of the world map pins",
+      "translation": "Ajuste la taille des épingles de la carte du monde",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "871a773e",
+      "english": "Attain Spiritual Insight cocnerning Indu'le Village",
+      "translation": "Atteindre la perspicacité spirituelle concernant le village d'Indu'le",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ee92de5",
+      "english": "Available Guides",
+      "translation": "Guides disponibles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e825af33",
+      "english": "Choose active theme",
+      "translation": "Choisissez un thème actif",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "322a3016",
+      "english": "Click to view the link",
+      "translation": "Cliquez pour voir le lien",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05ea962a",
+      "english": "Compare",
+      "translation": "Comparer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b537f07b",
+      "english": "current step has no configured targets",
+      "translation": "l'étape actuelle n'a aucune cible configurée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e81196",
+      "english": "Describe your issue:",
+      "translation": "Décrivez votre problème :",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1f822a06",
+      "english": "Development",
+      "translation": "Développement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec649906",
+      "english": "Do not edit below this line",
+      "translation": "Ne modifiez pas en dessous de cette ligne",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f110f46",
+      "english": "Dungeons",
+      "translation": "Donjons",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "418c0833",
+      "english": "Emergency Actions",
+      "translation": "Actions d'urgence",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90e45bc7",
+      "english": "Enable Talent Previews",
+      "translation": "Activer les aperçus des talents",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac956066",
+      "english": "Enable Talents Guides",
+      "translation": "Activer les guides de talents",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88da1440",
+      "english": "Enable Warning",
+      "translation": "Activer l'avertissement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "506a6ff6",
+      "english": "Favorites",
+      "translation": "Favoris",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d72e1578",
+      "english": "Go to step",
+      "translation": "Aller à l'étape",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6108811a",
+      "english": "Guide Author Recorder",
+      "translation": "Guide Auteur Enregistreur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "030e52cb",
+      "english": "Guide has no name",
+      "translation": "Le guide n'a pas de nom",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e6388a2",
+      "english": "Guides to import",
+      "translation": "Guides pour importer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a5d",
+      "english": "Herbalism1",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f6862d",
+      "english": "Herbalism10",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f6862e",
+      "english": "Herbalism11",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f6862f",
+      "english": "Herbalism12",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68630",
+      "english": "Herbalism13",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68631",
+      "english": "Herbalism14",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68632",
+      "english": "Herbalism15",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68633",
+      "english": "Herbalism16",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68634",
+      "english": "Herbalism17",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "53f68635",
+      "english": "Herbalism18",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a5e",
+      "english": "Herbalism2",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a5f",
+      "english": "Herbalism3",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a60",
+      "english": "Herbalism4",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a61",
+      "english": "Herbalism5",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a62",
+      "english": "Herbalism6",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a63",
+      "english": "Herbalism7",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a64",
+      "english": "Herbalism8",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "120f3a65",
+      "english": "Herbalism9",
+      "translation": "Herbalism{number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2745fac1",
+      "english": "hour",
+      "translation": "heure",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10055354",
+      "english": "hours",
+      "translation": "heures",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "144c767c",
+      "english": "Hunter Pet Assistant",
+      "translation": "Assistant pour animaux de chasse",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ef8ae328",
+      "english": "Impale Gunnar Thorvardsson",
+      "translation": "Empaler Gunnar Thorvardsson",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88977644",
+      "english": "Incomplete or invalid encoded string",
+      "translation": "Chaîne codée incomplète ou invalide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b46095c",
+      "english": "In-progress",
+      "translation": "En cours",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de43b509",
+      "english": "J_3.2AT_Sunreavers_Daily_Quests",
+      "translation": "J_{number_a}AT_Sunreavers_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b5057f9",
+      "english": "Jewel Of The Sewers -- 13832",
+      "translation": "Joyau des égouts -- {number_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "994d5113",
+      "english": "Karazhan",
+      "translation": "Karajan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e052bfb",
+      "english": "Level",
+      "translation": "Niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "42343710",
+      "english": "Map Pin Scale",
+      "translation": "Échelle des épingles de carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "899737a3",
+      "english": "Ogri'la Dailies",
+      "translation": "Ogri'la Belle",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed6a1a3e",
+      "english": "Open Performance Inspector",
+      "translation": "Inspecteur de performances ouvert",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b2eb3e9",
+      "english": "Open Route Preflight",
+      "translation": "Contrôle en amont de l'itinéraire ouvert",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b048d2f6",
+      "english": "Question Hugh Glass",
+      "translation": "Question Hugh Glass",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8509e46d",
+      "english": "Rare Found! %s is nearby.",
+      "translation": "Rare trouvé !{format_a} est à proximité.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dc9f34a4",
+      "english": "Recent",
+      "translation": "Recent",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08e6a38c",
+      "english": "Reload guides and UI",
+      "translation": "Recharger les guides et l'interface utilisateur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8efe7b93",
+      "english": "Reset Window Position",
+      "translation": "Réinitialiser la position de la fenêtre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51e1edd7",
+      "english": "Send or receive inspection requests for other Leveling Reports",
+      "translation": "Envoyer ou recevoir des demandes d'inspection pour d'autres rapports de nivellement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a1d2287b",
+      "english": "Sha'tari Skyguard Dailies",
+      "translation": "Journaliers quotidiens de la Garde céleste Sha'tari",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0a64ae8",
+      "english": "Step %d",
+      "translation": "Étape {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb71ed9b",
+      "english": "Step List Background",
+      "translation": "Contexte de la liste des étapes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f90f68c",
+      "english": "Tame a Strigid Hunter",
+      "translation": "Apprivoiser un chasseur rigide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9da5e90",
+      "english": "Threshold",
+      "translation": "Seuil",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7b66d92",
+      "english": "(Skip this step if you are level %d or above)",
+      "translation": "(Sautez cette étape si vous êtes de niveau {format_a} ou supérieur)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eafa0fa7",
+      "english": "* Group: %d%%",
+      "translation": "* Groupe : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e8e378c",
+      "english": "* Group: %s",
+      "translation": "* Groupe : {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b5c31d24",
+      "english": "* Killing: %d%%",
+      "translation": "* Tuerie : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "93cbc1c9",
+      "english": "* Killing: %s",
+      "translation": "* Tuer : {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c35a3d5f",
+      "english": "* Quests: %d%%",
+      "translation": "* Quêtes : {format_a}%%",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9f179744",
+      "english": "* Quests: %s",
+      "translation": "* Quêtes : {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9aaa7400",
+      "english": "A macro has been automatically built to aid in leveling. Please move %s to your action bars.",
+      "translation": "Une macro a été automatiquement créée pour faciliter la mise à niveau.Veuillez déplacer {format_a} vers vos barres d'action.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7be5c6cc",
+      "english": "Abandon the following quests?",
+      "translation": "Abandonner les quêtes suivantes ?",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f2fdc1",
+      "english": "Activate Hardcore mode",
+      "translation": "Activer le mode Hardcore",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "34f9659a",
+      "english": "Activate the Gold Assistant mode",
+      "translation": "Activer le mode Gold Assistant",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "58c0203a",
+      "english": "Activate the Quest Guide mode",
+      "translation": "Activer le mode Guide de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96ee5056",
+      "english": "Active Item Scale",
+      "translation": "Échelle des éléments actifs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b7bc69a1",
+      "english": "Active Items",
+      "translation": "Articles actifs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbd3b659",
+      "english": "Active Targets",
+      "translation": "Cibles actives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08fe4f81",
+      "english": "Active Targets Scale",
+      "translation": "Échelle des cibles actives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "851d3420",
+      "english": "Add main options menu to minimap",
+      "translation": "Ajouter le menu d'options principal à la mini-carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96ce70f7",
+      "english": "Adjust the leveling routes to the current season",
+      "translation": "Ajuster les itinéraires de nivellement à la saison en cours",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f6cf16cc",
+      "english": "Adjust the leveling routes to the deathless ruleset",
+      "translation": "Ajustez les itinéraires de mise à niveau aux règles immortelles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a3ff7600",
+      "english": "Adjust the routes to include almost every quest in the Northrend zones",
+      "translation": "Ajustez les itinéraires pour inclure presque toutes les quêtes dans les zones du Norfendre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d638c303",
+      "english": "Adjusts the batching window tolerance, used for hearthstone batching. Increase this value if you're experiencing framerate drops when using your Hearthstone",
+      "translation": "Ajuste la tolérance de la fenêtre de traitement par lots, utilisée pour le traitement par lots de Hearthstone.Augmentez cette valeur si vous rencontrez des baisses de framerate lors de l'utilisation de votre Hearthstone",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9dd95a03",
+      "english": "Adjusts the guide routes to match increased xp rate bonuses",
+      "translation": "Ajuste les itinéraires de guidage pour correspondre à l'augmentation des bonus de taux d'XP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b637322c",
+      "english": "Adjusts the guide routes to match the content phase\nPhase 2: Dire Maul quests\nPhase 3: 100% quest XP (SoM)\nPhase 4: ZG/Silithus quests\nPhase 5: AQ quests\nPhase 6: Eastern Plaguelands quests",
+      "translation": "Ajuste les itinéraires de guidage pour correspondre à la phase de contenu{newline_a}Phase {number_f} : Quêtes Dire Maul{newline_b}Phase {number_g} : {number_h}% d'XP de quête (SoM){newline_c}Phase {number_i} : Quêtes ZG/Silithus{newline_d}Phase {number_j} : AQQuêtes{newline_e}Phase {number_k} : Quêtes des Maleterres de l'Est",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1aedb32a",
+      "english": "Advanced Settings",
+      "translation": "Paramètres avancés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d20e0771",
+      "english": "Advertises and compares addon versions with all RXP users in party",
+      "translation": "Annonce et compare les versions du module complémentaire avec tous les utilisateurs RXP du groupe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "363bbd1d",
+      "english": "All guides",
+      "translation": "Tous les guides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c935ef7d",
+      "english": "Allows guides to choose quest rewards automatically",
+      "translation": "Permet aux guides de choisir automatiquement les récompenses de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1cb7d05c",
+      "english": "Allows the guide to automatically fly you to your destination",
+      "translation": "Permet au guide de vous conduire automatiquement vers votre destination",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "59a214a9",
+      "english": "Allows the guide to automatically set your home at an Innkeeper",
+      "translation": "Permet au guide de définir automatiquement votre domicile chez un aubergiste",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "86ffbd87",
+      "english": "Allows the guide to automatically skip gossip for NPCs",
+      "translation": "Permet au guide d'ignorer automatiquement les potins pour les PNJ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "77459e2d",
+      "english": "Allows the guide to buy useful leveling spells automatically",
+      "translation": "Permet au guide d'acheter automatiquement des sorts de mise à niveau utiles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d555bd2f",
+      "english": "Allows you to toggle items as junk by clicking on it with CTRL+RightClick or ALT+RightClick",
+      "translation": "Vous permet de basculer des éléments comme indésirables en cliquant dessus avec CTRL+Clic droit ou ALT+Clic droit",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2f99331",
+      "english": "Always Open Leveling Report With Character Panel",
+      "translation": "Toujours ouvrir le rapport de mise à niveau avec le panneau de caractères",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e1c6a40e",
+      "english": "Always Show Total EP",
+      "translation": "Toujours afficher le total EP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32feafb3",
+      "english": "Announce Flying Step timers",
+      "translation": "Annoncer les minuteries Flying Step",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1db0a552",
+      "english": "Announce in guild chat when you level up",
+      "translation": "Annoncez dans le chat de guilde lorsque vous montez de niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "21ae246e",
+      "english": "Announce in party chat when you collect all the items relevant to a quest (.collect)",
+      "translation": "Annoncez dans le chat de groupe lorsque vous récupérez tous les objets pertinents pour une quête (.collect)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7f72ac",
+      "english": "Announce in party chat when you complete certain quests (.complete)",
+      "translation": "Annoncez dans le chat de groupe lorsque vous terminez certaines quêtes (.complete)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31d8734d",
+      "english": "Announce in party chat when you level up",
+      "translation": "Annoncez dans le chat de groupe lorsque vous montez de niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92440ee3",
+      "english": "Announce in party chat where you're flying and how long until you arrive",
+      "translation": "Annoncez dans le chat de groupe où vous volez et combien de temps avant votre arrivée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b748c35",
+      "english": "Announce Level Ups (Emote)",
+      "translation": "Annoncer les augmentations de niveau (Emote)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a2e08e50",
+      "english": "Announce Level Ups (Guild Chat)",
+      "translation": "Annoncer les augmentations de niveau (chat de guilde)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4532eb",
+      "english": "Announce Level Ups (Party Chat)",
+      "translation": "Annoncer les niveaux supérieurs (chat de groupe)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e647da6a",
+      "english": "Announce when all Step items are collected",
+      "translation": "Annoncer quand tous les éléments de l'étape sont collectés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52939e13",
+      "english": "Announce when Quest Step is completed",
+      "translation": "Annoncer quand l'étape de quête est terminée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01f58481",
+      "english": "Announcements",
+      "translation": "Annonces",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90d31626",
+      "english": "Any items marked as junk will display a gold coin icon on the top left corner of the item icon within your bags",
+      "translation": "Tous les objets marqués comme indésirables afficheront une icône de pièce d'or dans le coin supérieur gauche de l'icône de l'objet dans vos sacs.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c0fcb496",
+      "english": "Arrow Scale",
+      "translation": "Échelle de flèche",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8449c2e",
+      "english": "Arrow Text Size",
+      "translation": "Taille du texte de la flèche",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b646bb3b",
+      "english": "Attempting to deposit",
+      "translation": "Tentative de dépôt",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "44b7c3ed",
+      "english": "Attempting to withdraw",
+      "translation": "Tentative de retrait",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b99a7c4",
+      "english": "Auto detects seasonal buffs and adjust the routes accordingly",
+      "translation": "Détecte automatiquement les améliorations saisonnières et ajuste les itinéraires en conséquence",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd634264",
+      "english": "Auto Sell Junk",
+      "translation": "Vente automatique de déchets",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e5a8b500",
+      "english": "Autohide in Raids",
+      "translation": "Masquer automatiquement dans les raids",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "401e9548",
+      "english": "Automatic quest sharing",
+      "translation": "Partage de quête automatique",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1e3373b",
+      "english": "Automatically attempts to discard the cheapest junk item from your bags if your inventory is full",
+      "translation": "Tente automatiquement de jeter l'article indésirable le moins cher de vos sacs si votre inventaire est plein",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ab3c4c8",
+      "english": "Automatically chooses the best calculated quest reward",
+      "translation": "Choisit automatiquement la récompense de quête la mieux calculée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb718f08",
+      "english": "Automatically create a targeting macro",
+      "translation": "Créer automatiquement une macro de ciblage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "47196619",
+      "english": "Automatically hide when in a raid, and unhide when you leave a raid",
+      "translation": "Se cacher automatiquement lors d'un raid et s'afficher lorsque vous quittez un raid",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d49218bc",
+      "english": "Automatically scan nearby targets",
+      "translation": "Scanner automatiquement les cibles à proximité",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94f70650",
+      "english": "Automatically sell all gray items and all other items that you set as junk",
+      "translation": "Vendez automatiquement tous les articles gris et tous les autres articles que vous définissez comme indésirables",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e7e4524",
+      "english": "Automation",
+      "translation": "Automation",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "891bb02c",
+      "english": "Backup / Restore",
+      "translation": "Sauvegarde / Restauration",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76944b27",
+      "english": "Batching window size (ms)",
+      "translation": "Taille de la fenêtre de traitement par lots (ms)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac4cc79c",
+      "english": "Battle.net unreachable, please exit your client, restart Battle.net, and try again",
+      "translation": "Battle.net est inaccessible, veuillez quitter votre client, redémarrer Battle.net et réessayer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2037cb93",
+      "english": "Buy",
+      "translation": "Acheter",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a516198d",
+      "english": "Buy Missing",
+      "translation": "Acheter manquant",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f7f6d5",
+      "english": "Calculates item upgrades with Tactics' effective power weights",
+      "translation": "Calcule les améliorations d'objets avec les poids de puissance effectifs de Tactics",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbf228f7",
+      "english": "Change font size of the Guide Window",
+      "translation": "Changer la taille de la police de la fenêtre Guide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e4d29f",
+      "english": "Check for Addon Incompatibility",
+      "translation": "Vérifier l'incompatibilité des modules complémentaires",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f79edd85",
+      "english": "Check if targets are nearby\nWarning: This relies on ADDON_ACTION_FORBIDDEN errors from TargetUnit() to function.",
+      "translation": "Vérifiez si les cibles sont à proximité{newline_a}Attention : cela repose sur les erreurs ADDON_ACTION_FORBIDDEN de TargetUnit() pour fonctionner.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c9c14683",
+      "english": "Check loaded addons for known compatibility issues with RXP",
+      "translation": "Vérifiez les modules complémentaires chargés pour les problèmes de compatibilité connus avec RXP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4cee6be",
+      "english": "Checks for heirlooms and experience buffs",
+      "translation": "Vérifie les objets de famille et les amateurs d'expérience",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "968a1e42",
+      "english": "Checks for nearby rare spawns",
+      "translation": "Vérifie les apparitions rares à proximité",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "97237957",
+      "english": "Choose Theme",
+      "translation": "Choisir un thème",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3ecbb7ee",
+      "english": "Class Supplies",
+      "translation": "Fournitures de classe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "360402b5",
+      "english": "Cleanup obsolete or leftover quests",
+      "translation": "Nettoyer les quêtes obsolètes ou restantes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b01b081",
+      "english": "Cleanup Orphaned Quests",
+      "translation": "Quêtes orphelines de nettoyage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec49815f",
+      "english": "Click to set a keybind",
+      "translation": "Cliquez pour définir un raccourci clavier",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fc303097",
+      "english": "Collect the following items:",
+      "translation": "Récupérez les objets suivants :",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78d21c3c",
+      "english": "Collected step %d - %s",
+      "translation": "Étape collectée {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "acb2ae81",
+      "english": "Compare Next Level",
+      "translation": "Comparez le niveau suivant",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0b1968a",
+      "english": "Completed step %d - %s",
+      "translation": "Étape {format_a} - {format_b} terminée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "19f6870f",
+      "english": "Content phase",
+      "translation": "Phase de contenu",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5df3a88",
+      "english": "Continue",
+      "translation": "Continuer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "62a5ec6e",
+      "english": "Create Targeting Macro",
+      "translation": "Créer une macro de ciblage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b0cc608",
+      "english": "Current step frame anchor",
+      "translation": "Ancrage actuel du cadre de marche",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d42957d9",
+      "english": "Currently loaded imported guides",
+      "translation": "Guides importés actuellement chargés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "203859a1",
+      "english": "day",
+      "translation": "jour",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27438e34",
+      "english": "days",
+      "translation": "jours",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4faac8a",
+      "english": "Deactivate Hardcore mode",
+      "translation": "Désactiver le mode Hardcore",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbf6221c",
+      "english": "Deaths",
+      "translation": "Décès",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c0bcfde8",
+      "english": "Defines how often the addon updates in milliseconds, increase this if you're having performance issues",
+      "translation": "Définit la fréquence à laquelle le module complémentaire est mis à jour en millisecondes, augmentez-la si vous rencontrez des problèmes de performances",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "60f2b150",
+      "english": "Delete Cheapest Junk Item Keybind",
+      "translation": "Supprimer le raccourci clavier de l'élément indésirable le moins cher",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f1da3b88",
+      "english": "Delete imported guide",
+      "translation": "Supprimer le guide importé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "87b06988",
+      "english": "Detect Rate",
+      "translation": "Détecter le taux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38045545",
+      "english": "Detect Season",
+      "translation": "Détecter la saison",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eed73cac",
+      "english": "Diagnose Current Step",
+      "translation": "Diagnostiquer l'étape actuelle",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "91453a89",
+      "english": "Disable Colors",
+      "translation": "Désactiver les couleurs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e4c2517",
+      "english": "Disable dragging/resizing, use alt+left click on the main window to resize it",
+      "translation": "Désactivez le glisser/redimensionner, utilisez alt+clic gauche sur la fenêtre principale pour la redimensionner",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f92d6adf",
+      "english": "Discard junk items if bag is full",
+      "translation": "Jetez les objets indésirables si le sac est plein",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3bbd55f9",
+      "english": "Displays dangerous mobs and patrols on the targeting window (WIP)",
+      "translation": "Affiche les foules et patrouilles dangereuses sur la fenêtre de ciblage (WIP)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5f1cb7e8",
+      "english": "Displays dangerous mobs and patrols on your map (WIP)",
+      "translation": "Affiche les foules et patrouilles dangereuses sur votre carte (WIP)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d22dc03",
+      "english": "Displays guides that are not applicable for your class/race such as starting zones for other races",
+      "translation": "Affiche des guides qui ne sont pas applicables à votre classe/course, tels que les zones de départ d'autres courses.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70549c64",
+      "english": "Displays the best calculated item upgrade",
+      "translation": "Affiche la mise à niveau d'élément la mieux calculée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a28e816",
+      "english": "Displays the best sellable quest reward",
+      "translation": "Affiche la meilleure récompense de quête vendable",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c48d6972",
+      "english": "Distance Between Pins",
+      "translation": "Distance entre les broches",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2cf81379",
+      "english": "Do the Blasted Lands collection quests",
+      "translation": "Faites les quêtes de collection Blasted Lands",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1591ed00",
+      "english": "Enable Active Targets",
+      "translation": "Activer les cibles actives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "09bcb407",
+      "english": "Enable Addon Version Checks",
+      "translation": "Activer les vérifications de version du module complémentaire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0199855d",
+      "english": "Enable Animations",
+      "translation": "Activer les animations",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d9a245",
+      "english": "Enable Beta Features",
+      "translation": "Activer les fonctionnalités bêta",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f60bbb1",
+      "english": "Enable Debug",
+      "translation": "Activer le débogage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2a9942fe",
+      "english": "Enable Item Reservations",
+      "translation": "Activer les réservations d'articles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a606841",
+      "english": "Enable Level Splits",
+      "translation": "Activer les divisions de niveaux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb4f8aec",
+      "english": "Enable Leveling Tracker",
+      "translation": "Activer le suivi de mise à niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8675b851",
+      "english": "Enable Minimap Button",
+      "translation": "Activer le bouton Mini-carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7db7119e",
+      "english": "Enable Route Preflight",
+      "translation": "Activer le contrôle en amont de l'itinéraire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c50400fd",
+      "english": "Enable Talent Plan",
+      "translation": "Activer le plan de gestion des talents",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "593a52ea",
+      "english": "Enable Tips",
+      "translation": "Activer les conseils",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "606a2889",
+      "english": "Enable Warning Sound",
+      "translation": "Activer le son d'avertissement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a4b1e40",
+      "english": "Enables new features, forces reload to take effect",
+      "translation": "Active de nouvelles fonctionnalités, force le rechargement à prendre effet",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7e7e972",
+      "english": "Enables or disables the chromie time guides. Note that freshly created accounts without a level 60 character cannot access chromie time",
+      "translation": "Active ou désactive les guides temporels chromie.Notez que les comptes fraîchement créés sans personnage de niveau {number_a} ne peuvent pas accéder à Chrome Time.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c1d11265",
+      "english": "Enables the automation of the innkeeper prompt, where you can set your home location in the same server tick you're teleporting away",
+      "translation": "Permet l'automatisation de l'invite de l'aubergiste, où vous pouvez définir l'emplacement de votre domicile dans le même tick de serveur que vous vous téléportez.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a47bdb6c",
+      "english": "Enables the RestedXP Leveling Report when you open your character panel",
+      "translation": "Active le rapport de mise à niveau RestedXP lorsque vous ouvrez le panneau de votre personnage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "35576df8",
+      "english": "Experience rate change detected, reloading guide for %.2fx",
+      "translation": "Changement de taux d'expérience détecté, guide de rechargement pour {format_a}x",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f301684a",
+      "english": "Experience rates",
+      "translation": "Tarifs d'expérience",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8770830f",
+      "english": "Experience Sources",
+      "translation": "Sources d'expérience",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "75027878",
+      "english": "Experience/hour",
+      "translation": "Expérience/heure",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8be393fa",
+      "english": "Failed to Import Guides: Invalid Import String",
+      "translation": "Échec de l'importation des guides : chaîne d'importation non valide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78eab215",
+      "english": "Failed to ReadCacheData",
+      "translation": "Échec de la lecture des données du cache",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6180b559",
+      "english": "Flash Client Icon",
+      "translation": "Icône du client Flash",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4642f265",
+      "english": "Flashes the game icon on taskbar when enemy target found",
+      "translation": "Fait clignoter l'icône du jeu sur la barre des tâches lorsque la cible ennemie est trouvée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8d29c303",
+      "english": "Flashes the screen corners when an emergency action is recommended",
+      "translation": "Fait clignoter les coins de l'écran lorsqu'une action d'urgence est recommandée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10bb8cd9",
+      "english": "Flashes the screen corners when enemy target found",
+      "translation": "Fait clignoter les coins de l'écran lorsque la cible ennemie est trouvée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "236d5cdd",
+      "english": "Flashes the screen corners when in danger of drowning",
+      "translation": "Fait clignoter les coins de l'écran en cas de risque de noyade",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbe4a06f",
+      "english": "Flight Path automation",
+      "translation": "Automatisation de la trajectoire de vol",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c12ae431",
+      "english": "Fly to",
+      "translation": "Envolez-vous vers",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da0cd2d9",
+      "english": "Flying to %s ETA %s",
+      "translation": "Vol vers {format_a} ETA {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273354fa",
+      "english": "Font",
+      "translation": "Fonte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da021ba7",
+      "english": "Font Path",
+      "translation": "Chemin de la police",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "243a765a",
+      "english": "Gear Advisor",
+      "translation": "Conseiller en équipement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ccb82047",
+      "english": "Get the %s flight path",
+      "translation": "Obtenez la trajectoire de vol {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f6ba34a3",
+      "english": "Gold Assistant",
+      "translation": "Assistant Or",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d0601ae",
+      "english": "Gold Farming Guides",
+      "translation": "Guides de culture de l’or",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9db3691",
+      "english": "Grind until you are %.0f%% into %s with %s",
+      "translation": "Broyez jusqu'à ce que vous soyez {format_a}%% en {format_b} avec {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e65e375",
+      "english": "Grind until you are %.0f%% into level %s",
+      "translation": "Broyez jusqu'à ce que vous soyez {format_a}%% au niveau {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7328ff3",
+      "english": "Grind until you are %d away from %s with %s",
+      "translation": "Broyez jusqu'à ce que vous soyez à {format_a} de {format_b} avec {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1020bbf",
+      "english": "Grind until you are %d xp away from level %s",
+      "translation": "Broyez jusqu'à ce que vous soyez {format_a} XP loin du niveau {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7bcba56",
+      "english": "Grind until you are %s into %s with %s",
+      "translation": "Broyez jusqu'à ce que vous soyez {format_a} en {format_b} avec {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b2b9202",
+      "english": "Grind until you are %s xp into level %s",
+      "translation": "Broyez jusqu'à ce que vous soyez {format_a} XP au niveau {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "025e8783",
+      "english": "Guide Font Size",
+      "translation": "Guider la taille de la police",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bd6e51ac",
+      "english": "Guide Import",
+      "translation": "Importation de guides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "250c0cf9",
+      "english": "Guide Routing",
+      "translation": "Routage des guides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ddcce089",
+      "english": "Guide Window",
+      "translation": "Fenêtre de guidage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7e45c72",
+      "english": "Guides Loaded Successfully",
+      "translation": "Guides chargés avec succès",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d2f01a30",
+      "english": "Hardcore mode",
+      "translation": "Mode hardcore",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a02d588",
+      "english": "Hearthstone batching",
+      "translation": "Mise en lots de Hearthstone",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb575c60",
+      "english": "Hide Active Item window",
+      "translation": "Masquer la fenêtre de l'élément actif",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "50c96afd",
+      "english": "Hide Background",
+      "translation": "Masquer l'arrière-plan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70289269",
+      "english": "Hide completed steps",
+      "translation": "Masquer les étapes terminées",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab7e05e2",
+      "english": "Hide Mini Map Pins",
+      "translation": "Masquer les épingles de la mini-carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "841a22bc",
+      "english": "Hide Splits Background",
+      "translation": "Masquer l'arrière-plan des divisions",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aeb779b7",
+      "english": "Hide Targets Background",
+      "translation": "Masquer l'arrière-plan des cibles",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4a266b23",
+      "english": "Hide waypoint arrow",
+      "translation": "Masquer la flèche du point de cheminement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "019b55d5",
+      "english": "Hide Window",
+      "translation": "Masquer la fenêtre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9f869ee",
+      "english": "Hides the main window",
+      "translation": "Masque la fenêtre principale",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac9fb56f",
+      "english": "Highlight active map pins",
+      "translation": "Mettre en surbrillance les épingles de carte actives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc3d3503",
+      "english": "Highlight or list levels for each talent",
+      "translation": "Mettre en surbrillance ou lister les niveaux pour chaque talent",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2475ae84",
+      "english": "Historical levels to show",
+      "translation": "Niveaux historiques à afficher",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3df4e4f9",
+      "english": "Holding the Control key modifier also toggles the quest auto accept feature on and off",
+      "translation": "Maintenir la touche Contrôle enfoncée active et désactive également la fonction d'acceptation automatique de la quête.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29be66b",
+      "english": "I just leveled from %d to %d in %s",
+      "translation": "Je viens de passer du {format_a} au {format_b} en {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fedea7e4",
+      "english": "I just leveled up to %d",
+      "translation": "Je viens de passer au niveau {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "226f041f",
+      "english": "If this option is enabled, it disables all steps involving trading or Auction House",
+      "translation": "Si cette option est activée, elle désactive toutes les étapes impliquant le trading ou la salle des ventes.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90017172",
+      "english": "If two or more steps are very close together, this addon will group them into a single pin on the map. Adjust this range to determine how close together two steps must be to form a group.",
+      "translation": "Si deux étapes ou plus sont très proches les unes des autres, cet add-on les regroupera en une seule épingle sur la carte.Ajustez cette plage pour déterminer à quel point deux étapes doivent être rapprochées pour former un groupe.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "71ba64c5",
+      "english": "Ignore Questie announcements",
+      "translation": "Ignorer les annonces Questie",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f37881cc",
+      "english": "Import guide",
+      "translation": "Guide d'importation",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a7ce282",
+      "english": "Innkeeper Bind automation",
+      "translation": "Automatisation de la liaison aubergiste",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d7544fb",
+      "english": "Join Discord",
+      "translation": "Rejoignez Discorde",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "38a7e760",
+      "english": "Join our support discord at discord.gg/RestedXP and copy paste this form into #bug-report",
+      "translation": "Rejoignez notre discorde d'assistance sur discord.gg/RestedXP et copiez-collez ce formulaire dans #bug-report",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f430b313",
+      "english": "Level %d time",
+      "translation": "Niveau {format_a} temps",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f43dbe0c",
+      "english": "Level Splits Font Size",
+      "translation": "Taille de la police des divisions de niveaux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f780a30c",
+      "english": "Level Splits History",
+      "translation": "Historique des divisions de niveaux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "215d43f3",
+      "english": "Level Splits Opacity",
+      "translation": "Opacité des divisions de niveaux",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e17e09b5",
+      "english": "Leveling report",
+      "translation": "Rapport de nivellement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29290e85",
+      "english": "Leveling Tracker",
+      "translation": "Suivi de mise à niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e632dd44",
+      "english": "Loaded %d characters into import buffer",
+      "translation": "Caractères {format_a} chargés dans le tampon d'importation",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d6ed968",
+      "english": "Loaded %d characters into import buffer, %d shown",
+      "translation": "{format_a} caractères chargés dans le tampon d'importation, {format_b} affiché",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4e00b322",
+      "english": "Loading Guides",
+      "translation": "Guides de chargement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8bb947c1",
+      "english": "Loads all addon data upfront, instead of loading the data slowly over time. This increases loading screen times, only enable this option if you are experiencing frame rate drops",
+      "translation": "Charge toutes les données du module complémentaire à l'avance, au lieu de charger les données lentement au fil du temps.Cela augmente les temps de chargement de l'écran, activez cette option uniquement si vous rencontrez des baisses de fréquence d'images.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d504bca",
+      "english": "Lock Frames",
+      "translation": "Verrouiller les cadres",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab705347",
+      "english": "Look and Feel",
+      "translation": "Regardez et ressentez",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4c29f052",
+      "english": "Lower number to make Level Splits more transparent",
+      "translation": "Nombre inférieur pour rendre les niveaux de division plus transparents",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a508816f",
+      "english": "Macro capacity reached",
+      "translation": "Capacité macro atteinte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81fa18e7",
+      "english": "Make a public emote when you level up",
+      "translation": "Créez une emote publique lorsque vous montez de niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5b60c81",
+      "english": "Map Pin Background Opacity",
+      "translation": "Opacité de l'arrière-plan de l'épingle de carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "435c82e7",
+      "english": "Map Pin color",
+      "translation": "Couleur de l'épingle de la carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96eb41b",
+      "english": "Map Pins",
+      "translation": "Épingles de carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b11b4ddd",
+      "english": "Mark Enemy Mobs",
+      "translation": "Marquer les monstres ennemis",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abb93f4a",
+      "english": "Mark enemy mobs with skull, cross, and square",
+      "translation": "Marquez les monstres ennemis avec un crâne, une croix et un carré",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05397dc6",
+      "english": "Mark Enemy Targets",
+      "translation": "Marquer les cibles ennemies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8995f45",
+      "english": "Mark Friendly Targets",
+      "translation": "Marquer les cibles amies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83786a36",
+      "english": "Mark friendly targets with star, circle, diamond, and triangle",
+      "translation": "Marquez les cibles amies avec une étoile, un cercle, un losange et un triangle",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "826bf4dc",
+      "english": "Mark special enemy targets with moon",
+      "translation": "Marquez les cibles ennemies spéciales avec la lune",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8a30749",
+      "english": "Maximize Nameplate Distance",
+      "translation": "Maximiser la distance de la plaque signalétique",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d6fb555",
+      "english": "Northrend Loremaster",
+      "translation": "Maître du savoir du Norfendre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e69379d",
+      "english": "Notice: Changing experience rates beyond 1x may cause some chapters to become hidden and certain steps may automatically skip as you out level them",
+      "translation": "Remarque : La modification des taux d'expérience au-delà de {number_a}x peut entraîner le masquage de certains chapitres et certaines étapes peuvent être automatiquement ignorées à mesure que vous les nivelez.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "840f1c6a",
+      "english": "Notify on new target",
+      "translation": "Notifier sur une nouvelle cible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d71256",
+      "english": "Notify on Rares",
+      "translation": "Notifier les rares",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1467843b",
+      "english": "Notify when a new rare is found",
+      "translation": "Avertir lorsqu'un nouveau rare est trouvé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c87aa05",
+      "english": "Notify when a new target is loaded",
+      "translation": "Notifier lorsqu'une nouvelle cible est chargée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b24bf99",
+      "english": "Number of Map Pins",
+      "translation": "Nombre de repères de carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63b82d6c",
+      "english": "Number of map pins shown on the world map",
+      "translation": "Nombre de repères cartographiques affichés sur la carte du monde",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fdfc2fc",
+      "english": "Only show when in range",
+      "translation": "S'afficher uniquement lorsqu'il est à portée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4ea04927",
+      "english": "Only shows current and future steps on the step list window",
+      "translation": "Affiche uniquement les étapes actuelles et futures dans la fenêtre de la liste des étapes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f320f380",
+      "english": "Open Class Supplies",
+      "translation": "Fournitures de classe ouverte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f18affb8",
+      "english": "Open Daily Planner",
+      "translation": "Ouvrir le planificateur quotidien",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9087a56c",
+      "english": "Open Gear Advisor",
+      "translation": "Conseiller Open Gear",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83e4e6c2",
+      "english": "Open Guide Hub",
+      "translation": "Ouvrir le centre de guides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b42f6a7c",
+      "english": "Paste encoded strings",
+      "translation": "Coller les chaînes codées",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dfe7ed0f",
+      "english": "Pick Up",
+      "translation": "Ramasser",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67034562",
+      "english": "Play Sound",
+      "translation": "Jouer du son",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9fa01cfc",
+      "english": "Please restart your game client and try again",
+      "translation": "Veuillez redémarrer votre client de jeu et réessayer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "02999afd",
+      "english": "Pre load all data",
+      "translation": "Précharger toutes les données",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc2ee3be",
+      "english": "Preview Changes",
+      "translation": "Aperçu des modifications",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "923620b1",
+      "english": "Preview theme changes",
+      "translation": "Aperçu des changements de thème",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "72234a79",
+      "english": "Purge All Data",
+      "translation": "Purger toutes les données",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "949a380d",
+      "english": "Quest auto accept/turn in",
+      "translation": "Quête acceptée/remise automatiquement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "225303c6",
+      "english": "Quest auto rewards",
+      "translation": "Récompenses automatiques de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ae63d0bd",
+      "english": "Quest Cleanup",
+      "translation": "Nettoyage de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4035c0",
+      "english": "Quest is being picked up at",
+      "translation": "La quête est à récupérer à",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a9fbf74",
+      "english": "Quest is being turned in at",
+      "translation": "La quête est rendue à",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6cc26fb",
+      "english": "Quest Reward Automation",
+      "translation": "Automatisation des récompenses de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbe1a32f",
+      "english": "Quest Reward Recommendation",
+      "translation": "Recommandation de récompense de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c40c46ae",
+      "english": "Quest Sellable Recommendation",
+      "translation": "Recommandation vendable pour la quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cdd6888d",
+      "english": "Reached max level",
+      "translation": "Niveau maximum atteint",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70c30d92",
+      "english": "Refresh",
+      "translation": "Rafraîchir",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eeb0dc88",
+      "english": "Reload Guide",
+      "translation": "Guide de rechargement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca4dbf1",
+      "english": "Remove",
+      "translation": "Retirer",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca7f07f",
+      "english": "Rescan",
+      "translation": "Nouvelle analyse",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e71b246",
+      "english": "Reset",
+      "translation": "Réinitialiser",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76c9ba66",
+      "english": "Reset Arrow Position",
+      "translation": "Réinitialiser la position de la flèche",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6a676ab",
+      "english": "RestedXP Feedback Form",
+      "translation": "Formulaire de commentaires RestedXP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "259b7564",
+      "english": "RestedXP Leveling Report",
+      "translation": "Rapport de mise à niveau RestedXP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa585cee",
+      "english": "Retrieving quest data",
+      "translation": "Récupération des données de quête",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd9c795d",
+      "english": "RGB hex color code",
+      "translation": "Code couleur hexadécimal RVB",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52cd7676",
+      "english": "Right Click Modifier",
+      "translation": "Modificateur de clic droit",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "28c62be9",
+      "english": "Route Planning",
+      "translation": "Planification d'itinéraire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec320617",
+      "english": "Route Preflight",
+      "translation": "Contrôle en amont de l'itinéraire",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e106ebb9",
+      "english": "Run Guide Configurator",
+      "translation": "Exécuter le configurateur de guide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e56364b",
+      "english": "RXPGuides Guide Hub",
+      "translation": "Centre de guides RXPGuides",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0a36d637",
+      "english": "Scale of the Active Item frame",
+      "translation": "Échelle du cadre Élément actif",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5671aca2",
+      "english": "Scale of the Active Targets frame",
+      "translation": "Échelle du cadre des cibles actives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "282d93a1",
+      "english": "Scale of the Main Window, use alt+left click on the main window to resize it",
+      "translation": "Echelle de la fenêtre principale, utilisez alt+clic gauche sur la fenêtre principale pour la redimensionner",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d0b33827",
+      "english": "Scale of the Waypoint Arrow",
+      "translation": "Échelle de la flèche du point de cheminement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9c0d3e0",
+      "english": "Scan Enemy Targets",
+      "translation": "Scanner les cibles ennemies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad48a108",
+      "english": "Scan for dangerous mobs",
+      "translation": "Rechercher des foules dangereuses",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8678d27",
+      "english": "Scan for enemy targets",
+      "translation": "Rechercher des cibles ennemies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0b6bb306",
+      "english": "Scan for friendly targets",
+      "translation": "Rechercher des cibles amies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fabe0a8d",
+      "english": "Scan for Nearby Rares",
+      "translation": "Rechercher des rares à proximité",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32f7371f",
+      "english": "Scan Friendly Targets",
+      "translation": "Scanner des cibles amies",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "def3802c",
+      "english": "Season",
+      "translation": "Saison",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bee063d2",
+      "english": "Select a guide",
+      "translation": "Sélectionnez un guide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f63c2",
+      "english": "Select another guide",
+      "translation": "Sélectionnez un autre guide",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c869ccc9",
+      "english": "Select Recommended Dungeons",
+      "translation": "Sélectionnez les donjons recommandés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "feb357fe",
+      "english": "Sell junk/resupply",
+      "translation": "Vendre des déchets/réapprovisionner",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f3dd33cd",
+      "english": "Send announcements without another RXP user in group",
+      "translation": "Envoyer des annonces sans un autre utilisateur RXP dans le groupe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7dfc3f16",
+      "english": "Send quest and collect step announcements even if Questie is enabled",
+      "translation": "Envoyez des quêtes et collectez les annonces d'étape même si Questie est activé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "45383bc7",
+      "english": "Sends sound on enemy target found",
+      "translation": "Envoie du son sur la cible ennemie trouvée",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5698845c",
+      "english": "Set current profile as default",
+      "translation": "Définir le profil actuel par défaut",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f049a593",
+      "english": "Set primary background",
+      "translation": "Définir l'arrière-plan principal",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bf85ee06",
+      "english": "Set your Hearthstone to",
+      "translation": "Réglez votre Hearthstone sur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d1a57a",
+      "english": "Sets maximum number of talents to layout",
+      "translation": "Définit le nombre maximum de talents à mettre en page",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "deb600ba",
+      "english": "Sets the current step frame to grow from bottom to top or top to bottom",
+      "translation": "Définit le cadre d'étape actuel pour qu'il s'agrandisse de bas en haut ou de haut en bas.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9c65ced9",
+      "english": "Show a targeting circle around active map pins",
+      "translation": "Afficher un cercle de ciblage autour des repères de carte actifs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb3d7106",
+      "english": "Show all Enabled Frames",
+      "translation": "Afficher tous les cadres activés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65af9e7b",
+      "english": "Show Chromie Time Guides",
+      "translation": "Afficher les guides temporels Chromie",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "12a847d6",
+      "english": "Show Flight Timers",
+      "translation": "Afficher les horaires de vol",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "07fb29d6",
+      "english": "Show Group Quests",
+      "translation": "Afficher les quêtes de groupe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96d3fe8",
+      "english": "Show junk item indicator",
+      "translation": "Afficher l'indicateur d'objet indésirable",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8c31b05c",
+      "english": "Show step list",
+      "translation": "Afficher la liste des étapes",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65204f43",
+      "english": "Show Total Time Split",
+      "translation": "Afficher le partage de temps total",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "836f5f59",
+      "english": "Show unused guides",
+      "translation": "Afficher les guides inutilisés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d10a1918",
+      "english": "Show/Hide the bottom frame listing all the steps of the current guide",
+      "translation": "Afficher/Masquer le cadre inférieur répertoriant toutes les étapes du guide actuel",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fce3fa1f",
+      "english": "Size of the waypoint arrow text",
+      "translation": "Taille du texte de la flèche du waypoint",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d0ba26f",
+      "english": "Skip Gossip",
+      "translation": "Passer les potins",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ecedb8a6",
+      "english": "Skip overleveled steps",
+      "translation": "Évitez les étapes excessives",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abe0ea17",
+      "english": "Skip quests with missing pre-requisites",
+      "translation": "Passer les quêtes avec des prérequis manquants",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "986e2888",
+      "english": "Skip steps you're overleveled for",
+      "translation": "Sautez les étapes pour lesquelles vous êtes sur-niveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3eb5a755",
+      "english": "Skip to step %d if you are level %d or above",
+      "translation": "Passez à l'étape {format_a} si vous êtes de niveau {format_b} ou supérieur",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cda3c4eb",
+      "english": "Solo Self Found Mode",
+      "translation": "Mode Solo trouvé par soi-même",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17a73c25",
+      "english": "Sound Channel",
+      "translation": "Canal sonore",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8a8932b7",
+      "english": "Step Highlight",
+      "translation": "Point culminant de l'étape",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ecaf31b",
+      "english": "Step mouseover highlight color",
+      "translation": "Passer la souris sur la couleur de surbrillance",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d98cfff",
+      "english": "Talent Plan Number",
+      "translation": "Numéro du plan de talent",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81d227da",
+      "english": "Targeting Macro",
+      "translation": "Macro de ciblage",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55adf36d",
+      "english": "Teamwork",
+      "translation": "Travail d'équipe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c26fe068",
+      "english": "Temporarily hide, use '/rxp splits' to show again",
+      "translation": "Masquer temporairement, utiliser '/rxp splits' pour afficher à nouveau",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ffabb527",
+      "english": "Text Color",
+      "translation": "Couleur du texte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "80c519ef",
+      "english": "The opacity of the black circles on the map and mini map",
+      "translation": "L'opacité des cercles noirs sur la carte et la mini carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "617d8d36",
+      "english": "There's a new addon version (%s) available",
+      "translation": "Il y a une nouvelle version du module complémentaire ({format_a}) disponible",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9d083af",
+      "english": "There's a new version (%s) available for %s",
+      "translation": "Il y a une nouvelle version ({format_a}) disponible pour {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f405ce0",
+      "english": "This action will remove ALL guides from the database\nAre you sure?",
+      "translation": "Cette action supprimera TOUS les guides de la base de données{newline_a}Êtes-vous sûr ?",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd687188",
+      "english": "This requires a reload to take effect, continue?",
+      "translation": "Cela nécessite un rechargement pour prendre effet, continuer ?",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b8ea719",
+      "english": "Throw away %s%s from your bags",
+      "translation": "Jetez le {format_a}{format_b} de vos sacs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b84cadc",
+      "english": "Time spent",
+      "translation": "Temps passé",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14828ed5",
+      "english": "Time to",
+      "translation": "Il est temps de",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273ae903",
+      "english": "Tips",
+      "translation": "Conseils",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e4f59e",
+      "english": "Toggle junk with modified right click",
+      "translation": "Activer/désactiver les fichiers indésirables avec un clic droit modifié",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d5d9cc0e",
+      "english": "Toggles all addon frames on or off",
+      "translation": "Active ou désactive tous les cadres complémentaires",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "22aaee2e",
+      "english": "Tooltip",
+      "translation": "Info-bulle",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "944eb65b",
+      "english": "Total guides loaded: %d/%s",
+      "translation": "Nombre total de guides chargés : {format_a}/{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70391ac4",
+      "english": "Track Mobs on Map",
+      "translation": "Suivre les foules sur la carte",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7feeacf3",
+      "english": "Train skills",
+      "translation": "Former des compétences",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d89259",
+      "english": "Trainer automation",
+      "translation": "Automatisation des formateurs",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e512de66",
+      "english": "Unable to retrieve report for",
+      "translation": "Impossible de récupérer le rapport pour",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fdd63ab8",
+      "english": "Unused Guides",
+      "translation": "Guides inutilisés",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "422958c9",
+      "english": "Update Frequency (ms)",
+      "translation": "Fréquence de mise à jour (ms)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9289fb9",
+      "english": "Warning",
+      "translation": "Avertissement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "54bb1fd2",
+      "english": "Warning: Changing this setting mid-guide may cause quest pre-requisite failures.\nGuides were optimized for experience, disabling this option will result in a disjointed guide steps.",
+      "translation": "Attention : la modification de ce paramètre en cours de guide peut entraîner des échecs des pré-requis de la quête.{newline_a}Les guides ont été optimisés pour l'expérience, la désactivation de cette option entraînera des étapes de guide décousues.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84d2dce9",
+      "english": "Waypoint Arrow",
+      "translation": "Flèche de point de cheminement",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8446e462",
+      "english": "When comparing, show next level's time",
+      "translation": "Lors de la comparaison, affiche l'heure du niveau suivant",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea3a91a0",
+      "english": "When comparing, show total time difference",
+      "translation": "Lors de la comparaison, affichez le décalage horaire total",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05f68812",
+      "english": "Whenever you accept a quest in the guide, the addon tries to share it with your group",
+      "translation": "Chaque fois que vous acceptez une quête dans le guide, l'extension essaie de la partager avec votre groupe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29c1883",
+      "english": "Window Scale",
+      "translation": "Échelle de la fenêtre",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1df8d271",
+      "english": "Without this checked we will only send announcements if another RestedXP User is in your group",
+      "translation": "Sans cette case cochée, nous n'enverrons des annonces que si un autre utilisateur RestedXP est dans votre groupe",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb451566",
+      "english": "XP Shortfall Predictor",
+      "translation": "Prédicteur de manque d'XP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "553232db",
+      "english": "Zones & Dungeons",
+      "translation": "Zones et donjons",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    }
+  ]
+}

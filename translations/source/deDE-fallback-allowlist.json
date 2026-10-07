@@ -1,0 +1,10 @@
+{
+    "schema":  1,
+    "sourceType":  "fallbackAllowlist",
+    "locale":  "deDE",
+    "sourceRevision":  "706a420a",
+    "policy":  "These entries render visibly as [EN] until reviewed or structurally safe machine text is available.",
+    "units":  [
+
+              ]
+}

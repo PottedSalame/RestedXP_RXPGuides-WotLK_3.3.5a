@@ -1,0 +1,4455 @@
+{
+  "schema": 1,
+  "locale": "ruRU",
+  "sourceRevision": "706a420a",
+  "revision": "machine-706a420a",
+  "source": "Unreviewed offline machine-translation draft",
+  "units": [
+    {
+      "id": "84c74b8f",
+      "english": "Error parsing guide",
+      "translation": "Руководство по разбору ошибок",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "12139145",
+      "english": "|cRXP_WARN_Wait out the RP|r",
+      "translation": "{rxpcolor_a}Подожди РП{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26de55ef",
+      "english": "60-70",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26a80c2a",
+      "english": "30-50",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26cc3d4d",
+      "english": "50-60",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a75f3d66",
+      "english": ".",
+      "translation": ".",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3239ddec",
+      "english": "|cRXP_WARN_Click here for video reference|r",
+      "translation": "{rxpcolor_a}Нажмите здесь, чтобы посмотреть видео{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "268698cb",
+      "english": "15-30",
+      "translation": "{number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d70e9b6e",
+      "english": "|cRXP_LOOT_OR",
+      "translation": "{rxpcolor_a}ИЛИ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d8e3d1a3",
+      "english": "|cRXP_WARN_Equip your normal|r |T133127:0|t[Helmet]",
+      "translation": "{rxpcolor_b}Наденьте обычный{colorend_c} {texture_a}[Шлем]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "005882e4",
+      "english": "RXP Speedrun Guide 1-30",
+      "translation": "Руководство по скоростному прохождению RXP {number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "25cc103b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gunny|r upstairs in the Keep",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху в Крепости.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b19a182",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Force Commander Danath Trollbane|r upstairs in the Keep",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху в Крепости.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fedcbceb",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Celoenus|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "005882c3",
+      "english": "RXP Speedrun Guide 1-20",
+      "translation": "Руководство по скоростному прохождению RXP {number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8fabdc17",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Garridel|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "511d3649",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Ponaris|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2dd2619c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_T'chali|r in the dirt mound",
+      "translation": "{texture_a}Поговорите с {friendly_b} в грязной насыпи.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0b7c8417",
+      "english": "RXP Speedrun Guide 20-32",
+      "translation": "Руководство по скоростному прохождению RXP {number_a}{number_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4cf134b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beryl|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ff5befb5",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Denjai|r upstairs in the inn",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху в гостинице.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbf5a26d",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Razelcraz|r outside Thrallmar Mine",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле шахты Траллмара.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3f543eec",
+      "english": "|cFFFF0000HIGH DEATH RISK WARNING:|r",
+      "translation": "{color_a}ПРЕДУПРЕЖДЕНИЕ О ВЫСОКОЙ СМЕРТИ:{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2541350e",
+      "english": "|cRXP_WARN_Perform a 'Ghetto Hearth' in Ragefire chasm|r",
+      "translation": "{rxpcolor_a}Выполните «Очаг гетто» в пропасти Яростного огня{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88c0f0a0",
+      "english": "|T134133:0|t[Blue Power Crystal]",
+      "translation": "{texture_a}[Blue Power Crystal]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c952123b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brenwyn Wintersteel|r downstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} внизу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f34a934",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chromie|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8790c800",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Hegnar Swiftaxe|r downstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} внизу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "54d5c97b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tannaria|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "95aa1d5f",
+      "english": "Requires Reload to take effect",
+      "translation": "Для вступления в силу требуется перезагрузка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "414bed97",
+      "english": "|cRXP_WARN_While disguised, enter Manaforge Coruu|r",
+      "translation": "{rxpcolor_a}Находясь замаскированным, войдите в Манагорн Коруу{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f823d486",
+      "english": "|T134324:0|t[Bog Lord Tendril]",
+      "translation": "{texture_a}[Bog Lord Tendril]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e3c26d9",
+      "english": "|T134523:0|t[Glowcap]",
+      "translation": "{texture_a}[Glowcap]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "343b4082",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Auctioneer Stockton|r in the Trade Quarter",
+      "translation": "{texture_a}Поговорите с {friendly_b} в Торговом квартале.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0463dece",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Sundown|r inside the mine",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри шахты.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd240b8c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kebok|r up stairs on the top floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице на верхнем этаже.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e2e0a71",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Private Thorsen|r at the Rebel Camp",
+      "translation": "{texture_a}Поговорите с {friendly_b} в Лагере повстанцев.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76cb0f15",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Veronia|r to fly to Manaforge Coruu",
+      "translation": "{texture_a}Поговорите с {friendly_b}, чтобы полететь в Манагорн-Коруу.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "39b94c8c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Darrowshire Spirits|r that appear over their corpses",
+      "translation": "{texture_a}Поговорите с {friendly_b}, которые появляются над их трупами.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dcbb8cfe",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Evergrove Druid|r beside you shortly",
+      "translation": "{texture_a}Скоро поговорите с {friendly_b} рядом с вами",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c5c3fff",
+      "english": "Missing pre-requisites",
+      "translation": "Отсутствуют предварительные условия",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9f9b9dec",
+      "english": "|cRXP_WARN_Don't accept the follow up yet|r",
+      "translation": "{rxpcolor_a}Пока не принимать подписку{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e99de49",
+      "english": "|cRXP_WARN_Exit the Deathforge|r",
+      "translation": "{rxpcolor_a}Выйти из Кузни Смерти{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a460a26",
+      "english": "|cRXP_WARN_Keep an eye out for the special |cRXP_FRIENDLY_Private Thorsen|r event. He will patrol down the road from the Rebel camp every 30 minutes|r",
+      "translation": "{rxpcolor_b}Следите за специальным событием {friendly_a}.Он будет патрулировать дорогу от лагеря повстанцев каждые {number_d} минуты{colorend_c}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "684bc6cc",
+      "english": "|cRXP_WARN_Travel to the Water Pump|r",
+      "translation": "{rxpcolor_a}Отправляйтесь к водяному насосу{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8cf30cff",
+      "english": "|T134116:0|t[Sample Elven Gem]",
+      "translation": "{texture_a}[Sample Elven Gem]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1586d5a5",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Akuno|r inside the Shadow Tomb",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри Сумрачной гробницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6202a471",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Apprentice Morlann|r outside",
+      "translation": "{texture_a}Поговорите с {friendly_b} снаружи",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b275648",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Assistant Klatu|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8906b23",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Azj'Tordin|r in Feralas",
+      "translation": "{texture_a}Поговорите с {friendly_b} в Фераласе",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cf80eb40",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Beetix Ficklespragg|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "16c55ac5",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boots|r, |cRXP_FRIENDLY_Nether-Stalker Khay'ji|r, |cRXP_FRIENDLY_Rocket-Chief Fuselage|r",
+      "translation": "{texture_a}Поговорите с {friendly_b}, {friendly_c}, {friendly_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ab971bd",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Catelyn the Blade|r inside the Inn",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cba034c8",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Christoph|r inside the inn",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd0bdb51",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Daestra|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de7026c2",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Deeg|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a05d9e8b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Elling Trias|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0770c76",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Empoor|r again after",
+      "translation": "{texture_a}Поговорите с {friendly_b} еще раз после",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9c51856",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Gracina Spiritmight|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "daa1521c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Idriana|r at the bank",
+      "translation": "{texture_a}Поговорите с {friendly_b} в банке",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abcf6c70",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_J.D. Collie|r inside the cave",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри пещеры.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e36e0f10",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kebok|r on the inn's top floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} на верхнем этаже гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5cdadba8",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r up stairs on the top floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице на верхнем этаже.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c10488c6",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mortaim|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9134204d",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Naturalist Bite|r and |cRXP_FRIENDLY_Weeder Greenthumb|r inside the Slave Pens",
+      "translation": "{texture_a}Поговорите с {friendly_b} и {friendly_c} внутри загона для рабов.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "738bcff1",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Orbaz Bloodbane|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9815e5e1",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Raleigh the Devout|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a41647ce",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vekax|r atop the tree platforms",
+      "translation": "{texture_a}Поговорите с {friendly_b} на вершине древесных платформ.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f1487995",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Warp-Scryer Kryv|r upstairs in the Keep",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху в Крепости.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55038390",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watch Commander Relthorn Netherwane|r outside the Dark Portal",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле Темного портала.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9391cc9a",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to an |cRXP_FRIENDLY_Auctioneer|r in a major city",
+      "translation": "{texture_a}Поговорите с {friendly_b} в крупном городе",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7b07bd1",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Legion Communicator|r with your |T133133:0|t[Felsworn Gas Mask] equipped",
+      "translation": "{texture_a}Поговорите с {friendly_c}, надев свой {texture_b}[Противог Скверны].",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bd4e5481",
+      "english": "Defeat 10 Hyldsmeet Drakeriders",
+      "translation": "Победить {number_a} Наездников Дрейкера Хильдсмита.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfab4205",
+      "english": "Export",
+      "translation": "Экспорт",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32e9cdea",
+      "english": "Level Time",
+      "translation": "Время уровня",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8106f24a",
+      "english": "Lure 3 Drakkari Chieftains",
+      "translation": "Приманка {number_a} Вожди Драккари",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29999bdf",
+      "english": "second",
+      "translation": "второй",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5ccd1832",
+      "english": "seconds",
+      "translation": "секунды",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f5520706",
+      "english": "Too low for %s",
+      "translation": "Слишком низко для {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e3ddf79c",
+      "english": "Die and respawn at the graveyard",
+      "translation": "Умереть и возродиться на кладбище",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "93fd6c4b",
+      "english": "Enable Leveling Report Inspections",
+      "translation": "Включить проверку отчетов по выравниванию",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1bf2456",
+      "english": "Give Feedback for step",
+      "translation": "Оставьте отзыв о шаге",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0daec15c",
+      "english": "Go to",
+      "translation": "Перейти к",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c838d6fe",
+      "english": "Import",
+      "translation": "Импорт",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "92be075a",
+      "english": "Level Splits",
+      "translation": "Разделение уровней",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "24f994b3",
+      "english": "Make background transparent",
+      "translation": "Сделать фон прозрачным",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1be92c95",
+      "english": "minute",
+      "translation": "минута",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "990ebfa8",
+      "english": "minutes",
+      "translation": "минуты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0446b7b7",
+      "english": "Missing data",
+      "translation": "Отсутствующие данные",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "213c11d7",
+      "english": "Objective Complete",
+      "translation": "Цель выполнена",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "536747ee",
+      "english": "Open Feedback Form",
+      "translation": "Открыть форму обратной связи",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "509fe0cf",
+      "english": "Stable your pet",
+      "translation": "Стабильный ваш питомец",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b28ff74",
+      "english": "Too high for %s",
+      "translation": "Слишком высоко для {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3ae2436",
+      "english": "Total Time",
+      "translation": "Общее время",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fdfcaef",
+      "english": "Vendor Treasures",
+      "translation": "Сокровища торговцев",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed7dee09",
+      "english": "Welcome to RestedXP Guides\nRight click to pick a guide",
+      "translation": "Добро пожаловать в RestedXP Guides{newline_a}Щелкните правой кнопкой мыши, чтобы выбрать руководство.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b82b2334",
+      "english": "/cast EMP",
+      "translation": "/cast ЭМИ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5250d5bd",
+      "english": "|cRXP_BUY_Buy a|r |T135341:0|t[Rondel] |cRXP_BUY_from her|r",
+      "translation": "{rxpcolor_b}Купите{colorend_d} {texture_a}[Рондель] {rxpcolor_c} у нее{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17f3af5e",
+      "english": "|cRXP_BUY_Buy the|r [Adversarial Bloodlines] |cRXP_WARN_from him|r",
+      "translation": "{rxpcolor_a}Купите{colorend_c} [Состязательные родословные] {rxpcolor_b} у него{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81a1b565",
+      "english": "|cRXP_BUY_Buy the|r |T132535:0|t[Volunteer's Greaves] |cRXP_BUY_from him|r",
+      "translation": "{rxpcolor_b}Купите{colorend_d} {texture_a}[Наголенники добровольца] {rxpcolor_c} у него{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d7fa3ab5",
+      "english": "|cRXP_BUY_Buy two|r |T134310:0|t[Shiny Fish Scales]",
+      "translation": "{rxpcolor_b}Купить две{colorend_c} {texture_a}[Блестящая рыбья чешуя]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dde34114",
+      "english": "|cRXP_ENEMY_Fly to Tarren Mill instead if you bought 8 Cresting, Thundering and Burning charms on the AH and skip the next 3 steps|r",
+      "translation": "{enemy_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b249451e",
+      "english": "|cRXP_ENEMY_Scarlet Mages|r |cRXP_WARN_and |cRXP_ENEMY_Scarlet Knights|r share spawns|r",
+      "translation": "{enemy_a}, {rxpcolor_c} и {enemy_b} делятся спавнами{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1c6f4d17",
+      "english": "|cRXP_ENEMY_Scarlet Medics|r |cRXP_WARN_and |cRXP_ENEMY_Scarlet Hunters|r share spawns|r",
+      "translation": "{enemy_a}, {rxpcolor_c} и {enemy_b} делятся спавнами{colorend_d}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e37c062",
+      "english": "|cRXP_WARN_Drag the|r |T136103:0|t[Felsteed] |cRXP_WARN_onto your Action Bars|r",
+      "translation": "{rxpcolor_b}Перетащите{colorend_d} {texture_a}[Скакун Скверны] {rxpcolor_c}на панели действий{colorend_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d783f96",
+      "english": "|cRXP_WARN_Get your old Ravager out of the stable and teach it|r |T135664:0|t[Gore Rank 9]",
+      "translation": "{rxpcolor_b}Вытащите своего старого Опустошителя из конюшни и научите его{colorend_c} {texture_a}[Ранг Гора {number_d}]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "470a8ebd",
+      "english": "|cRXP_WARN_Open the|r |T132595:0|t[Hoard of the Black Dragonflight]",
+      "translation": "{rxpcolor_b}Откройте{colorend_c} {texture_a}[Клад рода черных драконов]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cfb52de0",
+      "english": "|cRXP_WARN_STAND BEHIND MALORIC|r",
+      "translation": "{rxpcolor_a}СТОЙТЕ ЗА МАЛОРИКОМ{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b2a003b4",
+      "english": "|cRXP_WARN_Travel to the Spawning Glen|r",
+      "translation": "{rxpcolor_a}Путешествие в Нерестовую долину{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3bcbb89b",
+      "english": "|cRXP_WARN_Travel up the Lava Path of Fire Plume Ridge for a shortcut to the top. Follow the Arrow precisely|r",
+      "translation": "{rxpcolor_a}Поднимитесь по хребту Лавового Пути Огненного Шлейфа, чтобы срезать путь к вершине.Точно следуйте стрелке{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f547c04a",
+      "english": "|cRXP_WARN_Use the|r |T133707:0|t[Shabby Arakkoa Disguise]",
+      "translation": "{rxpcolor_b}Используйте{colorend_c} {texture_a}[Маскировку потрепанного араккоа]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e53c149",
+      "english": "|cRXP_WARN_Wait out the flight to Shatter Point|r",
+      "translation": "{rxpcolor_a}Пережди рейс в Точку Разрушения{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5aa8ce4e",
+      "english": "|T134413:0|t[Liferoot]",
+      "translation": "{texture_a}[Liferoot]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "57cba864",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Argent Guard Manados|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "40fdf7e0",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Augustus|r back in the house",
+      "translation": "{texture_a}Поговорите с {friendly_b} в доме.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e72720c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Bernie Heisten|r on the bottom floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} на нижнем этаже.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "26d8c2cb",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clavicus Knavingham|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32e2f8a9",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Clerk Lendry|r upstairs in the Keep",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху в Крепости.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d6d26a2",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Colonel Jules|r once the RP finishes",
+      "translation": "{texture_a}Поговорите с {friendly_b}, как только RP закончится.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "114878c3",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Crank|r inside the inn",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90f69d8f",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Crank|r on the inn's ground floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} на первом этаже гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "805bed7e",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Dawnwatcher Selgorm|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3d821637",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Enith|r on the ground",
+      "translation": "{texture_a}Поговорите с {friendly_b} на земле",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "97530875",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Foreman Razelcraz|r outside Thrallmar Mine",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле шахты Траллмара.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d2fcccfc",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Grahk|r outside the cave",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле пещеры.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "86acadf7",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Harick Boulderdrum|r downstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} внизу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e87ddc0f",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Belm|r inside",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8059b317",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Janice Felstone|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31a79ec4",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Kanaria|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ca59b7d1",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r and |cRXP_FRIENDLY_Kebok|r on the third floor of the inn",
+      "translation": "{texture_a}Поговорите с {friendly_b} и {friendly_c} на третьем этаже гостиницы.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "286713a8",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Krazek|r upstairs on the top floor",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху на верхнем этаже.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1fa4ac8c",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lord Jorach Ravenholdt|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8bbb1d9d",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lydon|r, |cRXP_FRIENDLY_Darthalia|r, the |cRXP_FRIENDLY_Wanted Poster|r, |cRXP_FRIENDLY_Krusk|r",
+      "translation": "{texture_a}Поговорите с {friendly_b}, {friendly_c}, {friendly_d}, {friendly_e}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c994d349",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Aledis|r if you see him. Kill |cRXP_ENEMY_Magister Aledis|r as he becomes hostile",
+      "translation": "{texture_a}Поговорите с {friendly_b}, если увидите его.Убейте {enemy_c}, поскольку он станет враждебным.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b101159e",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Magister Edien|r Sunhollow",
+      "translation": "{texture_a}Поговорите с {friendly_b} Солнечной Лощиной",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d1892b7",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Marlene|r inside the house",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри дома.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "341d9ab6",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Mulgris|r inside the house",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри дома.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2f742a9b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Noggle Ficklespragg|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1e9e48f7",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Pephredo|r downstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} внизу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "114b3b03",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Rokgah|r after the RP",
+      "translation": "{texture_a}Поговорите с {friendly_b} после RP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90986d73",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sentinel Moonwhisper|r outside the tunnel entrance",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле входа в туннель.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63f6b67b",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Thassarian|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78b90657",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Torntusk|r upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7608d563",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Treshala Fallowbrook|r up stairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} наверху по лестнице",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bad497cb",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Varnis|r on the table",
+      "translation": "{texture_a}Поговорите с {friendly_b} на столе.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d5154f67",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vedoran|r on the table",
+      "translation": "{texture_a}Поговорите с {friendly_b} на столе.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b3bc231",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Wiley the Black|r inside upstairs",
+      "translation": "{texture_a}Поговорите с {friendly_b} внутри наверху.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2fca80ec",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to a |cRXP_FRIENDLY_Stabled Argent Hippogryph|r outside the Argent Pavilion.",
+      "translation": "{texture_a}Поговорите с {friendly_b} возле Серебряного павильона.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6f9c0fb",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Beaten Corpse|r on the ground",
+      "translation": "{texture_a}Поговорите с {friendly_b} на земле.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a454a128",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Disciple of Naralex|r at the entrance of Wailing Caverns. Escort him safely to |cRXP_FRIENDLY_Naralex|r",
+      "translation": "{texture_a}Поговорите с {friendly_b} у входа в Пещеры Стенаний.Сопроводите его безопасно в {friendly_c}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cdee2e42",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Dying Blood Elf|r on the ground",
+      "translation": "{texture_a}Поговорите с {friendly_b} на земле.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ef7ac62e",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Haggard War Veteran|r, |cRXP_FRIENDLY_A'dal|r and |cRXP_FRIENDLY_Khadgar|r",
+      "translation": "{texture_a}Поговорите с {friendly_b}, {friendly_c} и {friendly_d}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6c6c126a",
+      "english": "|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to the |cRXP_FRIENDLY_Purple Shard|r on the ground",
+      "translation": "{texture_a}Поговорите с {friendly_b} на земле.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "04b7e64e",
+      "english": "0_Ogrila Unlock",
+      "translation": "{number_a}_Огрила Разблокировать",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7288a66",
+      "english": "0_Shatari Skyguard Unlock",
+      "translation": "{number_a}_Разблокировка Небесного стража Шатари",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6588840f",
+      "english": "01. The Deadmines",
+      "translation": "{number_a}.Мертвые копи",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b6880cc",
+      "english": "02. Shadowfang Keep",
+      "translation": "{number_a}.Крепость Темного Клыка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84e87b33",
+      "english": "03. Blackfathom Deeps",
+      "translation": "{number_a}.Непроглядная Пучина",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fb68b616",
+      "english": "04. The Stockade",
+      "translation": "{number_a}.Частокол",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fd08378b",
+      "english": "05. Gnomeregan",
+      "translation": "{number_a}.Гномреган",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cefd63dd",
+      "english": "08. Razorfen Downs",
+      "translation": "{number_a}.Разорфен Даунс",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bdbc4811",
+      "english": "1 x |T133004:0|t[Adamantite Frame]",
+      "translation": "{number_b} x {texture_a}[Адамантитовый каркас]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a573768",
+      "english": "1 x |T133018:0|t[Khorium Power Core]",
+      "translation": "{number_b} x {texture_a}[Кориевое силовое ядро]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6cc0e77e",
+      "english": "1_Ogrila Dailies",
+      "translation": "{number_a}_Ежедневные задания Огрилы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a0339bd6",
+      "english": "1_Shatari Skyguard Dailies",
+      "translation": "{number_a}_Ежедневные задания Шатарской Стражи Небес",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0ceec65d",
+      "english": "10. Zul'Farrak",
+      "translation": "{number_a}.Зул'Фаррак",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d242d61e",
+      "english": "103. Shadowfang Keep",
+      "translation": "{number_a}.Крепость Темного Клыка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c387311",
+      "english": "105 Razorfen Kraul",
+      "translation": "{number_a} Разорфен Краул",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "33082caf",
+      "english": "106 Gnomeregan",
+      "translation": "{number_a} Гномреган",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9422cadf",
+      "english": "107 Razorfen Downs",
+      "translation": "{number_a} Бритвенные холмы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b0a231c",
+      "english": "11. Maraudon",
+      "translation": "{number_a}.Мародон",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "be348aa0",
+      "english": "110 Zul'Farrak",
+      "translation": "{number_a} Зул'Фаррак",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9729d67f",
+      "english": "111 Maraudon",
+      "translation": "{number_a} Мародон",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a0b4b0f9",
+      "english": "116 Scholomance",
+      "translation": "{number_a} Некроситет",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea1cabb1",
+      "english": "117 Stratholme",
+      "translation": "{number_a} Стратхольм",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4efde661",
+      "english": "123 Underbog",
+      "translation": "{number_a} Вспомогательная книга",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9c2a0291",
+      "english": "126 Auchenai Crypts",
+      "translation": "{number_a} Аукенайские гробницы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "83237880",
+      "english": "1-450 Mining (A)",
+      "translation": "{number_a}{number_b} Горное дело (А)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0dc89c4e",
+      "english": "17. Stratholme",
+      "translation": "{number_a}.Стратхольм",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "778b587a",
+      "english": "2 x |T133231:0|t[Felsteel Bar]",
+      "translation": "{number_b} x {texture_a}[Слиток стали Скверны]",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b8f693ac",
+      "english": "2. Netherstorm (Scryers)",
+      "translation": "{number_a}.Пустоверть (Провидцы)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61b11fbf",
+      "english": "23. The Underbog",
+      "translation": "{number_a}.Подземье",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "690e185b",
+      "english": "24. The Slave Pens",
+      "translation": "{number_a}.Загоны для рабов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "40b18886",
+      "english": "30-32 Duskwood/STV",
+      "translation": "{number_a}{number_b} Сумеречный лес/СТВ",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a2dcc940",
+      "english": "31 The Steamvault",
+      "translation": "{number_a} Паровое хранилище",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbc18ace",
+      "english": "31. The Steamvault",
+      "translation": "{number_a}.Паровое хранилище",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94b84e71",
+      "english": "49-50 The Hinterlands",
+      "translation": "{number_a}{number_b} Внутренние земли",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27923072",
+      "english": "49-51 The Hinterlands",
+      "translation": "{number_a}{number_b} Внутренние земли",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "158ee5d5",
+      "english": "65-67 Blade's Edge Mts",
+      "translation": "{number_a}{number_b} Лезвие МТС",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1e8d0967",
+      "english": "A_1_AT_Start",
+      "translation": "A_{number_a}_AT_Start",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e14a13",
+      "english": "Adjusts the size of the world map pins",
+      "translation": "Регулирует размер булавок на карте мира.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6ee92de5",
+      "english": "Available Guides",
+      "translation": "Доступные руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4918dfe",
+      "english": "B_2_AT_Exodar",
+      "translation": "B_{number_a}_AT_Exodar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b185578b",
+      "english": "B_2_AT_Orgrimmar",
+      "translation": "B_{number_a}_AT_Orgrimmar",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b2d6fea",
+      "english": "C_2_AT_Sen'jin",
+      "translation": "C_{number_a}_AT_Сен'джин",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d04f9fa3",
+      "english": "C_2_AT_Stormwind",
+      "translation": "C_{number_a}_AT_Stormwind",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e825af33",
+      "english": "Choose active theme",
+      "translation": "Выберите активную тему",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b53e3363",
+      "english": "Chunk o' Mammoth & Borean Leather_37a",
+      "translation": "Кусок мамонта и борейская кожа_{number_a}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b53e3b61",
+      "english": "Chunk o' Mammoth & Borean Leather_53a",
+      "translation": "Кусок мамонта и борейская кожа_{number_a}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "322a3016",
+      "english": "Click to view the link",
+      "translation": "Нажмите, чтобы просмотреть ссылку",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05ea962a",
+      "english": "Compare",
+      "translation": "Сравнивать",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b537f07b",
+      "english": "current step has no configured targets",
+      "translation": "текущий шаг не имеет настроенных целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "662079f6",
+      "english": "Curse & port 6 Fizzcrank Gnomes",
+      "translation": "Проклятие и перенос {number_a} Шиповоротливые гномы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d4d2608",
+      "english": "D_2_AT_Ironforge",
+      "translation": "D_{number_a}_AT_Ironforge",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d05b5366",
+      "english": "D_2_AT_Thunder Bluff",
+      "translation": "D_{number_a}_AT_Громовой Утес",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e81196",
+      "english": "Describe your issue:",
+      "translation": "Опишите вашу проблему:",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1f822a06",
+      "english": "Development",
+      "translation": "Разработка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec649906",
+      "english": "Do not edit below this line",
+      "translation": "Не редактируйте ниже этой строки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f110f46",
+      "english": "Dungeons",
+      "translation": "Подземелья",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "80a4a5e1",
+      "english": "E_2_AT_Gnomeregan",
+      "translation": "E_{number_a}_AT_Gnomeregan",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "db63a775",
+      "english": "E_2_AT_Undercity",
+      "translation": "E_{number_a}_AT_Undercity",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "418c0833",
+      "english": "Emergency Actions",
+      "translation": "Экстренные действия",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7c75b287",
+      "english": "Enable embedded Cpt. Stadics' Vendor Treasures",
+      "translation": "Включить встроенный Cpt.Сокровища торговцев Стадикса",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90e45bc7",
+      "english": "Enable Talent Previews",
+      "translation": "Включить предварительный просмотр талантов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac956066",
+      "english": "Enable Talents Guides",
+      "translation": "Включить руководства по талантам",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88da1440",
+      "english": "Enable Warning",
+      "translation": "Включить предупреждение",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "75808d33",
+      "english": "F_2_AT_Darnassus",
+      "translation": "F_{number_a}_AT_Darnassus",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ed9a4b6d",
+      "english": "F_2_AT_Silvermoon",
+      "translation": "F_{number_a}_AT_Silvermoon",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c52dfa0",
+      "english": "Firewing Signet_15a",
+      "translation": "Перстень Огнекрыла_{number_a}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9b9854c",
+      "english": "G_2.1_AT_The_Black Knight's_Quest_Story",
+      "translation": "G_{number_a}_AT_История_Квеста_Черного рыцаря",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d72e1578",
+      "english": "Go to step",
+      "translation": "Перейти к шагу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "030e52cb",
+      "english": "Guide has no name",
+      "translation": "У гида нет имени",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8e6388a2",
+      "english": "Guides to import",
+      "translation": "Руководства по импорту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c1ddfd27",
+      "english": "H_3_AT_Champion_Daily_Quests",
+      "translation": "H_{number_a}_AT_Champion_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8b356e2f",
+      "english": "Hearth to Lakeshire",
+      "translation": "Очаг в Лейкшир",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2745fac1",
+      "english": "hour",
+      "translation": "час",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10055354",
+      "english": "hours",
+      "translation": "часы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "985b52b1",
+      "english": "I_3.1_AT_Crusader_Daily_Quests",
+      "translation": "I_{number_a}_AT_Crusader_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "88977644",
+      "english": "Incomplete or invalid encoded string",
+      "translation": "Неполная или неверная закодированная строка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b46095c",
+      "english": "In-progress",
+      "translation": "В ходе выполнения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "147f42ac",
+      "english": "J_3.2_AT_Silver_Covenant_Daily_Quests",
+      "translation": "J_{number_a}_AT_Silver_Covenant_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "de43b509",
+      "english": "J_3.2AT_Sunreavers_Daily_Quests",
+      "translation": "J_{number_a}AT_Sunreavers_Daily_Quests",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0e052bfb",
+      "english": "Level",
+      "translation": "Уровень",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "42343710",
+      "english": "Map Pin Scale",
+      "translation": "Масштаб карты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2037f7c9",
+      "english": "Max",
+      "translation": "Макс",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8509e46d",
+      "english": "Rare Found! %s is nearby.",
+      "translation": "Редкая находка!{format_a} рядом.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0991e3a7",
+      "english": "Reached Level",
+      "translation": "Достигнутый уровень",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "00be6c9a",
+      "english": "Reached maximum level for guide",
+      "translation": "Достигнут максимальный уровень руководства.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08e6a38c",
+      "english": "Reload guides and UI",
+      "translation": "Перезагрузите руководства и пользовательский интерфейс.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "51e1edd7",
+      "english": "Send or receive inspection requests for other Leveling Reports",
+      "translation": "Отправлять или получать запросы на проверку других отчетов о выравнивании",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e0a64ae8",
+      "english": "Step %d",
+      "translation": "Шаг {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb71ed9b",
+      "english": "Step List Background",
+      "translation": "Фон списка шагов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "30a4d71b",
+      "english": "Talbuk Venison_10a",
+      "translation": "Талбукская оленина_{number_a}a",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9da5e90",
+      "english": "Threshold",
+      "translation": "Порог",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7b66d92",
+      "english": "(Skip this step if you are level %d or above)",
+      "translation": "(Пропустите этот шаг, если ваш уровень {format_a} или выше)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9503b55c",
+      "english": "|c%sDeleting %sx%s|r",
+      "translation": "|c{format_b}Удаление {format_c}x{format_d}{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2475a7e5",
+      "english": "|c%sInventory is full, deleting %sx%s|r",
+      "translation": "|c{format_b}Инвентарь заполнен, удаляем {format_c}x{format_d}{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d3f94d9f",
+      "english": "|c%sInventory is full, sorting arrows/bullets|r",
+      "translation": "|c{format_b}Инвентарь полон, сортировка стрел/пуль{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e94f93f8",
+      "english": "|c%sSet %s as junk|r",
+      "translation": "|c{format_b} Установить {format_c} как ненужный{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f3075634",
+      "english": "|c%sSet %s as useful|r",
+      "translation": "|c{format_b}Установить {format_c} как полезное{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "af325713",
+      "english": "|c%sSold junk items for|r %s",
+      "translation": "|c{format_b}Продано ненужных вещей за{colorend_a} {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a1ce216",
+      "english": "|c%sSorting arrows/bullets|r",
+      "translation": "|c{format_b}Сортировка стрел/пуль{colorend_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "57bf948a",
+      "english": "|cRXP_WARN_Enter the Havenshire Mine|r",
+      "translation": "{rxpcolor_a}Войдите в шахту Хэвеншир{colorend_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7be5c6cc",
+      "english": "Abandon the following quests?",
+      "translation": "Отказаться от следующих квестов?",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "10f2fdc1",
+      "english": "Activate Hardcore mode",
+      "translation": "Активировать хардкорный режим",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "34f9659a",
+      "english": "Activate the Gold Assistant mode",
+      "translation": "Активируйте режим Золотого помощника",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "58c0203a",
+      "english": "Activate the Quest Guide mode",
+      "translation": "Активируйте режим «Руководство по квестам».",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "96ee5056",
+      "english": "Active Item Scale",
+      "translation": "Масштаб активного предмета",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b7bc69a1",
+      "english": "Active Items",
+      "translation": "Активные предметы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbd3b659",
+      "english": "Active Targets",
+      "translation": "Активные цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "08fe4f81",
+      "english": "Active Targets Scale",
+      "translation": "Шкала активных целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "851d3420",
+      "english": "Add main options menu to minimap",
+      "translation": "Добавить главное меню опций на миникарту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ca91a22e",
+      "english": "Add options menu to map",
+      "translation": "Добавить меню опций на карту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1aedb32a",
+      "english": "Advanced Settings",
+      "translation": "Расширенные настройки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d555bd2f",
+      "english": "Allows you to toggle items as junk by clicking on it with CTRL+RightClick or ALT+RightClick",
+      "translation": "Позволяет переключать элементы как ненужные, щелкнув по ним с помощью CTRL+щелчка правой кнопкой мыши или ALT+щелчка правой кнопкой мыши.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32feafb3",
+      "english": "Announce Flying Step timers",
+      "translation": "Объявите таймеры Flying Step",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1db0a552",
+      "english": "Announce in guild chat when you level up",
+      "translation": "Сообщите в чате гильдии о повышении уровня.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "31d8734d",
+      "english": "Announce in party chat when you level up",
+      "translation": "Сообщите в групповом чате о повышении уровня.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b748c35",
+      "english": "Announce Level Ups (Emote)",
+      "translation": "Объявить о повышении уровня (эмоция)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a2e08e50",
+      "english": "Announce Level Ups (Guild Chat)",
+      "translation": "Объявить о повышении уровня (чат гильдии)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4532eb",
+      "english": "Announce Level Ups (Party Chat)",
+      "translation": "Объявить о повышении уровня (групповой чат)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e647da6a",
+      "english": "Announce when all Step items are collected",
+      "translation": "Сообщите, когда все элементы этапа будут собраны.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52939e13",
+      "english": "Announce when Quest Step is completed",
+      "translation": "Объявите о завершении этапа квеста",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "01f58481",
+      "english": "Announcements",
+      "translation": "Объявления",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "90d31626",
+      "english": "Any items marked as junk will display a gold coin icon on the top left corner of the item icon within your bags",
+      "translation": "Любые предметы, помеченные как мусор, будут отмечены значком золотой монеты в верхнем левом углу значка предмета в ваших сумках.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c0fcb496",
+      "english": "Arrow Scale",
+      "translation": "Стрелка Масштаб",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8449c2e",
+      "english": "Arrow Text Size",
+      "translation": "Размер текста стрелки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b646bb3b",
+      "english": "Attempting to deposit",
+      "translation": "Попытка внести депозит",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "44b7c3ed",
+      "english": "Attempting to withdraw",
+      "translation": "Попытка вывести",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd634264",
+      "english": "Auto Sell Junk",
+      "translation": "Авто продать барахло",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e5a8b500",
+      "english": "Autohide in Raids",
+      "translation": "Автоскрытие в рейдах",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "401e9548",
+      "english": "Automatic quest sharing",
+      "translation": "Автоматический обмен квестами",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1e3373b",
+      "english": "Automatically attempts to discard the cheapest junk item from your bags if your inventory is full",
+      "translation": "Автоматически пытается выбросить самый дешевый ненужный предмет из ваших сумок, если ваш инвентарь полон.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb718f08",
+      "english": "Automatically create a targeting macro",
+      "translation": "Автоматически создавать макрос таргетинга",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d49218bc",
+      "english": "Automatically scan nearby targets",
+      "translation": "Автоматически сканировать ближайшие цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "94f70650",
+      "english": "Automatically sell all gray items and all other items that you set as junk",
+      "translation": "Автоматически продавать все серые предметы и все остальные предметы, которые вы считаете ненужными.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7e7e4524",
+      "english": "Automation",
+      "translation": "Автоматизация",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76944b27",
+      "english": "Batching window size (ms)",
+      "translation": "Размер окна пакетной обработки (мс)",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2037cb93",
+      "english": "Buy",
+      "translation": "Купить",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbf228f7",
+      "english": "Change font size of the Guide Window",
+      "translation": "Изменить размер шрифта окна руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6e4d29f",
+      "english": "Check for Addon Incompatibility",
+      "translation": "Проверьте несовместимость аддонов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f4cee6be",
+      "english": "Checks for heirlooms and experience buffs",
+      "translation": "Проверяет наличие семейных реликвий и баффов к опыту.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "968a1e42",
+      "english": "Checks for nearby rare spawns",
+      "translation": "Проверяет наличие поблизости редких мест появления.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "97237957",
+      "english": "Choose Theme",
+      "translation": "Выбрать тему",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "360402b5",
+      "english": "Cleanup obsolete or leftover quests",
+      "translation": "Очистка устаревших или оставшихся квестов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6b01b081",
+      "english": "Cleanup Orphaned Quests",
+      "translation": "Очистка потерянных квестов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ec49815f",
+      "english": "Click to set a keybind",
+      "translation": "Нажмите, чтобы установить привязку клавиш",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fc303097",
+      "english": "Collect the following items:",
+      "translation": "Соберите следующие предметы:",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78d21c3c",
+      "english": "Collected step %d - %s",
+      "translation": "Собранный шаг {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9f7e01ec",
+      "english": "Communications",
+      "translation": "Коммуникации",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "acb2ae81",
+      "english": "Compare Next Level",
+      "translation": "Сравнить следующий уровень",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0b1968a",
+      "english": "Completed step %d - %s",
+      "translation": "Завершенный шаг {format_a} - {format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "19f6870f",
+      "english": "Content phase",
+      "translation": "Этап содержания",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "62a5ec6e",
+      "english": "Create Targeting Macro",
+      "translation": "Создать макрос таргетинга",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b0cc608",
+      "english": "Current step frame anchor",
+      "translation": "Привязка кадра текущего шага",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d42957d9",
+      "english": "Currently loaded imported guides",
+      "translation": "Загруженные импортированные руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f1a0f",
+      "english": "Dangerous Mobs Tracking",
+      "translation": "Отслеживание опасных мобов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "203859a1",
+      "english": "day",
+      "translation": "день",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "27438e34",
+      "english": "days",
+      "translation": "дни",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a4faac8a",
+      "english": "Deactivate Hardcore mode",
+      "translation": "Деактивировать хардкорный режим",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1ad1f7ca",
+      "english": "Delete Cheapest Junk Item",
+      "translation": "Удалить самый дешевый ненужный товар",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "60f2b150",
+      "english": "Delete Cheapest Junk Item Keybind",
+      "translation": "Удалить комбинацию клавиш для самого дешевого ненужного предмета",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f1da3b88",
+      "english": "Delete imported guide",
+      "translation": "Удалить импортированное руководство",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "87b06988",
+      "english": "Detect Rate",
+      "translation": "Скорость обнаружения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "91453a89",
+      "english": "Disable Colors",
+      "translation": "Отключить цвета",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f92d6adf",
+      "english": "Discard junk items if bag is full",
+      "translation": "Выбросьте ненужные вещи, если сумка полна.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70549c64",
+      "english": "Displays the best calculated item upgrade",
+      "translation": "Отображает лучшее расчетное улучшение предмета.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a28e816",
+      "english": "Displays the best sellable quest reward",
+      "translation": "Отображает самую продаваемую награду за квест.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c48d6972",
+      "english": "Distance Between Pins",
+      "translation": "Расстояние между контактами",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2cf81379",
+      "english": "Do the Blasted Lands collection quests",
+      "translation": "Выполняйте квесты по сбору выжженных земель.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1591ed00",
+      "english": "Enable Active Targets",
+      "translation": "Включить активные цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "09bcb407",
+      "english": "Enable Addon Version Checks",
+      "translation": "Включить проверку версии аддона",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0199855d",
+      "english": "Enable Animations",
+      "translation": "Включить анимацию",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d9a245",
+      "english": "Enable Beta Features",
+      "translation": "Включить бета-функции",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7f60bbb1",
+      "english": "Enable Debug",
+      "translation": "Включить отладку",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7a606841",
+      "english": "Enable Level Splits",
+      "translation": "Включить разделение уровней",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eb4f8aec",
+      "english": "Enable Leveling Tracker",
+      "translation": "Включить трекер прокачки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8675b851",
+      "english": "Enable Minimap Button",
+      "translation": "Включить кнопку мини-карты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c50400fd",
+      "english": "Enable Talent Plan",
+      "translation": "Включить план талантов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "593a52ea",
+      "english": "Enable Tips",
+      "translation": "Включить подсказки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b0c35015",
+      "english": "Enable Tips Frame",
+      "translation": "Включить рамку советов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "606a2889",
+      "english": "Enable Warning Sound",
+      "translation": "Включить звуковое предупреждение",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "04e2d04c",
+      "english": "Enable World Map Button",
+      "translation": "Включить кнопку карты мира",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a4b1e40",
+      "english": "Enables new features, forces reload to take effect",
+      "translation": "Включает новые функции, требует перезагрузки, чтобы они вступили в силу",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f301684a",
+      "english": "Experience rates",
+      "translation": "Ставки опыта",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8770830f",
+      "english": "Experience Sources",
+      "translation": "Источники опыта",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bfad7e1a",
+      "english": "Extras",
+      "translation": "Дополнительно",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8be393fa",
+      "english": "Failed to Import Guides: Invalid Import String",
+      "translation": "Не удалось импортировать направляющие: неверная строка импорта.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "78eab215",
+      "english": "Failed to ReadCacheData",
+      "translation": "Не удалось прочитатьCacheData",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6180b559",
+      "english": "Flash Client Icon",
+      "translation": "Значок Flash-клиента",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bbe4a06f",
+      "english": "Flight Path automation",
+      "translation": "Автоматизация траектории полета",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c12ae431",
+      "english": "Fly to",
+      "translation": "Лететь в",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da0cd2d9",
+      "english": "Flying to %s ETA %s",
+      "translation": "Летим в {format_a} расчетное время прибытия {format_b}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273354fa",
+      "english": "Font",
+      "translation": "Шрифт",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "da021ba7",
+      "english": "Font Path",
+      "translation": "Путь к шрифту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ccb82047",
+      "english": "Get the %s flight path",
+      "translation": "Получите траекторию полета {format_a}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4d0601ae",
+      "english": "Gold Farming Guides",
+      "translation": "Руководства по фарму золота",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9db3691",
+      "english": "Grind until you are %.0f%% into %s with %s",
+      "translation": "Измельчайте до тех пор, пока {format_a}%% не превратится в {format_b} с помощью {format_c}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2e65e375",
+      "english": "Grind until you are %.0f%% into level %s",
+      "translation": "Гриндите, пока не достигнете {format_a}%% уровня {format_b}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f7328ff3",
+      "english": "Grind until you are %d away from %s with %s",
+      "translation": "Шлифуйте, пока не отойдете на {format_a} от {format_b} с помощью {format_c}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d1020bbf",
+      "english": "Grind until you are %d xp away from level %s",
+      "translation": "Гриндите, пока не отойдете на {format_a} опыта от уровня {format_b}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c7bcba56",
+      "english": "Grind until you are %s into %s with %s",
+      "translation": "Растирайте, пока не превратите {format_a} в {format_b} с помощью {format_c}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1b2b9202",
+      "english": "Grind until you are %s xp into level %s",
+      "translation": "Гриндите, пока не достигнете {format_a} опыта до уровня {format_b}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "025e8783",
+      "english": "Guide Font Size",
+      "translation": "Размер шрифта руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bd6e51ac",
+      "english": "Guide Import",
+      "translation": "Руководство по импорту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "250c0cf9",
+      "english": "Guide Routing",
+      "translation": "Руководство по маршрутизации",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ddcce089",
+      "english": "Guide Window",
+      "translation": "Окно руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e7e45c72",
+      "english": "Guides Loaded Successfully",
+      "translation": "Руководства успешно загружены",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d2f01a30",
+      "english": "Hardcore mode",
+      "translation": "Хардкорный режим",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a02d588",
+      "english": "Hearthstone batching",
+      "translation": "Пакетная обработка Hearthstone",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb575c60",
+      "english": "Hide Active Item window",
+      "translation": "Скрыть окно активного элемента",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "50c96afd",
+      "english": "Hide Background",
+      "translation": "Скрыть фон",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70289269",
+      "english": "Hide completed steps",
+      "translation": "Скрыть выполненные шаги",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab7e05e2",
+      "english": "Hide Mini Map Pins",
+      "translation": "Скрыть отметки на мини-карте",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "841a22bc",
+      "english": "Hide Splits Background",
+      "translation": "Скрыть фон разделения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aeb779b7",
+      "english": "Hide Targets Background",
+      "translation": "Скрыть фон целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14c01e9d",
+      "english": "Hide tips",
+      "translation": "Скрыть советы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4a266b23",
+      "english": "Hide waypoint arrow",
+      "translation": "Скрыть стрелку путевой точки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "019b55d5",
+      "english": "Hide Window",
+      "translation": "Скрыть окно",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9f869ee",
+      "english": "Hides the main window",
+      "translation": "Скрывает главное окно",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ac9fb56f",
+      "english": "Highlight active map pins",
+      "translation": "Выделение активных меток на карте",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc3d3503",
+      "english": "Highlight or list levels for each talent",
+      "translation": "Выделите или перечислите уровни для каждого таланта",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2475ae84",
+      "english": "Historical levels to show",
+      "translation": "Исторические уровни для отображения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29be66b",
+      "english": "I just leveled from %d to %d in %s",
+      "translation": "Я только что повысил уровень с {format_a} до {format_b} за {format_c}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fedea7e4",
+      "english": "I just leveled up to %d",
+      "translation": "Я только что повысил уровень до {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "71ba64c5",
+      "english": "Ignore Questie announcements",
+      "translation": "Игнорировать объявления Questie",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f37881cc",
+      "english": "Import guide",
+      "translation": "Руководство по импорту",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5a7ce282",
+      "english": "Innkeeper Bind automation",
+      "translation": "Автоматизация Innkeeper Bind",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2d7544fb",
+      "english": "Join Discord",
+      "translation": "Присоединяйтесь к Discord",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1682d518",
+      "english": "Left click to apply talents",
+      "translation": "Щелкните левой кнопкой мыши, чтобы применить таланты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f430b313",
+      "english": "Level %d time",
+      "translation": "Уровень {format_a} время",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f43dbe0c",
+      "english": "Level Splits Font Size",
+      "translation": "Размер шрифта разделения уровней",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f780a30c",
+      "english": "Level Splits History",
+      "translation": "История разделения уровней",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "215d43f3",
+      "english": "Level Splits Opacity",
+      "translation": "Уровень разделяет непрозрачность",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e17e09b5",
+      "english": "Leveling report",
+      "translation": "Отчет о выравнивании",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "29290e85",
+      "english": "Leveling Tracker",
+      "translation": "Трекер прокачки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c2a8d59d",
+      "english": "Loaded next guide, %s",
+      "translation": "Загружено следующее руководство, {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "4e00b322",
+      "english": "Loading Guides",
+      "translation": "Загрузка руководств",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1d504bca",
+      "english": "Lock Frames",
+      "translation": "Блокировка рамок",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ab705347",
+      "english": "Look and Feel",
+      "translation": "Смотри и чувствуй",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "59d0e6c6",
+      "english": "Loremaster Mode",
+      "translation": "Режим Хранителя мудрости",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a508816f",
+      "english": "Macro capacity reached",
+      "translation": "Достигнута емкость макросов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81fa18e7",
+      "english": "Make a public emote when you level up",
+      "translation": "Публикуйте эмоцию при повышении уровня.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c5b60c81",
+      "english": "Map Pin Background Opacity",
+      "translation": "Непрозрачность фона карты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "435c82e7",
+      "english": "Map Pin color",
+      "translation": "Цвет булавки карты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96eb41b",
+      "english": "Map Pins",
+      "translation": "Значки на карте",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b11b4ddd",
+      "english": "Mark Enemy Mobs",
+      "translation": "Отметить вражеских мобов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abb93f4a",
+      "english": "Mark enemy mobs with skull, cross, and square",
+      "translation": "Отмечайте вражеских мобов черепом, крестом и квадратом.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "05397dc6",
+      "english": "Mark Enemy Targets",
+      "translation": "Отмечайте вражеские цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a8995f45",
+      "english": "Mark Friendly Targets",
+      "translation": "Отметьте дружественные цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "826bf4dc",
+      "english": "Mark special enemy targets with moon",
+      "translation": "Отметьте особые цели противника луной",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d6fb555",
+      "english": "Northrend Loremaster",
+      "translation": "Хранитель мудрости Нордскола",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "840f1c6a",
+      "english": "Notify on new target",
+      "translation": "Уведомить о новой цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55d71256",
+      "english": "Notify on Rares",
+      "translation": "Уведомить о редких",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "1467843b",
+      "english": "Notify when a new rare is found",
+      "translation": "Уведомлять, когда будет найден новый редкий предмет",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0c87aa05",
+      "english": "Notify when a new target is loaded",
+      "translation": "Уведомлять при загрузке новой цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9b24bf99",
+      "english": "Number of Map Pins",
+      "translation": "Количество отметок на карте",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "63b82d6c",
+      "english": "Number of map pins shown on the world map",
+      "translation": "Количество меток, отображаемых на карте мира",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7fdfc2fc",
+      "english": "Only show when in range",
+      "translation": "Показывать только в радиусе действия",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b42f6a7c",
+      "english": "Paste encoded strings",
+      "translation": "Вставка закодированных строк",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dfe7ed0f",
+      "english": "Pick Up",
+      "translation": "Подобрать",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "67034562",
+      "english": "Play Sound",
+      "translation": "Воспроизвести звук",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "9fa01cfc",
+      "english": "Please restart your game client and try again",
+      "translation": "Пожалуйста, перезапустите игровой клиент и повторите попытку.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cc2ee3be",
+      "english": "Preview Changes",
+      "translation": "Предварительный просмотр изменений",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "923620b1",
+      "english": "Preview theme changes",
+      "translation": "Предварительный просмотр изменений темы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "72234a79",
+      "english": "Purge All Data",
+      "translation": "Очистить все данные",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "949a380d",
+      "english": "Quest auto accept/turn in",
+      "translation": "Автоматическое принятие/сдача квеста",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "225303c6",
+      "english": "Quest auto rewards",
+      "translation": "Автоматические награды за квесты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ae63d0bd",
+      "english": "Quest Cleanup",
+      "translation": "Квест Уборка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cd4035c0",
+      "english": "Quest is being picked up at",
+      "translation": "Квест забирают в",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6a9fbf74",
+      "english": "Quest is being turned in at",
+      "translation": "Квест сдается в",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6cc26fb",
+      "english": "Quest Reward Automation",
+      "translation": "Автоматизация наград за квесты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dbe1a32f",
+      "english": "Quest Reward Recommendation",
+      "translation": "Рекомендация о награде за квест",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c40c46ae",
+      "english": "Quest Sellable Recommendation",
+      "translation": "Квест Продаваемая рекомендация",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "eeb0dc88",
+      "english": "Reload Guide",
+      "translation": "Руководство по перезагрузке",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dca4dbf1",
+      "english": "Remove",
+      "translation": "Удалять",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "76c9ba66",
+      "english": "Reset Arrow Position",
+      "translation": "Сбросить положение стрелки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d6a676ab",
+      "english": "RestedXP Feedback Form",
+      "translation": "Форма обратной связи RestedXP",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "aa585cee",
+      "english": "Retrieving quest data",
+      "translation": "Получение данных квеста",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd9c795d",
+      "english": "RGB hex color code",
+      "translation": "Шестнадцатеричный цветовой код RGB",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "52cd7676",
+      "english": "Right Click Modifier",
+      "translation": "Модификатор правого клика",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e106ebb9",
+      "english": "Run Guide Configurator",
+      "translation": "Запустить конфигуратор руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0a36d637",
+      "english": "Scale of the Active Item frame",
+      "translation": "Масштаб рамки активного элемента",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5671aca2",
+      "english": "Scale of the Active Targets frame",
+      "translation": "Масштаб рамки активных целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d0b33827",
+      "english": "Scale of the Waypoint Arrow",
+      "translation": "Масштаб стрелки маршрутной точки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d9c0d3e0",
+      "english": "Scan Enemy Targets",
+      "translation": "Сканирование вражеских целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ad48a108",
+      "english": "Scan for dangerous mobs",
+      "translation": "Сканируйте опасных мобов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e8678d27",
+      "english": "Scan for enemy targets",
+      "translation": "Сканирование вражеских целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0b6bb306",
+      "english": "Scan for friendly targets",
+      "translation": "Сканирование дружественных целей",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fabe0a8d",
+      "english": "Scan for Nearby Rares",
+      "translation": "Сканируйте близлежащие редкие места",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "32f7371f",
+      "english": "Scan Friendly Targets",
+      "translation": "Сканировать дружественные цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "def3802c",
+      "english": "Season",
+      "translation": "Сезон",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "154f63c2",
+      "english": "Select another guide",
+      "translation": "Выбрать другое руководство",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "feb357fe",
+      "english": "Sell junk/resupply",
+      "translation": "Продать мусор/пополнить запасы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "45383bc7",
+      "english": "Sends sound on enemy target found",
+      "translation": "Посылает звук при обнаружении вражеской цели",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "5698845c",
+      "english": "Set current profile as default",
+      "translation": "Установить текущий профиль по умолчанию",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "f049a593",
+      "english": "Set primary background",
+      "translation": "Установить основной фон",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d1a57a",
+      "english": "Sets maximum number of talents to layout",
+      "translation": "Устанавливает максимальное количество талантов в макете.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bb3d7106",
+      "english": "Show all Enabled Frames",
+      "translation": "Показать все включенные фреймы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65af9e7b",
+      "english": "Show Chromie Time Guides",
+      "translation": "Показать справочники времени Хроми",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "12a847d6",
+      "english": "Show Flight Timers",
+      "translation": "Показать таймеры полета",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "07fb29d6",
+      "english": "Show Group Quests",
+      "translation": "Показать групповые квесты",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c96d3fe8",
+      "english": "Show junk item indicator",
+      "translation": "Показать индикатор нежелательного элемента",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8c31b05c",
+      "english": "Show step list",
+      "translation": "Показать список шагов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "65204f43",
+      "english": "Show Total Time Split",
+      "translation": "Показать общий интервал времени",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "836f5f59",
+      "english": "Show unused guides",
+      "translation": "Показать неиспользуемые руководства",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fce3fa1f",
+      "english": "Size of the waypoint arrow text",
+      "translation": "Размер текста стрелки маршрутной точки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "0d0ba26f",
+      "english": "Skip Gossip",
+      "translation": "Пропустить сплетни",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ecedb8a6",
+      "english": "Skip overleveled steps",
+      "translation": "Пропустить слишком многоуровневые шаги",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "abe0ea17",
+      "english": "Skip quests with missing pre-requisites",
+      "translation": "Пропускать квесты при отсутствии предварительных условий.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "986e2888",
+      "english": "Skip steps you're overleveled for",
+      "translation": "Пропустить шаги, для которых у вас превышен уровень",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "3eb5a755",
+      "english": "Skip to step %d if you are level %d or above",
+      "translation": "Перейдите к шагу {format_a}, если ваш уровень {format_b} или выше.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "cda3c4eb",
+      "english": "Solo Self Found Mode",
+      "translation": "Режим одиночного самонахождения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "17a73c25",
+      "english": "Sound Channel",
+      "translation": "Звуковой канал",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8a8932b7",
+      "english": "Step Highlight",
+      "translation": "Шаг выделения",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8ecaf31b",
+      "english": "Step mouseover highlight color",
+      "translation": "Цвет выделения шага при наведении курсора мыши",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "6d98cfff",
+      "english": "Talent Plan Number",
+      "translation": "Номер плана талантов",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "81d227da",
+      "english": "Targeting Macro",
+      "translation": "Таргетинг макроса",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "bad4496f",
+      "english": "Targeting macro updated with:%s",
+      "translation": "Макрос таргетинга обновлен: {format_a}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "55adf36d",
+      "english": "Teamwork",
+      "translation": "Работа в команде",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "c26fe068",
+      "english": "Temporarily hide, use '/rxp splits' to show again",
+      "translation": "Временно скрыть, для повторного отображения используйте «/rxp разделения».",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ffabb527",
+      "english": "Text Color",
+      "translation": "Цвет текста",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "617d8d36",
+      "english": "There's a new addon version (%s) available",
+      "translation": "Доступна новая версия аддона ({format_a}).",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a9d083af",
+      "english": "There's a new version (%s) available for %s",
+      "translation": "Доступна новая версия ({format_a}) для {format_b}.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "dd687188",
+      "english": "This requires a reload to take effect, continue?",
+      "translation": "Чтобы это вступило в силу, требуется перезагрузка, продолжить?",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7b8ea719",
+      "english": "Throw away %s%s from your bags",
+      "translation": "Выбросьте {format_a}{format_b} из своих сумок.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "2b84cadc",
+      "english": "Time spent",
+      "translation": "Проведенное время",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "14828ed5",
+      "english": "Time to",
+      "translation": "Время",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "273ae903",
+      "english": "Tips",
+      "translation": "Советы",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "61e4f59e",
+      "english": "Toggle junk with modified right click",
+      "translation": "Переключить мусор с помощью измененного щелчка правой кнопкой мыши",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "d5d9cc0e",
+      "english": "Toggles all addon frames on or off",
+      "translation": "Включает или выключает все дополнительные рамки.",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "22aaee2e",
+      "english": "Tooltip",
+      "translation": "Подсказка",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "944eb65b",
+      "english": "Total guides loaded: %d/%s",
+      "translation": "Всего загружено направляющих: {format_a}/{format_b}",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "70391ac4",
+      "english": "Track Mobs on Map",
+      "translation": "Отслеживать мобов на карте",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "7feeacf3",
+      "english": "Train skills",
+      "translation": "Тренировать навыки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "b9d89259",
+      "english": "Trainer automation",
+      "translation": "Автоматизация тренера",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e512de66",
+      "english": "Unable to retrieve report for",
+      "translation": "Не удалось получить отчет для",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "fdd63ab8",
+      "english": "Unused Guides",
+      "translation": "Неиспользованные направляющие",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "e9289fb9",
+      "english": "Warning",
+      "translation": "Предупреждение",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "84d2dce9",
+      "english": "Waypoint Arrow",
+      "translation": "Стрелка маршрутной точки",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "8446e462",
+      "english": "When comparing, show next level's time",
+      "translation": "При сравнении показывать время следующего уровня",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "ea3a91a0",
+      "english": "When comparing, show total time difference",
+      "translation": "При сравнении показывать общую разницу во времени",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "a29c1883",
+      "english": "Window Scale",
+      "translation": "Масштаб окна",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    },
+    {
+      "id": "553232db",
+      "english": "Zones & Dungeons",
+      "translation": "Зоны и подземелья",
+      "status": "machine",
+      "domain": "both",
+      "tokenized": true,
+      "attribution": "googletrans"
+    }
+  ]
+}

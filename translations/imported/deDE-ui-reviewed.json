@@ -1,0 +1,3987 @@
+{
+    "schema":  1,
+    "locale":  "deDE",
+    "sourceRevision":  "706a420a",
+    "revision":  "deDE-ui-reviewed-1",
+    "source":  "Existing RXPGuides deDE AceLocale catalog",
+    "units":  [
+                  {
+                      "id":  "22a1b50d",
+                      "english":  "%d guides",
+                      "translation":  "%d Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f7b66d92",
+                      "english":  "(Skip this step if you are level %d or above)",
+                      "translation":  "(Ueberspring diesen Schritt wenn du level %d oder hoeher bist)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9aaa7400",
+                      "english":  "A macro has been automatically built to aid in leveling. Please move %s to your action bars.",
+                      "translation":  "Eein Makro, welches dir beim level hilft, wurde automatisch erstellt, bitte bewege %s auf deine Aktionsleiste",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7be5c6cc",
+                      "english":  "Abandon the following quests?",
+                      "translation":  "Folgende Quests abbrechen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5be29d2c",
+                      "english":  "Accessible color and symbol preset",
+                      "translation":  "Barrierefreie Farb- und Symbolvorlage",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "10f2fdc1",
+                      "english":  "Activate Hardcore mode",
+                      "translation":  "Hardcore mode aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "34f9659a",
+                      "english":  "Activate the Gold Assistant mode",
+                      "translation":  "Gold Assistant Modus aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "58c0203a",
+                      "english":  "Activate the Quest Guide mode",
+                      "translation":  "Quest Guide aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b4dcb55f",
+                      "english":  "Active",
+                      "translation":  "Aktiv",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "96ee5056",
+                      "english":  "Active Item Scale",
+                      "translation":  "Skalierung des Aktive Items Fenster",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bbd3b659",
+                      "english":  "Active Targets",
+                      "translation":  "Aktive Ziele",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "08fe4f81",
+                      "english":  "Active Targets Scale",
+                      "translation":  "Skalierung Aktive-Ziele-Fenster",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "187f8827",
+                      "english":  "Adaptive FPS threshold",
+                      "translation":  "Adaptiver FPS-Grenzwert",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "32b79ab2",
+                      "english":  "Adaptive performance throttling",
+                      "translation":  "Adaptive Leistungsdrosselung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "851d3420",
+                      "english":  "Add main options menu to minimap",
+                      "translation":  "Optionsmenue der Minimap hinzufuegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "814889c2",
+                      "english":  "Add Note",
+                      "translation":  "Notiz hinzufuegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "02929c33",
+                      "english":  "Add Target",
+                      "translation":  "Ziel hinzufuegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f6cf16cc",
+                      "english":  "Adjust the leveling routes to the deathless ruleset",
+                      "translation":  "Passt die Levelrouten dem Regelsatz ohne Tod an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a3ff7600",
+                      "english":  "Adjust the routes to include almost every quest in the Northrend zones",
+                      "translation":  "Routen anpassen um fast jede Quest in Nordend zu inkludieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9dd95a03",
+                      "english":  "Adjusts the guide routes to match increased xp rate bonuses",
+                      "translation":  "Passt den Guide anhand deiner EXP-Raten an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b637322c",
+                      "english":  "Adjusts the guide routes to match the content phase\nPhase 2: Dire Maul quests\nPhase 3: 100% quest XP (SoM)\nPhase 4: ZG/Silithus quests\nPhase 5: AQ quests\nPhase 6: Eastern Plaguelands quests",
+                      "translation":  "Passt die Routes anhand der Phase an\nPhase 2: Duesterbruch Quests\nPhase 3: 100% Quest bonus(SoM)\nPhase 4: ZG/Silithus Quests\nPhase 5: AQ Quests\nPhase 6: Oestliche Pestlaender Quests",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "61e14a13",
+                      "english":  "Adjusts the size of the world map pins",
+                      "translation":  "Passt die Groesse der Kartenpins an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "43417a3a",
+                      "english":  "Advance Once",
+                      "translation":  "Einmal fortfahren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1aedb32a",
+                      "english":  "Advanced Settings",
+                      "translation":  "Erweiterte Einstellungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d20e0771",
+                      "english":  "Advertises and compares addon versions with all RXP users in party",
+                      "translation":  "Vergleicht Addon versionen mit allen RXP Nutzern in deiner Gruppe",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2037c61c",
+                      "english":  "All",
+                      "translation":  "Alle",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "363bbd1d",
+                      "english":  "All guides",
+                      "translation":  "Alle Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c935ef7d",
+                      "english":  "Allows guides to choose quest rewards automatically",
+                      "translation":  "Erlaubt Guides, automatisch eine Questbelohnung auszuwaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1cb7d05c",
+                      "english":  "Allows the guide to automatically fly you to your destination",
+                      "translation":  "Erlaubt Guides, automatisch Fluege zu starten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "59a214a9",
+                      "english":  "Allows the guide to automatically set your home at an Innkeeper",
+                      "translation":  "Erlaubt Guides, automatisch deinen Ruhestein zu setzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "86ffbd87",
+                      "english":  "Allows the guide to automatically skip gossip for NPCs",
+                      "translation":  "Erlaubt Guides, automatisch Konversationen mit NPCs zu ueberspringen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "77459e2d",
+                      "english":  "Allows the guide to buy useful leveling spells automatically",
+                      "translation":  "Erlaubt Guides, automatisch neue Faehigkeiten zu lernen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b2f99331",
+                      "english":  "Always Open Leveling Report With Character Panel",
+                      "translation":  "Levelreport immer im Charakterfenster oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "63d5412b",
+                      "english":  "An optional feature failed repeatedly. The guide window remains available.",
+                      "translation":  "Eine optionale Funktion ist wiederholt fehlgeschlagen. Das Guide-Fenster bleibt verfuegbar.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "32feafb3",
+                      "english":  "Announce Flying Step timers",
+                      "translation":  "Verkuendigen bei Flugrouten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1db0a552",
+                      "english":  "Announce in guild chat when you level up",
+                      "translation":  "Gibt einen Text im Gildenchat aus, der dein level up verkuendigt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "21ae246e",
+                      "english":  "Announce in party chat when you collect all the items relevant to a quest (.collect)",
+                      "translation":  "Verkuendigt die Vollendung eines Sammelshrittes im Gruppenchat(.collect)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ed7f72ac",
+                      "english":  "Announce in party chat when you complete certain quests (.complete)",
+                      "translation":  "Verkuendigt die Vollendung eines Questschrittes im Gruppenchat(.complete)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "31d8734d",
+                      "english":  "Announce in party chat when you level up",
+                      "translation":  "Gibt einen Text im Gruppenchat aus, der dein level up verkuendigt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "92440ee3",
+                      "english":  "Announce in party chat where you\u0027re flying and how long until you arrive",
+                      "translation":  "Verkuendigt die Flugzeit deines aktuellen Flugs im Gruppenchat",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9b748c35",
+                      "english":  "Announce Level Ups (Emote)",
+                      "translation":  "Level ups verkuendigen(Emote)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a2e08e50",
+                      "english":  "Announce Level Ups (Guild Chat)",
+                      "translation":  "Level ups verkuendigen(Gilde)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cd4532eb",
+                      "english":  "Announce Level Ups (Party Chat)",
+                      "translation":  "Level ups verkuendigen(Gruppe)",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e647da6a",
+                      "english":  "Announce when all Step items are collected",
+                      "translation":  "Verkuendigen bei vollendung eines Sammelschrittes",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "52939e13",
+                      "english":  "Announce when Quest Step is completed",
+                      "translation":  "Verkuendigen bei vollendung eines Questschrittes",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "01f58481",
+                      "english":  "Announcements",
+                      "translation":  "Ankuendigungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4c319177",
+                      "english":  "Anonymous Leveling Archives",
+                      "translation":  "Anonymes Levelarchiv",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c0fcb496",
+                      "english":  "Arrow Scale",
+                      "translation":  "Pfeilskalierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e8449c2e",
+                      "english":  "Arrow Text Size",
+                      "translation":  "Schriftgroesse Pfeil",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b646bb3b",
+                      "english":  "Attempting to deposit",
+                      "translation":  "Versuche abzulegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "44b7c3ed",
+                      "english":  "Attempting to withdraw",
+                      "translation":  "Versuche abzuholen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b46e5905",
+                      "english":  "Attempts to repair from the guild bank when you have permission. This option never spends your own money unless the personal-money option is also enabled.",
+                      "translation":  "Versucht mit der Gildenbank zu reparieren, wenn du berechtigt bist. Eigenes Gold wird nur mit aktivierter persoenlicher Reparatur verwendet.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d3775e7a",
+                      "english":  "Auction House",
+                      "translation":  "Auktionshaus",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e5a8b500",
+                      "english":  "Autohide in Raids",
+                      "translation":  "In Raids automatisch ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "401e9548",
+                      "english":  "Automatic quest sharing",
+                      "translation":  "Automatisches Teilen von Quests",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "45a63880",
+                      "english":  "Automatic repairs",
+                      "translation":  "Automatische Reparaturen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "eb718f08",
+                      "english":  "Automatically create a targeting macro",
+                      "translation":  "Erstellt automatisch ein Zielmakro",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "47196619",
+                      "english":  "Automatically hide when in a raid, and unhide when you leave a raid",
+                      "translation":  "Blendet das Fenster automatisch aus/ein, wenn du einen Raid betrittst/verlaesst",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c26d2c02",
+                      "english":  "Automatically repair using guild money",
+                      "translation":  "Automatisch mit Gildengold reparieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d8242833",
+                      "english":  "Automatically repair using my money",
+                      "translation":  "Automatisch mit eigenem Gold reparieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d49218bc",
+                      "english":  "Automatically scan nearby targets",
+                      "translation":  "Scannt automatisch nach Zielen in der naehe",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7e7e4524",
+                      "english":  "Automation",
+                      "translation":  "Automatisierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0c6b8004",
+                      "english":  "Available",
+                      "translation":  "Verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6ee92de5",
+                      "english":  "Available Guides",
+                      "translation":  "Verfuegbare Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "891bb02c",
+                      "english":  "Backup / Restore",
+                      "translation":  "Sichern / Wiederherstellen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ff176c03",
+                      "english":  "Backup checksum does not match.",
+                      "translation":  "Die Pruefsumme der Sicherung stimmt nicht.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2b07da47",
+                      "english":  "Backup contains invalid data.",
+                      "translation":  "Die Sicherung enthaelt ungueltige Daten.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f722aa2d",
+                      "english":  "Backup encoding is damaged.",
+                      "translation":  "Die Kodierung der Sicherung ist beschaedigt.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "73008a9b",
+                      "english":  "Backup Export",
+                      "translation":  "Sicherung exportieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bd47c1c7",
+                      "english":  "Backup has no character data.",
+                      "translation":  "Die Sicherung enthaelt keine Charakterdaten.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7b8e1f94",
+                      "english":  "Backup Import",
+                      "translation":  "Sicherung importieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "14e33504",
+                      "english":  "Backup is damaged or too large.",
+                      "translation":  "Die Sicherung ist beschaedigt oder zu gross.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "512ebeb9",
+                      "english":  "Backup is not text.",
+                      "translation":  "Die Sicherung ist kein Text.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4d7934e5",
+                      "english":  "Backup text is too large.",
+                      "translation":  "Der Sicherungstext ist zu gross.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2730e700",
+                      "english":  "Bags",
+                      "translation":  "Taschen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ac4cc79c",
+                      "english":  "Battle.net unreachable, please exit your client, restart Battle.net, and try again",
+                      "translation":  "Battle.net ist nicht erreichbar, bitte beende dein Spiel, starte Battle.net neu und versuche es noch einmal",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a516198d",
+                      "english":  "Buy Missing",
+                      "translation":  "Fehlendes kaufen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c3670497",
+                      "english":  "Buy the missing class supplies for %s?",
+                      "translation":  "Fehlende Klassenvorraete fuer %s kaufen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "61c57cad",
+                      "english":  "Capture 30s",
+                      "translation":  "30 s aufzeichnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dbf228f7",
+                      "english":  "Change font size of the Guide Window",
+                      "translation":  "Aendert die Schriftgroesse des Guide Fensters",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f79edd85",
+                      "english":  "Check if targets are nearby\nWarning: This relies on ADDON_ACTION_FORBIDDEN errors from TargetUnit() to function.",
+                      "translation":  "Checken, ob Ziele in der naehe sind\nWARNUNG: Dies erfordert ADDON_ACTION_FORBIDDEN errors von TargetUnit() um zu funktionieren.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f4cee6be",
+                      "english":  "Checks for heirlooms and experience buffs",
+                      "translation":  "Schaut nach Erbstuecken und EXP-Buffs",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "968a1e42",
+                      "english":  "Checks for nearby rare spawns",
+                      "translation":  "Scannt nach Seltenen NPCs in der naehe",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d2ba32fb",
+                      "english":  "Checks upcoming processed guide steps for proven prerequisite, quest-log, flight, map, item, and XP risks.",
+                      "translation":  "Prueft kommende Guide-Schritte auf bestaetigte Risiken bei Voraussetzungen, Questlog, Fluegen, Karten, Gegenstaenden und EP.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3ecbb7ee",
+                      "english":  "Class Supplies",
+                      "translation":  "Klassenvorraete",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2448126c",
+                      "english":  "Class: All",
+                      "translation":  "Klasse: Alle",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05432216",
+                      "english":  "Class: Current",
+                      "translation":  "Klasse: Aktuell",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "360402b5",
+                      "english":  "Cleanup obsolete or leftover quests",
+                      "translation":  "Ungebrauchte oder ueberfluessige Quests aufraeumen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6b01b081",
+                      "english":  "Cleanup Orphaned Quests",
+                      "translation":  "Ungebrauchte Quests aufraeumen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0d65dd4a",
+                      "english":  "Clear",
+                      "translation":  "Leeren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "34550434",
+                      "english":  "Clear the current recorder draft?",
+                      "translation":  "Aktuellen Aufzeichnungsentwurf loeschen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6f3ebad6",
+                      "english":  "Clear the locally tracked weekly completions?",
+                      "translation":  "Lokal gespeicherte Wochenabschluesse loeschen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "322a3016",
+                      "english":  "Click to view the link",
+                      "translation":  "Klicke um den Link zu oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fc303097",
+                      "english":  "Collect the following items:",
+                      "translation":  "Sammel die folgenden Items :",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "78d21c3c",
+                      "english":  "Collected step %d - %s",
+                      "translation":  "Aufgenommener Schritt %d - %s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9f7e01ec",
+                      "english":  "Communications",
+                      "translation":  "Kommunikationen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05ea962a",
+                      "english":  "Compare",
+                      "translation":  "Vergleichen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "acb2ae81",
+                      "english":  "Compare Next Level",
+                      "translation":  "Nächstes Level vergleichen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3942b20f",
+                      "english":  "Compatibility and quality-of-life options for the 3.3.5a (Wrath) backport.",
+                      "translation":  "Kompatibilitaets- und Komfortoptionen fuer die 3.3.5a-(Wrath)-Rueckportierung.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2ba90280",
+                      "english":  "Completed",
+                      "translation":  "Abgeschlossen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b0b1968a",
+                      "english":  "Completed step %d - %s",
+                      "translation":  "Beendeter Schritt %d - %s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05fef0be",
+                      "english":  "Content",
+                      "translation":  "Zufrieden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "19f6870f",
+                      "english":  "Content phase",
+                      "translation":  "Contentphase",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c5df3a88",
+                      "english":  "Continue",
+                      "translation":  "Fortsetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5e143aba",
+                      "english":  "Copy Report",
+                      "translation":  "Bericht kopieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2775906b",
+                      "english":  "Copy this sanitized report.",
+                      "translation":  "Diesen bereinigten Bericht kopieren.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b6f9cbb4",
+                      "english":  "Copy this text and store it somewhere safe.",
+                      "translation":  "Diesen Text kopieren und sicher aufbewahren.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "62a5ec6e",
+                      "english":  "Create Targeting Macro",
+                      "translation":  "Zielmakro erstellen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1b0cc608",
+                      "english":  "Current step frame anchor",
+                      "translation":  "Ausrichtung des \u0027Aktuellen Schritt\u0027-Fensters",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b537f07b",
+                      "english":  "current step has no configured targets",
+                      "translation":  "Aktueller Schritt hat keine konfigurierten Ziele",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d42957d9",
+                      "english":  "Currently loaded imported guides",
+                      "translation":  "Momentan geladene, importierte Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "203859a1",
+                      "english":  "day",
+                      "translation":  "Tag",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "27438e34",
+                      "english":  "days",
+                      "translation":  "Tage",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a4faac8a",
+                      "english":  "Deactivate Hardcore mode",
+                      "translation":  "Hardcore mode deaktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bbfbebf6",
+                      "english":  "Delete",
+                      "translation":  "Loeschen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f1da3b88",
+                      "english":  "Delete imported guide",
+                      "translation":  "Importierten Guide loeschen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f0faf4ea",
+                      "english":  "Delete the selected anonymous archive?",
+                      "translation":  "Ausgewaehltes anonymes Archiv loeschen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d322bb93",
+                      "english":  "Describe the problem above this sanitized report when filing an issue.",
+                      "translation":  "Beschreibe das Problem oberhalb dieses bereinigten Berichts.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d6e81196",
+                      "english":  "Describe your issue:",
+                      "translation":  "Beschreib dein Problem",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "87b06988",
+                      "english":  "Detect Rate",
+                      "translation":  "EXP-Rate erkennen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1f822a06",
+                      "english":  "Development",
+                      "translation":  "Entwicklung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "eed73cac",
+                      "english":  "Diagnose Current Step",
+                      "translation":  "Aktuellen Schritt diagnostizieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "522ce461",
+                      "english":  "Diagnose this step",
+                      "translation":  "Diesen Schritt diagnostizieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e3ddf79c",
+                      "english":  "Die and respawn at the graveyard",
+                      "translation":  "Sterbe und lass dich vom Geistheiler wiederbeleben",
+                      "status":  "reviewed",
+                      "domain":  "both",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0e4c2517",
+                      "english":  "Disable dragging/resizing, use alt+left click on the main window to resize it",
+                      "translation":  "Das Fenster nur noch mit Alt+Klick veraendern",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6e9d5aa2",
+                      "english":  "Disabled by this guide version",
+                      "translation":  "Von dieser Guide-Version deaktiviert",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f447bbf9",
+                      "english":  "Display Tips",
+                      "translation":  "Tipps anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4d22dc03",
+                      "english":  "Displays guides that are not applicable for your class/race such as starting zones for other races",
+                      "translation":  "Zeigt Guides an, die nicht zu deiner Rasse/Klasse passen, wie z.B. Starterzonen fuer andere Rassen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c48d6972",
+                      "english":  "Distance Between Pins",
+                      "translation":  "Abstand zwischen den Pins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ec649906",
+                      "english":  "Do not edit below this line",
+                      "translation":  "Bitte hier drunter nichts bearbeiten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2cf81379",
+                      "english":  "Do the Blasted Lands collection quests",
+                      "translation":  "Mach die Sammelquests in den Verwuesteten Landen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9cedd73e",
+                      "english":  "Downgrade",
+                      "translation":  "Verschlechterung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "40dacd48",
+                      "english":  "Draws a solid dark background behind waypoint pin numbers so they are readable. Takes effect after a /reload.",
+                      "translation":  "Zeichnet einen dunklen Hintergrund hinter Wegpunktnummern. Wird nach /reload wirksam.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1591ed00",
+                      "english":  "Enable Active Targets",
+                      "translation":  "Aktive Ziele aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "09bcb407",
+                      "english":  "Enable Addon Version Checks",
+                      "translation":  "Addon Version Checks aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "55d9a245",
+                      "english":  "Enable Beta Features",
+                      "translation":  "Beta-Features aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7f60bbb1",
+                      "english":  "Enable Debug",
+                      "translation":  "Debugging aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4498ce63",
+                      "english":  "Enable Hunter Pet Assistant",
+                      "translation":  "Jaegerbegleiter-Assistent aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2a9942fe",
+                      "english":  "Enable Item Reservations",
+                      "translation":  "Gegenstandsreservierungen aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7a606841",
+                      "english":  "Enable Level Splits",
+                      "translation":  "Levelsplits aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "93fd6c4b",
+                      "english":  "Enable Leveling Report Inspections",
+                      "translation":  "Levelreport Inspektionen aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "eb4f8aec",
+                      "english":  "Enable Leveling Tracker",
+                      "translation":  "Leveltracker aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8675b851",
+                      "english":  "Enable Minimap Button",
+                      "translation":  "Minimap Button aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dce4c25a",
+                      "english":  "Enable party guide synchronization",
+                      "translation":  "Guide-Synchronisierung in der Gruppe aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7db7119e",
+                      "english":  "Enable Route Preflight",
+                      "translation":  "Routenpruefung aktivieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6a4b1e40",
+                      "english":  "Enables new features, forces reload to take effect",
+                      "translation":  "Aktiviert Beta Features, erfordert einen reload.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f7e7e972",
+                      "english":  "Enables or disables the chromie time guides. Note that freshly created accounts without a level 60 character cannot access chromie time",
+                      "translation":  "Aktiviert/Deaktiviert die Chromiezeit Guides. Frische accounts ohne leve 60 Charakter haben keinen Zugriff auf diese Quests",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a47bdb6c",
+                      "english":  "Enables the RestedXP Leveling Report when you open your character panel",
+                      "translation":  "Aktiviert den Levelreport, wenn du dein Charakterfenster oeffnest",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c4b4f906",
+                      "english":  "Enter a step number for %s",
+                      "translation":  "Schrittnummer fuer %s eingeben",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0d8d1147",
+                      "english":  "Equip",
+                      "translation":  "Anlegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f0152781",
+                      "english":  "Equivalent",
+                      "translation":  "Gleichwertig",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "84c74b8f",
+                      "english":  "Error parsing guide",
+                      "translation":  "Fehler beim Analysieren des Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "35576df8",
+                      "english":  "Experience rate change detected, reloading guide for %.2fx",
+                      "translation":  "EXP-Raten aenderung entdeckt, Guides fuer %.2fx werden neu geladen.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f301684a",
+                      "english":  "Experience rates",
+                      "translation":  "EXP-Raten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8770830f",
+                      "english":  "Experience Sources",
+                      "translation":  "EXP-Quellen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bfab4205",
+                      "english":  "Export",
+                      "translation":  "Exportieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "158be25a",
+                      "english":  "Faction: All",
+                      "translation":  "Fraktion: Alle",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "92a93904",
+                      "english":  "Faction: Current",
+                      "translation":  "Fraktion: Aktuell",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8be393fa",
+                      "english":  "Failed to Import Guides: Invalid Import String",
+                      "translation":  "Importieren fehlgeschlagen: Import-Code ungueltig",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "78eab215",
+                      "english":  "Failed to ReadCacheData",
+                      "translation":  "Fehler beim Lesen der Cache Daten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "506a6ff6",
+                      "english":  "Favorites",
+                      "translation":  "Favoriten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cd0b0100",
+                      "english":  "Feature Tools",
+                      "translation":  "Funktionswerkzeuge",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5d74369c",
+                      "english":  "Feedback Form",
+                      "translation":  "Feedbackformular",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "27333b64",
+                      "english":  "Find",
+                      "translation":  "Finden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "da7552d6",
+                      "english":  "Find a catch-up step",
+                      "translation":  "Einstiegsschritt finden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d3c49359",
+                      "english":  "Finish Run",
+                      "translation":  "Lauf beenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "65ee9313",
+                      "english":  "Finish the current archive and start a new anonymous run?",
+                      "translation":  "Aktuelles Archiv beenden und einen neuen anonymen Lauf starten?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6180b559",
+                      "english":  "Flash Client Icon",
+                      "translation":  "Spielicon aufblinken lassen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4642f265",
+                      "english":  "Flashes the game icon on taskbar when enemy target found",
+                      "translation":  "Laesst das Spielicon in der Taskbar blinken, wenn ein Seltener NPC gefunden wurde",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bbe4a06f",
+                      "english":  "Flight Path automation",
+                      "translation":  "FLugpunkt Automatisierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c12ae431",
+                      "english":  "Fly to",
+                      "translation":  "Fliege zu",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "da0cd2d9",
+                      "english":  "Flying to %s ETA %s",
+                      "translation":  "Fliegen nach %s verbleibende Zeit: %s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "243a765a",
+                      "english":  "Gear Advisor",
+                      "translation":  "Ausruestungsberater",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ccb82047",
+                      "english":  "Get the %s flight path",
+                      "translation":  "Hol den Flugpunkt %s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d1bf2456",
+                      "english":  "Give Feedback for step",
+                      "translation":  "Feedback für diesen Schritt geben",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0daec15c",
+                      "english":  "Go to",
+                      "translation":  "Gehe zu",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "90879ee1",
+                      "english":  "Go to Pet Step",
+                      "translation":  "Zum Begleiterschritt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d72e1578",
+                      "english":  "Go to step",
+                      "translation":  "Geh zu Schritt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f6ba34a3",
+                      "english":  "Gold Assistant",
+                      "translation":  "Gold-Assistent",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5f38ebbf",
+                      "english":  "Gold Assistant report",
+                      "translation":  "Gold-Assistent-Bericht",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4d0601ae",
+                      "english":  "Gold Farming Guides",
+                      "translation":  "Guides zum Goldfarmen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a9db3691",
+                      "english":  "Grind until you are %.0f%% into %s with %s",
+                      "translation":  "Grinde, bis du  %.0f%% in %s mit %s bist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2e65e375",
+                      "english":  "Grind until you are %.0f%% into level %s",
+                      "translation":  "Grinde, bis du %.0f%% EXP in level %s erreicht hast",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f7328ff3",
+                      "english":  "Grind until you are %d away from %s with %s",
+                      "translation":  "Grinde, bis du %d von %s mit %s entfernt bist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d1020bbf",
+                      "english":  "Grind until you are %d xp away from level %s",
+                      "translation":  "Grinde, bis du  %d EXP von level %s bist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c7bcba56",
+                      "english":  "Grind until you are %s into %s with %s",
+                      "translation":  "Grinde, bis du %s in %s mit %s bist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1b2b9202",
+                      "english":  "Grind until you are %s xp into level %s",
+                      "translation":  "Grinde, bis du %s EXP in level %s erreicht hast",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6108811a",
+                      "english":  "Guide Author Recorder",
+                      "translation":  "Guide-Aufzeichnung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cbab92cf",
+                      "english":  "Guide data unavailable",
+                      "translation":  "Guide-Daten nicht verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "025e8783",
+                      "english":  "Guide Font Size",
+                      "translation":  "Schriftgroesse des Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "030e52cb",
+                      "english":  "Guide has no name",
+                      "translation":  "Guide hat keinen Namen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "250c0cf9",
+                      "english":  "Guide Routing",
+                      "translation":  "Guideroute",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "951f4afd",
+                      "english":  "Guide tools and accessibility",
+                      "translation":  "Guide-Werkzeuge und Barrierefreiheit",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e7e45c72",
+                      "english":  "Guides Loaded Successfully",
+                      "translation":  "Guides erfolgreich geladen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8e6388a2",
+                      "english":  "Guides to import",
+                      "translation":  "Importierbare Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0dba8065",
+                      "english":  "Happy",
+                      "translation":  "Gluecklich",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d2f01a30",
+                      "english":  "Hardcore mode",
+                      "translation":  "Hardcoremodus",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bb575c60",
+                      "english":  "Hide Active Item window",
+                      "translation":  "Fenster fuer aktive Items ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "70289269",
+                      "english":  "Hide completed steps",
+                      "translation":  "Fertige Schritte ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ab7e05e2",
+                      "english":  "Hide Mini Map Pins",
+                      "translation":  "Minimap Icons ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "841a22bc",
+                      "english":  "Hide Splits Background",
+                      "translation":  "Levelsplits Hintergrund ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "aeb779b7",
+                      "english":  "Hide Targets Background",
+                      "translation":  "Zielhintergrund entfernen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "82211cdf",
+                      "english":  "Hide the Active Targets frame",
+                      "translation":  "Fenster \u0027Aktive Ziele\u0027 ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4a266b23",
+                      "english":  "Hide waypoint arrow",
+                      "translation":  "Blendet den Pfeil aus",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "019b55d5",
+                      "english":  "Hide Window",
+                      "translation":  "Fenster ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e9f869ee",
+                      "english":  "Hides the main window",
+                      "translation":  "Hauptfenster ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "644daf47",
+                      "english":  "Hides the working Active Targets window if you prefer to use only the targeting macro and nameplate markers.",
+                      "translation":  "Blendet das Fenster \u0027Aktive Ziele\u0027 aus, wenn du nur das Zielmakro und die Namensplaketten-Markierungen verwenden moechtest.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ac9fb56f",
+                      "english":  "Highlight active map pins",
+                      "translation":  "Markiere aktive Kartenpins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2475ae84",
+                      "english":  "Historical levels to show",
+                      "translation":  "Vergangene Level anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3df4e4f9",
+                      "english":  "Holding the Control key modifier also toggles the quest auto accept feature on and off",
+                      "translation":  "STRG gedrückt halten, aktiviert oder deaktiviert dieses Feature zeitweise",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2745fac1",
+                      "english":  "hour",
+                      "translation":  "Stunde",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "10055354",
+                      "english":  "hours",
+                      "translation":  "Stunden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "88a26c02",
+                      "english":  "How many visible guide steps one mouse-wheel tick moves through.",
+                      "translation":  "Wie viele sichtbare Guide-Schritte eine Mausradbewegung weiterschaltet.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "144c767c",
+                      "english":  "Hunter Pet Assistant",
+                      "translation":  "Jaegerbegleiter-Assistent",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a29be66b",
+                      "english":  "I just leveled from %d to %d in %s",
+                      "translation":  "Ich habe von Stufe %d auf %d in %s gelevelt.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fedea7e4",
+                      "english":  "I just leveled up to %d",
+                      "translation":  "Ich habe gerade auf %d gelevelt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "90017172",
+                      "english":  "If two or more steps are very close together, this addon will group them into a single pin on the map. Adjust this range to determine how close together two steps must be to form a group.",
+                      "translation":  "Wenn zwei oder mehrere Schritte nah bei einander sind, werden sie zu einem einzigen Kartenpin gruppiert, pass den Minimalabstand an.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "71ba64c5",
+                      "english":  "Ignore Questie announcements",
+                      "translation":  "Questie verkuendigungen ignorieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c838d6fe",
+                      "english":  "Import",
+                      "translation":  "Importieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f37881cc",
+                      "english":  "Import guide",
+                      "translation":  "Guides Importieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "88977644",
+                      "english":  "Incomplete or invalid encoded string",
+                      "translation":  "Unvollstaendiger oder fehlerhafter Import-Code",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5a7ce282",
+                      "english":  "Innkeeper Bind automation",
+                      "translation":  "Ruhestein Automatisierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9b46095c",
+                      "english":  "In-progress",
+                      "translation":  "Im Gange",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2d7544fb",
+                      "english":  "Join Discord",
+                      "translation":  "Discord beitreten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "38a7e760",
+                      "english":  "Join our support discord at discord.gg/RestedXP and copy paste this form into #bug-report",
+                      "translation":  "Tritt unserem discord bei unter discord.gg/RestedXP und kopier dieses Formular in #bug-report",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "34722a60",
+                      "english":  "Keep Disabled",
+                      "translation":  "Deaktiviert lassen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f430b313",
+                      "english":  "Level %d time",
+                      "translation":  "level %d Zeit",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f43dbe0c",
+                      "english":  "Level Splits Font Size",
+                      "translation":  "Schriftgroesse Levelsplitz",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f780a30c",
+                      "english":  "Level Splits History",
+                      "translation":  "Levelsplits Verlauf",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "215d43f3",
+                      "english":  "Level Splits Opacity",
+                      "translation":  "Transparenz Levelsplits",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "32e9cdea",
+                      "english":  "Level Time",
+                      "translation":  "Levelzeit",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "34a31d0e",
+                      "english":  "Level: All",
+                      "translation":  "Stufe: Alle",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8b86adb8",
+                      "english":  "Level: Current",
+                      "translation":  "Stufe: Aktuell",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e17e09b5",
+                      "english":  "Leveling report",
+                      "translation":  "Levelreport",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "29290e85",
+                      "english":  "Leveling Tracker",
+                      "translation":  "Leveltracker",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e632dd44",
+                      "english":  "Loaded %d characters into import buffer",
+                      "translation":  "%d Zeichen in den Buffer geladen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0d6ed968",
+                      "english":  "Loaded %d characters into import buffer, %d shown",
+                      "translation":  "%d Zeichen in den Buffer geladen, %d werden angezeigt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4e00b322",
+                      "english":  "Loading Guides",
+                      "translation":  "Laden der Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1d504bca",
+                      "english":  "Lock Frames",
+                      "translation":  "Fenster sperren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cf554e35",
+                      "english":  "Locked",
+                      "translation":  "Gesperrt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4c29f052",
+                      "english":  "Lower number to make Level Splits more transparent",
+                      "translation":  "Nummer verkleinern um Levelsplits transparent zu machen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a508816f",
+                      "english":  "Macro capacity reached",
+                      "translation":  "Markokapazitaet erreicht",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "81fa18e7",
+                      "english":  "Make a public emote when you level up",
+                      "translation":  "Gibt ein Emote im chat aus, was dein level up verkuendigt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "24f994b3",
+                      "english":  "Make background transparent",
+                      "translation":  "Hintergrund Transparent machen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "232897d9",
+                      "english":  "Manual watchdog timeout",
+                      "translation":  "Manuelles Zeitlimit der Schrittueberwachung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8962e4f1",
+                      "english":  "Manually %s step %d? This changes only local guide progress.",
+                      "translation":  "%s fuer Schritt %d manuell ausfuehren? Dies aendert nur den lokalen Fortschritt.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cfdb2305",
+                      "english":  "Manually complete step...",
+                      "translation":  "Schritt manuell abschliessen...",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ba7ecd23",
+                      "english":  "Manually skip step...",
+                      "translation":  "Schritt manuell ueberspringen...",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c5b60c81",
+                      "english":  "Map Pin Background Opacity",
+                      "translation":  "Hintergrundtransparenz Kartenpins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "42343710",
+                      "english":  "Map Pin Scale",
+                      "translation":  "Skalierung der Kartenpins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05397dc6",
+                      "english":  "Mark Enemy Targets",
+                      "translation":  "Feinliche Ziele Markieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a8995f45",
+                      "english":  "Mark Friendly Targets",
+                      "translation":  "Freundliche Ziele Markieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "83786a36",
+                      "english":  "Mark friendly targets with star, circle, diamond, and triangle",
+                      "translation":  "Markiert freundliche Ziele mit Stern, Kreis, Diamant und Dreieck",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b8a30749",
+                      "english":  "Maximize Nameplate Distance",
+                      "translation":  "Namensplaketten-Distanz maximieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "03ba09c5",
+                      "english":  "Measures bounded RXPGuides work and exports a sanitized report.",
+                      "translation":  "Misst begrenzte RXPGuides-Arbeit und exportiert einen bereinigten Bericht.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0e1733b3",
+                      "english":  "Merge",
+                      "translation":  "Zusammenfuehren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1be92c95",
+                      "english":  "minute",
+                      "translation":  "Minute",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "990ebfa8",
+                      "english":  "minutes",
+                      "translation":  "Minuten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0446b7b7",
+                      "english":  "Missing data",
+                      "translation":  "Fehlende Daten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7c5c3fff",
+                      "english":  "Missing pre-requisites",
+                      "translation":  "Fehlende Anforderungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3de07382",
+                      "english":  "New Run",
+                      "translation":  "Neuer Lauf",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f9ef6b29",
+                      "english":  "New Step",
+                      "translation":  "Neuer Schritt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e015e9a5",
+                      "english":  "No loaded guide accepts prerequisite quest %d.",
+                      "translation":  "Kein geladener Guide nimmt die vorausgesetzte Quest %d an.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5e64af51",
+                      "english":  "No player, realm, chat, account, or GUID data is included.",
+                      "translation":  "Es sind keine Spieler-, Realm-, Chat-, Konto- oder GUID-Daten enthalten.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "00f231b5",
+                      "english":  "No safe bag space is available for these supplies.",
+                      "translation":  "Fuer diese Vorraete ist kein sicherer Taschenplatz verfuegbar.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6d6fb555",
+                      "english":  "Northrend Loremaster",
+                      "translation":  "Meister der Lehren: Nordend",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "840f1c6a",
+                      "english":  "Notify on new target",
+                      "translation":  "Bei neuem Ziel benachrichtigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "55d71256",
+                      "english":  "Notify on Rares",
+                      "translation":  "Benachrichtigen bei Seltenen NPCs",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1467843b",
+                      "english":  "Notify when a new rare is found",
+                      "translation":  "Benachrichtigen, wenn Seltene NPCs gefunden wurden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0c87aa05",
+                      "english":  "Notify when a new target is loaded",
+                      "translation":  "Benachrichtigt im Chat, wenn ein neues Ziel geladen wird",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "052f7954",
+                      "english":  "Number of current and upcoming steps checked by Route Preflight and the XP predictor.",
+                      "translation":  "Anzahl aktueller und kommender Schritte fuer Routenpruefung und EP-Prognose.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ba1faaef",
+                      "english":  "Number of current and upcoming steps searched for item requirements.",
+                      "translation":  "Anzahl der Schritte, die nach benoetigten Gegenstaenden durchsucht werden.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9b24bf99",
+                      "english":  "Number of Map Pins",
+                      "translation":  "Anzahl der Kartenpins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "63b82d6c",
+                      "english":  "Number of map pins shown on the world map",
+                      "translation":  "Anzahl der Kartenpins auf der Karte",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "213c11d7",
+                      "english":  "Objective Complete",
+                      "translation":  "Ziel abgeschlossen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7fdfc2fc",
+                      "english":  "Only show when in range",
+                      "translation":  "Ziele nur anzeigen, wenn sie in Reichweite sind.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4ea04927",
+                      "english":  "Only shows current and future steps on the step list window",
+                      "translation":  "Nur aktuelle und kommende Schritte im unteren Fenster anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f320f380",
+                      "english":  "Open Class Supplies",
+                      "translation":  "Klassenvorraete oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f18affb8",
+                      "english":  "Open Daily Planner",
+                      "translation":  "Taeglichen Planer oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "536747ee",
+                      "english":  "Open Feedback Form",
+                      "translation":  "Feedback-Formular oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9087a56c",
+                      "english":  "Open Gear Advisor",
+                      "translation":  "Ausruestungsberater oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "83e4e6c2",
+                      "english":  "Open Guide Hub",
+                      "translation":  "Guide-Zentrale oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8718978e",
+                      "english":  "Open Hunter Pet Assistant",
+                      "translation":  "Jaegerbegleiter-Assistent oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ed6a1a3e",
+                      "english":  "Open Performance Inspector",
+                      "translation":  "Leistungsanalyse oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "530ffa09",
+                      "english":  "Open Personal-Best Archives",
+                      "translation":  "Bestzeitenarchiv oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1ad71725",
+                      "english":  "Open prerequisite guide",
+                      "translation":  "Voraussetzungs-Guide oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2b2eb3e9",
+                      "english":  "Open Route Preflight",
+                      "translation":  "Routenpruefung oeffnen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3f95d0aa",
+                      "english":  "Open the guide containing prerequisite quest %d?",
+                      "translation":  "Den Guide mit der vorausgesetzten Quest %d oeffnen?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a3bd1035",
+                      "english":  "Opt in to sharing the active guide and step with RXP party members.",
+                      "translation":  "Teilt den aktiven Guide und Schritt mit RXP-Gruppenmitgliedern.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cf8df11b",
+                      "english":  "Opt in to temporary RXP-only scan/update slowing after sustained low FPS. Saved preferences are not changed and normal rates return automatically.",
+                      "translation":  "Verlangsamt nur RXP-Scans voruebergehend bei dauerhaft niedrigen FPS. Gespeicherte Einstellungen bleiben unveraendert.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a85a9339",
+                      "english":  "Options...",
+                      "translation":  "Optionen...",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a30fd02a",
+                      "english":  "Original Upstream Guides",
+                      "translation":  "Originale Upstream-Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b42f6a7c",
+                      "english":  "Paste encoded strings",
+                      "translation":  "Verschluesselten Code einfuegen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "988d6af6",
+                      "english":  "Pause Run",
+                      "translation":  "Lauf pausieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "521bafcf",
+                      "english":  "Pauses quest accept/turn-in automation so quest text can be read.",
+                      "translation":  "Pausiert die automatische Questannahme und -abgabe, damit der Questtext gelesen werden kann.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2119d6ec",
+                      "english":  "Performance Inspector",
+                      "translation":  "Leistungsanalyse",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c8fde791",
+                      "english":  "Performance Report",
+                      "translation":  "Leistungsbericht",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fcb74c77",
+                      "english":  "Personal-Best Archives",
+                      "translation":  "Bestzeitenarchiv",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d69cd040",
+                      "english":  "Plan return to route",
+                      "translation":  "Rueckkehr zur Route planen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "67034562",
+                      "english":  "Play Sound",
+                      "translation":  "Sound abspielen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9fa01cfc",
+                      "english":  "Please restart your game client and try again",
+                      "translation":  "Bitte starte dein Spiel neu und versuche es erneut",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "aef8c54a",
+                      "english":  "Preflight steps ahead",
+                      "translation":  "Vorausgepruefte Schritte",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3abf88cd",
+                      "english":  "Protects items required by upcoming guide steps from automatic junk handling and marks them in bags.",
+                      "translation":  "Schuetzt Gegenstaende fuer kommende Guide-Schritte vor automatischer Muellbehandlung und markiert sie in Taschen.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "72234a79",
+                      "english":  "Purge All Data",
+                      "translation":  "Alle Daten loeschen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "949a380d",
+                      "english":  "Quest auto accept/turn in",
+                      "translation":  "Automatisch Quest annehmen/abgeben",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "225303c6",
+                      "english":  "Quest auto rewards",
+                      "translation":  "Automatische Questbelohnung auswaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ae63d0bd",
+                      "english":  "Quest Cleanup",
+                      "translation":  "Questlog aufraeumen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cd4035c0",
+                      "english":  "Quest is being picked up at",
+                      "translation":  "Quest wird hier angenommen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6a9fbf74",
+                      "english":  "Quest is being turned in at",
+                      "translation":  "Quest wird hier abgegeben",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2a0db305",
+                      "english":  "Quest lore pause",
+                      "translation":  "Pause fuer Questtexte",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "21ff0b8d",
+                      "english":  "Quest Rewards",
+                      "translation":  "Questbelohnungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8509e46d",
+                      "english":  "Rare Found! %s is nearby.",
+                      "translation":  "Seltener Mob gefunden! %s ist in der Naehe.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0991e3a7",
+                      "english":  "Reached Level",
+                      "translation":  "Level Erreicht",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a28c2868",
+                      "english":  "Readable waypoint pins",
+                      "translation":  "Lesbare Wegpunktmarkierungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dc9f34a4",
+                      "english":  "Recent",
+                      "translation":  "Zuletzt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4ad932db",
+                      "english":  "Recorded Guide Preview",
+                      "translation":  "Vorschau des aufgezeichneten Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "70c30d92",
+                      "english":  "Refresh",
+                      "translation":  "Aktualisieren",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "eeb0dc88",
+                      "english":  "Reload Guide",
+                      "translation":  "Guide neu laden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "08e6a38c",
+                      "english":  "Reload guides and UI",
+                      "translation":  "Guides und UI neu laden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dca4dbf1",
+                      "english":  "Remove",
+                      "translation":  "Entfernen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "97b5d09c",
+                      "english":  "Repairs all damaged equipment when you open a repair merchant. If guild repair is also enabled, your money is used only for costs the guild repair did not cover.",
+                      "translation":  "Repariert beschaedigte Ausruestung beim Oeffnen eines Reparaturhaendlers. Eigenes Gold deckt nur Kosten, die die Gilde nicht uebernimmt.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7174a53f",
+                      "english":  "Replace",
+                      "translation":  "Ersetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5da433d3",
+                      "english":  "Reputation gated",
+                      "translation":  "Ruf erforderlich",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dca7f07f",
+                      "english":  "Rescan",
+                      "translation":  "Neu pruefen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6300389e",
+                      "english":  "Rescan current step",
+                      "translation":  "Aktuellen Schritt neu pruefen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "4884f5f7",
+                      "english":  "Reservation steps ahead",
+                      "translation":  "Reservierungsschritte im Voraus",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0e71b246",
+                      "english":  "Reset",
+                      "translation":  "Zuruecksetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "76c9ba66",
+                      "english":  "Reset Arrow Position",
+                      "translation":  "Pfeilposition zuruecksetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "79005dbb",
+                      "english":  "Reset Run",
+                      "translation":  "Lauf zuruecksetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f002b717",
+                      "english":  "Reset Settings",
+                      "translation":  "Einstellungen zuruecksetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "16eaf117",
+                      "english":  "Reset Weekly",
+                      "translation":  "Woche zuruecksetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d6a676ab",
+                      "english":  "RestedXP Feedback Form",
+                      "translation":  "RestedXP Feedback Formular",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5d206109",
+                      "english":  "Resume Run",
+                      "translation":  "Lauf fortsetzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "aa585cee",
+                      "english":  "Retrieving quest data",
+                      "translation":  "Erhalte Questdaten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "79ab06fe",
+                      "english":  "Retry Once",
+                      "translation":  "Einmal erneut versuchen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "28c62be9",
+                      "english":  "Route Planning",
+                      "translation":  "Routenplanung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ec320617",
+                      "english":  "Route Preflight",
+                      "translation":  "Routenpruefung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fe6f3ef6",
+                      "english":  "Route Preflight, XP \u0026 Reservations",
+                      "translation":  "Routenpruefung, EP und Reservierungen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3cd380b4",
+                      "english":  "RXPGuides Backup",
+                      "translation":  "RXPGuides-Sicherung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2e56364b",
+                      "english":  "RXPGuides Guide Hub",
+                      "translation":  "RXPGuides Guide-Zentrale",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9725ff47",
+                      "english":  "RXPGuides Performance Inspector",
+                      "translation":  "RXPGuides Leistungsanalyse",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "45a60922",
+                      "english":  "RXPGuides Safe Mode",
+                      "translation":  "RXPGuides Abgesicherter Modus",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0a36d637",
+                      "english":  "Scale of the Active Item frame",
+                      "translation":  "Skaliert das Aktive Items Fenster",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5671aca2",
+                      "english":  "Scale of the Active Targets frame",
+                      "translation":  "Skaliert das Fenster fuer aktive Ziele",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "282d93a1",
+                      "english":  "Scale of the Main Window, use alt+left click on the main window to resize it",
+                      "translation":  "Skalierung des Hauptfensters, aendern mit Alt+Klick",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d0b33827",
+                      "english":  "Scale of the Waypoint Arrow",
+                      "translation":  "Skaliert die Groesse des Pfeils",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d9c0d3e0",
+                      "english":  "Scan Enemy Targets",
+                      "translation":  "Feindliche Ziele scannen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e8678d27",
+                      "english":  "Scan for enemy targets",
+                      "translation":  "Sucht nach feindlichen Zielen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0b6bb306",
+                      "english":  "Scan for friendly targets",
+                      "translation":  "Sucht nach freundlichen Zielen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fabe0a8d",
+                      "english":  "Scan for Nearby Rares",
+                      "translation":  "Nach Seltenen NPCs in der naehe scannen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "32f7371f",
+                      "english":  "Scan Friendly Targets",
+                      "translation":  "Freundliche Ziele Scannen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "29999bdf",
+                      "english":  "second",
+                      "translation":  "Sekunde",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5ccd1832",
+                      "english":  "seconds",
+                      "translation":  "Sekunden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "411d972e",
+                      "english":  "Seconds without measurable progress before an explicitly armed step watchdog warns. The watchdog never starts automatically.",
+                      "translation":  "Sekunden ohne messbaren Fortschritt, bevor die manuell aktivierte Schrittueberwachung warnt. Sie startet nie automatisch.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "def94b43",
+                      "english":  "Select",
+                      "translation":  "Auswaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bee063d2",
+                      "english":  "Select a guide",
+                      "translation":  "Guide auswaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "154f63c2",
+                      "english":  "Select another guide",
+                      "translation":  "Einen anderen Guide auswaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "feb357fe",
+                      "english":  "Sell junk/resupply",
+                      "translation":  "Muell verkaufen/aufstocken",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f3dd33cd",
+                      "english":  "Send announcements without another RXP user in group",
+                      "translation":  "Verkuendigungen in Gruppen senden, die keinen anderen RXP Nutzer haben",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "51e1edd7",
+                      "english":  "Send or receive inspection requests for other Leveling Reports",
+                      "translation":  "Inspektionsanfragen fuer Levelreports senden und empfangen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7dfc3f16",
+                      "english":  "Send quest and collect step announcements even if Questie is enabled",
+                      "translation":  "Verkuendigt die Vollendung der Schritte selbst, wenn Questie aktiviert ist.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "45383bc7",
+                      "english":  "Sends sound on enemy target found",
+                      "translation":  "Spielt einen Sound ab, wenn ein seltener NPC gefunden wurde",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bf85ee06",
+                      "english":  "Set your Hearthstone to",
+                      "translation":  "Setze deinen Ruhestein bei",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "deb600ba",
+                      "english":  "Sets the current step frame to grow from bottom to top or top to bottom",
+                      "translation":  "Aendert die Richtung des \u0027Aktuellen Schritt\u0027-Fensters",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "9c65ced9",
+                      "english":  "Show a targeting circle around active map pins",
+                      "translation":  "Zeig Zielkreis ueber aktiven Kartenpins",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bb3d7106",
+                      "english":  "Show all Enabled Frames",
+                      "translation":  "Alle aktiven Fenster anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "65af9e7b",
+                      "english":  "Show Chromie Time Guides",
+                      "translation":  "Chromiezeit Guides anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8c31b05c",
+                      "english":  "Show step list",
+                      "translation":  "Schrittliste anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "836f5f59",
+                      "english":  "Show unused guides",
+                      "translation":  "Unbenutzte Guides anzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d10a1918",
+                      "english":  "Show/Hide the bottom frame listing all the steps of the current guide",
+                      "translation":  "Unteres Fenster mit allen Schritten des Guides anzeigen/ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fce3fa1f",
+                      "english":  "Size of the waypoint arrow text",
+                      "translation":  "Passt die Schriftgroesse des Pfeils an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0d0ba26f",
+                      "english":  "Skip Gossip",
+                      "translation":  "Konversation ueberspringen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ecedb8a6",
+                      "english":  "Skip overleveled steps",
+                      "translation":  "Ueberlevelte Schritte ueberspringen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "abe0ea17",
+                      "english":  "Skip quests with missing pre-requisites",
+                      "translation":  "Quests mit unvollstaendigen praerequisiten ueberspringen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "986e2888",
+                      "english":  "Skip steps you\u0027re overleveled for",
+                      "translation":  "Ueberspringt Schritte, fuer die dein Level zu hoch ist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3eb5a755",
+                      "english":  "Skip to step %d if you are level %d or above",
+                      "translation":  "Spring zu Schritt %d wenn du level %d oder hoeher bist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "17a73c25",
+                      "english":  "Sound Channel",
+                      "translation":  "Soundkanal",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "509fe0cf",
+                      "english":  "Stable your pet",
+                      "translation":  "Pack dein Pet in den Stall",
+                      "status":  "reviewed",
+                      "domain":  "both",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "0e8bb991",
+                      "english":  "Start",
+                      "translation":  "Starten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e0a64ae8",
+                      "english":  "Step %d",
+                      "translation":  "Schritt %d",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5870bdaa",
+                      "english":  "Step Doctor",
+                      "translation":  "Schrittdiagnose",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "30430173",
+                      "english":  "Steps Per Mouse-Wheel Scroll",
+                      "translation":  "Schritte pro Mausradbewegung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "273a8b49",
+                      "english":  "Stop",
+                      "translation":  "Stoppen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e6d9829e",
+                      "english":  "Stop Watching",
+                      "translation":  "Ueberwachung stoppen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b2253661",
+                      "english":  "Suggest Step",
+                      "translation":  "Schritt vorschlagen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5c3d7238",
+                      "english":  "Supplies",
+                      "translation":  "Vorraete",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "81d227da",
+                      "english":  "Targeting Macro",
+                      "translation":  "Zielmakro",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c26fe068",
+                      "english":  "Temporarily hide, use \u0027/rxp splits\u0027 to show again",
+                      "translation":  "Temporaer verstecken, benutz \u0027/rxp splits\u0027 um es wieder anzuzeigen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ade16091",
+                      "english":  "Temporary adaptation begins only after FPS remains below this value for five samples.",
+                      "translation":  "Die temporaere Anpassung beginnt erst nach fuenf Messungen unter diesem FPS-Wert.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "5ceccc73",
+                      "english":  "The current step has no known missing prerequisite.",
+                      "translation":  "Der aktuelle Schritt hat keine bekannte fehlende Voraussetzung.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "80c519ef",
+                      "english":  "The opacity of the black circles on the map and mini map",
+                      "translation":  "Passt die Hintergrundtransparenz der schwarzen Kreise auf der minimap an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fffb6e59",
+                      "english":  "The optional \u0027%s\u0027 subsystem failed repeatedly and was disabled.\n%s",
+                      "translation":  "Das optionale Subsystem \u0027%s\u0027 ist wiederholt fehlgeschlagen und wurde deaktiviert.\n%s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "48cdee05",
+                      "english":  "The report explains the current step. Use /rxp diagnose after retrying the action.",
+                      "translation":  "Der Bericht erklaert den aktuellen Schritt. Nutze /rxp diagnose nach einem erneuten Versuch.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "116f8949",
+                      "english":  "There is no import to undo in this session.",
+                      "translation":  "In dieser Sitzung gibt es keinen Import zum Rueckgaengigmachen.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "617d8d36",
+                      "english":  "There\u0027s a new addon version (%s) available",
+                      "translation":  "Eine neue Addonversion (%s) ist verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a9d083af",
+                      "english":  "There\u0027s a new version (%s) available for %s",
+                      "translation":  "Eine neue Addonversion (%s) fuer %s ist verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2f405ce0",
+                      "english":  "This action will remove ALL guides from the database\nAre you sure?",
+                      "translation":  "Diese Aktion wird alle Guides aus dem Addon loeschen\nBist du sicher?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "880cd577",
+                      "english":  "This is a draft. Validate it offline before publishing.",
+                      "translation":  "Dies ist ein Entwurf. Vor der Veroeffentlichung offline pruefen.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "dd687188",
+                      "english":  "This requires a reload to take effect, continue?",
+                      "translation":  "Du musst reloaden um fortzufahren, willst du das?",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7b8ea719",
+                      "english":  "Throw away %s%s from your bags",
+                      "translation":  "Loesch %s%s aus dem Inventar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "2b84cadc",
+                      "english":  "Time spent",
+                      "translation":  "Gebrauchte Zeit",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "14828ed5",
+                      "english":  "Time to",
+                      "translation":  "Zeit bis",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "cf2024b0",
+                      "english":  "Tip: after toggling \u0027Readable waypoint pins\u0027, use /reload for it to take effect.",
+                      "translation":  "Tipp: Nach dem Umschalten der lesbaren Wegpunktmarkierungen /reload ausfuehren.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bd6fac02",
+                      "english":  "Toggle Current-Step Watchdog",
+                      "translation":  "Aktuelle Schrittueberwachung umschalten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "85e8d37a",
+                      "english":  "Toggle Wait",
+                      "translation":  "Warten umschalten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d5d9cc0e",
+                      "english":  "Toggles all addon frames on or off",
+                      "translation":  "Alle Fenster ein/ausblenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "944eb65b",
+                      "english":  "Total guides loaded: %d/%s",
+                      "translation":  "Guides geladen: %d/%s",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d3ae2436",
+                      "english":  "Total Time",
+                      "translation":  "Gesamtzeit",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "431d5a9b",
+                      "english":  "Tracks pet happiness, compatible food, talents, known skills, supplies, and guide-linked stable/tame preparation.",
+                      "translation":  "Verfolgt Begleiterzufriedenheit, Futter, Talente, Fertigkeiten, Vorraete und Guide-Schritte zum Stall oder Zaehmen.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "7feeacf3",
+                      "english":  "Train skills",
+                      "translation":  "Faehigkeiten lernen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b9d89259",
+                      "english":  "Trainer automation",
+                      "translation":  "Trainer Automatisierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e512de66",
+                      "english":  "Unable to retrieve report for",
+                      "translation":  "Für folgendes konnte kein Bericht gefunden werden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "e42497a7",
+                      "english":  "Unavailable",
+                      "translation":  "Nicht verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a70a9bc4",
+                      "english":  "Unavailable to the current class",
+                      "translation":  "Fuer die aktuelle Klasse nicht verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "618b35b2",
+                      "english":  "Unavailable to the current faction",
+                      "translation":  "Fuer die aktuelle Fraktion nicht verfuegbar",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "273b8919",
+                      "english":  "Undo",
+                      "translation":  "Rueckgaengig",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "f5b921b4",
+                      "english":  "Undo Import",
+                      "translation":  "Import rueckgaengig",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6ccb3e88",
+                      "english":  "Unhappy",
+                      "translation":  "Unzufrieden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "6d08a593",
+                      "english":  "unknown",
+                      "translation":  "unbekannt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "24c79360",
+                      "english":  "Unknown backup format.",
+                      "translation":  "Unbekanntes Sicherungsformat.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "db16139b",
+                      "english":  "Unknown/cache pending",
+                      "translation":  "Unbekannt/Cache ausstehend",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "b63cb3d9",
+                      "english":  "Unnamed guide",
+                      "translation":  "Unbenannter Guide",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "3c789fa1",
+                      "english":  "Unsupported backup schema.",
+                      "translation":  "Nicht unterstuetztes Sicherungsschema.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "fdd63ab8",
+                      "english":  "Unused Guides",
+                      "translation":  "Unbenutzte Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8d62bf80",
+                      "english":  "Use a plain navigation arrow",
+                      "translation":  "Einfachen Navigationspfeil verwenden",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "d9b024bc",
+                      "english":  "Uses explicit XP gates, current XP, live rewards, and anonymous observed quest rewards. Unknown rewards remain clearly marked as unknown.",
+                      "translation":  "Verwendet feste EP-Grenzen, aktuelle EP, Belohnungen und anonym beobachtete Questbelohnungen. Unbekannte Werte bleiben gekennzeichnet.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "139e608d",
+                      "english":  "Validate",
+                      "translation":  "Pruefen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "92361be8",
+                      "english":  "Validated \u0026 Fixed Guides",
+                      "translation":  "Gepruefte und korrigierte Guides",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a0f4a5ba",
+                      "english":  "Wait for synchronized party members",
+                      "translation":  "Auf synchronisierte Gruppenmitglieder warten",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "54bb1fd2",
+                      "english":  "Warning: Changing this setting mid-guide may cause quest pre-requisite failures.\nGuides were optimized for experience, disabling this option will result in a disjointed guide steps.",
+                      "translation":  "Warnung: Aendern dieser Einstellung in der Mitte eines Guides, kann zu Fehlern fuehren\nGuides wurden für EXP Optimiert, ausschalten dieser Option wird zu schlecht verketteten Schritten fuehren.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "28f5e6f9",
+                      "english":  "Watch Current Step",
+                      "translation":  "Aktuellen Schritt ueberwachen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1eb81a9e",
+                      "english":  "Waypoint",
+                      "translation":  "Wegpunkt",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "84d2dce9",
+                      "english":  "Waypoint Arrow",
+                      "translation":  "Wegpunkt-Pfeil",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "ed7dee09",
+                      "english":  "Welcome to RestedXP Guides\nRight click to pick a guide",
+                      "translation":  "Willkommen bei RestedXP Guides\nGuides mit Rechtsklick auswaehlen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "8446e462",
+                      "english":  "When comparing, show next level\u0027s time",
+                      "translation":  "Wenn verglichen wird, zeig die Zeit fuer das naechste Level an",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05f68812",
+                      "english":  "Whenever you accept a quest in the guide, the addon tries to share it with your group",
+                      "translation":  "Jedes mal, wenn du eine Quest annimmst, versucht das Addon sie mit deiner Gruppe zu teilen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "a29c1883",
+                      "english":  "Window Scale",
+                      "translation":  "Fensterskalierung",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "1df8d271",
+                      "english":  "Without this checked we will only send announcements if another RestedXP User is in your group",
+                      "translation":  "Ohne diese Einstellung wird RXP nur in die Gruppe schreiben, wenn ein anderer RXP Nutzer vorhanden ist",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "c1e1a9ee",
+                      "english":  "WotLK Daily \u0026 Weekly Planner",
+                      "translation":  "WotLK-Tages- und Wochenplaner",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "bb451566",
+                      "english":  "XP Shortfall Predictor",
+                      "translation":  "EP-Defizitprognose",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "05a5c61b",
+                      "english":  "You do not have enough money for the missing supplies.",
+                      "translation":  "Du hast nicht genug Gold fuer die fehlenden Vorraete.",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  },
+                  {
+                      "id":  "553232db",
+                      "english":  "Zones \u0026 Dungeons",
+                      "translation":  "Zonen und Instanzen",
+                      "status":  "reviewed",
+                      "domain":  "ui",
+                      "tokenized":  false,
+                      "attribution":  "Existing RXPGuides deDE AceLocale catalog"
+                  }
+              ]
+}
