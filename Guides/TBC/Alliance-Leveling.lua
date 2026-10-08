@@ -82,11 +82,6 @@ step
 .goto Dustwallow Marsh,59.652,41.243
 .target Archmage Tervosh
 step
-.goto Dustwallow Marsh,59.658,41.106
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Wymor|r
-.accept 11137 >> Accept Defias in Dustwallow?
-.target Captain Wymor
-step
 .goto Dustwallow Marsh,55.442,25.917
 >>Click the |cRXP_PICK_Loose Dirt|r
 .accept 1219 >> Accept The Orc Report
@@ -1493,7 +1488,8 @@ step << Hunter
 step
 .goto Dustwallow Marsh,66.336,45.469
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morgan Stern|r
-.accept 1204 >> Accept Mudrock Soup and Bugs
+.turnin -1260 >> Turn in Morgan Stern
+.accept 1204,2,1260 >> Accept Mudrock Soup and Bugs (needs the Morgan Stern breadcrumb from Angus Stern in Stormwind)
 .target Morgan Stern
 .maxlevel 41
 step << Mage
@@ -1524,6 +1520,7 @@ step
 >>|cRXP_ENEMY_Garn Mathers|r |cRXP_WARN_patrols the small island|r
 .complete 11137,1 
 .unitscan Garn Mathers
+.isOnQuest 11137
 step << Warrior/Warlock
 #label FlyRatchet
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Baldruc|r
@@ -2094,11 +2091,6 @@ step
 .accept 574 >> Accept Special Forces
 .target Sergeant Yohwa
 step
-.goto Stranglethorn Vale,37.832,3.559
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Nimetz|r
-.accept 207 >> Accept Kurzen's Mystery
-.target Brother Nimetz
-step
 #label Thorsen2
 #completewith Tiger187
 .goto Stranglethorn Vale,40.339,8.434,0
@@ -2297,22 +2289,9 @@ step
 #completewith next
 .goto Stranglethorn Vale,29.471,19.119,70 >> Travel to the Bal'lal Ruins
 step
-.goto Stranglethorn Vale,29.471,19.119
->>Open the |cRXP_PICK_Moon Over the Vale|r. Loot it for |cRXP_LOOT_The First Troll Legend|r
-.complete 207,1 
-step
 #optional
 #completewith next
 .goto Stranglethorn Vale,24.719,8.905,150 >> Travel to the Ruins of Zul'Kunda
-step
-.goto Stranglethorn Vale,24.719,8.905
->>Open |cRXP_PICK_The Emperor's Tomb|r. Loot it for |cRXP_LOOT_The Fourth Troll Legend|r
-.complete 207,4 
-step
-#label KurzenMystery2
-.goto Stranglethorn Vale,22.94,12.01
->>Open the |cRXP_PICK_Fall of Gurubashi|r. Loot it for |cRXP_LOOT_The Third Troll Legend|r
-.complete 207,3 
 step
 .goto Stranglethorn Vale,25.38,12.55,0
 .goto Stranglethorn Vale,25.58,10.02,0
@@ -2417,11 +2396,6 @@ step
 .collect 4611,9,705,1 
 .isOnQuest 1107
 step
-#label UnderwaterLegend
-.goto Stranglethorn Vale,24.765,22.871
->>Open |cRXP_PICK_Gri'lek the Wanderer|r underwater. Loot it for |cRXP_LOOT_The Second Troll Legend|r
-.complete 207,2 
-step
 #ah
 #loop
 .goto Stranglethorn Vale,24.9,29.1,0
@@ -2467,11 +2441,6 @@ step
 .accept 193 >> Accept Panther Mastery
 .target +Sir S. J. Erlgadin
 .goto Stranglethorn Vale,35.556,10.546
-step
-.goto Stranglethorn Vale,37.832,3.559
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Nimetz|r
-.turnin 207 >> Turn in Kurzen's Mystery
-.target Brother Nimetz
 step
 .goto Stranglethorn Vale,37.980,3.410
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Private Thorsen|r at the Rebel Camp
@@ -2899,6 +2868,11 @@ step
 .turnin 11134 >> Turn in The End of the Deserters
 .target Calia Hastings
 step
+.goto Dustwallow Marsh,65.07,47.13
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lieutenant Aden|r in the keep
+.accept 11136 >> Accept A Disturbing Development
+.target Lieutenant Aden
+step
 .goto Dustwallow Marsh,68.257,51.818
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Sergeant Amelyn|r
 .accept 11177 >> Accept The Hermit of Swamplight Manor
@@ -2937,7 +2911,6 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moxie Steelgrille|r
 .target Moxie Steelgrille
 .accept 11207 >> Accept Secure the Cargo!
-.accept 11174 >> Accept Corrosion Prevention
 step
 .isOnQuest 1187
 .goto Dustwallow Marsh,54.071,56.490
@@ -2959,29 +2932,12 @@ step
 .goto 1445,49.6,55.2,70,0
 .goto 1445,51.4,52.6,70,0
 .goto 1445,54.4,54.4,70,0
-.use 33108 >>|cRXP_WARN_Channel the|r |T133000:0|t[Ooze Buster] |cRXP_WARN_on |cRXP_ENEMY_Acidic Swamp Oozes|r and |cRXP_ENEMY_Bubbling Swamp Oozes|r while near a|r |cRXP_PICK_Power Core Fragment|r |cRXP_WARN_which grants the|r |T136099:0|t[Energized!] |cRXP_WARN_buff|r
-.complete 11174,1 
-.mob Bubbling Swamp Ooze
-.mob Acidic Swamp Ooze
-step
-#loop
-.goto 1445,54.0,57.6,0
-.goto 1445,51.6,59.0,0
-.goto 1445,49.6,55.2,0
-.goto 1445,51.4,52.6,0
-.goto 1445,54.4,54.4,0
-.goto 1445,54.0,57.6,70,0
-.goto 1445,51.6,59.0,70,0
-.goto 1445,49.6,55.2,70,0
-.goto 1445,51.4,52.6,70,0
-.goto 1445,54.4,54.4,70,0
 >>Loot the |cRXP_LOOT_Zeppelin Cargo|r on the ground
 .complete 11207,1 
 step
 .goto Dustwallow Marsh,53.573,56.916
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Moxie Steelgrille|r
 .target Moxie Steelgrille
-.turnin 11174 >> Turn in Corrosion Prevention
 .turnin 11207 >> Turn in Secure the Cargo!
 .accept 11208 >>Accept Delivery for Drazzit
 step
@@ -3205,6 +3161,12 @@ step << Shaman
 .cooldown item,6948,>2,1
 .subzoneskip 513,1
 .bindlocation 513,1
+step
+.goto Dustwallow Marsh,59.658,41.106
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Wymor|r at Sentry Point
+.turnin 11136 >> Turn in A Disturbing Development
+.accept 11137 >> Accept Defias in Dustwallow?
+.target Captain Wymor
 step
 #optional
 .goto Dustwallow Marsh,64.06,28.67,50,0
@@ -3467,7 +3429,7 @@ step
 .goto Dustwallow Marsh,66.336,45.469
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Morgan Stern|r
 .turnin 1222 >>Turn in Stinky's Escape
-.turnin 1204 >>Turn in Mudrock Soup and Bugs
+.turnin -1204 >>Turn in Mudrock Soup and Bugs
 .target Morgan Stern
 step
 .isQuestComplete 1222
@@ -3823,7 +3785,7 @@ step << Mage
 .goto Dustwallow Marsh,66.274,49.025
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Jaina Proudmoore|r atop the tower
 .target Lady Jaina Proudmoore
-.turnin 11223 >> Turn in Return to Jaina
+.turnin -11223 >> Turn in Return to Jaina
 step << Mage
 #optional
 #completewith next
@@ -6665,7 +6627,7 @@ RXPGuides.RegisterGuide([[
 step
 .goto Stranglethorn Vale,37.832,3.559
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Nimetz|r
-.accept 205 >> Accept Troll Witchery
+.accept 205,2,207 >> Accept Troll Witchery
 .target Brother Nimetz
 step
 .goto Stranglethorn Vale,38.042,3.012
@@ -6962,6 +6924,7 @@ step
 .goto Stranglethorn Vale,45.78,42.27,0
 >>Kill |cRXP_ENEMY_Skullsplitter Mystics|r and |cRXP_ENEMY_Skullsplitter Witch Doctors|r. Loot them for their |cRXP_LOOT_Skullsplitter Fetishes|r
 .complete 205,1 
+.isOnQuest 205
 .mob Skullsplitter Mystic
 .mob Skullsplitter Witch Doctor
 step
@@ -6995,8 +6958,8 @@ step
 .goto Stranglethorn Vale,37.832,3.559
 .target Brother Nimetz
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brother Nimetz|r
-.turnin 205 >> Turn in Troll Witchery
-.accept 206 >> Accept Mai'Zoth
+.turnin -205 >> Turn in Troll Witchery
+.accept 206,2,205 >> Accept Mai'Zoth
 step
 .goto Stranglethorn Vale,38.042,3.012
 .target Lieutenant Doren
@@ -7206,7 +7169,7 @@ step
 .accept 607 >> Accept Return to MacKinley
 step
 .goto Stranglethorn Vale,26.7,73.7
-.accept 8551 >> Accept The Captain's Chest
+.accept 614 >> Accept The Captain's Chest
 step
 .goto Stranglethorn Vale,28.1,76.2
 .turnin 597 >> Turn in The Bloodsail Buccaneers
@@ -7253,7 +7216,7 @@ step
 .goto Stranglethorn Vale,37.0,69.7
 >>Kill the sea giant that roams this area. If you are having trouble killing him you can kite him to the Booty Bay guards, just be sure to do atleast 51% damage to him.
 .link https://www.youtube.com/watch?v=lNy2ohTWeLw&t=1038s >> Click here for an example of how to kite him to the guards
-.complete 8551,1 
+.complete 614,1 
 step
 #label mixture
 #sticky
@@ -7300,7 +7263,7 @@ step
 .accept 608 >> Accept The Bloodsail Buccaneers
 step
 .goto Stranglethorn Vale,26.7,73.7
-.turnin 8551 >> Turn in The Captain's Chest
+.turnin 614 >> Turn in The Captain's Chest
 step << !Warrior !Rogue !Paladin
 >> Look for Mok'rash, an elite giant at the giant goblin statue
 >>Set up a slow trap near the goblin statue and kite him with cheetah << Hunter
@@ -8492,7 +8455,7 @@ step
 .goto Stranglethorn Vale,26.694,73.613
 .target Captain Hecklebury Smotts
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Hecklebury Smotts|r
-.accept 8551 >> Accept The Captain's Chest
+.accept 614 >> Accept The Captain's Chest
 step
 .group 2 << Warrior/Rogue/Paladin/Mage/Shaman
 .goto Stranglethorn Vale,23.24,71.92
@@ -8629,10 +8592,10 @@ step
 .target Auctioneer O'reely
 step
 #optional
-.isQuestComplete 8551
+.isQuestComplete 614
 .goto Stranglethorn Vale,26.694,73.613
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Hecklebury Smotts|r
-.turnin 8551 >> Turn in The Captain's Chest
+.turnin 614 >> Turn in The Captain's Chest
 .target Captain Hecklebury Smotts
 step
 #label SnuffEye
@@ -8730,7 +8693,7 @@ step
 >>Kill |cRXP_ENEMY_Gorlash|r. Loot him for |cRXP_LOOT_Smotts' Chest|r
 >>|cRXP_WARN_Don't try to solo him unless you're in a group or have cooldowns/potion CDs ready|r << Rogue/Warrior/Paladin
 >>|cRXP_WARN_Try to kite him if required to the Booty Bay enterance so guards assist you. Ensure you deal at least 51% damage to him|r
-.complete 8551,1 
+.complete 614,1 
 .mob Gorlash
 step
 #completewith next
@@ -8900,7 +8863,7 @@ step << Druid
 .target Loganaar
 .cooldown item,6948,>2,1
 step
-.isOnQuest 587,608,613,348,576,8551,8552
+.isOnQuest 587,608,613,348,576,614,8552
 .hs >> Hearth to Booty Bay
 >>|cRXP_BUY_Buy food/water if needed|r << !Warrior !Rogue
 >>|cRXP_BUY_Buy food if needed|r << Warrior/Rogue
@@ -8908,7 +8871,7 @@ step
 .subzoneskip 35
 .bindlocation 35,1
 step << Shaman
-.isOnQuest 587,608,613,348,576,8551,8552
+.isOnQuest 587,608,613,348,576,614,8552
 .cast 556 >> |T136010:0|t[Astral Recall] back to Booty Bay
 >>|cRXP_BUY_Buy food/water if needed|r << !Warrior !Rogue
 >>|cRXP_BUY_Buy food if needed|r << Warrior/Rogue
@@ -8916,7 +8879,7 @@ step << Shaman
 .subzoneskip 35
 .bindlocation 35,1
 step
-.isOnQuest 587,608,613,348,576,8551,8552
+.isOnQuest 587,608,613,348,576,614,8552
 .goto Stranglethorn Vale,38.237,4.034
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Nizzle|r
 .fly Booty Bay >> Fly to Booty Bay
@@ -8950,10 +8913,10 @@ step
 .turnin 576 >> Turn in Keep An Eye Out
 .target Dizzy One-Eye
 step
-.isQuestComplete 8551
+.isQuestComplete 614
 .goto Stranglethorn Vale,26.694,73.613
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Captain Hecklebury Smotts|r
-.turnin 8551 >> Turn in The Captain's Chest
+.turnin 614 >> Turn in The Captain's Chest
 .target Captain Hecklebury Smotts
 step
 .isOnQuest 1477,624,1448
@@ -8963,7 +8926,7 @@ step
 .target Gyll
 step
 #optional
-.abandon 8551 >> Abandon The Captain's Chest
+.abandon 614 >> Abandon The Captain's Chest
 step << Shaman
 .isOnQuest 1477,624,1448,1395
 .goto Duskwood,73.872,44.406
@@ -8973,8 +8936,8 @@ step << Shaman
 step
 .goto Duskwood,75.779,46.159
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Watchmaster Sorigal|r
-.turnin 1477 >> Turn in Vital Supplies
-.accept 1395 >> Accept Supplies for Nethergarde
+.turnin -1477 >> Turn in Vital Supplies
+.accept 1395,2,1477 >> Accept Supplies for Nethergarde
 .target Watchmaster Sorigal
 step
 #completewith EnterBL
@@ -8997,6 +8960,7 @@ step
 .goto Swamp of Sorrows,67.00,47.00
 >>Swim to the middle of the Pool of Tears
 .complete 1448,1 
+.isOnQuest 1448
 step
 #label EnterBL
 #completewith next
@@ -9006,7 +8970,7 @@ step
 step
 .goto Blasted Lands,66.521,21.386
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Quartermaster Lungertz|r
-.turnin 1395 >> Turn in Supplies for Nethergarde
+.turnin -1395 >> Turn in Supplies for Nethergarde
 .target Quartermaster Lungertz
 step
 #completewith next << !Shaman
@@ -9057,8 +9021,8 @@ step << Mage
 step
 .goto Stormwind City,64.328,20.627
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Brohann Caskbelly|r
-.turnin 1448 >>Turn in In Search of The Temple
-.accept 1449 >>Accept To The Hinterlands
+.turnin -1448 >>Turn in In Search of The Temple
+.accept 1449,2,1448 >>Accept To The Hinterlands
 .target Brohann Caskbelly
 step << !Mage
 #optional
@@ -9123,7 +9087,7 @@ step << !Mage
 .goto Dustwallow Marsh,66.274,49.025
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Lady Jaina Proudmoore|r atop the tower
 .target Lady Jaina Proudmoore
-.turnin 11223 >> Turn in Return to Jaina
+.turnin -11223 >> Turn in Return to Jaina
 step
 .dungeon Mara
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Archmage Tervosh|r atop the tower
@@ -9193,9 +9157,100 @@ step
 .target Innkeeper Fizzgrimble
 .bindlocation 976
 step
+#xprate >1.499
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chief Engineer Bilgewhizzle|r and |cRXP_FRIENDLY_Spigot Operator Luglunket|r
+.accept 1690 >> Accept Wastewander Justice
+.target +Chief Engineer Bilgewhizzle
+.goto Tanaris,52.462,28.514
+.accept 1707 >> Accept Water Pouch Bounty
+.target +Spigot Operator Luglunket
+.goto Tanaris,52.486,28.445
+step << Mage
+#xprate >1.499
+.isQuestAvailable 1690,1707,1188,1194
+.goto Tanaris,52.51,27.91
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Innkeeper Fizzgrimble|r
+.home >> Set your Hearthstone to Gadgetzan
+.target Innkeeper Fizzgrimble
+.bindlocation 976
+step
+#xprate >1.499
+.goto Tanaris,51.566,26.759
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tran'rek|r
+.turnin 2864 >> Turn in Tran'rek
+.target Tran'rek
+step
+#xprate >1.499
+#completewith PortQ
+.goto Tanaris,60.4,24.6,0
+.goto Tanaris,63.6,31.0,0
+>>Kill |cRXP_ENEMY_Wastewander Bandits|r and |cRXP_ENEMY_Wastewander Thieves|r. Loot them for their |cRXP_LOOT_Wastewander Water Pouches|r
+>>|cRXP_WARN_Kill them en-route to Steamwheedle Port. Don't complete this immediately|r
+.complete 1690,1 
+.mob +Wastewander Bandit
+.complete 1690,2 
+.mob +Wastewander Thief
+.complete 1707,1 
+.mob +Wastewander Bandit
+.mob +Wastewander Thief
+step
+#xprate >1.499
+.goto Tanaris,66.560,22.265
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Haughty Modiste|r
+.accept 8365 >> Accept Pirate Hats Ahoy!
+.target Haughty Modiste
+step
+#xprate >1.499
+#label PortQ
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Security Chief Bilgewhizzle|r and |cRXP_FRIENDLY_Stoley|r
+.accept 8366 >> Accept Southsea Shakedown
+.target +Security Chief Bilgewhizzle
+.goto Tanaris,67.058,23.891
+.turnin 2872 >> Turn in Stoley's Debt
+.accept 2873 >> Accept Stoley's Shipment
+.target +Stoley
+.goto Tanaris,67.109,23.978
+step
+#xprate >1.499
+#loop
+.goto Tanaris,60.14,23.42,0
+.goto Tanaris,63.93,31.60,0
+.goto Tanaris,63.85,29.26,50,0
+.goto Tanaris,63.63,31.66,50,0
+.goto Tanaris,63.27,33.57,50,0
+.goto Tanaris,62.77,30.20,50,0
+.goto Tanaris,63.93,31.60,50,0
+>>Kill |cRXP_ENEMY_Wastewander Bandits|r and |cRXP_ENEMY_Wastewander Thieves|r. Loot them for their |cRXP_LOOT_Wastewander Water Pouches|r
+.complete 1690,1 
+.mob +Wastewander Bandit
+.complete 1690,2 
+.mob +Wastewander Thief
+.complete 1707,1 
+.mob +Wastewander Bandit
+.mob +Wastewander Thief
+step << Mage
+#xprate >1.499
+#completewith next
+.hs >> Hearth to Gadgetzan
+>>|cRXP_BUY_Buy food/water if needed|r << !Warrior !Rogue
+>>|cRXP_BUY_Buy food if needed|r << Warrior/Rogue
+.cooldown item,6948,>2,1
+.bindlocation 976,1
+.subzoneskip 976
+step
+#xprate >1.499
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chief Engineer Bilgewhizzle|r and |cRXP_FRIENDLY_Spigot Operator Luglunket|r
+.turnin 1690 >> Turn in Wastewander Justice
+.target +Chief Engineer Bilgewhizzle
+.goto Tanaris,52.462,28.514
+.turnin 1707 >> Turn in Water Pouch Bounty
+.target +Spigot Operator Luglunket
+.goto Tanaris,52.486,28.445
+step
 .dungeon ZF
 .goto Tanaris,51.566,26.759
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Tran'rek|r
+.turnin -2864 >> Turn in Tran'rek
 .accept 2865 >> Accept Scarab Shells
 .target Tran'rek
 step
@@ -9427,7 +9482,7 @@ step
 step
 .goto Tanaris,52.462,28.514
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Chief Engineer Bilgewhizzle|r
-.accept 1691 >> Accept More Wastewander Justice
+.accept 1691,2,1690 >> Accept More Wastewander Justice
 .target Chief Engineer Bilgewhizzle
 step
 .isQuestAvailable 2605,1691,5863,2781,2875,1188,992,8366,8365
@@ -13746,7 +13801,6 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
 .turnin 980 >> Turn in The New Springs
 .turnin 3908 >> Turn in It's a Secret to Everybody
-.accept 5082 >> Accept Threat of the Winterfall
 .target Donova Snowden
 .isOnQuest 980
 .isOnQuest 3908
@@ -13765,22 +13819,6 @@ step
 .target Donova Snowden
 .isOnQuest 3908
 step
-#optional
-.goto Winterspring,31.269,45.164
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
-.accept 5082 >> Accept Threat of the Winterfall
-.target Donova Snowden
-step
-#completewith next
->>Kill |cRXP_ENEMY_Winterfall Pathfinders|r, |cRXP_ENEMY_Winterfall Den Watchers|r and |cRXP_ENEMY_Winterfall Totemics|r
->>|cRXP_WARN_Don't go out of your way to complete this now|r
-.complete 5082,1 
-.mob +Winterfall Pathfinder
-.complete 5082,2 
-.mob +Winterfall Den Watcher
-.complete 5082,3 
-.mob +Winterfall Totemic
-step
 #loop
 .goto Winterspring,30.6,35.8,0
 .goto Winterspring,33.6,36.8,0
@@ -13797,15 +13835,6 @@ step
 .mob Winterfall Pathfinder
 .mob Winterfall Den Watcher
 .mob Winterfall Totemic
-step
-#optional
-.isQuestComplete 5082
-.goto Winterspring,31.269,45.164
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
-.turnin 5082 >> Turn in Threat of the Winterfall
-.turnin 5083 >> Turn in Winterfall Firewater
-.accept 5084 >> Accept Falling to Corruption
-.target Donova Snowden
 step
 #label FallingWinterfall
 .goto Winterspring,31.269,45.164
@@ -13966,9 +13995,9 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Arathandris Silversky|r
 >>|cRXP_WARN_Turn in your 6|r |T132884:0|t[|cRXP_LOOT_Corrupted Soul Shards|r] |cRXP_WARN_you have to receive 2|r |T132804:0|t[|cRXP_LOOT_Cenarion Plant Salves|r]
 >>If you don't have 6 get them from the |cRXP_ENEMY_Furbolgs|r to the west
-.collect 11515,6,5882,1 
-.accept 5882 >> Accept Salve via Hunting
-.turnin 5882 >> Turn in Salve via Hunting
+.collect 11515,6,4103,1
+.accept 4103,2,4101 >> Accept Salve via Hunting (only offered after Cleansing Felwood, 15 Blood Amber, from the same NPC)
+.turnin -4103 >> Turn in Salve via Hunting
 .target Arathandris Silversky
 .zoneskip Felwood,1
 .mob Deadwood Warrior
@@ -14116,28 +14145,6 @@ step
 >>Loot |cRXP_LOOT_Moontouched Feathers|r on the ground
 .complete 978,1 
 step
-#loop
-.goto Winterspring,30.6,35.8,0
-.goto Winterspring,33.6,36.8,0
-.goto Winterspring,39.4,43.8,0
-.goto Winterspring,41.6,42.8,0
-.goto Winterspring,30.6,35.8,70,0
-.goto Winterspring,33.6,36.8,70,0
-.goto Winterspring,39.4,43.8,70,0
-.goto Winterspring,41.6,42.8,70,0
->>Kill |cRXP_ENEMY_Winterfall Pathfinders|r, |cRXP_ENEMY_Winterfall Den Watchers|r and |cRXP_ENEMY_Winterfall Totemics|r
-.complete 5082,1 
-.mob +Winterfall Pathfinder
-.complete 5082,2 
-.mob +Winterfall Den Watcher
-.complete 5082,3 
-.mob +Winterfall Totemic
-step
-.goto Winterspring,31.269,45.164
->>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
-.turnin 5082 >> Turn in Threat of the Winterfall
-.target Donova Snowden
-step
 #optional
 .isQuestComplete 5087
 .goto Winterspring,31.269,45.164
@@ -14163,6 +14170,11 @@ step
 .home >> Set your Hearthstone to Everlook
 .target Innkeeper Vizzie
 .bindlocation 2255
+step
+.goto Winterspring,60.66,38.17
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Meggi Peppinrocker|r
+.accept 6603 >> Accept Trouble in Winterspring!
+.target Meggi Peppinrocker
 step
 .goto Winterspring,61.626,38.615
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Felnok Steelspring|r
@@ -14404,6 +14416,12 @@ step
 .target Donova Snowden
 .isOnQuest 4842
 step
+.goto Winterspring,31.269,45.164
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
+.turnin 6603 >> Turn in Trouble in Winterspring!
+.accept 5082 >> Accept Threat of the Winterfall
+.target Donova Snowden
+step
 #optional
 .goto Winterspring,31.269,45.164
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
@@ -14417,6 +14435,28 @@ step
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Salfa|r
 .turnin 8464 >> Turn in Winterfall Activity
 .target Salfa
+step
+#loop
+.goto Winterspring,30.6,35.8,0
+.goto Winterspring,33.6,36.8,0
+.goto Winterspring,39.4,43.8,0
+.goto Winterspring,41.6,42.8,0
+.goto Winterspring,30.6,35.8,70,0
+.goto Winterspring,33.6,36.8,70,0
+.goto Winterspring,39.4,43.8,70,0
+.goto Winterspring,41.6,42.8,70,0
+>>Kill |cRXP_ENEMY_Winterfall Pathfinders|r, |cRXP_ENEMY_Winterfall Den Watchers|r and |cRXP_ENEMY_Winterfall Totemics|r
+.complete 5082,1 
+.mob +Winterfall Pathfinder
+.complete 5082,2 
+.mob +Winterfall Den Watcher
+.complete 5082,3 
+.mob +Winterfall Totemic
+step
+.goto Winterspring,31.269,45.164
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Donova Snowden|r
+.turnin 5082 >> Turn in Threat of the Winterfall
+.target Donova Snowden
 step
 #sticky
 #optional
@@ -28043,6 +28083,28 @@ step
 #completewith A529
 .zone Netherstorm >> Travel to Netherstorm
 step
+#aldor
+#completewith next
+.goto Blade's Edge Mountains,61.680,39.613
+.fly Shattrath City >> Fly to Shattrath. Assist Exarch Orelis from the Aldor Rise unlocks the Manaforge quest chain in Netherstorm
+.zoneskip Shattrath City
+.zoneskip Netherstorm
+step
+#aldor
+.goto Shattrath City,35.5,32.0
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Vindicator Kaan|r on the Aldor Rise
+.accept 11038 >> Accept Assist Exarch Orelis
+.target Vindicator Kaan
+.zoneskip Netherstorm
+step
+#aldor
+#completewith next
+.goto Shattrath City,64.061,41.112
+.fly Evergrove >> Fly back to Evergrove
+.target Nutral
+.zoneskip Netherstorm
+.zoneskip Blade's Edge Mountains
+step
 .goto Netherstorm,21.81,55.52
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Netherologist Coppernickels|r on the bridge
 .accept 10183 >> Accept Off To Area 52
@@ -28051,11 +28113,25 @@ step
 #completewith A529
 .subzone 3712 >> Travel to Area 52
 step
+#aldor
+.goto Netherstorm,32.04,64.18
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Anchorite Karja|r
+.accept 10263 >> Accept Assisting the Consortium
+.target Anchorite Karja
+step
+#scryer
+.goto Netherstorm,32.00,64.07
+>>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Spymaster Thalodien|r
+.accept 10264 >> Accept Assisting the Consortium
+.target Spymaster Thalodien
+step
 #label A529
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Boots|r, |cRXP_FRIENDLY_Nether-Stalker Khay'ji|r, |cRXP_FRIENDLY_Rocket-Chief Fuselage|r
 .accept 10342 >> Accept Securing the Shaleskin Shale
 .target +Boots
 .goto Netherstorm,32.27,63.92
+.turnin -10263 >> Turn in Assisting the Consortium
+.turnin -10264 >> Turn in Assisting the Consortium
 .accept 10265 >> Accept Consortium Crystal Collection
 .target +Nether-Stalker Khay'ji
 .goto Netherstorm,32.44,64.20
@@ -28080,7 +28156,8 @@ step
 #aldor
 .goto Netherstorm,32.07,64.18
 >>|Tinterface/worldmap/chatbubble_64grey.blp:20|tTalk to |cRXP_FRIENDLY_Exarch Orelis|r
-.accept 10241 >> Accept Distraction at Manaforge B'naar
+.turnin -11038 >> Turn in Assist Exarch Orelis
+.accept 10241,2,11038 >> Accept Distraction at Manaforge B'naar
 .target Exarch Orelis
 step
 #scryer
@@ -28242,6 +28319,7 @@ step
 #aldor
 >>Kill |cRXP_ENEMY_Sunfury Magisters|r and |cRXP_ENEMY_Sunfury Bloodwarders|r
 .complete 10241,1 
+.isOnQuest 10241
 .mob +Sunfury Magister
 .goto Netherstorm,25.64,68.35,50,0
 .goto Netherstorm,26.58,68.65,50,0
@@ -28406,8 +28484,8 @@ step
 .accept 10300 >> Accept Rebuilding the Staff
 .target +Ravandwyr
 .goto Netherstorm,31.36,66.15,-1
-.turnin 10241 >> Turn in Distraction at Manaforge B'naar
-.accept 10313 >> Accept Measuring Warp Energies
+.turnin -10241 >> Turn in Distraction at Manaforge B'naar
+.accept 10313,2,10241 >> Accept Measuring Warp Energies
 .target +Exarch Orelis
 .goto Netherstorm,32.07,64.18,-1
 .accept 10243 >> Accept Naaru Technology
@@ -28438,8 +28516,8 @@ step
 .accept 10300 >> Accept Rebuilding the Staff
 .target +Ravandwyr
 .goto Netherstorm,31.36,66.15
-.turnin 10241 >> Turn in Distraction at Manaforge B'naar
-.accept 10313 >> Accept Measuring Warp Energies
+.turnin -10241 >> Turn in Distraction at Manaforge B'naar
+.accept 10313,2,10241 >> Accept Measuring Warp Energies
 .target +Exarch Orelis
 .goto Netherstorm,32.07,64.18
 .accept 10243 >> Accept Naaru Technology

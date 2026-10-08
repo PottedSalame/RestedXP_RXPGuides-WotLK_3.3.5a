@@ -3470,11 +3470,28 @@ step
 .zone Borean Tundra
 >>Ride the boat to Borean Tundra
 step
-.zone Dragonblight
->>Go northeast to Dragonblight
+.goto Borean Tundra,59.0,68.3
+.fly Unu'pe, Borean Tundra >> Fly to Unu'pe
+.zoneskip Dragonblight
+step
+#completewith next
+.goto Borean Tundra,78.5,73.5,60,0
+.goto Dragonblight,40.0,79.0,60,0
+.goto Dragonblight,48.06,74.96
+>>Ride east along the south coast into Dragonblight to Moa'ki Harbor
+step
+.goto Dragonblight,48.06,74.96
+.target Emissary Skyhaven
+.accept 11995 >> Accept Your Presence is Required at Stars' Rest
+.fp Moa'ki, Dragonblight >> Get the Moa'ki flight path
+step
+#completewith next
+.goto Dragonblight,29,55.5
+>>Ride northwest to Stars' Rest
 step
 .goto Dragonblight,29,55.5
 .target Image of Archmage Modera
+.turnin 11995 >> Turn in Your Presence is Required at Stars' Rest
 .accept 12000 >> Accept Rifle the Bodies
 step
 .goto Dragonblight,29.2,55.3

@@ -844,9 +844,15 @@ step << Druid
     .accept 5921 >> Accept Moonglade
 	.trainer >> Train your level 10 spells
 step << !Rogue
+    .goto Darnassus,28.9,45.8
+.target Sister Aquinne
+>>Talk to |cRXP_FRIENDLY_Sister Aquinne|r in the Temple Gardens
+    .accept 2519 >> Accept The Temple of the Moon
+step << !Rogue
     .goto Darnassus,36.5,86.0
 .target Priestess A'moora
 >>Talk to |cRXP_FRIENDLY_Priestess A'moora|r
+    .turnin 2519 >> Turn in The Temple of the Moon
     .accept 2518 >> Accept Tears of the Moon
 step << Druid
     .goto Moonglade,56.2,30.8
@@ -1050,9 +1056,15 @@ step << Rogue
 .target Syurna
     .accept 2242 >> Accept Destiny Calls
 step << Rogue
+    .goto Darnassus,28.9,45.8
+.target Sister Aquinne
+>>Talk to |cRXP_FRIENDLY_Sister Aquinne|r in the Temple Gardens
+    .accept 2519 >> Accept The Temple of the Moon
+step << Rogue
     .goto Darnassus,36.5,86.0
 .target Priestess A'moora
 >>Talk to |cRXP_FRIENDLY_Priestess A'moora|r
+    .turnin -2519 >> Turn in The Temple of the Moon
     .accept 2518 >> Accept Tears of the Moon
 step << Hunter
     #sticky
