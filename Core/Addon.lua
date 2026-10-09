@@ -406,7 +406,7 @@ function addon.NormalizeQuestAcceptedId(arg1, arg2)
         -- isCollapsed, isComplete, frequency, questID). Use the 8th positional
         -- return value instead of the Bootstrap C_QuestLog index cache, which
         -- can race with QUEST_ACCEPTED and return nil when the log is stale.
-        return select(8, _G.GetQuestLogTitle(arg1)) or tonumber(arg1)
+        return select(8, _G.GetQuestLogTitle(arg1))
     end
     return arg1
 end
