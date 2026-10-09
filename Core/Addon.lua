@@ -401,9 +401,12 @@ function addon.NormalizeQuestAcceptedId(arg1, arg2)
         quirks.questAcceptedLogIndex == false then
         return tonumber(arg1)
     end
-    if addon.gameVersion == 30300 and arg1 and C_QuestLog and
-        C_QuestLog.GetQuestIDForLogIndex then
-        return C_QuestLog.GetQuestIDForLogIndex(arg1)
+    if addon.gameVersion == 30300 and arg1 and type(arg1) == "number" then
+        -- Native 3.3.5a: GetQuestLogTitle returns (title, level, tag, isHeader,
+        -- isCollapsed, isComplete, frequency, questID). Use the 8th positional
+        -- return value instead of the Bootstrap C_QuestLog index cache, which
+        -- can race with QUEST_ACCEPTED and return nil when the log is stale.
+        return select(8, _G.GetQuestLogTitle(arg1)) or tonumber(arg1)
     end
     return arg1
 end
