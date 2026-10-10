@@ -937,6 +937,8 @@ function addon.SetStep(n, n2, loopback)
         end
     end
 
+    addon.UpdateMap(true)
+
     for _,prevstep in pairs(previousSteps) do
         if not prevstep.active then
             addon:SendEvent("RXP_STEP_DEACTIVATED",prevstep,guide)
