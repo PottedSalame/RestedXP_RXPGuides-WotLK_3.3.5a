@@ -402,11 +402,10 @@ function addon.NormalizeQuestAcceptedId(arg1, arg2)
         return tonumber(arg1)
     end
     if addon.gameVersion == 30300 and arg1 and type(arg1) == "number" then
-        -- Native 3.3.5a: GetQuestLogTitle returns (title, level, tag, isHeader,
-        -- isCollapsed, isComplete, frequency, questID). Use the 8th positional
-        -- return value instead of the Bootstrap C_QuestLog index cache, which
-        -- can race with QUEST_ACCEPTED and return nil when the log is stale.
-        return select(8, _G.GetQuestLogTitle(arg1))
+        -- AzerothCore 3.3.5a GetQuestLogTitle returns questID at position 9;
+        -- the compat wrapper reshapes it to position 8 for position-dependent reads.
+        -- Use the wrapper to avoid misreading isDaily as questID.
+        return select(8, (_G.RXPCompatGetQuestLogTitle or _G.GetQuestLogTitle)(arg1))
     end
     return arg1
 end

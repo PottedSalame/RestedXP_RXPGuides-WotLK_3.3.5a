@@ -1303,6 +1303,8 @@ local function updateArrowData()
     local deathNavigationMode = isGhost and GetDeathNavigationMode()
     local HBD = LibStub("HereBeDragons-2.0")
 
+    local playerInstance = select(3, HBD:GetPlayerWorldPosition())
+
     local function ProcessWaypoint(element, lowPrio, isComplete)
         if element.hidden then
             return
@@ -1321,6 +1323,12 @@ local function updateArrowData()
                 and not (element.parent and (element.parent.completed or element.parent.skip))
                 and not (element.text and (element.completed or isComplete) and not isComplete))
         then
+            if element.instance and element.instance ~= playerInstance then
+                return
+            end
+            if not element.instance then
+                return
+            end
             af:SetShown(
                 not addon.settings.profile.disableArrow
                 and not addon.hideArrow

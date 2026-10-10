@@ -167,9 +167,14 @@ function addon.tracker:SetupTracker()
         type(addon.db.profile.reports.splits) == "table" and
             addon.db.profile.reports.splits or {}
 
+    -- addon.player.guid is captured at file load, where 3.3.5a can still
+    -- return nil. Re-read it here, and never treat an unavailable GUID as a
+    -- character change: that would archive levels and move splits needlessly.
+    addon.player.guid = UnitGUID("player") or addon.player.guid
+
     if not self.db.profile.trackedGuid then self.db.profile.trackedGuid = addon.player.guid end
 
-    if self.db.profile.trackedGuid ~= addon.player.guid then
+    if addon.player.guid and self.db.profile.trackedGuid ~= addon.player.guid then
         addon.comms.PrettyDebug("GUID changed, saving %s and resetting for %s", addon.player.name, addon.player.guid)
 
         -- 3.3.5a GUIDs are hex (e.g. "0x00000000000123AB") with no dashes, so the

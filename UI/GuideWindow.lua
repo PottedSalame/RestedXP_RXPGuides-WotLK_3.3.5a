@@ -671,6 +671,25 @@ local function ApplyElementVisualState(elementFrame, element, step)
     elementFrame.text:SetTextColor(unpack(color))
 end
 
+-- A #completewith step stays active until its target step is passed (or, for a
+-- sticky target, skipped). Mirrors the rule in UpdateStepCompletion (kept
+-- inline there because tests load that function body in isolation) so SetStep
+-- can retire stale optional steps in the same pass instead of re-activating
+-- them until the next deferred completion check.
+local function IsCompleteWithTargetPassed(guide, step, currentStep)
+    local completewith = step.completewith
+    if completewith == "next" then
+        completewith = step.index and (step.index + 1)
+    else
+        completewith = guide.labels[completewith]
+    end
+    if not completewith then return false end
+    if guide.steps[completewith] and guide.steps[completewith].sticky then
+        return RXPCData.stepSkip[completewith] and true or false
+    end
+    return currentStep > completewith
+end
+
 function addon.UpdateStepCompletion()
     if addon.IsQuestRewardSettlementActive and
         addon.IsQuestRewardSettlementActive() then
@@ -877,6 +896,13 @@ function addon.SetStep(n, n2, loopback)
 
     for i = 1, n - 1 do
         local step = guide.steps[i]
+        -- Retire optional steps whose #completewith target is already behind
+        -- us before they are re-activated; otherwise their waypoints keep the
+        -- arrow until the next deferred UpdateStepCompletion pass.
+        if step.sticky and step.completewith and not RXPCData.stepSkip[i] and
+            IsCompleteWithTargetPassed(guide, step, n) then
+            RXPCData.stepSkip[i] = true
+        end
         if step.sticky then
             local req = guide.labels[step.requires]
             if step.requires and req then
