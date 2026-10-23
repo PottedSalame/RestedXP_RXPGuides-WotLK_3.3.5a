@@ -235,10 +235,16 @@ step
     .collect 4371,1,175,1,1
     .bronzetube
 step
+    .goto Wetlands,10.1,56.9
+.target Valstag Ironjaw
+>>Talk to |cRXP_FRIENDLY_Valstag Ironjaw|r inside the keep
+    .accept 473 >> Accept Report to Captain Stoutfist
+step
     .goto Wetlands,9.9,57.4
 	>>Go upstairs inside the keep
 .target Captain Stoutfist
 >>Talk to |cRXP_FRIENDLY_Captain Stoutfist|r
+    .turnin 473 >> Turn in Report to Captain Stoutfist
     .accept 464 >> Accept War Banners
 step
     .goto Wetlands,11.503,52.134
@@ -2870,6 +2876,12 @@ step << Dwarf Paladin
 .target Tiza Battleforge
 >>Talk to |cRXP_FRIENDLY_Tiza Battleforge|r
     .turnin 1785 >>Turn in The Tome of Divinity
+step
+    .goto Stormwind City,51.8,93.6
+.target Angus Stern
+>>Talk to |cRXP_FRIENDLY_Angus Stern|r in the Blue Recluse (Mage Quarter). Needs level 33, skip if you are not there yet
+    .accept 1260 >> Accept Morgan Stern
+    .xp <33,1
 step << Dwarf !Paladin tbc
 	.skill riding,75,1
 	.money <35.0
@@ -3811,6 +3823,12 @@ step << Draenei !Shaman !Paladin wotlk
 	.goto Wetlands,5.2,63.3,50,0
 	.money <5.00
 	.skill riding,75 >> Take the boat to Darkshore then the boat to the Exodar and buy your mount. Then hearth to Stormwind
+step
+    .goto Stormwind City,51.8,93.6
+.target Angus Stern
+>>Talk to |cRXP_FRIENDLY_Angus Stern|r in the Blue Recluse (Mage Quarter). Needs level 33, skip if you are not there yet
+    .accept 1260 >> Accept Morgan Stern
+    .xp <33,1
 step
     #sticky
 	#completewith next
