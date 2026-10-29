@@ -459,7 +459,7 @@ return function(root, baseObject, style)
     -- Exercise the Choose Step and shared Find Start confirmation definitions.
     -- RXP modal strata must survive hovering the library and be restored when
     -- the stock popup frame is returned to its shared pool.
-    install(source("Features/Communications.lua"), 'function addon.comms:ConfirmChoice(', '\naddon.comms.grouping =')
+    install(source("Features/Communications.lua"), 'local pendingChoices335', '\naddon.comms.grouping =')
     hub.selected = {key = "fixture", name = "fixture", active = true, guide = {}}
     hub:ChooseStep()
     addon.comms:ConfirmChoice("RXP_CATCHUP_CONFIRM", "fixture", forbidden)

@@ -142,7 +142,7 @@ function addon.UpdateQuestButton(index)
 
         -- Only evaluates true on first load
         -- addon.orphanedList is updated when QuestLogFrame opens/closes
-        if not addon.orphanedList then
+        if not addon.orphanedList or (addon.questRouteInspection and not addon.questRouteInspection:IsReady()) then
             addon.GetOrphanedQuests()
         end
 
@@ -183,11 +183,170 @@ end
 
 local stepIndex = 0
 local guideKey,qLogCache,futureTurnInsCache
+-- Only the orphan/expected-log inspection yields. Explicit debugging calls to
+-- GetQuestLog keep their synchronous contract; no directive actions run here.
+local inspection = {revision = 0}
+addon.questRouteInspection = inspection
+local BuildExpectedQuestLog
+local routeSettings = {"hardcore", "soloSelfFound", "enableGroupQuests", "phase",
+    "season", "xprate", "professions", "northrendLM", "loremasterMode",
+    "enableXpStepSkipping", "enableBetaFeatures", "chromieTime"}
+
+local function Context()
+    local profile = addon.settings.profile
+    local guide = addon.currentGuide
+    local group = guide and addon.guideList[guide.group]
+    local context = {refs = setmetatable({guide, profile}, {__mode = "v"}),
+        signature = guide and guide.sourceSignature, step = RXPCData.currentStep,
+        revision = inspection.revision, level = UnitLevel("player"),
+        skipDailies = RXPCData.skipDailies, gold = RXPCData.GA,
+        start = group and group.defaultGuide_, values = {}, dungeons = {}}
+    for _, key in ipairs(routeSettings) do context.values[key] = profile[key] end
+    for key, value in pairs(profile.dungeons or {}) do context.dungeons[key] = value end
+    return context
+end
+
+local function Current(context)
+    local guide, profile = addon.currentGuide, addon.settings.profile
+    local group = guide and addon.guideList[guide.group]
+    if not context or not guide or context.refs[1] ~= guide or context.refs[2] ~= profile or
+        context.signature ~= guide.sourceSignature or context.step ~= RXPCData.currentStep or
+        context.revision ~= inspection.revision or context.level ~= UnitLevel("player") or
+        context.skipDailies ~= RXPCData.skipDailies or context.gold ~= RXPCData.GA or
+        context.start ~= (group and group.defaultGuide_) then return false end
+    for _, key in ipairs(routeSettings) do
+        if context.values[key] ~= profile[key] then return false end
+    end
+    for key, value in pairs(profile.dungeons or {}) do
+        if context.dungeons[key] ~= value then return false end
+    end
+    for key, value in pairs(context.dungeons) do
+        if (profile.dungeons or {})[key] ~= value then return false end
+    end
+    return true
+end
+
+function inspection:Release()
+    for _, release in pairs(self.owners or {}) do release() end
+    self.owners, self.worker = nil, nil
+end
+
+function inspection:IsReady()
+    return self.status == "ready" and Current(self.context)
+end
+
+function inspection:StatusText()
+    return self.status == "error" and L("Quest inspection is unavailable. No quests were abandoned.") or
+        L("Quest inspection is pending. Please try again shortly.")
+end
+
+function inspection:Invalidate(restart)
+    local pending = self.worker ~= nil
+    addon.scheduler:CancelOwner(self)
+    self:Release()
+    self.revision = self.revision + 1
+    self.context, self.status = nil, nil
+    qLogCache, futureTurnInsCache, addon.orphanedList = nil, nil, nil
+    if pending and restart ~= false then self:Request() end
+end
+
+function inspection:Own(guide)
+    if guide and guide.key and addon.guideBodyCache and not self.owners[guide.key] then
+        self.owners[guide.key] = addon.guideBodyCache:Retain(guide)
+    end
+    for key in pairs(guide and guide.bodyCacheDependencies335 or {}) do
+        if addon.guideBodyCache and not self.owners[key] then
+            self.owners[key] = addon.guideBodyCache:Retain({key = key})
+        end
+    end
+end
+
+local function InspectionBoundary(chapter)
+    if inspection.runningWorker and coroutine.running() == inspection.runningWorker then
+        if inspection.worker ~= inspection.runningWorker then error("Quest inspection cancelled", 0) end
+        inspection.work = (inspection.work or 0) + 1
+        if chapter or inspection.work >= 32 then
+            inspection.work = 0
+            coroutine.yield()
+        end
+    end
+end
+
+function inspection:Schedule()
+    if not self.worker or addon.scheduler:Has(self, "slice") then return end
+    if addon.questRewardTransaction and addon.questRewardTransaction.active then return end
+    addon.scheduler:AfterCombat(self, "slice", function()
+        if addon.PerfInvoke then addon.PerfInvoke("quest route inspection", self.RunSlice, self)
+        else self:RunSlice() end
+    end)
+end
+
+function inspection:RunSlice()
+    if not self.worker then return end
+    if not Current(self.context) then self:Invalidate(); return end
+    if _G.InCombatLockdown and _G.InCombatLockdown() then self:Schedule(); return end
+    if addon.questRewardTransaction and addon.questRewardTransaction.active then return end
+    local worker = self.worker
+    self.runningWorker = worker
+    local ok, quests, future = coroutine.resume(worker)
+    self.runningWorker = nil
+    if self.worker ~= worker then return end -- invalidated by a synchronous callback
+    if not ok then
+        self.status = "error"
+        self:Release()
+        if _G.geterrorhandler then _G.geterrorhandler()(quests) end
+        return
+    end
+    if coroutine.status(self.worker) ~= "dead" then self:Schedule(); return end
+    if not Current(self.context) then self:Invalidate(); return end
+    qLogCache, futureTurnInsCache = quests or {}, future or {}
+    self.status = "ready"
+    self:Release()
+    addon.orphanedList = nil
+    if addon.UpdateQuestButton then addon:ScheduleTask(addon.UpdateQuestButton) end
+    local registry = LibStub and LibStub("AceConfigRegistry-3.0", true)
+    if registry and registry.NotifyChange then registry:NotifyChange(addon.title) end
+end
+
+function inspection:Request()
+    if Current(self.context) then self:Schedule(); return end
+    addon.scheduler:CancelOwner(self)
+    self:Release()
+    qLogCache, futureTurnInsCache, addon.orphanedList = nil, nil, nil
+    self.context, self.status, self.owners, self.work = Context(), "pending", {}, 0
+    if not addon.currentGuide or not addon.currentGuide.steps then
+        self.status = "error"; return
+    end
+    self:Own(addon.currentGuide)
+    self.worker = coroutine.create(function() return BuildExpectedQuestLog() end)
+    self:Schedule()
+end
+
 local function QuestView(group, name)
-    if addon.GetGuideQuestView then return addon:GetGuideQuestView(group, name) end
-    return addon:FetchGuide(group, name)
+    InspectionBoundary(true) -- at most one chapter parse per scheduler cycle
+    local guide
+    if addon.GetGuideQuestView then guide = addon:GetGuideQuestView(group, name)
+    else guide = addon:FetchGuide(group, name) end
+    if inspection.worker and coroutine.running() == inspection.worker then
+        if name and not (guide and guide.steps) then
+            error("Quest inspection could not read a requested chapter", 0)
+        end
+        inspection:Own(guide)
+    end
+    return guide
+end
+local function ProcessQuestView(guide)
+    local processed = addon.ProcessGuideTable(guide)
+    if inspection.worker and coroutine.running() == inspection.worker then inspection:Own(processed) end
+    return processed
 end
 function addon.GetExpectedQuestLog()
+    inspection:Request()
+    if inspection.status ~= "ready" then return {}, {}, inspection.status end
+    return qLogCache, futureTurnInsCache, "ready"
+end
+
+function BuildExpectedQuestLog()
     local guide = addon.currentGuide
     local startGuide
     local currentStep = RXPCData.currentStep
@@ -206,8 +365,10 @@ function addon.GetExpectedQuestLog()
             local name = addon.guideList[group].defaultGuide_
             startGuide = QuestView(group,name)
         end
-        startGuide = addon.ProcessGuideTable(startGuide)
-        if not (startGuide and startGuide.steps) then return {},{} end
+        startGuide = ProcessQuestView(startGuide)
+        if not (startGuide and startGuide.steps) then
+            error("Quest inspection has no readable route entry", 0)
+        end
         --print(group,name)
         local qLog = addon.GetQuestLog(nil,nil,startGuide,true,guide.key,currentStep)
         if not qLog or not next(qLog) then
@@ -216,6 +377,7 @@ function addon.GetExpectedQuestLog()
         local futureTurnIns = {}
 
         local function ProcessStep(step,guide)
+            InspectionBoundary(false)
             for _,element in ipairs(step.elements) do
                 if element.tag and (element.tag:find("turnin")) then
                     local ids = element.ids or {element.questId}
@@ -243,7 +405,7 @@ function addon.GetExpectedQuestLog()
             if nextGuide and nextGuide.steps then
                 if not visited[nextGuide.key] then
                     visited[nextGuide.key] = true
-                    nextGuide = addon.ProcessGuideTable(nextGuide)
+                    nextGuide = ProcessQuestView(nextGuide)
                     guide = nextGuide
                     for _,step in ipairs(guide.steps) do
                         ProcessStep(step,guide)
@@ -257,7 +419,7 @@ function addon.GetExpectedQuestLog()
         return qLog,futureTurnIns
     end
     if scanQuests then
-        qLogCache,futureTurnInsCache = scanGuides()
+        return scanGuides()
     end
     return qLogCache,futureTurnInsCache
 end
@@ -281,6 +443,7 @@ function addon.GetQuestLog(QL, LT, guide, silent, stopGuide, stopStep, visited)
     local lastQuestAccepted
     if not (guide and addon.stepLogic.SeasonCheck(guide)) then return end
     for _, step in ipairs(guide.steps) do
+        InspectionBoundary(false)
         local remove = tonumber(step.qremove)
         if remove then
             QL[remove] = nil
@@ -349,7 +512,7 @@ function addon.GetQuestLog(QL, LT, guide, silent, stopGuide, stopStep, visited)
         local nextGroup,nextName = group.next(false,guide)
         local nextGuide = QuestView(nextGroup,nextName)
         if nextGuide and nextGuide.steps then
-            nextGuide = addon.ProcessGuideTable(nextGuide)
+            nextGuide = ProcessQuestView(nextGuide)
             if guide.key ~= nextGuide.key then
                 return addon.GetQuestLog(QL, LT, nextGuide, silent, stopGuide, stopStep, visited)
             end
@@ -456,13 +619,15 @@ end
 
 -- Set on first GetOrphanedQuests run, likely by UpdateQuestButton call
 addon.orphanedList = nil -- {}
-function addon.GetOrphanedQuests()
-    if addon.isHidden or not addon.currentGuide or not addon.currentGuide.key then
-        return {}, {}
+function addon.GetOrphanedQuests(allowHidden)
+    if (addon.isHidden and not allowHidden) or not addon.currentGuide or not addon.currentGuide.key then
+        addon.orphanedList = nil
+        return {}, "unavailable"
     end
     local invertedList, orphanedList = {}, {}
 
-    local guideQuests, futureTurnIns = addon.GetExpectedQuestLog()
+    local guideQuests, futureTurnIns, status = addon.GetExpectedQuestLog()
+    if status ~= "ready" then addon.orphanedList = nil; return {}, status end
 
     local questData, orphanData
     local isPartOfGuide
@@ -494,16 +659,33 @@ function addon.GetOrphanedQuests()
     addon.orphanedList = orphanedList
 
     -- invertedList to abandon from questlog bottom, no required refresh on bulk abandon
-    return invertedList
+    return invertedList, "ready"
 end
 
 
 local SetAbandonQuest = addon.questLog.SetAbandonQuest or _G.SetAbandonQuest
 local AbandonQuest = addon.questLog.AbandonQuest or _G.AbandonQuest
 
+local function ValidatedOrphans(requested)
+    local live, status = addon.GetOrphanedQuests(true)
+    if status ~= "ready" then
+        addon.comms.PrettyPrint(inspection:StatusText())
+        return
+    end
+    if not requested then return live end
+    local byId, result = {}, {}
+    for _, quest in ipairs(live) do byId[quest.questID] = quest end
+    for _, quest in ipairs(requested) do
+        if byId[quest.questID] then result[#result + 1] = byId[quest.questID]; byId[quest.questID] = nil end
+    end
+    return result
+end
+
 function addon.AbandonOrphanedQuests(orphans)
-    -- Likely addon.orphanedList but re-create if empty
-    orphans = orphans or addon.GetOrphanedQuests()
+    -- Confirmation payloads are suggestions, never authoritative cached state.
+    orphans = ValidatedOrphans(orphans)
+    if not orphans then return end
+    local approvedContext = inspection.context
 
     local function abandonQuest(questInfo)
         addon.comms.PrettyPrint("Abandoning %s", questInfo.questLogTitleText)
@@ -523,6 +705,10 @@ function addon.AbandonOrphanedQuests(orphans)
 
     -- Reverse process list, to avoid searching, abandon from bottom
     for i = #orphans, 1, -1 do
+        if not Current(approvedContext) then
+            addon.comms.PrettyPrint(inspection:StatusText())
+            return
+        end
         questData = orphans[i]
 
         if addon.questLog.SetSelectedQuest then
@@ -624,6 +810,8 @@ local function TrySettingsCleanup(orphans)
 end
 
 function addon.BeginAbandonOrphans(orphans)
+    orphans = ValidatedOrphans(orphans)
+    if not orphans then return end
     if not (type(orphans) == "table" and #orphans > 0) then
         addon.comms.PrettyPrint("Cleanup: no orphaned quests to abandon.")
         return
@@ -632,6 +820,7 @@ function addon.BeginAbandonOrphans(orphans)
     addon.comms.PrettyPrint("Cleanup: abandoning %d orphaned quest(s)...", #orphans)
 
     local i = #orphans
+    local approvedContext = inspection.context
     local function step()
         if i < 1 then
             if C_Timer and C_Timer.After then
@@ -642,6 +831,11 @@ function addon.BeginAbandonOrphans(orphans)
                     end
                 end)
             end
+            return
+        end
+
+        if not Current(approvedContext) then
+            addon.comms.PrettyPrint(inspection:StatusText())
             return
         end
 
@@ -688,8 +882,9 @@ end
 local function VerifyThenFallback(originalOrphans)
     local wasHidden = addon.isHidden
     addon.isHidden = false
-    local still = addon.GetOrphanedQuests()
+    local still, status = addon.GetOrphanedQuests()
     addon.isHidden = wasHidden
+    if status ~= "ready" then addon.comms.PrettyPrint(inspection:StatusText()); return end
 
     if still and #still > 0 then
         addon.comms.PrettyPrint("Cleanup: Settings handler did not complete; using fallback.")
@@ -708,8 +903,9 @@ local function RXP_RunCleanupOrphanedQuests()
     -- ensure GetOrphanedQuests() returns data even if UI = hidden
     local wasHidden = addon.isHidden
     addon.isHidden = false
-    local orphans = addon.GetOrphanedQuests()
+    local orphans, status = addon.GetOrphanedQuests()
     addon.isHidden = wasHidden
+    if status ~= "ready" then addon.comms.PrettyPrint(inspection:StatusText()); return end
 
     local count = (orphans and #orphans) or 0
     if count == 0 then
@@ -725,6 +921,8 @@ local function RXP_RunCleanupOrphanedQuests()
             button1 = ACCEPT,
             button2 = CANCEL,
             OnAccept = function(_, data)
+                data = ValidatedOrphans(data)
+                if not data or #data == 0 then return end
                 if TrySettingsCleanup(data) then
                     if C_Timer and C_Timer.After then
                         C_Timer.After(0.25, function() VerifyThenFallback(data) end)
@@ -848,6 +1046,10 @@ do
     f:RegisterEvent("PLAYER_REGEN_DISABLED")
     f:RegisterEvent("PLAYER_REGEN_ENABLED")
     f:RegisterEvent("QUEST_LOG_UPDATE")
+    f:RegisterEvent("PLAYER_LEVEL_UP")
+    f:RegisterEvent("UPDATE_FACTION")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:RegisterEvent("PLAYER_LOGOUT")
 
     local hookedToggle = false
 
@@ -880,8 +1082,12 @@ do
                 cleanupBtn:SetShown(not addon.isHidden)
             end
 
-        elseif ev == "QUEST_LOG_UPDATE" then
-            addon.orphanedList = nil
+        elseif ev == "QUEST_LOG_UPDATE" or ev == "PLAYER_LEVEL_UP" or
+            ev == "UPDATE_FACTION" or ev == "PLAYER_ENTERING_WORLD" then
+            inspection:Invalidate()
+
+        elseif ev == "PLAYER_LOGOUT" then
+            inspection:Invalidate(false)
 
         elseif ev == "PLAYER_REGEN_DISABLED" then
             SetCleanupBtnEnabled(false)

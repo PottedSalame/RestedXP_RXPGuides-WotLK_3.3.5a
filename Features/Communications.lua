@@ -737,13 +737,48 @@ function addon.comms:PrettyPrintTime(s)
     return formattedString
 end
 
-function addon.comms:ConfirmChoice(lookup, prompt, confirmCallback, payload)
+local pendingChoices335 = {}
+function addon.comms:CancelChoice(lookup)
+    local state = pendingChoices335[lookup]
+    if state then state.finish(false) end
+end
+
+function addon.comms:ConfirmChoice(lookup, prompt, confirmCallback, payload, ownedGuide)
+    self:CancelChoice(lookup)
+    local state = {callback = confirmCallback, payload = payload}
+    -- Ownership is explicit for callbacks that capture a guide, and inferred
+    -- only from the documented guide payload used by prerequisite/catch-up UI.
+    local guide = ownedGuide or type(payload) == "table" and payload.guide
+    if guide and addon.guideBodyCache then state.release = addon.guideBodyCache:Retain(guide) end
+    local function finish(accept)
+        if state.done then return end
+        state.done = true
+        if addon.scheduler then addon.scheduler:CancelOwner(state) end
+        if pendingChoices335[lookup] == state then pendingChoices335[lookup] = nil end
+        local callback, data, release = state.callback, state.payload, state.release
+        state.callback, state.payload, state.release = nil, nil, nil
+        local ok, failure = true
+        if accept and callback then ok, failure = pcall(callback, data) end
+        if release then release() end
+        if not ok then error(failure, 0) end
+    end
+    state.finish = finish
+    pendingChoices335[lookup] = state
 
     StaticPopupDialogs[lookup] = {
         text = prompt,
         button1 = _G.YES,
         button2 = _G.NO,
-        OnAccept = function() if confirmCallback then confirmCallback(payload) end end,
+        OnAccept = function() finish(true) end,
+        OnCancel = function() finish(false) end,
+        OnHide = function()
+            if state.done then return end
+            -- Some client popup paths hide before dispatching acceptance.
+            -- Give that same-stack callback a chance, then drop all payloads.
+            if addon.scheduler then
+                addon.scheduler:After(state, "hidden", 0, function() finish(false) end)
+            else finish(false) end
+        end,
         OnShow = function(frame)
             if addon.toolWindows then addon.toolWindows:RaisePopup(frame) end
         end,

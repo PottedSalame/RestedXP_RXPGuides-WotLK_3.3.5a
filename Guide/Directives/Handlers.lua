@@ -1124,7 +1124,7 @@ function addon.BeginQuestGuideIndex(guide)
 end
 
 function addon.InsertQuestGuide(id,tbl)
-    if addon.guideIndexMode == "quests" then return end
+    if addon.guideIndexMode == "quests" or addon.guideIndexMode == "body" then return end
     tbl[id] = tbl[id] or {}
     local entry = {}
 

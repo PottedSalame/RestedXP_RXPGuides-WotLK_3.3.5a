@@ -27,9 +27,12 @@ local COUNTERS = {
     ["dirty rows processed"] = true, ["compact display renders"] = true,
 }
 local LABELS = {
+    ["guide cache cleanup"] = true,
     ["guide catalogue"] = true, ["tool layering"] = true,
     ["gear advisor scan"] = true, ["equipment proficiency refresh"] = true,
     ["main update"] = true, ["map refresh"] = true, ["guide parsing"] = true,
+    ["guide body parsing"] = true, ["quest index parsing"] = true,
+    ["guide catalogue parsing"] = true, ["quest route inspection"] = true,
     ["map reset"] = true, ["map lines"] = true, ["map world pins"] = true,
     ["map minimap pins"] = true, ["map arrow"] = true, ["map visibility"] = true,
     ["directive evaluation"] = true, ["guide rows"] = true,
@@ -346,7 +349,8 @@ function inspector:Wrap(container, key, label)
     if inspector.wrapped[token] then return end
     local original = container[key]
     container[key] = function(...)
-        return addon.PerfInvoke(label, original, ...)
+        local name = type(label) == "function" and label(...) or label
+        return addon.PerfInvoke(name, original, ...)
     end
     inspector.wrapped[token] = true
 end
@@ -357,7 +361,12 @@ function inspector:InstallInstrumentation()
     self:Wrap(addon.gearAdvisor, "BuildRows", "gear advisor scan")
     self:Wrap(addon, "UpdateMap", "map refresh")
     self:Wrap(addon, "LegacyUpdateLoop", "main update")
-    self:Wrap(addon, "ParseGuide", "guide parsing")
+    self:Wrap(addon, "ParseGuide", function(_, _, _, _, _, _, mode)
+        if mode == "quests" then return "quest index parsing" end
+        if mode == "catalog" then return "guide catalogue parsing" end
+        return "guide body parsing"
+    end)
+    self:Wrap(addon.guideBodyCache, "TrimOne", "guide cache cleanup")
     self:Wrap(addon, "Call", "directive evaluation")
     self:Wrap(addon.targeting, "LegacyScanTick", "nameplate scan")
     self:Wrap(addon.targeting, "DiscoverLegacyNameplates", "nameplate discovery")
@@ -459,6 +468,13 @@ function inspector:Export()
         "Tickers: " .. tostring(CountTickers()), ""
     }
     self:AppendMeasurements(lines, false)
+    if addon.guideBodyCache then
+        local cache = addon.guideBodyCache:GetStats()
+        tinsert(lines, format("Guide body cache (session): hits=%d misses=%d evictions=%d protected=%d eligible-inactive=%d",
+            cache.hits, cache.misses, cache.evictions, cache.protected, cache.eligibleInactive))
+        tinsert(lines, format("Reloadable sources: %d; source text bytes=%d (not a heap estimate)",
+            cache.sources, cache.sourceBytes))
+    end
     if self.memorySamples and #self.memorySamples > 0 then
         tinsert(lines, "")
         tinsert(lines, "Passive memory samples (outside timing captures; elapsed seconds, not wall-clock time):")

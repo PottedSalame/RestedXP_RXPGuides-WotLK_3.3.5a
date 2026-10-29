@@ -1,6 +1,6 @@
 -- Production parser, directive handlers, quest-route reader and fetch path.
 -- No client memory estimate; these assertions establish retained work counts.
-return function(root)
+return function(root, fixturesOnly)
     local function read(path)
         local file = assert(io.open(root .. "/" .. path, "rb"))
         local source = file:read("*a"):gsub("\r\n", "\n"); file:close(); return source
@@ -17,6 +17,7 @@ return function(root)
         local f = fixture(); f:loadDirectives()
         local a, e = f.addon, f.env
         e.strlower, e.tremove, e.fmt = string.lower, table.remove, string.format
+        e.coroutine = coroutine
         e.addon = a
         e.CopyTable = function(value)
             local out = {}; for k, v in pairs(value) do out[k] = type(v) == "table" and e.CopyTable(v) or v end
@@ -50,6 +51,7 @@ return function(root)
         return "<< ac335 Horde\n#group Lazy Fixture\n#subgroup Branch\n#name " .. name ..
             "\n" .. (header or "") .. "step\n" .. body .. "\n"
     end
+    if fixturesOnly then return new, source, slice end
     local first = source("1-6 First", ".accept 788 >> Cutting Teeth\n.collect 4865,1,788,1\n" ..
         ".target Mottled Boar\nstep << Mage\n.accept 789\nstep\n.dungeon WC\n.turnin 788\n" ..
         "step\n.deathskip\n.accept 790", "#next 6-10 Second\n#defaultfor Orc\n")
@@ -79,8 +81,8 @@ return function(root)
     local fetched = assert(a:FetchGuide(v))
     assert(not fetched.questIndex335 and #fetched.steps[1].elements == 3)
     assert(a:FetchGuide(g) == fetched, "stale preview cannot refetch a loaded guide")
-    assert(#a.pickUpList[788] == 1 and a.pickUpList[788][1].guide == fetched,
-        "full parse duplicated or retained the old catalog registration")
+    assert(#a.pickUpList[788] == 1 and a.pickUpList[788][1].guide == g,
+        "full parse duplicated or replaced the lightweight catalog registration")
     assert(e.RXPCData.guideProgress.saved == checkpoint and checkpoint.currentStep == 7 and checkpoint.stepSkip[3])
     -- Actual recursive quest reader: follow metadata next links without loading
     -- later chapter artwork/directives. The current guide uses its live indices.
@@ -92,6 +94,9 @@ return function(root)
     end
     e.RXPCData.currentStep = 1; f.log[790] = true
     local expected, future = a.GetExpectedQuestLog()
+    assert(not next(expected) and not next(future), "Pending route inspection exposed partial results")
+    for _ = 1, 30 do f:tick() end
+    expected, future = a.GetExpectedQuestLog()
     assert(expected[788] and future[790] == nextGuide.key)
     assert(not nextGuide.steps and not a.GetGuideTable("Lazy Fixture", "06-10 Second").steps,
         "quest-log route analysis loaded a future body")

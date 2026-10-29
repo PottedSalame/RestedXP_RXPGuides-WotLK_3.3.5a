@@ -1062,6 +1062,7 @@ function addon.SetStep(n, n2, loopback)
     end
 
     local lastTip = addon.currentTip
+    addon.currentTip = nil
     local step = guide.steps[n]
     local req = step.requires and guide.labels[step.requires] and
                     guide.steps[guide.labels[step.requires]]
@@ -2294,6 +2295,7 @@ function addon.ProcessGuideTable(guide)
 
     currentGuide.steps = {}
     currentGuide.tips = {}
+    currentGuide.bodyCacheDependencies335 = {}
     local ProcessSteps
     local IncludeGuide
     local guideRef = {}
@@ -2334,6 +2336,7 @@ function addon.ProcessGuideTable(guide)
     end
     local lastTip
     function ProcessSteps(guide,startAt,stopAt)
+        if guide.key then currentGuide.bodyCacheDependencies335[guide.key] = true end
         for _, step in ipairs(guide.steps) do
             local isShown = addon.IsStepShown(step)
             if isShown and startAt and (step.label == startAt or startAt == step.stepId) then
@@ -2370,6 +2373,16 @@ end
 function addon:FetchGuide(guide,arg2)
     if type(guide) == "string" then
         return addon:FetchGuide(addon.GetGuideTable(guide,arg2))
+    end
+    if addon.guideBodyCache then
+        local managed
+        guide, managed = addon.guideBodyCache:Resolve(guide)
+        if guide and managed then
+            local cache = addon.guideBodyCache
+            if guide.steps then cache.hits = cache.hits + 1
+            else cache.misses = cache.misses + 1 end
+            cache:Touch(guide)
+        end
     end
     if guide and (not guide.steps or guide.questIndex335) then
         -- UI previews can still hold metadata after another consumer loaded it.
@@ -2411,7 +2424,9 @@ function addon:FetchGuide(guide,arg2)
             end
             addon.guides[index] = newGuide
             addon.guideCache[key] = nil
-            if addon.ForgetGuideIndex then addon:ForgetGuideIndex(key) end
+            if not (addon.guideBodyCache and addon.guideBodyCache:Parsed(key, newGuide)) then
+                if addon.ForgetGuideIndex then addon:ForgetGuideIndex(key) end
+            end
             guide = newGuide
             addon:ScheduleTask(addon.UpdateQuestButton)
             addon:ScheduleTask(addon.RXPFrame.GenerateMenuTable)
@@ -2629,7 +2644,14 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
         addon.comms.PrettyDebug("Unable to load guide: no valid empty guide is registered")
     end
     guide = addon:PrepareGuideLoad335(guide)
-    if not guide then return LoadEmptyGuide() end
+    if not guide then
+        -- A failed reconstruction must leave the running route untouched.
+        if type(requestedGuide) == "table" and addon.guideBodyCache and
+            (requestedGuide.bodyCacheGeneration335 or
+             addon.guideBodyCache:Metadata(requestedGuide) ~= requestedGuide or
+             addon.guideCache[requestedGuide.key]) then return end
+        return LoadEmptyGuide()
+    end
     if addon.hardcoreGuides and not addon.hardcoreGuides:BeforeLoad(
         guide, OnLoad, loadSource, redirectTrail) then return end
     addon.loadNextStep = false
@@ -3067,6 +3089,27 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
     -- Internal load receipt. Redirects return their actual destination; a
     -- matching display name alone is never proof the requested load succeeded.
     return addon.currentGuide
+end
+
+-- Loading is synchronous, but includes/reentrant callbacks can fetch bodies.
+-- Cleanup runs only after the complete load/teardown boundary has succeeded.
+local loadGuideWithFrames335 = addon.LoadGuide
+addon.LoadGuide = function(self, ...)
+    local cache = addon.guideBodyCache
+    if not cache then return loadGuideWithFrames335(self, ...) end
+    local previousGuide = addon.currentGuide
+    cache.loading = cache.loading + 1
+    local ok, result = pcall(loadGuideWithFrames335, self, ...)
+    cache.loading = cache.loading - 1
+    if not ok then cache.loadFailed = true; error(result, 0) end
+    if result then
+        cache.loadFailed = nil
+        if addon.questRouteInspection then addon.questRouteInspection:Invalidate(false) end
+        cache:Touch(previousGuide)
+        cache:Touch(result)
+    end
+    cache:RequestTrim()
+    return result
 end
 
 function addon:ReloadGuide(keepStep)

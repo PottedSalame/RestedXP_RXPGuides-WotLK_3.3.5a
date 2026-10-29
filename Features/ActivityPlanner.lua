@@ -130,7 +130,7 @@ function planner:BuildCatalog()
                             cataloguedGuides[guideIdentity] = true
                             table.insert(self.catalog, {
                                 kind = "daily", guideKey = guide.key,
-                                guide = guide,
+                                guide = addon.guideBodyCache and addon.guideBodyCache:Metadata(guide) or guide,
                                 name = addon.GetGuideName(guide) or guide.name,
                                 questIds = questIds,
                                 active = addon.IsGuideActive(guide),

@@ -65,8 +65,10 @@ function state:QueueAdvance(step, manual)
 end
 
 function state:CancelAdvance()
+    local hadPending = self.pendingAdvance ~= nil
     self.pendingAdvance = nil
     addon.loadNextStep = false
+    if hadPending and addon.guideBodyCache then addon.guideBodyCache:RequestTrim() end
 end
 
 function state:InvalidateAdvance(step)

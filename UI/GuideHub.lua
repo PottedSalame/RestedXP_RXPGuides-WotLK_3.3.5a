@@ -441,6 +441,7 @@ local function BuildGuideList()
         for _, name in ipairs(list.names_ or {}) do
             local guide = addon.GetGuideTable(realGroup, name) or
                               addon.GetGuideTable(group, name)
+            if addon.guideBodyCache then guide = addon.guideBodyCache:Metadata(guide) end
             local key = GuideKey(guide)
             local modeMatches = guide and
                 ((RXPCData and RXPCData.GA and guide.farm) or

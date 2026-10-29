@@ -1507,6 +1507,11 @@ local mapPresentationOwner = {}
 local mapPresentationFrame
 local mapGeneration = 0
 local preparedWorldPins
+function addon.MapOwnsGuideBody335(key)
+    local guide = preparedWorldPins and preparedWorldPins.guide
+    return guide and (guide.key == key or
+        guide.bodyCacheDependencies335 and guide.bodyCacheDependencies335[key])
+end
 
 local function CancelMapPresentation()
     addon.scheduler:Cancel(mapPresentationOwner, "present")
@@ -1563,6 +1568,7 @@ function addon.UpdateMap(resetPins)
         CancelMapPresentation()
         mapGeneration = mapGeneration + 1
         preparedWorldPins = nil
+        if addon.guideBodyCache then addon.guideBodyCache:RequestTrim() end
         lastMap = nil
         MeasureMapStage("map reset", resetMap)
         if not addon.currentGuide then return end

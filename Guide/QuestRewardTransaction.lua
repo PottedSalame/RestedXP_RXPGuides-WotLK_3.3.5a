@@ -146,6 +146,8 @@ function transaction:Finish(serial)
     local active = self:Get(serial)
     if not active then return false end
     self.active = nil
+    if addon.guideBodyCache then addon.guideBodyCache:RequestTrim() end
+    if addon.questRouteInspection then addon.questRouteInspection:Schedule() end
     return active
 end
 
@@ -154,6 +156,8 @@ function transaction:Cancel(serial, reason)
     if not active then return false end
     active.cancelReason = reason
     self.active = nil
+    if addon.guideBodyCache then addon.guideBodyCache:RequestTrim() end
+    if addon.questRouteInspection then addon.questRouteInspection:Schedule() end
     return active
 end
 

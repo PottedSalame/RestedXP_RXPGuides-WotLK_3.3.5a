@@ -37,6 +37,137 @@ local embeddedGuides = {}
 -- Session-only sources for bundled guides. Full bodies are compiled only by
 -- FetchGuide; quest-log analysis can request a smaller, non-executable view.
 local guideIndexes = {}
+-- Session-only ownership. Sources and catalog records survive body eviction;
+-- no progress, quest knowledge or saved metadata is owned by this cache.
+local bodyCache = {hits = 0, misses = 0, evictions = 0, clock = 0, loading = 0}
+addon.guideBodyCache = bodyCache
+
+function bodyCache:Metadata(guide)
+    local entry = guide and guideIndexes[guide.key]
+    return entry and entry.metadata or guide
+end
+
+function bodyCache:Resolve(guide)
+    if type(guide) ~= "table" then return guide end
+    local entry = guideIndexes[guide.key]
+    if not entry then
+        if guide.bodyCacheGeneration335 then return nil end
+        return guide
+    end
+    local current = addon.guides[entry.metadata.group .. "||" .. entry.metadata.name]
+    if not current or current.key ~= guide.key or
+        guide.sourceSignature ~= entry.metadata.sourceSignature then return nil end
+    -- A current-generation processed view already has runtime filtering applied.
+    -- Preserve it; only obsolete generations must resolve/reconstruct anew.
+    if entry.body and guide.steps and guide.bodyCacheGeneration335 == entry.generation then
+        return guide, true
+    end
+    return entry.body or entry.metadata, true
+end
+
+function bodyCache:Touch(guide)
+    local entry = guide and guideIndexes[guide.key]
+    if not entry then return end
+    self.clock = self.clock + 1
+    entry.used = self.clock
+end
+
+function bodyCache:Retain(guide)
+    local retained = {}
+    local function keep(key)
+        local entry = key and guideIndexes[key]
+        if entry and not retained[key] then
+            entry.owners = (entry.owners or 0) + 1
+            retained[key] = entry
+        end
+    end
+    if guide then
+        keep(guide.key)
+        for key in pairs(guide.bodyCacheDependencies335 or {}) do keep(key) end
+    end
+    return function()
+        if not retained then return end
+        for key, owner in pairs(retained) do
+            local entry = guideIndexes[key]
+            if entry == owner then entry.owners = math.max(0, (entry.owners or 0) - 1) end
+        end
+        retained = nil
+        self:RequestTrim()
+    end
+end
+
+local function ownsGuide(guide, key)
+    return guide and (guide.key == key or
+        guide.bodyCacheDependencies335 and guide.bodyCacheDependencies335[key])
+end
+
+function bodyCache:IsProtected(key, entry)
+    local pending = addon.guideState and addon.guideState.pendingAdvance
+    local reward = addon.questRewardTransaction and addon.questRewardTransaction.active
+    return (entry.owners or 0) > 0 or ownsGuide(addon.currentGuide, key) or
+        ownsGuide(pending and pending.guide, key) or ownsGuide(reward and reward.guide, key) or
+        (addon.MapOwnsGuideBody335 and addon.MapOwnsGuideBody335(key))
+end
+
+function bodyCache:GetStats()
+    local stats = {hits = self.hits, misses = self.misses, evictions = self.evictions,
+        protected = 0, eligibleInactive = 0, sources = 0, sourceBytes = 0}
+    for key, entry in pairs(guideIndexes) do
+        stats.sources = stats.sources + 1
+        stats.sourceBytes = stats.sourceBytes + #(entry.source or "") + #(entry.text or "")
+        if entry.body then
+            if self:IsProtected(key, entry) then stats.protected = stats.protected + 1
+            else stats.eligibleInactive = stats.eligibleInactive + 1 end
+        end
+    end
+    return stats
+end
+
+function bodyCache:TrimOne()
+    if addon.settings.profile.preLoadData or self.loading > 0 or self.loadFailed then return end
+    if addon.questRewardTransaction and addon.questRewardTransaction.active then return end
+    if InCombatLockdown and InCombatLockdown() then
+        addon.scheduler:AfterCombat(self, "trim", function() self:TrimOne() end)
+        return
+    end
+    local count, oldest, oldestKey = 0
+    for key, entry in pairs(guideIndexes) do
+        if entry.body and not self:IsProtected(key, entry) then
+            count = count + 1
+            if not oldest or (entry.used or 0) < (oldest.used or 0) then
+                oldest, oldestKey = entry, key
+            end
+        end
+    end
+    if count <= 2 then return end
+    local index = oldest.metadata.group .. "||" .. oldest.metadata.name
+    -- Do not overwrite a replacement/import registration. Never mutate steps:
+    -- a protected processed guide can share the original parser objects.
+    if addon.guides[index] ~= oldest.body or self:IsProtected(oldestKey, oldest) then return end
+    addon.guides[index] = oldest.metadata
+    addon.guideCache[oldestKey] = oldest.parse
+    oldest.body, oldest.questView = nil, nil
+    oldest.generation = (oldest.generation or 0) + 1
+    self.evictions = self.evictions + 1
+    if count > 3 then self:RequestTrim() end -- at most one body per timer cycle
+end
+
+function bodyCache:RequestTrim()
+    if not addon.scheduler or addon.settings.profile.preLoadData then return end
+    if addon.scheduler:Has(self, "trim") then return end
+    addon.scheduler:After(self, "trim", 0, function() self:TrimOne() end)
+end
+
+function bodyCache:Parsed(key, guide)
+    local entry = guideIndexes[key]
+    if not entry then return false end
+    entry.body, entry.questView = guide, nil
+    entry.generation = (entry.generation or 0) + 1
+    guide.bodyCacheGeneration335 = entry.generation
+    self:Touch(guide)
+    self:RequestTrim()
+    return true
+end
 local catalogDirectives = {collect = true, addquestitem = true,
     dungeon = true, profession = true, group = true, solo = true, deathskip = true,
     accept = true, acceptmultiple = true, daily = true, turnin = true,
@@ -67,6 +198,7 @@ function addon:GetGuideQuestView(guide, name)
             entry.defaultFor, true, entry.group, entry.key, "quests")
         if failure or not view then return end
         view.questIndex335 = true -- never an executable guide body
+        view.sourceSignature = entry.metadata.sourceSignature
         entry.questView = view
     end
     return entry.questView
@@ -278,8 +410,9 @@ function addon.RemoveGuide(guideKey)
 
         return
     end
+    local indexedGuide = guideIndexes[guideKey] and guideIndexes[guideKey].metadata or loadedGuide
     guideIndexes[guideKey], addon.guideCache[guideKey] = nil, nil
-    if addon.BeginQuestGuideIndex then addon.BeginQuestGuideIndex(loadedGuide) end
+    if addon.BeginQuestGuideIndex then addon.BeginQuestGuideIndex(indexedGuide) end
 
     if addon.currentGuide and addon.currentGuide.key == guideKey then
         addon:LoadGuide(addon.emptyGuide)
@@ -706,13 +839,16 @@ function addon.LoadEmbeddedGuides()
                         guide.steps = nil
                         local entry = {source = guideData.groupOrContent,
                             text = guideData.text, defaultFor = guideData.defaultFor,
-                            group = group, key = key}
+                            group = group, key = key, metadata = guide}
                         guideIndexes[guide.key] = entry
                         addon.guideCache[guide.key] = function(self)
-                            local parsed, failure, parsedMetadata = addon.ParseGuide(
+                            local ok, parsed, failure, parsedMetadata = pcall(addon.ParseGuide,
                                 entry.source, entry.text, entry.defaultFor, true,
-                                entry.group, entry.key)
-                            if failure or not parsed then return end
+                                entry.group, entry.key, "body")
+                            -- Failed parsers must not retain their partially built graph.
+                            addon.guide, addon.guideIndexMode = false, nil
+                            addon.lastElement, addon.lastObjective, addon.step = nil, nil, nil
+                            if not ok or failure or not parsed then return end
                             parsed.bundled, parsed.sourceSignature = true, sourceSignature
                             if parsedMetadata then
                                 parsedMetadata.sourceSignature = sourceSignature
@@ -721,6 +857,7 @@ function addon.LoadEmbeddedGuides()
                             if addon.player.faction == "Neutral" then parsed.parse = self end
                             return parsed
                         end
+                        entry.parse = addon.guideCache[guide.key]
                     else
                         guideIndexes[guide.key], addon.guideCache[guide.key] = nil, nil
                     end
@@ -997,6 +1134,8 @@ end
 addon.ParseLine = parseLine
 
 function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, key, indexMode)
+    local cachedBody = indexMode == "body"
+    if cachedBody then indexMode = nil end
 
     addon.lastObjective = nil
     if not groupOrContent then return end
@@ -1056,7 +1195,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
         guide.farm = true
     end
     addon.guide = guide
-    addon.guideIndexMode = indexMode
+    addon.guideIndexMode = cachedBody and "body" or indexMode
 
     guide.group = groupOrContent
     addon.currentGuideGroup = groupOrContent
@@ -1099,7 +1238,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
                 guide.key = guide.key or key or addon.BuildGuideKey(guide)
                 guide.guideId = addon.A32(guide.key)
                 addon.RegisterGroup(guide.group)
-                if addon.BeginQuestGuideIndex and indexMode ~= "quests" then
+                if addon.BeginQuestGuideIndex and indexMode ~= "quests" and not cachedBody then
                     addon.BeginQuestGuideIndex(guide)
                 end
             end
@@ -1229,7 +1368,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     addon.guide = false
     addon.guideIndexMode = nil
     addon.lastObjective = nil
-    if indexMode then addon.lastElement = nil end
+    addon.lastElement = nil
     -- print(guide.name,"\n",guide.enabledFor)
 
     local metadata = {length = length}

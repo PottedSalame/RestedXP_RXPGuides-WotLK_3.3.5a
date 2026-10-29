@@ -3041,7 +3041,8 @@ function addon.settings:CreateAceOptionsPanel()
                             return result
                         end,
                         disabled = function()
-                            return #settingsCache.invertedOrphans == 0
+                            return #settingsCache.invertedOrphans == 0 or
+                                (addon.questRouteInspection and not addon.questRouteInspection:IsReady())
                         end
                     },
                     orphanedQuestBox = {
@@ -3051,7 +3052,11 @@ function addon.settings:CreateAceOptionsPanel()
                             -- TODO prevent double call on settings frame load, optimization
                             -- Explicity not using addon.orphanedList to reduce chance of outdated results
                             local result = ""
-                            local invertedOrphans = addon.GetOrphanedQuests()
+                            local invertedOrphans, status = addon.GetOrphanedQuests()
+                            if status and status ~= "ready" and addon.questRouteInspection then
+                                settingsCache.invertedOrphans = {}
+                                return addon.questRouteInspection:StatusText()
+                            end
                             for _, d in ipairs(invertedOrphans) do
                                 result =
                                     fmt("%s\n%s (level %d)", result,

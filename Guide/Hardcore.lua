@@ -53,6 +53,7 @@ end
 
 function hardcore:CancelPendingSelection()
     self.selectionSerial = (self.selectionSerial or 0) + 1
+    if addon.comms.CancelChoice then addon.comms:CancelChoice("RXP_HARDCORE_GUIDE_CONFIRM") end
 end
 
 function hardcore:Apply(enabled)
@@ -137,7 +138,7 @@ function hardcore:BeforeLoad(guide, restoring, source, redirectTrail, continuati
             if addon.guideState then addon.guideState:SaveCurrent() end
             addon:LoadGuide(guide, nil, source, redirectTrail)
         end
-    end)
+    end, nil, guide)
     return false
 end
 

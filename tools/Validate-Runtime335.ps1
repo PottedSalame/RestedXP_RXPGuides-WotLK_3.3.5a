@@ -288,7 +288,9 @@ if ($questLogText -notmatch
         'GetLegacyQuestIDAtIndex\(questData\.questLogIndex\)' -or
     $questLogText -notmatch 'RegisterEvent\("QUEST_LOG_UPDATE"\)' -or
     $questLogText -notmatch
-        'QUEST_LOG_UPDATE"\s+then\s+addon\.orphanedList\s*=\s*nil') {
+        '(?s)elseif ev == "QUEST_LOG_UPDATE"[^;]*?then\s+inspection:Invalidate\(\)' -or
+    $questLogText -notmatch
+        '(?s)function inspection:Invalidate\(restart\).*?qLogCache, futureTurnInsCache, addon\.orphanedList = nil, nil, nil') {
     Add-ValidationError (
         'The guarded 3.3.5 quest-log completion, abandon, or cache fix is missing.')
 }
