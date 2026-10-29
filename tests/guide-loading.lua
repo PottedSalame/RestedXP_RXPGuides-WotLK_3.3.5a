@@ -1063,9 +1063,25 @@ return function(root, fixturesOnly)
             end
             startup.LoadEmbeddedGuides()
             local endgameCount = 0
+            local questTags = {accept = true, acceptmultiple = true, daily = true,
+                complete = true, turnin = true, turninmultiple = true,
+                dailyturnin = true, abandon = true}
+            local function questLines(step)
+                local lines = {}
+                for _, element in ipairs(step.elements) do
+                    if questTags[element.tag] then lines[#lines + 1] = element.sourceLine end
+                end
+                return table.concat(lines, "\n")
+            end
             for key, parsed in pairs(expected) do
                 local loaded = assert(startup.guides[key],
                     "Startup lost applicable guide: " .. key .. " for " .. profile[2])
+                local view
+                if not loaded.steps then
+                    view = startup:GetGuideQuestView(loaded)
+                    assert(not loaded.steps, "Quest inspection installed a full body")
+                    loaded = assert(startup.guideCache[loaded.key](), "Lazy body unavailable: " .. key)
+                end
                 assert(loaded.key == parsed.key and #loaded.steps == #parsed.steps,
                        "Startup changed identity or step count: " .. key)
                 for index, step in ipairs(parsed.steps) do
@@ -1074,6 +1090,12 @@ return function(root, fixturesOnly)
                     assert(loaded.steps[index].stepId - loaded.guideId ==
                                step.stepId - parsed.guideId,
                            "Startup changed step source position: " .. key)
+                    if view then
+                        assert(#view.steps == #loaded.steps and view.key == loaded.key and
+                            view.steps[index].stepId == loaded.steps[index].stepId and
+                            questLines(view.steps[index]) == questLines(loaded.steps[index]),
+                            "Lightweight quest view differs from full body: " .. key .. "/" .. index)
+                    end
                 end
                 if parsed.group == "RestedXP Endgame Guides" then
                     endgameCount = endgameCount + 1
@@ -1136,8 +1158,9 @@ return function(root, fixturesOnly)
                "Bundled guide did not replace its same-key imported copy")
         assert(addon.bundledGuideReplacements[replacement.key],
                "Same-key layout replacement was not recorded")
-        assert(addon.guideCache[replacement.key] == nil,
-               "Stale imported parser survived bundled replacement")
+        assert(type(addon.guideCache[replacement.key]) == "function" and
+            addon.guideCache[replacement.key]().next == "New Route",
+            "Bundled replacement did not install its own lazy parser")
     end
     print("Alliance/Horde quest-chain, source filtering and embedded-cache regression tests passed.")
 end

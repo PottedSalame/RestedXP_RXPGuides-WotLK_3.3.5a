@@ -130,6 +130,39 @@ return function(root)
     end
     assert(#inspector.spanPool == 1, "capture allocated a span for every call")
 
+    -- Passive memory history reuses the visible inspector's existing sampler.
+    -- It is bounded, numeric-only, and never collected in a timing capture.
+    assert(not inspector.memorySamples)
+    inspector:ResetMetrics()
+    local visible = false
+    inspector.frame = {IsShown = function() return visible end}
+    addon.guides = {one = {steps = {}}, two = {key = "unparsed"}}
+    now = 20; inspector:Sample()
+    assert(memoryCalls == 0 and not inspector.memorySamples)
+    visible = true
+    for i = 1, 40 do now = 20 + i * 5; inspector:Sample() end
+    assert(memoryCalls == 40 and #inspector.memorySamples == 36)
+    local sample = inspector.memorySamples[36]
+    assert(sample.kb == 10 and sample.seconds == 195 and
+        sample.registered == 2 and sample.parsed == 1)
+    for _, record in ipairs(inspector.memorySamples) do
+        for _, value in pairs(record) do assert(type(value) == "number") end
+    end
+    inspector:Sample(); assert(memoryCalls == 40, "memory sampler lost its throttle")
+    visible = false; now = now + 5; inspector:Sample()
+    assert(memoryCalls == 40)
+    visible = true; inspector:StartCapture(5); inspector:Sample()
+    assert(memoryCalls == 40 and inspector.memorySamples[36] == sample)
+    inspector:Export()
+    assert(exported:find("Passive memory samples", 1, true) and
+        exported:find("registered=2 parsed=1", 1, true))
+    inspector:ResetMetrics()
+    env.UpdateAddOnMemoryUsage = function() error("Unavailable") end
+    now = now + 5; inspector:Sample()
+    assert(inspector.memorySamples[36] == sample, "failed accounting recorded stale data")
+    inspector.frame = nil
+    inspector:StartCapture(5)
+
     local writes, measures = 0, 0
     local text = {width = 220, font = "fixture", size = 12, flags = "",
                   scale = 1, spacing = 0, height = 20}
@@ -143,6 +176,12 @@ return function(root)
     local layout = addon.guideLayout
     for _ = 1, 500 do assert(layout:MeasureText(text, "Objective 0/5") == 28) end
     assert(writes == 1 and measures == 1, "unchanged rows were remeasured")
+    assert(layout:MeasureText(text, "Objective 0/5", false, false, 1, 1.1) == 23)
+    local scaled = measures
+    assert(layout:MeasureText(text, "Objective 0/5", false, false, 1, 1.1) == 23)
+    assert(measures == scaled, "legacy objective multiplier bypassed measurement cache")
+    assert(layout:MeasureText(text, "Objective 0/5") == 28)
+    writes, measures = 1, 1 -- following assertions count the original geometry
     layout:MeasureText(text, "Objective 1/5")
     assert(writes == 2 and measures == 2, "live objective count was frozen")
     assert(layout:MeasureText(text, "Hidden", false, true) == 1)

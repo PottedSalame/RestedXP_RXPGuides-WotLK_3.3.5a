@@ -23,6 +23,8 @@ local COUNTERS = {
     ["line tiles created"] = true,
     ["reservation refreshes"] = true, ["reservation refreshes avoided"] = true,
     ["nameplate children"] = true, ["timer callbacks due"] = true,
+    ["row paints"] = true, ["row paints avoided"] = true,
+    ["dirty rows processed"] = true, ["compact display renders"] = true,
 }
 local LABELS = {
     ["guide catalogue"] = true, ["tool layering"] = true,
@@ -256,6 +258,28 @@ function inspector:SetAdapted(enabled, reason)
     self:Refresh()
 end
 
+-- Reuse the existing five-second, visible-window memory sample. Never walk
+-- the object graph, force collection, sample during a timing capture, or save
+-- these observations in SavedVariables. Retain at most 36 samples (three
+-- minutes of continuous sampling; closing the window leaves a gap).
+function inspector:RecordMemorySample()
+    local now = _G.GetTime()
+    self.memorySampleOrigin = self.memorySampleOrigin or now
+    local registered, parsed = 0, 0
+    if addon.guides then
+        for _, guide in pairs(addon.guides) do
+            if type(guide) == "table" then
+                registered = registered + 1
+                if type(guide.steps) == "table" then parsed = parsed + 1 end
+            end
+        end
+    end
+    self.memorySamples = self.memorySamples or {}
+    tinsert(self.memorySamples, {seconds = now - self.memorySampleOrigin,
+        kb = self.memoryKB, registered = registered, parsed = parsed})
+    while #self.memorySamples > 36 do table.remove(self.memorySamples, 1) end
+end
+
 function inspector:Sample()
     local fps = type(_G.GetFramerate) == "function" and _G.GetFramerate() or 0
     self.lastFPS = fps
@@ -268,10 +292,15 @@ function inspector:Sample()
         type(_G.UpdateAddOnMemoryUsage) == "function" and
         type(_G.GetAddOnMemoryUsage) == "function" then
         self.lastMemorySample = _G.GetTime()
-        pcall(_G.UpdateAddOnMemoryUsage)
-        local ok, memory = pcall(_G.GetAddOnMemoryUsage,
-                                 self.addonIndex or addonName)
-        if ok then self.memoryKB = tonumber(memory) end
+        local updated = pcall(_G.UpdateAddOnMemoryUsage)
+        local ok, memory
+        if updated then
+            ok, memory = pcall(_G.GetAddOnMemoryUsage, self.addonIndex or addonName)
+        end
+        if ok then
+            self.memoryKB = tonumber(memory)
+            if self.memoryKB then self:RecordMemorySample() end
+        end
     end
     self.fpsSamples = self.fpsSamples or {}
     tinsert(self.fpsSamples, fps)
@@ -430,6 +459,14 @@ function inspector:Export()
         "Tickers: " .. tostring(CountTickers()), ""
     }
     self:AppendMeasurements(lines, false)
+    if self.memorySamples and #self.memorySamples > 0 then
+        tinsert(lines, "")
+        tinsert(lines, "Passive memory samples (outside timing captures; elapsed seconds, not wall-clock time):")
+        for _, sample in ipairs(self.memorySamples) do
+            tinsert(lines, format("+%.0fs memory=%.1fKB registered=%d parsed=%d",
+                sample.seconds, sample.kb, sample.registered, sample.parsed))
+        end
+    end
     addon.comms.OpenBrandedExport(L("Performance Report"),
         L("No player, realm, chat, account, or GUID data is included."),
         table.concat(lines, "\n"), 620, 420)

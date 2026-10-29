@@ -664,25 +664,47 @@ local function ApplyStepVisualState(frame, step, bottom)
                            (bottom and addon.colors.bottomFrameBG or
                                addon.colors.background)
     local textColor = visual and visual.text or addon.activeTheme.textColor
-
-    if addon.presentation and addon.presentation:IsModern() then
-        addon.presentation:Skin(frame, true)
+    local modern = addon.presentation and addon.presentation:IsModern() or false
+    local r, g, b, a = unpack(background)
+    if modern then
         -- Keep progress/accessibility colours as an accent, not a solid slab.
         if addon.settings.profile.activeTheme == "Default" and
             (addon.settings.profile.colorBlindMode or "off") == "off" then
             local _, surface = addon.presentation:Palette()
-            background = {surface[1] * 0.8 + background[1] * 0.2,
-                surface[2] * 0.8 + background[2] * 0.2,
-                surface[3] * 0.8 + background[3] * 0.2, surface[4]}
+            r, g, b, a = surface[1] * 0.8 + r * 0.2,
+                surface[2] * 0.8 + g * 0.2, surface[3] * 0.8 + b * 0.2, surface[4]
         end
+    end
+    local mode = addon.settings.profile.colorBlindMode or "off"
+    local revision = addon.presentation and addon.presentation.themeRevision
+    local paint = frame.rxpStepPaint
+    if paint and paint.state == state and paint.index == (step and step.index) and
+        paint.bottom == bottom and paint.modern == modern and paint.mode == mode and
+        paint.revision == revision and paint.font == addon.font and
+        paint.size == addon.settings.profile.guideFontSize and
+        paint.number == frame.number and paint.text == frame.text and
+        paint.r == r and paint.g == g and paint.b == b and paint.a == a and
+        paint.tr == textColor[1] and paint.tg == textColor[2] and paint.tb == textColor[3] and
+        paint.ta == textColor[4] and
+        (not modern or frame.rxpModernBackdrop == addon.presentation.backdrop and
+            frame.rxpModernTheme == addon.activeTheme) then
+        if addon.PerfCount then addon.PerfCount("row paints avoided") end
+        return
+    end
+    if modern then
+        addon.presentation:Skin(frame, true)
         frame:SetBackdropBorderColor(textColor[1], textColor[2], textColor[3], 0.55)
     end
-
+    if addon.PerfCount then addon.PerfCount("row paints") end
+    -- Frame-owned storage: never mutate a shared theme/palette table.
+    local resolved = frame.rxpStepBackground or {}
+    frame.rxpStepBackground = resolved
+    resolved[1], resolved[2], resolved[3], resolved[4] = r, g, b, a
     frame.stepVisualState = state
-    frame.stepVisualBackground = background
-    frame:SetBackdropColor(unpack(background))
+    frame.stepVisualBackground = resolved
+    frame:SetBackdropColor(r, g, b, a)
     if frame.number and not bottom then
-        frame.number:SetBackdropColor(unpack(background))
+        frame.number:SetBackdropColor(r, g, b, a)
     end
     if frame.number and frame.number.text then
         frame.number.text:SetTextColor(unpack(textColor))
@@ -693,6 +715,15 @@ local function ApplyStepVisualState(frame, step, bottom)
     if bottom and frame.text then
         frame.text:SetTextColor(unpack(textColor))
     end
+    paint = paint or {}
+    frame.rxpStepPaint = paint
+    paint.state, paint.index, paint.bottom = state, step and step.index, bottom
+    paint.modern, paint.mode, paint.revision = modern, mode, revision
+    paint.font, paint.size = addon.font, addon.settings.profile.guideFontSize
+    paint.number, paint.text = frame.number, frame.text
+    paint.r, paint.g, paint.b, paint.a = r, g, b, a
+    paint.tr, paint.tg, paint.tb = textColor[1], textColor[2], textColor[3]
+    paint.ta = textColor[4]
 end
 
 local function ApplyElementVisualState(elementFrame, element, step)
@@ -1101,6 +1132,7 @@ function addon.SetStep(n, n2, loopback)
         end
         if stepframe.theme ~= addon.activeTheme then
             stepframe.rxpModernBackdrop = nil
+            stepframe.rxpStepPaint = nil
             stepframe.theme = addon.activeTheme
             stepframe:ClearBackdrop()
             stepframe:SetBackdrop(RXPFrame.backdrop.edge)
@@ -1453,7 +1485,14 @@ function RXPFrame.RefreshQuestState(event)
 end
 
 function CurrentStepFrame.UpdateText(languageRefresh)
-    if not languageRefresh then addon.updateStepText = false end
+    if not languageRefresh then
+        addon.updateStepText = false
+        if addon.stepUpdateList then
+            for _, pending in pairs(addon.stepUpdateList) do
+                if pending then addon.updateStepText = true; break end
+            end
+        end
+    end
     local guide = addon.currentGuide
     if not guide then return end
     
@@ -1510,8 +1549,8 @@ function CurrentStepFrame.UpdateText(languageRefresh)
                 addon.guideLayout:PrepareText(stepframe.number.text, stepframe.number,
                     "TOPLEFT", 0, 0, stepframe.number:GetWidth())
                 stepframe.number.text:SetJustifyH("LEFT")
-                stepframe.number.text:SetText(title)
-                titleHeight = math.ceil(stepframe.number.text:GetStringHeight())
+                titleHeight = addon.guideLayout:MeasureText(stepframe.number.text,
+                    title, false, false, 0)
                 stepframe.number:SetHeight(titleHeight)
                 stepframe.number:SetAlpha(1)
             else
@@ -1557,21 +1596,21 @@ function CurrentStepFrame.UpdateText(languageRefresh)
                             (modernCard and 8 or 6) - elementFrame.button:GetWidth() -
                             11 - (modernCard and 8 or 5))
 
-                         -- Prevent text from overwritten with " ", could be stale text
+                        -- Keep the previous display while server data is pending.
+                        local displayText = elementFrame.text:GetText()
                         if element.text ~= ' ' then
                             local renderedText = addon.locale.GuideText(
                                 element.text, element, "text")
-                            elementFrame.text:SetText(
-                                addon.ReplaceNpcIds(renderedText, element))
+                            displayText = addon.ReplaceNpcIds(renderedText, element)
                         elseif not languageRefresh then
                             element.requestFromServer = true
                         end
 
-                        h = math.ceil(elementFrame.text:GetStringHeight() *
-                                                1.1) + 1
+                        h = addon.guideLayout:MeasureText(elementFrame.text,
+                            displayText, false, false, modernCard and 2 or 1,
+                            modernCard and 1 or 1.1)
                         if modernCard then
-                            h = math.max(elementFrame.button:GetHeight(),
-                                math.ceil(elementFrame.text:GetStringHeight()) + 2)
+                            h = math.max(elementFrame.button:GetHeight(), h)
                         end
                         -- print('sh:',h)
                         elementFrame:SetHeight(h)
@@ -2285,7 +2324,14 @@ end
 function addon:FetchGuide(guide,arg2)
     if type(guide) == "string" then
         return addon:FetchGuide(addon.GetGuideTable(guide,arg2))
-    elseif guide and not guide.steps then
+    end
+    if guide and (not guide.steps or guide.questIndex335) then
+        -- UI previews can still hold metadata after another consumer loaded it.
+        local registered = addon.guides[fmt("%s||%s", guide.group, guide.name)]
+        if registered and registered.key == guide.key then guide = registered end
+        if guide.questIndex335 then return end
+    end
+    if guide and not guide.steps then
         --print('ok3',guide.key)
         local key = guide.key
         local index = fmt("%s||%s",guide.group,guide.name)
@@ -2319,6 +2365,7 @@ function addon:FetchGuide(guide,arg2)
             end
             addon.guides[index] = newGuide
             addon.guideCache[key] = nil
+            if addon.ForgetGuideIndex then addon:ForgetGuideIndex(key) end
             guide = newGuide
             addon:ScheduleTask(addon.UpdateQuestButton)
             addon:ScheduleTask(addon.RXPFrame.GenerateMenuTable)
@@ -2408,7 +2455,7 @@ end
 
 local function GuideContainsQuest(guide, questId)
     if type(guide) ~= "table" or not tonumber(questId) then return false end
-    local fetched = addon:FetchGuide(guide)
+    local fetched = addon.GetGuideQuestView and addon:GetGuideQuestView(guide) or addon:FetchGuide(guide)
     if not fetched then return false end
     local processed = addon.ProcessGuideTable(fetched)
     if not processed or type(processed.steps) ~= "table" then return false end
@@ -2815,8 +2862,8 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
         end
         frame:ClearBackdrop()
         frame.rxpModernBackdrop = nil -- pooled rows must be reskinned after the legacy reset
+        frame.rxpStepPaint = nil
         frame:SetBackdrop(RXPFrame.backdrop.bottom)
-        ApplyStepVisualState(frame, step, true)
 
         frame:SetScript("OnEnter", function(self)
             self.currentAlpha = self:GetAlpha()
@@ -2907,11 +2954,18 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
         -- frame.text:SetText(text)
 
         frame:SetHeight(20)
+        -- Paint after the pooled text/font reset, otherwise the reset erases
+        -- semantic colours while the paint cache still considers them applied.
+        ApplyStepVisualState(frame, step, true)
 
     end
     if #ScrollChild.framePool > nframes then
         for i = nframes + 1, #ScrollChild.framePool do
-            ScrollChild.framePool[i]:Hide()
+            local unused = ScrollChild.framePool[i]
+            unused:Hide()
+            unused:EnableMouse(false)
+            unused.guide, unused.step = nil, nil
+            unused.guideTranslationFallback, unused.guideTranslationMachine = nil, nil
         end
     end
     ScrollChild.f1 = ScrollChild.f1 or CreateFrame("Frame", nil, ScrollChild)
@@ -3093,7 +3147,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
             end
 
             if rawtext and not element.hideTooltip then
-                local rendered, meta = addon.guideLocalization:Render(
+                local rendered, meta = addon.guideLocalization:RenderRow(
                     rawtext, element, element.tooltipText and
                         "tooltipText" or "text")
                 translationFallback = translationFallback or
@@ -3185,7 +3239,7 @@ function BottomFrame.UpdateFrame(self, stepn, languageRefresh)
                 end
 
                 if rawtext and not element.hideTooltip and rawtext ~= "" then
-                    local rendered, meta = addon.guideLocalization:Render(
+                    local rendered, meta = addon.guideLocalization:RenderRow(
                         rawtext, element, element.tooltipText and
                             "tooltipText" or "text")
                     translationFallback = translationFallback or

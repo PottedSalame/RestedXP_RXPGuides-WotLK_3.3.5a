@@ -102,7 +102,7 @@ function planner:BuildCatalog()
                 local guideIdentity = guide and (guide.key or
                     (realGroup .. "\031" .. tostring(name)))
                 if guide and not cataloguedGuides[guideIdentity] and
-                    not guide.internal and not guide.chapter then
+                    not guide.internal and not guide.chapter and guide.hasDaily ~= false then
                     guide = addon:FetchGuide(guide)
                     if guide and guide.steps then
                         local questIds, seen, reputationGated = {}, {}, false

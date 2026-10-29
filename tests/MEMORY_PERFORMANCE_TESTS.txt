@@ -1,0 +1,123 @@
+Memory/on-demand loading pass -- client acceptance checklist
+============================================================
+
+Scope
+-----
+This pass removes recurring palette/paint/formatting allocations, caches active
+objective measurements, consumes dirty-row requests independently, and releases
+the guide/step references held by surplus hidden list rows. It does not change
+guide content, progress, quest automation, feature defaults, or garbage collection.
+
+Bundled guides now register metadata and shared dungeon/profession/quest-item
+indexes without retaining their full step bodies. Quest-log analysis and
+prerequisite lookup use compact quest views; the daily planner loads only daily
+candidates. Selecting a guide compiles its normal production body on demand.
+Explicit "Pre load all data" still compiles everything. Imports, includes and
+parser-extension guides retain the conservative full path.
+
+Loaded bodies stay available for the rest of the session; this is not eviction.
+Visiting many guides or using tools which inspect their full bodies increases
+the parsed count legitimately. Reload starts a fresh on-demand session without
+resetting progress. No cache version, progress migration or GC policy is changed.
+
+Automated evidence
+------------------
+tests/memory-performance.lua exercises production palette, paint, formatting,
+localization, name-resolution, dirty-row and surplus-row cleanup paths:
+- 1,000 identical paints make no further paint writes and reuse frame storage.
+- Theme edits, accessibility changes, skin resets and style changes invalidate.
+- 1,000 element renders reuse compact status without freezing objective counts.
+  Ordinary Render callers still receive the complete metadata record.
+- A self-redirtying row cannot retain 99 unrelated requests; requests raised for
+  an earlier row survive the current render.
+- Released hidden-row references become collectible in the offline test process.
+
+tests/performance.lua checks measurement invalidation/multipliers and the bounded
+memory sampler. tests/run.lua checks compact display across supported locales and
+live language changes. Existing Modern/Legacy, map, progression, quest automation,
+inventory, backup and compatibility regressions remain required.
+
+These are deterministic work/ownership checks, not client memory or FPS results.
+
+tests/lazy-guides.lua exercises production parsing, shared indexes, cold/warm
+metadata, current/future quest-log analysis, cyclic transitions, removal, imports,
+daily cataloguing, farming counts and explicit preload. tests/guide-loading.lua
+compares full bodies and compact quest views across all manifest sources for four
+representative character profiles, preserving identities and quest actions.
+On-demand parsing also has a regression against borrowing the active guide's
+private quest-ID conversions; runtime conversions remain active-guide-owned.
+
+Preparation
+-----------
+1. Save any existing performance export. Leave real SavedVariables intact.
+2. Reload after updating the addon. Use the same character, guide, step, language,
+   interface style, visible tools, resolution and addon set for comparisons.
+3. Begin with RXPGuides, BugGrabber and BugSack only. Disable adaptive performance
+   for matched timing captures. Ensure the existing "Pre load all data" setting
+   is off, then reload. Record its value and keep it unchanged between captures.
+4. Do not force garbage collection. Do not use a debugger, memory injector,
+   process dump or server/database edits. The addon-supported sampler is enough.
+
+Passive memory observations (separate from timing captures)
+----------------------------------------------------------
+5. Open /rxp perf and keep the inspector visible for at least three minutes while
+   standing still with the guide visible. Do NOT start Capture 30s during this run.
+6. Click Export. The report now includes at most 36 memory samples, collected by
+   the existing five-second visible-window sampler. No new polling was added.
+   Fields: elapsed seconds, addon memory in KB, registered guides, parsed guides.
+   The series is session-only and contains no character/realm/account identifiers.
+7. Export before reloading; the series is not written to SavedVariables. For a
+   distinct second scenario reload and repeat with the guide deliberately hidden.
+   Hiding the guide retains its normal automation-pausing behavior.
+8. Compare post-collection floors, peaks and cycle lengths separately. Stable
+   parsed counts with a sawtooth do not prove a leak. Changing parsed counts may
+   help distinguish guide retention from temporary rendering allocations.
+
+Timing and correctness
+----------------------
+9. Separately use Capture 30s for idle display, normal quest progress, and rapid
+   step browsing. Memory accounting is suspended during captures, so the report's
+   top-level LastKnownMemoryKB is not a contemporaneous allocation measurement.
+   The appended passive series is explicitly outside the timing capture.
+10. On disposable Orc Warrior / Validated 1-6 Durotar, verify quest acceptance,
+    live Cutting Teeth counters, Sarkoth's same-title follow-up, manual rewards,
+    mixed Gornek interactions and quest-log header expansion. Do not reset a real
+    character's progress to run this checklist.
+11. Check Modern and Legacy; resize narrow/wide, change font and colors, toggle
+    accessibility palettes, hover rows and change display language. Text wrapping,
+    progress colors, delayed names and objective counters must update immediately.
+12. Switch between long and short guides and back. Rows must remain clickable
+    when reused; hidden surplus rows must not intercept clicks. Reload and verify
+    independent guide progress, skips and checkpoints.
+13. Recheck the enlarged map after closing/reopening. Repeat key interactions with
+    Questie tracking enabled and Questie quest automation disabled.
+14. Open both library styles. Search/filter without loading every guide; select
+    guides from Normal and each Hardcore family and check independent progress,
+    favorites, recents and restoration. Cancel a selection confirmation and check
+    that the current guide stays unchanged. Browse/Choose Step may load its body.
+15. Check quest-log pickup/turn-in locations and item tooltips, prerequisite
+    redirection, dungeon/profession filters and farming menus. These shared
+    features must remain correct before their referenced guides have been opened.
+16. Open the daily Activity Planner and check its available quests. If you use
+    imported guides, test one as well. Optional tools remain disabled by default.
+17. Optionally enable "Pre load all data" and reload once to verify that all
+    applicable guides still compile. Disable it and reload before memory testing.
+    Do not treat the preloaded run as an equivalent on-demand comparison.
+
+Report the scenario, addon set, any Lua errors, and sanitized exports. Capture-only
+counters include row paints/paints avoided, compact display renders, dirty rows
+processed, measurements and measurement hits. Do not add nested inclusive totals.
+Lower work counts alone do not establish lower stutter or resolution of issue #10.
+
+Reported client acceptance
+--------------------------
+The user confirmed guide switching, saved-position restoration after reload and
+normal quest interactions after this change. Their passive export retained 375
+registered guides with 27 parsed, versus 375 parsed before. The observed memory
+floor fell from approximately 114 MiB to 36.5 MiB (about 68%); the new excerpt
+peaked at approximately 43.6 MiB. These are observations from this client, not a
+universal memory budget or a matched CPU-performance result.
+
+Temporary growth remained approximately 2.8 MiB/minute between collections.
+Further allocation reductions and broader scenario coverage remain separate;
+this does not establish resolution of issue #10 or certify every checklist case.

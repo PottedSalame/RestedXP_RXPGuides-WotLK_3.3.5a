@@ -382,7 +382,7 @@ return function(root)
     -- Run the real row-recycling backdrop block, then the production skin.
     local pooled = object(); view:Skin(pooled, true)
     env.frame = pooled
-    local reset = Extract("UI/GuideWindow.lua", "        frame:ClearBackdrop()\n        frame.rxpModernBackdrop = nil", "        ApplyStepVisualState")
+    local reset = Extract("UI/GuideWindow.lua", "        frame:ClearBackdrop()\n        frame.rxpModernBackdrop = nil", '        frame:SetScript("OnEnter"')
     setfenv(assert(loadstring(reset)), env)()
     view:Skin(pooled, true)
     check(pooled.backdrop == view.backdrop, "recycled rows cannot retain Legacy borders")
@@ -432,7 +432,7 @@ return function(root)
     addon.icons, addon.functions, addon.stepUpdateList = {}, {}, {}
     addon.locale.GuideText = function(text) return text end
     addon.ReplaceNpcIds = function(text) return text end
-    addon.guideLocalization = {Render = function(_, text) return text end}
+    addon.guideLocalization = {RenderRow = function(_, text) return text end}
     addon.BetaVersionCheck = function() error("cosmetic pass ran version/gameplay work") end
     addon.currentGuide.steps[4] = step
     rootFrame.BottomFrame.hiddenFrames = 0

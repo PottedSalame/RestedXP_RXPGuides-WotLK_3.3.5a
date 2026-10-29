@@ -183,6 +183,10 @@ end
 
 local stepIndex = 0
 local guideKey,qLogCache,futureTurnInsCache
+local function QuestView(group, name)
+    if addon.GetGuideQuestView then return addon:GetGuideQuestView(group, name) end
+    return addon:FetchGuide(group, name)
+end
 function addon.GetExpectedQuestLog()
     local guide = addon.currentGuide
     local startGuide
@@ -200,7 +204,7 @@ function addon.GetExpectedQuestLog()
         else
             local group = guide.group
             local name = addon.guideList[group].defaultGuide_
-            startGuide = addon:FetchGuide(group,name)
+            startGuide = QuestView(group,name)
         end
         startGuide = addon.ProcessGuideTable(startGuide)
         if not (startGuide and startGuide.steps) then return {},{} end
@@ -232,11 +236,13 @@ function addon.GetExpectedQuestLog()
 
         local nextGroup,nextName,nextGuide
 
+        local visited = {[guide.key] = true}
         repeat
             nextGroup,nextName = addon.functions.next(false,guide)
-            nextGuide = addon:FetchGuide(nextGroup,nextName)
+            nextGuide = QuestView(nextGroup,nextName)
             if nextGuide and nextGuide.steps then
-                if guide.key ~= nextGuide.key then
+                if not visited[nextGuide.key] then
+                    visited[nextGuide.key] = true
                     nextGuide = addon.ProcessGuideTable(nextGuide)
                     guide = nextGuide
                     for _,step in ipairs(guide.steps) do
@@ -257,12 +263,16 @@ function addon.GetExpectedQuestLog()
 end
 local maxQLogSize = 0
 local maxIndex = 0
-function addon.GetQuestLog(QL, LT, guide, silent, stopGuide, stopStep)
+function addon.GetQuestLog(QL, LT, guide, silent, stopGuide, stopStep, visited)
     if not (QL and LT) then
         QL = {}
         LT = {}
         guide = guide or addon.currentGuide
     end
+    if not guide then return QL end
+    visited = visited or {}
+    if visited[guide.key or guide] then return QL end
+    visited[guide.key or guide] = true
     local name = guide.name
     local group = addon.functions
     local qError
@@ -337,11 +347,11 @@ function addon.GetQuestLog(QL, LT, guide, silent, stopGuide, stopStep)
         end
     else
         local nextGroup,nextName = group.next(false,guide)
-        local nextGuide = addon:FetchGuide(nextGroup,nextName)
+        local nextGuide = QuestView(nextGroup,nextName)
         if nextGuide and nextGuide.steps then
             nextGuide = addon.ProcessGuideTable(nextGuide)
             if guide.key ~= nextGuide.key then
-                return addon.GetQuestLog(QL, LT, nextGuide, silent, stopGuide, stopStep)
+                return addon.GetQuestLog(QL, LT, nextGuide, silent, stopGuide, stopStep, visited)
             end
         elseif eStep and not silent then
             addon.comms.PrettyPrint("Error at step %d (%s)", eStep.index or 0,guide.name)

@@ -125,14 +125,23 @@ view.backdrop = {bgFile = "Interface\\Buttons\\WHITE8X8",
     edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1,
     insets = {left = 1, right = 1, top = 1, bottom = 1}}
 
+-- Shared, read-only colours: repainting must not allocate new palette tables.
+local defaultBackground = {0.028, 0.032, 0.065, 0.96}
+local defaultSurface = {0.10, 0.11, 0.19, 0.96}
+local defaultAccent = {0.10, 0.82, 1}
+local fallbackBackground = {0.035, 0.04, 0.075, 1}
+local fallbackSurface = {0.1, 0.11, 0.19, 1}
+local fallbackText = {0.82, 0.84, 0.9}
+local emptyTheme = {}
+
 function view:Palette()
-    local p, theme = Profile(), addon.activeTheme or {}
+    local p, theme = Profile(), addon.activeTheme or emptyTheme
     if p and (p.activeTheme ~= "Default" or (addon.currentGuide and addon.currentGuide.theme)) then
-        return theme.background or {0.035, 0.04, 0.075, 1},
-            theme.bottomFrameBG or theme.background or {0.1, 0.11, 0.19, 1},
-            theme.textColor or {0.82, 0.84, 0.9}
+        return theme.background or fallbackBackground,
+            theme.bottomFrameBG or theme.background or fallbackSurface,
+            theme.textColor or fallbackText
     end
-    return {0.028, 0.032, 0.065, 0.96}, {0.10, 0.11, 0.19, 0.96}, {0.10, 0.82, 1}
+    return defaultBackground, defaultSurface, defaultAccent
 end
 
 function view:Skin(frame, card)

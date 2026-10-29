@@ -5125,7 +5125,7 @@ function addon.settings:CreateAceOptionsPanel()
                     preLoadData = {
                         name = L("Pre load all data"),
                         desc = L(
-                            "Loads all addon data upfront, instead of loading the data slowly over time. This increases loading screen times, only enable this option if you are experiencing frame rate drops"),
+                            "Parses all guides at login instead of on demand. Uses more memory and increases loading time. Disable to keep most unused guide bodies unloaded."),
                         type = "toggle",
                         width = optionsWidth,
                         order = 1.65,
@@ -5798,42 +5798,45 @@ function addon.settings:DisableTextColors()
     AceConfigRegistry:NotifyChange(addon.title)
 end
 
-function addon.settings.ReplaceColors(element)
-    -- Replace text placeholders
-    local function replace(textLine)
-        if type(textLine) ~= "string" then return textLine end
-        for RXP_ in string.gmatch(textLine, "RXP_[A-Z]+_") do
-            local prefix = addon.accessibility and
-                               addon.accessibility:GetTokenPrefix(RXP_) or ""
-            textLine = textLine:gsub(RXP_,
-                (addon.guideTextColors[RXP_] or
-                    addon.guideTextColors.default["error"]) .. prefix)
-        end
-
-        -- Replace raw hex values
-        for hex in string.gmatch(textLine, "|c(%x%x%x%x%x%x%x%x)") do
-            textLine = textLine:gsub(hex, addon.guideTextColors[hex] or
-                                         addon.guideTextColors.default["error"])
-        end
-
-        textLine = textLine:gsub("\\n","\n")
-        return textLine
+local guideColorFields = {"text", "rawtext", "tooltipText", "mapTooltip", "title", "arrowtext"}
+local function ReplaceGuideColorText(textLine)
+    if type(textLine) ~= "string" then return textLine end
+    if not textLine:find("RXP_", 1, true) and
+        not textLine:find("|c", 1, true) and
+        not textLine:find("\\n", 1, true) then return textLine end
+    for RXP_ in string.gmatch(textLine, "RXP_[A-Z]+_") do
+        local prefix = addon.accessibility and
+                           addon.accessibility:GetTokenPrefix(RXP_) or ""
+        textLine = textLine:gsub(RXP_,
+            (addon.guideTextColors[RXP_] or
+                addon.guideTextColors.default["error"]) .. prefix)
     end
 
+    -- Replace raw hex values
+    for hex in string.gmatch(textLine, "|c(%x%x%x%x%x%x%x%x)") do
+        textLine = textLine:gsub(hex, addon.guideTextColors[hex] or
+                                     addon.guideTextColors.default["error"])
+    end
+
+    textLine = textLine:gsub("\\n","\n")
+    return textLine
+end
+
+function addon.settings.ReplaceColors(element)
     local fieldString
     if type(element) == "table" or element and element.textReplaced then
         element.textReplaced = element.textReplaced or {}
-        for i, field in pairs({"text", "rawtext", "tooltipText", "mapTooltip","title","arrowtext"}) do
+        for i, field in ipairs(guideColorFields) do
             if element.textReplaced[i] then
-                element[field] = replace(element.textReplaced[i])
+                element[field] = ReplaceGuideColorText(element.textReplaced[i])
             else
                 fieldString = element[field]
                 element.textReplaced[i] = fieldString
-                element[field] = replace(fieldString)
+                element[field] = ReplaceGuideColorText(fieldString)
             end
         end
     else
-        return replace(element)
+        return ReplaceGuideColorText(element)
     end
 
 end

@@ -233,12 +233,13 @@ local function FindGuideForQuest(questId)
             local guide = addon.GetGuideTable(realGroup, name) or
                               addon.GetGuideTable(group, name)
             if guide and not guide.disabled and not guide.internal then
-                local parsed = addon:FetchGuide(guide)
+                local parsed = addon.GetGuideQuestView and addon:GetGuideQuestView(guide) or
+                    addon:FetchGuide(guide)
                 for stepIndex, step in ipairs(parsed and parsed.steps or {}) do
                     for _, element in ipairs(step.elements or {}) do
                         if tonumber(element.questId or element.id) == questId and
                             (element.tag == "accept" or element.tag == "daily") then
-                            return parsed, step.index or stepIndex
+                            return addon:FetchGuide(guide), step.index or stepIndex
                         end
                     end
                 end

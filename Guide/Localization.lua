@@ -26,6 +26,15 @@ local supported = {
 }
 local englishClient = locale == "enUS" or locale == "enGB"
 local cache = {}
+-- Only internal display callers opt into these immutable status records.
+-- Public Render callers retain the complete metadata contract. Live text/name
+-- resolution still runs; this is not a cache of objective completion or text.
+local displayOptions = {}
+local displayStatus = {
+    clean = {fallback = false, machine = false},
+    fallback = {fallback = true, machine = false},
+    machine = {fallback = false, machine = true},
+}
 local catalog
 local standingNames
 local FALLBACK_BADGE = " |cff9d9d9d[EN]|r"
@@ -1357,6 +1366,14 @@ function service:Render(text, element, field, options)
             output = output .. MACHINE_BADGE
         end
     end
+    if type(element) == "table" and (field == nil or field == "text") then
+        element.guideTranslationFallback = fallback or nil
+        element.guideTranslationMachine = machine or nil
+    end
+    if options == displayOptions and element then
+        if addon.PerfCount then addon.PerfCount("compact display renders") end
+        return output, displayStatus[fallback and "fallback" or machine and "machine" or "clean"]
+    end
     local meta = {
         mode = localized and "localized" or "english",
         locale = locale,
@@ -1371,12 +1388,12 @@ function service:Render(text, element, field, options)
                               catalog and catalog.revision,
         sourceSignature = HashSource(source),
     }
-    if type(element) == "table" and (field == nil or field == "text") then
-        element.guideTranslationFallback = fallback or nil
-        element.guideTranslationMachine = machine or nil
-    end
     if cacheKey then cache[cacheKey] = {output, meta} end
     return output, meta
+end
+
+function service:RenderRow(text, element, field)
+    return self:Render(text, element, field, displayOptions)
 end
 
 local function TranslateTitleWords(text)
@@ -1520,7 +1537,7 @@ end
 
 -- Compatibility entry point used by the existing guide and map renderers.
 addon.locale.GuideText = function(text, element, field, options)
-    local rendered = service:Render(text, element, field, options)
+    local rendered = service:Render(text, element, field, options or displayOptions)
     -- GuideText predates translation metadata and is also used as a nested
     -- argument by legacy integrations. Keep its historical single return;
     -- first-party renderers that need metadata call service:Render directly.

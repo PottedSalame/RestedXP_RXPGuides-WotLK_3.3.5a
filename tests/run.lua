@@ -986,16 +986,28 @@ for _, localeCode in ipairs({
         localizedObjective, objective)
     check(localizedOutput == localizedObjective and localizedMeta.official,
           localeCode .. " client objective text was replaced")
+    local compactOutput, compactMeta = addon.guideLocalization:RenderRow(
+        localizedObjective, objective)
+    check(compactOutput == localizedOutput and
+        compactMeta.fallback == localizedMeta.fallback and
+        compactMeta.machine == localizedMeta.machine,
+        localeCode .. " compact display changed localization")
+    check(addon.guideLocalization:RenderRow("Localized " .. localeCode .. ": 3/5", objective) ==
+        "Localized " .. localeCode .. ": 3/5", localeCode .. " compact display froze live progress")
     addon.guideLocalization:SetMode("english")
     local originalEnglish = addon.guideLocalization:Render(
         localizedObjective, objective)
     check(originalEnglish == "Sack of Supplies\n2/5",
           localeCode .. " Original English objective was generated incorrectly")
+    check(addon.guideLocalization:RenderRow(localizedObjective, objective) == originalEnglish,
+        localeCode .. " compact display ignored a live language switch")
 end
 
 assert(loadfile(root .. "/tests/guide-loading.lua"))()(root)
+assert(loadfile(root .. "/tests/lazy-guides.lua"))()(root)
 assert(loadfile(root .. "/tests/performance.lua"))()(root)
 assert(loadfile(root .. "/tests/refresh-performance.lua"))()(root)
+assert(loadfile(root .. "/tests/memory-performance.lua"))()(root)
 assert(loadfile(root .. "/tests/modern-ui.lua"))()(root)
 assert(loadfile(root .. "/tests/export-window.lua"))()(root)
 assert(loadfile(root .. "/tests/map-performance.lua"))()(root)

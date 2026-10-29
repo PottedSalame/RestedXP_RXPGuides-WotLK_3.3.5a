@@ -34,6 +34,43 @@ local L = addon.locale.Get
 
 -- File guides and string-imports need different load order support
 local embeddedGuides = {}
+-- Session-only sources for bundled guides. Full bodies are compiled only by
+-- FetchGuide; quest-log analysis can request a smaller, non-executable view.
+local guideIndexes = {}
+local catalogDirectives = {collect = true, addquestitem = true,
+    dungeon = true, profession = true, group = true, solo = true, deathskip = true,
+    accept = true, acceptmultiple = true, daily = true, turnin = true,
+    turninmultiple = true, dailyturnin = true}
+local questDirectives = {accept = true, acceptmultiple = true, daily = true,
+    turnin = true, turninmultiple = true, dailyturnin = true, abandon = true,
+    complete = true, dungeon = true, profession = true, group = true,
+    solo = true, deathskip = true}
+
+function addon:ForgetGuideIndex(key)
+    guideIndexes[key] = nil
+end
+
+function addon:GetGuideQuestView(guide, name)
+    if type(guide) == "string" then guide = addon.GetGuideTable(guide, name) end
+    if not guide then return end
+    if addon.currentGuide and addon.currentGuide.key == guide.key then
+        return addon.currentGuide
+    end
+    local registered = addon.guides[guide.group .. "||" .. guide.name]
+    if registered and registered.key ~= guide.key then return end
+    if registered and registered.key == guide.key then guide = registered end
+    if guide.steps then return guide end
+    local entry = guideIndexes[guide.key]
+    if not entry then return addon:FetchGuide(guide) end -- imports/custom sources
+    if not entry.questView then
+        local view, failure = addon.ParseGuide(entry.source, entry.text,
+            entry.defaultFor, true, entry.group, entry.key, "quests")
+        if failure or not view then return end
+        view.questIndex335 = true -- never an executable guide body
+        entry.questView = view
+    end
+    return entry.questView
+end
 
 addon.minGuideVersion = 0
 addon.maxGuideVersion = 0
@@ -145,6 +182,9 @@ function addon.AddGuide(guide)
     local replaceImported = loadedGuide and guide.bundled and
                                 loadedGuide.imported
     if loadedGuide and not replaceImported then return true end
+    if guide.farm and not (loadedGuide and loadedGuide.farm) then
+        addon.farmGuides = addon.farmGuides + 1
+    end
     if replaceImported then
         local signature = tostring(guide.sourceSignature or
                                      (tostring(guide.version or 0) .. ":" ..
@@ -238,6 +278,8 @@ function addon.RemoveGuide(guideKey)
 
         return
     end
+    guideIndexes[guideKey], addon.guideCache[guideKey] = nil, nil
+    if addon.BeginQuestGuideIndex then addon.BeginQuestGuideIndex(loadedGuide) end
 
     if addon.currentGuide and addon.currentGuide.key == guideKey then
         addon:LoadGuide(addon.emptyGuide)
@@ -597,10 +639,9 @@ function addon.LoadEmbeddedGuides()
             addon.ImportGuide(guideData.groupOrContent, guideData.text,
                               guideData.defaultFor, true)
         else
-            local guide, errorMsg, metadata, length, key, group, name, sourceSignature
+            local guide, errorMsg, metadata, key, group, name, sourceSignature
             local enabled = true
             if not guideData.text then
-                length = guideData.groupOrContent:len()
                 sourceSignature = addon.A32(guideData.groupOrContent)
                 if RXPCData.guideDisabled[n] == sourceSignature then
                     enabled = false
@@ -633,70 +674,66 @@ function addon.LoadEmbeddedGuides()
 
                         if enabled then
                             key = addon.BuildGuideKey(group,"",name)
-                            guide = key and RXPCData.guideMetaData[key]
                         else
                             RXPCData.guideDisabled[n] = sourceSignature
                         end
                     end
                 end
-                --print('g-ok',guide and guide.length)
             elseif RXPCData.guideDisabled[n] then
                 enabled = false
             end
 
-            if guide and guide.length == length and
-                guide.sourceSignature == sourceSignature then
-                --print('w',guide.key)
-                if (guide.defaultFor and not applies(guide.defaultFor)) then
-                    guide.lowPrio = "*" .. group
-                    --print(group)
-                else
-                    guide.lowPrio = nil
-                end
-                errorMsg = not (not guide.enabledFor or applies(guide.enabledFor))
-                --print(guide,errorMsg,guide.enabledFor)
-                addon.guideCache[guide.key] = function(self)
-                    local tbl, parseError, parsedMetadata = addon.ParseGuide(
-                        guideData.groupOrContent, guideData.text,
-                        guideData.defaultFor, true, group, key)
-                    if parseError then return end
-                    if tbl then
-                        tbl.bundled = true
-                        tbl.sourceSignature = sourceSignature
-                    end
-                    if parsedMetadata and RXPCData and RXPCData.guideMetaData then
-                        parsedMetadata.sourceSignature = sourceSignature
-                        RXPCData.guideMetaData[key or guide.key] = parsedMetadata
-                    end
-                    if addon.player.faction == "Neutral" and tbl then
-                        tbl.parse = self
-                    end
-                    return tbl
-                end
-            elseif enabled then
-                guide, errorMsg, metadata =
-                    addon.ParseGuide(guideData.groupOrContent,
-                                    guideData.text,
-                                    guideData.defaultFor, true, group, key)
-                    --print('n2',guide and guide.key)
-                enabled = not errorMsg
-                if enabled and guide then
-                    -- A fully parsed bundled guide supersedes any lazy parser
-                    -- left by an older imported copy with the same key.
-                    addon.guideCache[guide.key] = nil
-                end
-                if key and metadata then
+            if enabled then
+                -- Includes and parser-extension guides keep the established full
+                -- path. Their arbitrary cross-guide/quest-DB effects are not a
+                -- safe target for selective indexing.
+                local body = guideData.text or guideData.groupOrContent
+                local eager = guideData.text ~= nil or
+                    body:find("#include", 1, true) or body:find("#disablecaching", 1, true) or
+                    body:find(".setquestdb", 1, true) or body:find(".addtoquestdb", 1, true) or
+                    body:find(".convertquest", 1, true) or body:find(".mirrorquest", 1, true) or
+                    body:find(".rare", 1, true) -- shares preceding waypoint parser state
+                guide, errorMsg, metadata = addon.ParseGuide(
+                    guideData.groupOrContent, guideData.text, guideData.defaultFor,
+                    true, group, key, not eager and "catalog" or nil)
+                enabled = guide ~= nil and not errorMsg
+                if enabled then
                     metadata.sourceSignature = sourceSignature
-                    local cleanup = {}
-                    for guideKey,data in pairs(RXPCData.guideMetaData) do
-                        if data.key == guide.key then
-                            tinsert(cleanup,guideKey)
+                    guide.defaultFor = metadata.defaultFor
+                    if not eager then
+                        -- Never attach an empty steps table to a lazy guide:
+                        -- existing consumers use its presence to mean parsed.
+                        guide.steps = nil
+                        local entry = {source = guideData.groupOrContent,
+                            text = guideData.text, defaultFor = guideData.defaultFor,
+                            group = group, key = key}
+                        guideIndexes[guide.key] = entry
+                        addon.guideCache[guide.key] = function(self)
+                            local parsed, failure, parsedMetadata = addon.ParseGuide(
+                                entry.source, entry.text, entry.defaultFor, true,
+                                entry.group, entry.key)
+                            if failure or not parsed then return end
+                            parsed.bundled, parsed.sourceSignature = true, sourceSignature
+                            if parsedMetadata then
+                                parsedMetadata.sourceSignature = sourceSignature
+                                RXPCData.guideMetaData[key or parsed.key] = parsedMetadata
+                            end
+                            if addon.player.faction == "Neutral" then parsed.parse = self end
+                            return parsed
                         end
+                    else
+                        guideIndexes[guide.key], addon.guideCache[guide.key] = nil, nil
                     end
-                    for _,guideKey in pairs(cleanup) do
-                        RXPCData.guideMetaData[guideKey] = nil
+                    if key then
+                        local cleanup = {}
+                        for guideKey, data in pairs(RXPCData.guideMetaData) do
+                            if type(data) == "table" and data.key == guide.key then
+                                tinsert(cleanup, guideKey)
+                            end
+                        end
+                        for _, guideKey in ipairs(cleanup) do RXPCData.guideMetaData[guideKey] = nil end
+                        RXPCData.guideMetaData[key] = metadata
                     end
-                    RXPCData.guideMetaData[key] = metadata
                 end
             end
             if enabled then
@@ -719,6 +756,11 @@ function addon.LoadEmbeddedGuides()
         embeddedGuides = nil
     else
         embeddedGuides = {}
+    end
+
+    local enabledDungeons = RXPCData.guideMetaData.enabledDungeons
+    if enabledDungeons and addon.dungeons then
+        enabledDungeons[addon.player.faction] = addon.dungeons
     end
 
     --A1 = GetTimePreciseSec() - A1
@@ -764,9 +806,10 @@ function addon.LoadCachedGuides()
                 local data = guideData
                 addon.guideCache[key] = function(self)
                     local g = LibDeflate:DecompressDeflate(data.groupOrContent)
-                    local tbl = addon.ParseGuide(g)
+                    local tbl, failure, parsedMetadata = addon.ParseGuide(g)
+                    if failure or not tbl then return end
                     if RXPCData and RXPCData.guideMetaData then
-                        RXPCData.guideMetaData[guide.key] = metadata
+                        RXPCData.guideMetaData[tbl.key] = parsedMetadata
                     end
                     if addon.player.faction == "Neutral" and tbl then
                         tbl.parse = self
@@ -795,6 +838,9 @@ function addon.LoadCachedGuides()
             if not errorMsg and guide then
                 guide.imported = true
                 addon.AddGuide(guide)
+                -- Imports may contain arbitrary parse-time database directives.
+                -- Only bundled sources use selective indexing in this pass.
+                if not guide.steps then addon:FetchGuide(guide) end
             else
                 addon.comms.PrettyDebug(L('Unable to decode cached guide (%s), removed'), key)
                 addon.db.profile.guides[key] = nil
@@ -950,7 +996,7 @@ local function parseLine(linetext,step,parsingLogic)
 end
 addon.ParseLine = parseLine
 
-function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, key)
+function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, key, indexMode)
 
     addon.lastObjective = nil
     if not groupOrContent then return end
@@ -1002,14 +1048,15 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     end
 
     local guide = {}
+    guide.hasDaily = false
     -- Immutable source identity for progress flags; never derived from
     -- translated text, numeric display positions, or mutable counters.
     local progressSource = tostring(addon.A32((text:gsub("\r\n", "\n"):gsub("\r", "\n"))))
     if groupOrContent:sub(1, 1) == "+" then
-        addon.farmGuides = addon.farmGuides + 1
         guide.farm = true
     end
     addon.guide = guide
+    addon.guideIndexMode = indexMode
 
     guide.group = groupOrContent
     addon.currentGuideGroup = groupOrContent
@@ -1044,6 +1091,7 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
                 addon.minGuideVersion = math.min(guide.version,addon.minGuideVersion)
                 addon.maxGuideVersion = math.max(guide.version,addon.maxGuideVersion)
                 addon.guide = false
+                addon.guideIndexMode = nil
                 addon.lastObjective = nil
                 guide.key = guide.key or key
                 return guide, skipGuide
@@ -1051,6 +1099,9 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
                 guide.key = guide.key or key or addon.BuildGuideKey(guide)
                 guide.guideId = addon.A32(guide.key)
                 addon.RegisterGroup(guide.group)
+                if addon.BeginQuestGuideIndex and indexMode ~= "quests" then
+                    addon.BeginQuestGuideIndex(guide)
+                end
             end
             local classtag = line:match("<<%s*(.+)")
             if classtag and not applies(classtag) then
@@ -1061,9 +1112,8 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
                     step.hidewindow = true
                 end
                 currentStep = currentStep + 1
-                guide.steps[currentStep] = {}
-                guide.steps[currentStep].elements = {}
-                step = guide.steps[currentStep]
+                step = {elements = {}}
+                if indexMode ~= "catalog" then guide.steps[currentStep] = step end
                 step.stepId = linenumber + guide.guideId
                 --step.index = currentStep
                 addon.step = step
@@ -1072,7 +1122,20 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
             end
         elseif not skip then
             if currentStep > 0 then
-                parseLine(line,step,parsingLogic)
+                local directive = line:match("^%.(%S+)")
+                if directive == "daily" or directive == "dailyturnin" or
+                    line:match("^#include%s") then guide.hasDaily = true end
+                if not indexMode or line:sub(1, 1) == "#" or
+                    (indexMode == "catalog" and catalogDirectives[directive]) or
+                    (indexMode == "quests" and questDirectives[directive]) then
+                    parseLine(line,step,parsingLogic)
+                    if indexMode == "catalog" then
+                        -- Handlers populate shared item/dungeon/profession data,
+                        -- but their disposable display elements are not retained.
+                        step.elements = {}
+                        addon.lastElement, addon.lastObjective = nil, nil
+                    end
+                end
             else
                 -- print(line)
                 line = line:gsub("(.-)%s*<<%s*(.+)", function(code, tag)
@@ -1164,7 +1227,9 @@ function addon.ParseGuide(groupOrContent, text, defaultFor, isEmbedded, group, k
     addon.maxGuideVersion = math.max(guide.version,addon.maxGuideVersion)
 
     addon.guide = false
+    addon.guideIndexMode = nil
     addon.lastObjective = nil
+    if indexMode then addon.lastElement = nil end
     -- print(guide.name,"\n",guide.enabledFor)
 
     local metadata = {length = length}

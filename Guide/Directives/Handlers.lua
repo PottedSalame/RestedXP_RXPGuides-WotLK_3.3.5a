@@ -440,7 +440,9 @@ addon.IsQuestComplete = IsQuestComplete
 
 local function GetQuestId(src,guide,checkMirror)
     if type(guide) ~= "table" then
-        guide = addon.currentGuide or addon.guide
+        -- Lazy parsing can run while a different guide is active. Parse-time
+        -- IDs belong to the source being compiled, not that active route.
+        guide = addon.guide or addon.currentGuide
     end
     if not (src and guide) then
         return src
@@ -890,6 +892,10 @@ function addon.GetNpcName(id)
 end
 
 function addon.ReplaceNpcIds(textLine,element)
+    -- Most instructions have no deferred NPC names. Avoid allocating a gsub
+    -- callback/iterator for those strings; marked strings still resolve live.
+    if not textLine:find("npc:", 1, true) and
+       not textLine:find("::", 1, true) then return textLine end
     -- Guide display formatters may return a second metadata value.  Treat an
     -- object without a real guide step like the historical one-argument call
     -- instead of assuming every table is a parsed element.
@@ -1102,7 +1108,23 @@ local function ProcessItems(value, step, questId, isTurnIn)
     end
 end
 
+local questIndexOwners = {}
+function addon.BeginQuestGuideIndex(guide)
+    local key = guide and (guide.questIndexOwner335 or
+        (guide.group and guide.name and table.concat({guide.group, guide.subgroup or "", guide.name}, "|")))
+    if not key then return end
+    guide.questIndexOwner335 = key
+    for _, owned in ipairs(questIndexOwners[key] or {}) do
+        local list = owned.list
+        for i = #list, 1, -1 do
+            if list[i] == owned.entry then table.remove(list, i); break end
+        end
+    end
+    questIndexOwners[key] = {}
+end
+
 function addon.InsertQuestGuide(id,tbl)
+    if addon.guideIndexMode == "quests" then return end
     tbl[id] = tbl[id] or {}
     local entry = {}
 
@@ -1112,6 +1134,10 @@ function addon.InsertQuestGuide(id,tbl)
     entry.guide = addon.guide
 
     tinsert(tbl[id],entry)
+    local key = addon.guide and addon.guide.questIndexOwner335
+    if key and questIndexOwners[key] then
+        tinsert(questIndexOwners[key], {list = tbl[id], entry = entry})
+    end
 end
 
 function addon.IsOnTurnInGuide(self)

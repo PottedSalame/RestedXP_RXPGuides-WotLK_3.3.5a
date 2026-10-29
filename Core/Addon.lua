@@ -3041,25 +3041,34 @@ function addon.LegacyUpdateLoop()
             local steps = addon.currentGuide.steps
             local update = {}
 
-            for n in pairs(addon.stepUpdateList) do
-                tinsert(update,n)
+            for n, requested in pairs(addon.stepUpdateList) do
+                if requested then tinsert(update,n)
+                else addon.stepUpdateList[n] = nil end
             end
 
             for _,n in pairs(update) do
+                -- Consume this request BEFORE rendering. A new request from
+                -- this row survives, without retaining unrelated rows merely
+                -- because the global text-dirty flag was raised.
+                addon.stepUpdateList[n] = nil
                 if steps[n] then
+                    if addon.PerfCount then addon.PerfCount("dirty rows processed") end
                     if not updateText and steps[n].active then
                         updateText = true
                     end
                     addon.RXPFrame.BottomFrame.UpdateFrame(nil, n)
-                    if not addon.updateStepText then
-                        addon.stepUpdateList[n] = nil
-                    end
                 end
             end
 
             if updateText or addon.updateTipWindow then
                 addon.updateTipWindow = false
                 addon.RXPFrame.CurrentStepFrame.UpdateText()
+            end
+            -- UpdateText clears its own flag. Do not lose row requests raised
+            -- during either render, including a request for an earlier row.
+            for n, requested in pairs(addon.stepUpdateList) do
+                if requested then addon.updateStepText = true
+                else addon.stepUpdateList[n] = nil end
             end
         elseif addon.updateBottomFrame then
             event = event .. "/bottomFrame"
@@ -3071,7 +3080,8 @@ function addon.LegacyUpdateLoop()
             skip = 1
 
             return 'bottomFrame'
-        elseif skip % 2 == 1 and next(addon.guideCache) then
+        elseif addon.settings.profile.preLoadData and
+            skip % 2 == 1 and next(addon.guideCache) then
             event = event .. "/cache"
             local length = 0
             local loadGuide = true

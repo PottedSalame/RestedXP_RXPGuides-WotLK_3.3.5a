@@ -27,8 +27,9 @@ function layout:PrepareText(region, relative, point, x, y, width)
     if region.SetWordWrap then region:SetWordWrap(true) end
 end
 
-function layout:MeasureText(textRegion, text, force, hidden, padding)
+function layout:MeasureText(textRegion, text, force, hidden, padding, multiplier)
     padding = padding or 8
+    multiplier = multiplier or 1
     if not textRegion then return 8 end
     if hidden then
         if textRegion:GetText() ~= text then
@@ -49,7 +50,8 @@ function layout:MeasureText(textRegion, text, force, hidden, padding)
     if not force and cache and not write and cache.text == text and
         cache.revision == revision and cache.font == font and
         cache.size == size and cache.flags == flags and cache.width == width and
-        cache.scale == scale and cache.spacing == spacing and cache.padding == padding then
+        cache.scale == scale and cache.spacing == spacing and cache.padding == padding and
+        cache.multiplier == multiplier then
         if addon.PerfCount then addon.PerfCount("row measurement hits") end
         return cache.height
     end
@@ -57,11 +59,12 @@ function layout:MeasureText(textRegion, text, force, hidden, padding)
         textRegion:SetText(text)
         if addon.PerfCount then addon.PerfCount("row text writes") end
     end
-    local height = math.ceil(textRegion:GetStringHeight() + padding)
+    local height = math.ceil(textRegion:GetStringHeight() * multiplier + padding)
     if addon.PerfCount then addon.PerfCount("row measurements") end
     measurements[textRegion] = {
         text = text, revision = revision, font = font, size = size, flags = flags,
         width = width, scale = scale, spacing = spacing, height = height, padding = padding,
+        multiplier = multiplier,
     }
     return height
 end
