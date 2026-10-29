@@ -6035,7 +6035,10 @@ function addon.settings:SetupMapButton()
         if addon.libraryTabs and addon.libraryTabs:OpenFromOptions(mouseButton) then
             button.menuFrame:Hide()
             -- The stock full-screen map would otherwise cover the DIALOG hub.
-            HideUIPanel(_G.WorldMapFrame)
+            -- Closing the hub should leave the map itself open.
+            if addon.libraryTabs.window and addon.libraryTabs.window:IsShown() then
+                HideUIPanel(_G.WorldMapFrame)
+            end
             return
         end
         if addon.gameVersion == 30300 then

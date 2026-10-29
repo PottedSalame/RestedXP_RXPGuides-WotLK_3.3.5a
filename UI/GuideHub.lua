@@ -15,11 +15,16 @@ do
     local names = {"Guides", "Feature Tools", "Settings", "Import"}
 
     -- Shared options-icon shortcut; callers retain their existing menu and
-    -- left-click behavior when this returns false. Opening is never a toggle.
+    -- left-click behavior when this returns false. Toggle the whole hub,
+    -- regardless of its selected tab; reopening starts on Guides.
     function tabs:OpenFromOptions(button)
         if button ~= "RightButton" or IsShiftKeyDown() then return false end
         if _G.CloseDropDownMenus then _G.CloseDropDownMenus() end
-        self:Open("Guides")
+        if self.window and self.window:IsShown() then
+            self.window:Hide()
+        else
+            self:Open("Guides")
+        end
         return true
     end
 

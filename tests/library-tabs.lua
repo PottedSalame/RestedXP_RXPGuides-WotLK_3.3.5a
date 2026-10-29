@@ -345,7 +345,7 @@ return function(root, baseObject, style)
     assert(addon.libraryTabs.selected == "Guides")
 
     -- Execute the installed production icon callbacks, not a duplicate click
-    -- dispatcher. Opening the library must not toggle it shut or load a guide.
+    -- dispatcher. Right-click toggles the hub without loading a guide.
     local shift, menus, closed, toggled, dragged = false, 0, 0, 0, 0
     env.IsShiftKeyDown = function() return shift end
     env.CloseDropDownMenus = function() closed = closed + 1 end
@@ -391,13 +391,20 @@ return function(root, baseObject, style)
         function(button) addon.settings.worldMapButton.scripts.OnClick(addon.settings.worldMapButton, button) end
     }
     for _, click in ipairs(callbacks) do
-        addon.libraryTabs:Open("Settings")
         local beforeMenus, beforeClosed = menus, closed
         shift = false
-        env.WorldMapFrame:Show()
-        click("RightButton"); click("RightButton")
-        assert(addon.libraryTabs.selected == "Guides" and addon.guideHub.window:IsShown())
-        assert(menus == beforeMenus and closed == beforeClosed + 2, "plain right-click only opens library")
+        for _, tab in ipairs({"Guides", "Feature Tools", "Settings", "Import"}) do
+            addon.libraryTabs:Open(tab)
+            env.WorldMapFrame:Show()
+            click("RightButton")
+            assert(not addon.guideHub.window:IsShown(), "right-click closes the hub from every tab")
+            assert(env.WorldMapFrame:IsShown(), "closing the hub must not close the map")
+            click("RightButton")
+            assert(addon.libraryTabs.selected == "Guides" and addon.guideHub.window:IsShown())
+            click("RightButton")
+            assert(not addon.guideHub.window:IsShown(), "a second right-click closes Guides")
+        end
+        assert(menus == beforeMenus and closed == beforeClosed + 12, "plain right-click only toggles the library")
         addon.guideHub.window:Hide()
         addon.settings.worldMapButton.menuFrame:Hide()
         shift = true
