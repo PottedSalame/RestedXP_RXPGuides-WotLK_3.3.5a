@@ -1,0 +1,29 @@
+Guide HUD drag-only change -- client checks
+==========================================
+
+Scope: Modern and Legacy guide HUD input only. Guide-loading/eviction behavior,
+guide content, saved progress and separate style placement remain unchanged.
+
+1. Reload, unlock the guide frame, and drag its blank background, active-objective
+   text without a tooltip/action, ongoing objective cards and guide-list rows.
+   The whole HUD should move. Dragging a row must not jump to that step.
+2. Click and release a guide-list row without dragging: the existing jump should
+   occur once, on release. Right-click should still open the existing step menu.
+3. Check checkboxes, Browse, settings, collapse, the scrollbar and its arrows,
+   mousewheel scrolling, resize grip, XP info and any link/next-guide prompt.
+   These controls retain their own actions and do not become HUD drag handles.
+4. Lock the guide frame and attempt to drag it. It must not move; dragging a row
+   must not turn into a navigation click. Unlock and verify dragging works again.
+5. Drag, release outside the original row, and reload. The saved position should
+   restore correctly. Switch guides and repeat to exercise reused row frames.
+6. Collapse and expand the HUD; hidden objectives must not intercept the mouse.
+   Independent tip windows must still move themselves, not the guide HUD.
+7. Switch interface style through the existing reload confirmation and repeat
+   the checks in Legacy. Each style must retain its own saved placement.
+
+Offline coverage: tests/hud-drag.lua executes the production drag bindings and
+row handlers in both styles, including both release-event orders, locks, stale
+selections, outside releases, prompts, hidden frames and hide cancellation.
+No new OnUpdate loop or input overlay is installed. Runtime callback tests do
+not prove native-client hit testing. The user confirmed the updated HUD works
+correctly in their client; the checklist remains available for other setups.

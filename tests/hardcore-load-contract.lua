@@ -9,6 +9,11 @@ return function(root,fixtures)
     local first=assert(source:find("function addon:PrepareGuideLoad335(",1,true))
     local last=assert(source:find("function addon:ReloadGuide(",first,true))
     local loader=source:sub(first,last-1)
+    -- The loader binds pooled rows to these production-local input helpers.
+    -- Keep them in the same lexical chunk; gesture behavior has its own suite.
+    local dragStart=assert(source:find("local guideDragOwner",1,true))
+    local dragEnd=assert(source:find('RXPFrame:HookScript("OnHide"',dragStart,true))
+    loader=source:sub(dragStart,dragEnd-1)..loader
     local factory=assert(loadfile(root.."/tests/quest-automation-audit.lua"))
     setfenv(factory,setmetatable({arg={root,"--fixtures"}},{__index=_G}))
     local fixture=factory()
@@ -120,7 +125,7 @@ return function(root,fixtures)
         local w={}
         for name in ("SetHeight ClearAllPoints SetPoint Hide EnableMouse Show SetAlpha "..
             "ClearBackdrop SetBackdrop SetScript SetFontObject SetJustifyH SetJustifyV "..
-            "SetTextColor SetFont SetSize SetText"):gmatch("%S+") do w[name]=noop end
+            "SetTextColor SetFont SetSize SetText RegisterForDrag HookScript"):gmatch("%S+") do w[name]=noop end
         w.GetFont=function() return "fixture",10,"" end
         w.GetStringWidth=function() return 20 end
         w.CreateFontString=widget

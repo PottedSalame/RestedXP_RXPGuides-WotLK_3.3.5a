@@ -337,6 +337,50 @@ RXPFrame:HookScript("OnSizeChanged", function()
 end)
 RXPFrame:EnableMouse(1)
 
+-- Only plain HUD surfaces participate. Native drag events distinguish a drag
+-- from a row click without polling, overlays, or touching secure/tool controls.
+local guideDragOwner
+local function StopGuideDrag(self)
+    if guideDragOwner ~= self then return end
+    guideDragOwner = nil
+    RXPFrame.OnMouseUp(self, "LeftButton")
+end
+
+local function StartGuideDrag(self, button)
+    if button ~= "LeftButton" or not self:IsVisible() or self:GetAlpha() == 0 then return end
+    self.rxpHUDDragged = true -- even a locked drag must not become a row click
+    self.rxpHUDPressedGuide, self.rxpHUDPressedStep = nil, nil
+    if addon.settings.profile.lockFrames or (self.step and self.step.tip) then return end
+    local element = self.element
+    if element and (self:GetScript("OnMouseDown") or element.tooltip or
+        element.guideTranslationFallback or element.guideTranslationMachine) then return end
+    if self.guideTranslationFallback or self.guideTranslationMachine then return end
+    if guideDragOwner then StopGuideDrag(guideDragOwner) end
+    guideDragOwner = self
+    RXPFrame.OnMouseDown(self, button)
+end
+
+local function BindGuideDragSurface(frame)
+    if frame.rxpHUDDragBound then return end
+    frame.rxpHUDDragBound = true
+    frame:RegisterForDrag("LeftButton")
+    frame:HookScript("OnDragStart", StartGuideDrag)
+    frame:HookScript("OnDragStop", StopGuideDrag)
+    frame:HookScript("OnMouseUp", StopGuideDrag)
+    frame:HookScript("OnHide", function(self)
+        StopGuideDrag(self)
+        self.rxpHUDPressedGuide, self.rxpHUDPressedStep = nil, nil
+    end)
+end
+
+RXPFrame:HookScript("OnHide", function()
+    if guideDragOwner then StopGuideDrag(guideDragOwner) end
+end)
+for _, surface in ipairs({BottomFrame, ScrollFrame, ScrollChild}) do
+    surface:EnableMouse(true)
+    BindGuideDragSurface(surface)
+end
+
 local stepPos = {}
 local refreshScrollRange
 
@@ -1101,7 +1145,7 @@ function addon.SetStep(n, n2, loopback)
             stepframe:SetFrameStrata(RXPFrame:GetFrameStrata())
             stepframe:ClearAllPoints()
             stepframe:SetScript("OnMouseDown",nil)
-            stepframe:SetScript("OnMouseUp",nil)
+            stepframe:SetScript("OnMouseUp",StopGuideDrag)
             if anchor < 1 then
                 stepframe:SetPoint("TOPLEFT", CurrentStepFrame, 0, 0)
                 stepframe:SetPoint("TOPRIGHT", CurrentStepFrame, 0, 0)
@@ -1113,6 +1157,7 @@ function addon.SetStep(n, n2, loopback)
             end
             anchor = c
             stepframe:SetMovable(false)
+            BindGuideDragSurface(stepframe)
         end
         if not stepframe.number then
             stepframe.number = CreateFrame("Frame", "$parent_number", stepframe,
@@ -1272,6 +1317,7 @@ function addon.SetStep(n, n2, loopback)
 
                 elementFrame:SetScript("OnEnter", tpOnEnter)
                 elementFrame:SetScript("OnLeave", tpOnLeave)
+                BindGuideDragSurface(elementFrame)
 
                 elementFrame.button:HookScript("OnEnter", tpOnEnter)
                 elementFrame.button:HookScript("OnLeave", tpOnLeave)
@@ -2896,6 +2942,8 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
         frame.index = n
         frame.guide = guide
         frame:SetScript("OnMouseDown", function(self, button)
+            self.rxpHUDPressedGuide, self.rxpHUDPressedStep = nil, nil
+            self.rxpHUDDragged = false
             if not IsFrameShown(frame, self.step) then return end
             if button == "RightButton" then
                 self.timer = 0
@@ -2910,11 +2958,23 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
                     LibDD:EasyMenu(bottomMenu, MenuFrame, "cursor", 0, 0, "MENU");
                 end
             elseif button == "LeftButton" and self.step and addon.GoToStep then
-                -- Left-click a step to jump straight to it (right-click still opens
-                -- the menu with "Go to step", browse toggle, etc.).
-                addon.GoToStep(self.step.index)
+                -- Defer navigation until release: dragging must never jump steps.
+                self.rxpHUDPressedGuide, self.rxpHUDPressedStep = addon.currentGuide, self.step
             end
         end)
+        frame:SetScript("OnMouseUp", function(self, button)
+            if button ~= "LeftButton" then return end
+            local pressedGuide, pressedStep = self.rxpHUDPressedGuide, self.rxpHUDPressedStep
+            self.rxpHUDPressedGuide, self.rxpHUDPressedStep = nil, nil
+            StopGuideDrag(self)
+            if not self.rxpHUDDragged and pressedGuide == addon.currentGuide and
+                pressedStep and pressedStep == self.step and self:IsVisible() and
+                self:GetAlpha() > 0 and IsFrameShown(self, self.step) and
+                (not _G.MouseIsOver or _G.MouseIsOver(self)) and addon.GoToStep then
+                addon.GoToStep(pressedStep.index)
+            end
+        end)
+        BindGuideDragSurface(frame)
 
         if not frame.text then
             frame.text = frame:CreateFontString(nil, "OVERLAY")
