@@ -2,13 +2,40 @@
 export const MAX_BYTES = 12 * 1024 * 1024;
 export const NEW_GUIDE = '#wotlk\n#ac335\n#version 1\n#group RXPGuides Custom Guides\n#name My Guide\n\nstep\n    >>Write your first instruction here.\n';
 export const FORMS = {
-  goto: ['Zone / map token', 'X (0–100)', 'Y (0–100)', 'Radius (optional)', 'Optional marker (presence enables; usually 0)'],
+  goto: ['Zone / map token', 'X (0–100)', 'Y (0–100)', 'Arrival radius (yards; blank = navigation only)', 'Optional marker (presence enables; usually 0)'],
   accept: ['Quest ID'], turnin: ['Quest ID', 'Reward choice (optional)'],
   complete: ['Quest ID', 'Client objective index', 'Partial amount (optional)'],
   collect: ['Item ID', 'Quantity (defaults to 1)'], use: ['Item ID'],
   target: ['NPC name or ID'], mob: ['Creature name or ID'],
   note: [], objective: [],
 };
+export const DEFAULT_TRAVEL_RADIUS = '15';
+// Defaults apply only to newly chosen actions, never to imported source.
+export function newArguments(tag) { return tag === 'goto' ? ['', '', '', DEFAULT_TRAVEL_RADIUS] : []; }
+export function waypointMode(args) {
+  if (args.length <= 3 || !args[3] && !args[4]) return 'navigation';
+  return Number(args[3]) > 0 && !args[4] ? 'travel' : 'advanced';
+}
+export function newWaypoint(zone, x, y, mode = 'travel') {
+  if (!['travel', 'navigation'].includes(mode)) throw new Error('Select a waypoint type.');
+  return buildInstruction('goto', [zone, x.toFixed(2), y.toFixed(2), ...(mode === 'travel' ? [DEFAULT_TRAVEL_RADIUS] : [])], '', '');
+}
+export function instructionHint(parsed) {
+  if (!parsed) return '';
+  if (parsed.tag === 'goto') return {
+    travel: 'Travel objective: completes inside the arrival radius.',
+    navigation: 'Navigation marker only: pair with a quest or manual objective in this step.',
+    advanced: 'Special waypoint behavior: radius and optional fields are preserved; review in Source.',
+  }[waypointMode(parsed.args)];
+  return {
+    note: 'Display only. Use Manual objective for a checkable instruction.',
+    objective: 'Manually checked by the player.',
+    target: 'Target helper only; does not detect talking to the NPC.',
+    mob: 'Target helper only; use a quest objective or collection to track kills.',
+    use: 'Item-button helper only; does not track successful use. Pair with an objective.',
+    complete: 'Uses the client quest-log objective index, not a database slot.',
+  }[parsed.tag] || '';
+}
 
 export function decodeFile(bytes) {
   if (bytes.byteLength > MAX_BYTES) throw new Error('File exceeds the 12 MiB editor limit. Split the source file first.');
@@ -263,6 +290,16 @@ export function validate(guide, catalogue = {}) {
     if (optionalNumber && !/^\d+$/.test(optionalNumber)) add('error', 'Nonnegative integer optional argument required.', number);
   }
   for (const [label, number] of refs) if (!labels.has(label)) add('warning', 'Unresolved local label ' + label + '; check the intended branch/dependency.', number);
+  // Diagnose only the simple forms we understand. Advanced directives and
+  // step gates may supply their own progression rules; do not guess those.
+  const lineNumbers = new Map(guide.lines.map((line, index) => [line, index + 1]));
+  for (const step of guide.steps) {
+    const content = step.lines.filter(line => line.text.trim() && !/^\s*--/.test(line.text));
+    const parsed = content.map(instruction);
+    const helper = item => item && (['note', 'target', 'mob', 'use'].includes(item.tag)
+      || item.tag === 'goto' && waypointMode(item.args) === 'navigation');
+    if (parsed.length && parsed.every(helper)) add('warning', 'This step has only notes/navigation/helpers, with no completion objective. For a stop, add a travel, quest or manual objective.', lineNumbers.get(content[0]));
+  }
   return found;
 }
 

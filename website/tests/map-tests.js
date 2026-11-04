@@ -278,8 +278,13 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
     await test('Map add / replace / selection use the real source and Undo controls',async()=>{
       input('source',basic);await sleep(400);
       get('map-x').value='44';get('map-y').value='65';const before=get('source').value;
-      get('map-add').click();assert(get('source').value.includes('.goto Durotar,44.00,65.00'));
+      get('map-add').click();assert(get('source').value.includes('.goto Durotar,44.00,65.00,15'));
       get('undo').click();equal(get('source').value,before);get('redo').click();
+      get('undo').click();get('map-waypoint-kind').value='navigation';get('map-add').click();
+      assert(get('source').value.includes('.goto Durotar,44.00,65.00\n'));
+      assert(!get('source').value.includes('.goto Durotar,44.00,65.00,15'));
+      get('undo').click();equal(get('source').value,before);
+      get('map-waypoint-kind').value='travel';get('map-add').click();
       const list=get('map-waypoints');list.value='1';list.dispatchEvent(new w.Event('change'));
       equal(get('steps').value,'0');get('map-x').value='40';get('map-y').value='60';get('map-replace').click();
       assert(get('source').value.includes('.goto Durotar,40.00,60.00'));get('undo').click();assert(get('source').value.includes('.goto Durotar,43.33,68.61'));

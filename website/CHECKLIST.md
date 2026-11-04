@@ -10,6 +10,11 @@ needed. All work remains local until publication is separately authorized.
    turn-in. Look up quest 4641 and NPC 10176, then use them in instructions.
    Search a name on Wowhead and paste a WotLK result link back. Verify failed
    lookups leave editing available and .complete indices remain author-entered.
+   Put walking destinations in separate steps: new travel instructions from
+   Write and Map must include a 15-yard radius. Import an old radius-free
+   waypoint and verify it stays navigation-only until explicitly converted.
+   Undo the conversion; the original source must return unchanged. Notes,
+   target/mob and item-use helpers alone should warn, not silently gain objectives.
 3. Change a coordinate, text and condition through forms; inspect Source. Edit
    Source and check the form/preview. Typing must update the selected instruction
    immediately without moving the caret. New instruction drafts require Add;

@@ -1,6 +1,7 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay,terrainLayers} from './map-model.js';
 import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,CLASS_LABELS,markerAppearance,locationDescription,markerHit} from './map-markers.js';
 import {createInteriorView} from './interior-view.js';
+import {newWaypoint} from './model.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects',...PROFESSION_LABELS};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS,...Object.fromEntries(Object.keys(PROFESSION_LABELS).map(key=>[key,'#d4c597']))};
 const ordinaryRoles=Object.keys(colors);
@@ -132,7 +133,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   function setProposal(x,y){proposal={x,y};$('map-x').value=x.toFixed(2);$('map-y').value=y.toFixed(2);}
   function numbers(){const x=Number($('map-x').value),y=Number($('map-y').value);if(!zone()||!$('map-x').value||!$('map-y').value||!Number.isFinite(x+y)||x<0||y<0||x>100||y>100)throw new Error('Select a zone and enter X/Y within 0–100.');return {x,y};}
   function action(callback){try{callback();}catch(error){status(error.message);}}
-  $('map-add').onclick=()=>action(()=>{const {x,y}=numbers();adapter.add('    .goto '+zone().token+','+x.toFixed(2)+','+y.toFixed(2));});
+  $('map-add').onclick=()=>action(()=>{const {x,y}=numbers();adapter.add(newWaypoint(zone().token,x,y,$('map-waypoint-kind').value));});
   $('map-replace').onclick=()=>action(()=>{const {x,y}=numbers();if(!selected||selected.zone.id!==zone().id)throw new Error('Select a waypoint in this zone first.');adapter.move(selected,x,y);});
   function popup(members){
     const box=$('map-popup');box.replaceChildren();

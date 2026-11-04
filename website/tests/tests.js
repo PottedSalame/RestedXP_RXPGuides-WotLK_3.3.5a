@@ -18,6 +18,15 @@ const catalogue = await fetch('../data/catalogue.json').then(r => r.json());
 await mapTests(test,assert,equal,rejects,sleep);
 await interiorTests(test,assert,equal,rejects);
 let exported;
+// Feed actual editor-generated forms to the production Lua handler tests.
+const formSource = '#wotlk\n#ac335\n#group RXPGuides Custom Guides\n#name Form semantics\n'
+  + [M.newWaypoint('Durotar',44.31,68.20), M.newWaypoint('Durotar',45.76,68.27,'navigation'),
+    ...[['accept',['4641'],'Accept Your Place In The World'],['turnin',['4641','1'],''],
+      ['complete',['788','1','4'],'Kill boars'],['collect',['4865','2'],'Collect pelts'],
+      ['use',['6948'],'Use your Hearthstone'],['target',['Kaltunk::10176'],'Talk to Kaltunk'],
+      ['mob',['Mottled Boar::3098'],'Kill boars'],['note',[],'Done!'],['objective',[],'Done!']]
+      .map(([tag,args,text])=>M.buildInstruction(tag,args,text,''))]
+    .map(line=>'step\n'+line+'\n').join('');
 
 await test('UTF-8 BOM, Unicode and mixed endings round trip', () => {
   const original = '\uFEFF#group Custom\r\n#name Café\rstep\n>>你好\r\n';
@@ -60,6 +69,33 @@ await test('Form changes only selected instruction', () => {
   const g = parse(text), line = g.steps[0].lines[0], old = M.instruction(line);
   const replacement = M.buildInstruction(old.tag, ['Durotar', '45', '68.61'], old.display, old.condition, old.leading);
   equal(M.editGuide(text, g, line.start, line.end, replacement), text.replace('43.33', '45'));
+});
+await test('New travel and navigation waypoints are explicit; imports retain their arguments', () => {
+  equal(M.newArguments('goto'), ['', '', '', '15']);
+  equal(M.newWaypoint('Durotar', 44.31, 68.20), '    .goto Durotar,44.31,68.20,15');
+  equal(M.newWaypoint('Durotar', 44.31, 68.20, 'navigation'), '    .goto Durotar,44.31,68.20');
+  rejects(() => M.newWaypoint('Durotar', 1, 2, 'advanced'), /type/);
+  for (const [args, mode] of [[['Durotar','1','2'],'navigation'], [['Durotar','1','2','15'],'travel'], [['Durotar','1','2','15','0'],'advanced'], [['Durotar','1','2','0'],'advanced'], [['Durotar','1','2','-1'],'advanced']]) {
+    equal(M.waypointMode(args), mode);
+    const line = M.buildInstruction('goto', args, 'Travel', 'Orc', '  ');
+    equal(M.instruction({text:line}).args, args);
+  }
+});
+await test('Helper-only steps warn without modifying source or guessing advanced progression', () => {
+  const head = '#wotlk\n#group RXPGuides Custom Guides\n#name My Guide\n';
+  const original = head + 'step\n>>Hello there!\n.goto Durotar,44.31,68.20\nstep\n.goto Durotar,45.76,68.27\nstep\n.goto Durotar,45.04,65.86\nstep\n.goto Durotar,44.31,68.20\nstep\n>>Done!\n';
+  const g = parse(original), warnings = M.validate(g,catalogue).filter(x=>x.message.includes('no completion objective'));
+  equal(g.body,original);equal(g.steps.length,5);equal(warnings.length,5);
+  assert(warnings.every(x=>x.severity==='warning'&&x.line>0));
+  const corrected = original.replace(/(\.goto Durotar,[\d.]+,[\d.]+)/g,'$1,15').replace('>>Done!','+Done!');
+  assert(!M.validate(parse(corrected),catalogue).some(x=>x.message.includes('no completion objective')));
+  for (const body of ['.use 6948','.target 10176','.mob Mottled Boar']) {
+    assert(M.validate(parse(head+'step\n'+body),catalogue).some(x=>x.message.includes('no completion objective')));
+    assert(!M.validate(parse(head+'step\n'+body+'\n+Check when done'),catalogue).some(x=>x.message.includes('no completion objective')));
+  }
+  for (const body of ['#completewith next\n.goto Durotar,1,2','.xp 6','.goto Durotar,1,2,15,0']) {
+    assert(!M.validate(parse(head+'step\n'+body),catalogue).some(x=>x.message.includes('no completion objective')));
+  }
 });
 await test('Target and mob use production semicolon separators, not commas', () => {
   const line = '.target Smith, the Elder::123;Second NPC::124';
@@ -194,6 +230,27 @@ try {
   await test('Source edits synchronize with forms', async () => {
     input('source', basic); await sleep(400); equal(get('steps').options.length, 3);
     equal(get('action').value, 'goto'); equal(get('arg-0').value, 'Durotar');
+  });
+  await test('Existing navigation stays unchanged; explicit travel conversion and new defaults are undoable', async () => {
+    const before=get('source').value;
+    equal(get('waypoint-kind').value,'navigation');equal(get('arg-3').value,'');
+    assert(get('action-hint').textContent.includes('Navigation marker only'));
+    equal(get('source').value,before);
+    input('waypoint-kind','travel');await sleep(0);equal(get('source').value,before);
+    change('waypoint-kind','travel');await sleep(0);
+    assert(get('source').value.includes('.goto Durotar,43.33,68.61,15'));
+    assert(get('preview').textContent.includes('arrive within 15 yards'));
+    get('undo').click();equal(get('source').value,before);
+    get('new-line').click();input('action','goto');await sleep(0);change('action','goto');await sleep(0);
+    equal(get('arg-3').value,'15');equal(get('waypoint-kind').value,'travel');
+    input('arg-0','Durotar');input('arg-1','44.31');input('arg-2','68.20');await sleep(0);
+    equal(get('source').value,before);get('append-line').click();
+    assert(get('source').value.includes('.goto Durotar,44.31,68.20,15'));
+    get('undo').click();equal(get('source').value,before);
+    const advanced=basic.replace('.goto Durotar,43.33,68.61','.goto Durotar,43.33,68.61,25,0');
+    input('source',advanced);await sleep(400);change('steps','0');change('instructions','0');equal(get('waypoint-kind').value,'advanced');
+    input('arg-1','44');await sleep(0);equal(get('source').value,advanced.replace('43.33','44'));
+    input('source',basic);await sleep(400);change('steps','0');change('instructions','0');
   });
   await test('Leaving source flushes pending edits before editing a form', async () => {
     get('workspace-tabs-source').click();
@@ -354,4 +411,4 @@ if (new URLSearchParams(location.search).has('corpus')) await test('Actual repos
   }
 });
 output.dataset.status = failed.length ? 'failed' : 'passed';
-output.textContent = JSON.stringify({passed, failed, companion: exported}, null, 2);
+output.textContent = JSON.stringify({passed, failed, companion: exported, formSource}, null, 2);

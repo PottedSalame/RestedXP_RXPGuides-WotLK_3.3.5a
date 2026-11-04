@@ -96,9 +96,11 @@ def run(browser, lua_command=None, live_wowhead=False):
                     raise RuntimeError("Browser regressions failed")
                 companion = scratch / "Guide.lua"
                 companion.write_text(report["companion"]["lua"], encoding="utf-8", newline="\n")
+                forms = scratch / "forms.txt"
+                forms.write_text(report["formSource"], encoding="utf-8", newline="\n")
                 if lua_command:
                     # The existing platform runner is explicitly provided, never downloaded.
-                    result = subprocess.run([str(lua_command), str(ROOT / "tests/production-parser.lua"), str(addon), str(companion)], capture_output=True, timeout=60)
+                    result = subprocess.run([str(lua_command), str(ROOT / "tests/production-parser.lua"), str(addon), str(companion), str(forms)], capture_output=True, timeout=60)
                     print(result.stdout.decode("utf-8", errors="replace"), end="", flush=True)
                     if result.returncode:
                         raise RuntimeError(result.stderr.decode("utf-8", errors="replace"))

@@ -1,5 +1,6 @@
 import {NEW_GUIDE, FORMS, MAX_BYTES, History, decodeFile, encodeFile, parseDocument, instruction,
-  buildInstruction, editGuide, setHeader, moveStep, newline, validate, companion, applyTextarea, reparseEditedGuide} from './model.js';
+  buildInstruction, editGuide, setHeader, moveStep, newline, validate, companion, applyTextarea, reparseEditedGuide,
+  newArguments, waypointMode, instructionHint, DEFAULT_TRAVEL_RADIUS} from './model.js';
 import {referenceInput, referenceURL, searchURL, createLookup} from './wowhead.js';
 import {createWorkspace} from './workspace.js';
 
@@ -72,6 +73,13 @@ function renderArguments(values = []) {
     const error=node('small');error.id='arg-error-'+index;error.className='error';error.hidden=true;input.setAttribute('aria-describedby',error.id);
     label.append(input,error); $('arguments').append(label);
   }
+  updateActionHint();
+}
+function updateActionHint() {
+  const tag = $('action').value, args = FORMS[tag].map((_, i) => $('arg-' + i).value.trim());
+  $('waypoint-kind-field').hidden = tag !== 'goto';
+  if (tag === 'goto') $('waypoint-kind').value = waypointMode(args);
+  $('action-hint').textContent = instructionHint({tag, args});
 }
 function renderSteps() {
   const query=$('step-search').value.trim().toLowerCase(),items=guide()?.steps||[];
@@ -159,7 +167,8 @@ function renderPreview(draft) {
   for (const line of step()?.lines || []) {
     const parsed = instruction(line);
     if (!parsed) continue;
-    const text = parsed.display || '.' + parsed.tag + ' ' + parsed.args.join(',');
+    const text = (parsed.display || '.' + parsed.tag + ' ' + parsed.args.join(','))
+      + (parsed.tag === 'goto' ? ' [' + (waypointMode(parsed.args) === 'travel' ? 'arrive within ' + parsed.args[3] + ' yards' : waypointMode(parsed.args) === 'navigation' ? 'navigation only' : 'special waypoint') + ']' : '');
     $('preview').append(node('li', text + (parsed.condition ? ' [only if: ' + parsed.condition + ']' : '')));
   }
   if (draft) $('preview').append(node('li', 'New: ' + (instruction({text: draft})?.display || draft.trim())));
@@ -175,6 +184,7 @@ function flushLive() {
   liveQueued = false;
   const kind = liveAction; liveAction = null;
   try {
+    if (kind === 'instruction') updateActionHint();
     if (kind === 'instruction' && state.drafting) { renderPreview(formLine()); return; }
     if (!guide() || (kind === 'instruction' && !state.formEditable)) return;
     const before = state.history.text;
@@ -222,9 +232,19 @@ function replaceDocument(text, filename) {
 }
 function confirmReplace() { flushSource(); return state.history.text === state.saved || confirm('Replace the current document? Download it first if you need a separate backup.'); }
 
-for (const tag of Object.keys(FORMS)) $('action').append(option(tag === 'note' ? 'Written instruction (>>)' : tag === 'objective' ? 'Manual objective (+)' : '.' + tag, tag));
-$('action').addEventListener('change', event => { renderArguments(); queueLive('instruction', event.target); });
-$('instruction-form').addEventListener('input', event => { if (!event.isComposing) queueLive('instruction', event.target); });
+for (const tag of Object.keys(FORMS)) $('action').append(option(tag === 'note' ? 'Note — display only (>>)' : tag === 'objective' ? 'Manual objective (+)' : '.' + tag, tag));
+$('action').addEventListener('change', event => { renderArguments(newArguments($('action').value)); queueLive('instruction', event.target); });
+$('waypoint-kind').addEventListener('change', event => {
+  if ($('action').value !== 'goto') return;
+  const travel = event.target.value === 'travel';
+  $('arg-3').value = travel ? DEFAULT_TRAVEL_RADIUS : ''; $('arg-4').value = '';
+  queueLive('instruction', event.target);
+});
+$('instruction-form').addEventListener('input', event => {
+  // Selects own their change transaction; do not read the old argument fields
+  // between the browser's input event and its subsequent change event.
+  if (!event.isComposing && !['action', 'waypoint-kind'].includes(event.target.id)) queueLive('instruction', event.target);
+});
 $('instruction-form').addEventListener('compositionend', event => queueLive('instruction', event.target));
 $('header-value').addEventListener('input', event => { if (!event.isComposing) queueLive('header', event.target); });
 $('header-value').addEventListener('compositionend', event => queueLive('header', event.target));
@@ -272,7 +292,7 @@ $('add-step').onclick = safely(() => { flushSource(); const active = guide(), eo
 $('duplicate-step').onclick = safely(() => { flushSource(); const active = guide(), selected = step(), text = active.body.slice(selected.start, selected.stop); state.step++; commit(editGuide(state.history.text, active, selected.stop, selected.stop, (/[\r\n]$/.test(text) ? '' : newline(text)) + text)); });
 $('delete-step').onclick = safely(() => { flushSource(); if (confirm('Delete this step? You can Undo.')) commit(editGuide(state.history.text, guide(), step().start, step().stop, '')); });
 for (const [id, delta] of [['up', -1], ['down', 1]]) $(id).onclick = safely(() => { flushSource(); const text = moveStep(state.history.text, guide(), state.step, delta); state.step += delta; commit(text); });
-function formLine() { return buildInstruction($('action').value, FORMS[$('action').value].map((_, i) => $('arg-' + i).value.trim()), $('display-text').value, $('condition').value, currentLine()?.text.match(/^[ \t]*/)[0] || '    '); }
+function formLine() { return buildInstruction($('action').value, FORMS[$('action').value].map((_, i) => $('arg-' + i).value.trim()), $('display-text').value, $('condition').value, currentLine()?.text.match(/^[ \t]*/)[0] ?? '    '); }
 $('instruction-form').onsubmit = safely(() => { if (state.drafting) $('append-line').click(); else { queueLive('instruction', $('display-text')); flushLive(); } });
 $('new-line').onclick = safely(() => {
   flushSource(); state.drafting = true; lastInput = null; $('action').value = 'note'; renderArguments();

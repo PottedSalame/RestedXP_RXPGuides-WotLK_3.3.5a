@@ -50,7 +50,9 @@
       <div class="toolbar"><button id="new-line">New instruction</button><button id="delete-line">Delete instruction</button></div>
       <form id="instruction-form">
         <label>Action <select id="action"></select></label>
+          <label id="waypoint-kind-field" hidden>Waypoint type <select id="waypoint-kind"><option value="travel">Travel objective</option><option value="navigation">Navigation marker only</option><option value="advanced" disabled>Advanced source waypoint</option></select></label>
         <div id="arguments" class="field-grid"></div>
+          <p id="action-hint" class="hint"></p>
         <label>Instruction text <input id="display-text" autocomplete="off"></label>
         <details id="instruction-advanced"><summary>Conditions</summary><label>Condition after &lt;&lt; (optional) <input id="condition" autocomplete="off" placeholder="For example: Warrior"></label></details>
         <div class="toolbar"><button type="button" id="append-line" hidden>Add instruction</button><button type="button" id="cancel-line" hidden>Cancel</button></div>
@@ -120,6 +122,7 @@
             <p id="map-selection" class="hint"></p>
             <label>X <input id="map-x" type="number" min="0" max="100" step="0.01"></label>
             <label>Y <input id="map-y" type="number" min="0" max="100" step="0.01"></label>
+            <label>New waypoint <select id="map-waypoint-kind"><option value="travel">Travel objective (15 yards)</option><option value="navigation">Navigation marker only</option></select></label>
             <div class="toolbar"><button id="map-add" type="button">Add waypoint</button><button id="map-replace" type="button">Replace coordinates</button></div>
             <label>Visible locations (first 200) <select id="map-locations" size="4"></select></label>
             <button id="map-details" type="button">Location details</button>
