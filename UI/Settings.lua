@@ -39,6 +39,7 @@ elseif (tonumber(select(3,_G.GetBuildInfo()):match("%d+$")) or 0) < 2025 then
 end
 
 local importCache = {
+    format = "website",
     bufferString = "",
     displayString = "",
     bufferData = {},
@@ -949,6 +950,17 @@ local function RestoreProfileOptions(profile, snapshot)
 end
 
 function addon.settings.ProcessImportBox()
+    if importCache.format == "website" then
+        addon.comms:CancelChoice("RXP_CUSTOM_IMPORT")
+        local plan, problem = addon.customImport:Analyze(importCache.bufferString)
+        if not plan then return false, problem end
+        addon.comms:ConfirmChoice("RXP_CUSTOM_IMPORT", fmt(L("Save %d custom guide(s), replacing %d existing import(s)?\nSource edits may change saved step restoration. Your current guide will not change until you reload. Keep a source backup."), #plan.entries, plan.replacements),
+            function(data)
+                local ok, problem = addon.customImport:Save(data)
+                addon.settings:UpdateImportStatusHistory(ok and L("Custom guides saved. Use Reload guides and UI when ready; then select your guide in the library.") or problem)
+            end, plan)
+        return true
+    end
     if not importCache.workerFrame:IsShown() then
         importCache.workerFrame:Show()
     end
@@ -983,7 +995,17 @@ function addon.settings.GetImportedGuides()
             local group, subgroup, name = guide.key:match("^(.*)|(.*)|(.*)")
             if subgroup ~= "" then group = group .. "/" .. subgroup end
             display[guide.key] = string.format("%s/%s - version %s", group,
-                                               name, guide.version)
+                                               name, tostring(guide.version or ""))
+        end
+    end
+
+    for key, record in pairs(addon.db.profile.guides) do
+        if type(record) == "table" and (record.customSourceVersion == 1 or record.cache or type(record.groupOrContent) == "string") then
+            importedGuidesFound = true
+            local canonical = record.key or key:match("^[^|]+|[^|]*|[^|]+") or key
+            display[canonical] = canonical:gsub("|", "/") .. " - " ..
+                L(record.customSourceVersion == 1 and "website import" or "encoded import")
+            if addon.customImport.errors[canonical] then display[canonical] = display[canonical] .. " - " .. L("Source needs correction") end
         end
     end
 
@@ -1023,6 +1045,8 @@ end
 
 --/run StaticPopup_Show("RXP_Import")
 function addon.settings.ImportSplicedString()
+    addon.comms:CancelChoice("RXP_CUSTOM_IMPORT")
+    importCache.format = "encoded"
     return StaticPopup_Show("RXP_Import")
 end
 local strbuffer = {}
@@ -1083,6 +1107,7 @@ _G.StaticPopupDialogs["RXP_Import"] = {
 
 function addon.settings:CreateImportOptionsPanel()
     local function notOnline()
+        if importCache.format == "website" then return false end
         if not RXPData.cache and GetTime() - importCache.lastBNetQuery > 5 then
             addon.comms.PrettyDebug("Battle.net not cached, querying")
             importCache.lastBNetQuery = GetTime()
@@ -1097,9 +1122,24 @@ function addon.settings:CreateImportOptionsPanel()
         name = fmt("RestedXP %s - %s", L("Guide Import"), addon.versionText),
         handler = self,
         args = {
+            sourceFormat = {
+                order = 0, type = "select", name = L("Import format"),
+                values = {website = L("Website guide source"), encoded = L("Encoded import string")},
+                get = function() return importCache.format end,
+                set = function(_, value)
+                    addon.comms:CancelChoice("RXP_CUSTOM_IMPORT")
+                    importCache.format = value
+                    importCache.bufferString, importCache.bufferData = "", {}
+                end,
+            },
             buffer = {
                 order = 1,
-                name = L("Paste encoded strings"),
+                name = function()
+                    if importCache.format == "website" then
+                        return L("Paste the website's Save guide text or Guide.lua contents (up to 256 KiB). Basic editor instructions only; executable Lua, macros and includes are not supported. Save as new guide on the website to use a custom identity. Saving requires confirmation; reload when ready.")
+                    end
+                    return L("Paste encoded strings")
+                end,
                 type = "description",
                 width = "full",
                 fontSize = "medium"
@@ -1121,7 +1161,7 @@ function addon.settings:CreateImportOptionsPanel()
                 order = 11,
                 type = 'select',
                 style = 'dropdown',
-                name = L("Currently loaded imported guides"),
+                name = L("Saved imported guides"),
                 width = 'full',
                 values = function()
                     return self.GetImportedGuides()
@@ -1141,14 +1181,6 @@ function addon.settings:CreateImportOptionsPanel()
                 order = 12,
                 type = 'execute',
                 name = L("Delete imported guide"),
-                confirm = function()
-                    if next(addon.db.profile.guides) == nil or
-                        not self.gui.selectedDeleteGuide then
-                        return false
-                    end
-                    return string.format(L("Remove") .. " %s?",
-                                         self.gui.selectedDeleteGuide)
-                end,
                 disabled = function()
                     return next(addon.db.profile.guides) == nil or
                                not self.gui.selectedDeleteGuide or
@@ -1156,10 +1188,14 @@ function addon.settings:CreateImportOptionsPanel()
                                self.gui.selectedDeleteGuide == "none"
                 end,
                 func = function()
-                    if addon.RemoveGuide(self.gui.selectedDeleteGuide) then
-                        addon.db.profile.guides[self.gui.selectedDeleteGuide] =
-                            nil
-                    end
+                    local plan, problem = addon.customImport:PlanDelete(self.gui.selectedDeleteGuide)
+                    if not plan then self:UpdateImportStatusHistory(problem); return end
+                    addon.comms:ConfirmChoice("RXP_DELETE_CUSTOM_GUIDE",
+                        fmt(L("Delete imported guide %s? Keep a source backup. Saved progress is retained."), plan.key),
+                        function(data)
+                            local ok, failure = addon.customImport:Delete(data)
+                            if not ok then self:UpdateImportStatusHistory(failure) end
+                        end, plan)
                 end
             },
             purgeAll = {

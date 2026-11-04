@@ -91,7 +91,9 @@ Selecting a Hardcore guide requests confirmation to enable Hardcore mode. Famili
 
 ## Custom guides and support
 
-Additional community routes live on the [custom-guides branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides) and are not bundled with the main download. Copy a guide's text and paste it into `/rxp import`. Authors can use the [custom-guide contribution instructions](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/CustomGuides/README.md).
+In the library, choose **Type → Custom guides** to find your routes. Select an imported guide and **Delete import** to remove its saved source after confirmation; switch away first if it is active. Checkpoints are retained. Companion-addon files must be removed separately with the game closed.
+
+Additional community routes live on the [custom-guides branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides) and are not bundled with the main download. Website-created guides can be pasted into `/rxp import` using **Website guide source**: confirm saving, reload when ready, then select the guide in the library. Use a distinct name under `RXPGuides Custom Guides`. Basic editor instructions are supported; executable Lua, macros and includes are rejected. Existing encoded imports have a separate format choice. Authors can also use the [custom-guide contribution instructions](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/CustomGuides/README.md).
 
 Report bugs or suggest features through [GitHub Issues](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/issues). For bugs, include:
 

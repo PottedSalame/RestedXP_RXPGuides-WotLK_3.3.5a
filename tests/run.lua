@@ -1005,6 +1005,7 @@ end
 
 assert(loadfile(root .. "/tests/guide-loading.lua"))()(root)
 assert(loadfile(root .. "/tests/lazy-guides.lua"))()(root)
+assert(loadfile(root .. "/tests/custom-import.lua"))()(root)
 assert(loadfile(root .. "/tests/guide-cache.lua"))()(root)
 assert(loadfile(root .. "/tests/quest-inspection.lua"))()(root)
 assert(loadfile(root .. "/tests/performance.lua"))()(root)

@@ -2612,6 +2612,7 @@ end
 -- This only parses/caches the destination; it never activates its steps.
 function addon:PrepareGuideLoad335(guide)
     if type(guide) ~= "table" then return end
+    if addon.customImport and addon.customImport:IsRemoved(guide.key) then return end
     local function eligible(candidate)
         local farmCompatible = not candidate.farm or not addon.goldAssistant or
             not addon.goldAssistant.IsGuideCompatible or
@@ -2636,6 +2637,7 @@ function addon:LoadGuide(guide, OnLoad, loadSource, redirectTrail, selection)
         addon.hardcoreGuides:CancelPendingSelection()
     end
     local requestedGuide = guide
+    if type(guide) == "table" and addon.customImport and addon.customImport:IsRemoved(guide.key) then return end
     local function LoadEmptyGuide()
         if requestedGuide ~= addon.emptyGuide and
             type(addon.emptyGuide) == "table" then

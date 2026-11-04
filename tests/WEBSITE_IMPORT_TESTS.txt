@@ -1,0 +1,40 @@
+Website guide import (uncommitted client acceptance)
+
+Use a disposable Orc Warrior and keep a source backup. Do not install the same
+guide as both a companion addon and an import. Existing encoded imports remain
+available through Import format -> Encoded import string.
+
+1. In the website, use File -> Save as new guide. Give it a distinct name under
+   RXPGuides Custom Guides. Add a note, a Durotar waypoint, accept 788, complete
+   788 objective 1, and turn in 788. Export -> Save guide text.
+2. Open the downloaded text in a text editor and copy its contents. In the addon,
+   open Import -> Website guide source, paste, and press Import. Cancel the
+   confirmation: nothing should be saved or loaded and progress must not change.
+3. Paste again and confirm. The current guide must remain unchanged. Voluntarily
+   /reload, find the custom guide in the library, and select it. Check the note,
+   waypoint and quest progress. Repeat with Questie tracking, automation disabled.
+4. Edit the source and import again with the same name. Confirm the replacement
+   warning. It must not change the current guide until reload. After reload,
+   check the new text and saved position; changed steps may need manual review.
+5. Import another uniquely named guide using the exported Guide.lua contents.
+   Reload: both should be selectable, also on a later login. Multiple literal
+   wrappers in one paste are supported; each needs a unique group/name.
+6. Try an unknown directive, .macro, .setquestdb, external Lua around a wrapper,
+   invalid coordinates, and a bundled group name. Each must be rejected without
+   changing saved guides. Conditional identity headers and includes are not
+   supported; use the basic website form controls or review a companion manually.
+7. In Guides, select Type -> Custom guides. Test both Modern and Legacy, including
+   starting from Original Upstream Guides. Select an import and use Delete import.
+   Cancel first: nothing changes. If active, switch guides before deleting it.
+   Confirm: it leaves the library and must not return on login. Reimporting keeps
+   its checkpoint. Bundled/companion files must never be deleted by this action.
+   Also test Import -> Saved imported guides -> Delete imported guide before the
+   first reload, and with an invalid saved source. Source backups remain your
+   recovery path; deletion deliberately preserves progress, favorites and history.
+8. Repeat the paste/confirmation in Legacy and the Interface -> AddOns fallback.
+   Switching Import format must cancel any pending website confirmation.
+
+Limits: 256 KiB per paste, 32 wrappers per paste, 1 MiB of saved website sources.
+Source is retained in the existing account-wide RXPDB guide store. No account
+key is required. This is not a source editor, compiler or Lua execution console.
+The existing backup tool is not a replacement for downloaded guide source.

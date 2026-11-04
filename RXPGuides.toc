@@ -99,6 +99,7 @@ Guide\QuestCache.lua
 Guide\QuestAutomation.lua
 Compat\Questie335.lua
 Guide\Loader.lua
+Guide\CustomImport.lua
 Guide\Registry.lua
 Guide\Parser.lua
 Guide\Conditions.lua

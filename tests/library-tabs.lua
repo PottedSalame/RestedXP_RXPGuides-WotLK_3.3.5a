@@ -149,7 +149,7 @@ return function(root, baseObject, style)
         comms = {SendPing = function() end, OpenBugReport = function() end},
         targeting = {CanCreateMacro = function() return true end},
         classColor = {r = 0.8, g = 0.6, b = 0.4},
-        scheduler = {After = function(_, _, key, _, fn) queue[key] = fn end},
+        scheduler = {After = function(_, _, key, _, fn) queue[key] = fn end, CancelOwner = function() end},
         timer = {After = function(_, fn) queue.timer = fn end},
         db = {profile = {guides = {}}}, guideList = {}, guides = {}, settings = {}, RXPFrame = object(),
         GetTexture = function(s) return "Textures/" .. s end,
@@ -179,6 +179,9 @@ return function(root, baseObject, style)
     for _, name in ipairs({"LibDBIcon-1.0", "LibDataBroker-1.1"}) do env.LibStub:NewLibrary(name, 1) end
     load("UI/Themes.lua")
     load("UI/Settings.lua")
+    addon.affix = function(low, high) return string.format("%02d-%02d", low, high) end
+    addon.BuildGuideKey = function(g) return g.group.."|"..(g.subgroup or "").."|"..g.name end
+    load("Guide/CustomImport.lua")
     addon.settings:InitializeDatabase()
     addon.settings.profile.uiStyle = style
     load("UI/Presentation.lua"); addon.presentation:Initialize()
@@ -277,6 +280,10 @@ return function(root, baseObject, style)
         "hub callback refreshes the visible original panel once")
     clean("Bidirectional native refresh")
     addon.libraryTabs:Open("Import")
+    -- Native format selection retains the existing encoded validation path.
+    addon.comms.CancelChoice = function() end
+    local format = assert(find(addon.libraryTabs.pages.Import.widget, "sourceFormat"))
+    format:Fire("OnValueChanged", "encoded")
     import = assert(find(addon.libraryTabs.pages.Import.widget, "importBox"))
     import.editBox:SetFocus()
     now = 1
@@ -295,6 +302,43 @@ return function(root, baseObject, style)
     assert(imports == 1 and #addon.settings.gui.importStatusHistory > 0, "import validator and status remain live")
     assert(addon.libraryTabs.pages.Import.status:GetText() == "Fixture rejection", "native validation message remains visible")
     clean("Import validation")
+    -- The same native edit box accepts website text without account cache.
+    local pending
+    addon.comms.ConfirmChoice = function(_, _, _, callback, data) pending={callback=callback,data=data} end
+    addon.comms.CancelChoice = function() pending=nil end
+    format=assert(find(addon.libraryTabs.pages.Import.widget,"sourceFormat"))
+    format:Fire("OnValueChanged","website")
+    env.RXPData.cache=nil
+    import=assert(find(addon.libraryTabs.pages.Import.widget,"importBox"))
+    local websiteSource="#wotlk\n#group RXPGuides Custom Guides\n#name UI test\nstep\n.accept 788\n"
+    local function pasteWebsite(text)
+        import=assert(find(addon.libraryTabs.pages.Import.widget,"importBox"))
+        import.editBox:SetFocus();now=now+1
+        for char in text:gmatch(".") do import.editBox.scripts.OnChar(import.editBox,char) end
+        import.editBox.scripts.OnUpdate(import.editBox)
+        import.button:GetScript("OnClick")(import.button)
+    end
+    pasteWebsite(websiteSource)
+    assert(pending and not next(addon.db.profile.guides),"website import awaits confirmation offline")
+    pending.callback(pending.data)
+    local saved=assert(addon.db.profile.guides["RXPGuides Custom Guides||UI test"])
+    assert(saved.source==websiteSource and env.RXPCData.currentStep==7)
+    pasteWebsite(websiteSource..">>Changed\n")
+    assert(pending.data.replacements==1)
+    format=assert(find(addon.libraryTabs.pages.Import.widget,"sourceFormat"))
+    format:Fire("OnValueChanged","encoded")
+    assert(not pending and saved.source==websiteSource,"format switch cancels pending replacement")
+    env.RXPData.cache=true
+    clean("Website import confirmation")
+    local deleteOption=assert(find(addon.libraryTabs.pages.Import.widget,"deleteSelectedGuide"))
+    addon.settings.gui.selectedDeleteGuide="RXPGuides Custom Guides||UI test"
+    deleteOption:Fire("OnClick")
+    assert(pending and pending.data.records and addon.db.profile.guides[pending.data.key],"Import delete requests confirmation")
+    addon.comms:CancelChoice("RXP_DELETE_CUSTOM_GUIDE")
+    assert(addon.db.profile.guides["RXPGuides Custom Guides||UI test"],"cancel keeps saved import")
+    deleteOption:Fire("OnClick");pending.callback(pending.data)
+    assert(not addon.db.profile.guides["RXPGuides Custom Guides||UI test"] and env.RXPCData.currentStep==7)
+    clean("Import deletion")
     local purge = assert(find(addon.libraryTabs.pages.Import.widget, "purgeAll"))
     local purges = 0
     addon.CreateMetaDataTable = function() purges = purges + 1 end
@@ -529,6 +573,26 @@ return function(root, baseObject, style)
     assert(menuOpens == 3 and menuCloses == 1, "another visible menu does not block opening Type")
     purposeMenu[5].func() -- Professions, from inside the Leveling category
     assert(hub.purposeFilter == "profession" and #hub.filtered == 2)
+    local custom={key="RXPGuides Custom Guides||Filter",group="RXPGuides Custom Guides",name="Filter",imported=true}
+    local customEntry={guide=custom,key=custom.key,name=custom.name,group=custom.group,canonicalGroup=custom.group,canonicalName=custom.name,active=true}
+    hub.guides[#hub.guides+1]=customEntry
+    hub.collection="original" -- the Custom filter must not be hidden by a collection tab
+    for _, item in ipairs(purposeMenu) do if item.text=="Custom guides" then item.func() end end
+    assert(hub.purposeFilter=="custom" and #hub.filtered==1 and hub.filtered[1]==customEntry)
+    assert(not hub:GetPreviewIdentity(customEntry):find("Validated",1,true),"imports are not certified routes")
+    addon.db.profile.guides[custom.key]={key=custom.key,customSourceVersion=1,source=websiteSource}
+    hub:Select(customEntry)
+    assert(hub.frame.deleteImport:IsShown(),"custom preview has a delete action in "..style)
+    hub.frame.deleteImport.scripts.OnClick()
+    local deleteDialog=assert(env.StaticPopupDialogs.RXP_DELETE_CUSTOM_GUIDE)
+    deleteDialog.OnCancel();assert(addon.db.profile.guides[custom.key],"cancel preserves source")
+    hub.frame.deleteImport.scripts.OnClick()
+    hub:Select(nil);env.StaticPopupDialogs.RXP_DELETE_CUSTOM_GUIDE.OnAccept()
+    assert(addon.db.profile.guides[custom.key],"changed selection cannot delete the old preview")
+    hub:Select(customEntry);hub.frame.deleteImport.scripts.OnClick();env.StaticPopupDialogs.RXP_DELETE_CUSTOM_GUIDE.OnAccept()
+    assert(not addon.db.profile.guides[custom.key] and env.RXPCData.currentStep==7)
+    assert(addon.libraryTabs.pages.Import.dirty,"library deletion invalidates the Import list too")
+    hub.collection=nil;hub.purposeFilter="profession"
     assert(env.RXPCData.currentStep == 7)
     for _, child in ipairs(hub.frame.children) do
         local text = child:GetText()

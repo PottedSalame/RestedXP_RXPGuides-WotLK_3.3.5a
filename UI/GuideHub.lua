@@ -241,12 +241,14 @@ hub.purposes = {
     {"dungeon", "Dungeons"}, {"loot", "Loot & gear"},
     {"profession", "Professions"}, {"reputation", "Reputation"},
     {"daily", "Daily quests"}, {"attunement", "Attunements & keys"},
-    {"farming", "Farming"}, {"other", "Other guides"}
+    {"farming", "Farming"}, {"other", "Other guides"}, {"custom", "Custom guides"}
 }
 
 function hub:GetGuidePurpose(guide)
     local group = lower(tostring(guide.group or "")):gsub("^[*+]", ""):gsub("^original guides %- ", "")
     local subgroup = lower(tostring(guide.subgroup or ""))
+    if guide.imported or guide.customSource335 or group == "rxpguides custom guides" or
+        group:match("^rxpguides custom guides %- ") then return "custom" end
     if addon.hardcoreGuides and addon.hardcoreGuides:GetFamily(guide) then return "other" end
     if group:find("profession", 1, true) or subgroup:find("profession", 1, true) or
         group == "mining & herbalism" or group == "cooking & skinning" then return "profession" end
@@ -275,7 +277,8 @@ end
 function hub:GetPreviewIdentity(entry)
     local original = tostring(entry.canonicalGroup or entry.guide.group):gsub("^[*+]", ""):find("Original Guides - ", 1, true) == 1
     return L("Type") .. ": " .. self:GetGuideIdentifier(entry.guide) .. "\n" ..
-        L(original and "Original Upstream Guides" or "Validated & Fixed Guides") .. "\n" .. entry.group
+        L(self:GetGuidePurpose(entry.guide) == "custom" and "Custom guides" or
+            (original and "Original Upstream Guides" or "Validated & Fixed Guides")) .. "\n" .. entry.group
 end
 
 hub.buttonHelp = {
@@ -303,6 +306,7 @@ hub.buttonHelp = {
     ["Restart"] = "Request confirmation to load the selected guide from step 1.",
     ["Choose Step"] = "Enter a step number, then confirm loading the selected guide at that step.",
     ["Find Start"] = "Analyze quest progress and preview a proposed starting step. Apply it only after confirmation.",
+    ["Delete import"] = "Delete this saved import after confirmation. Choose another guide first if it is active. Progress is retained; bundled and companion-addon files are not deleted.",
     ["Close"] = "Close the library without disabling tools or changing guide progress.",
     ["Resize"] = "Drag to resize the library. This does not change the guide HUD size.",
     ["Scroll up"] = "Scroll upward without selecting or loading a guide.",
@@ -514,7 +518,7 @@ function hub:GetFilteredGuides()
         local familyMatch = not self.hardcoreFamily or
             (family and family.id == self.hardcoreFamily)
         local original = tostring(entry.canonicalGroup):gsub("^[*+]", ""):find("Original Guides - ", 1, true) == 1
-        local collectionMatch = not self.collection or (self.collection == "original") == original
+        local collectionMatch = self.purposeFilter == "custom" or not self.collection or (self.collection == "original") == original
         local categoryMatch = not self.category or self.category == "all" or
             (self.category == "hardcore" and family) or
             (self.category == "farming" and guide.farm) or
@@ -576,6 +580,9 @@ end
 function hub:Select(entry)
     self.selected = entry
     if self.frame then
+        if self.frame.deleteImport then
+            self.frame.deleteImport:SetShown(entry and self:GetGuidePurpose(entry.guide) == "custom" or false)
+        end
         local enabled = entry and entry.active
         if enabled then
             self.frame.continue:Enable()
@@ -595,6 +602,24 @@ function hub:Select(entry)
         if self.frame.modern then addon.modernLibrary:Details(self) end
     end
     self:RefreshRows()
+end
+
+function hub:DeleteSelected()
+    local entry = self.selected
+    if not entry or not addon.customImport then return end
+    local function report(problem)
+        hub.frame.status:SetText(problem)
+        if hub.frame.modern then addon.modernLibrary:ResizeDetails(hub) else hub:RefreshRows() end
+    end
+    local plan, problem = addon.customImport:PlanDelete(entry.key)
+    if not plan then report(problem); return end
+    addon.comms:ConfirmChoice("RXP_DELETE_CUSTOM_GUIDE",
+        format(L("Delete imported guide %s? Keep a source backup. Saved progress is retained."), entry.name),
+        function(data)
+            if not hub.selected or hub.selected.key ~= data.key then return end
+            local ok, failure = addon.customImport:Delete(data)
+            if not ok then report(failure) end
+        end, plan)
 end
 
 function hub:LoadSelected(restart)
@@ -1006,6 +1031,10 @@ function hub:CreateFrame()
         local guide = addon:FetchGuide(hub.selected.guide)
         addon.catchUp:Preview(guide)
     end)
+    frame.deleteImport = CreateButton(frame, "Delete import", 115)
+    frame.deleteImport:SetPoint("LEFT", frame.purpose, "RIGHT", 8, 0)
+    frame.deleteImport:SetScript("OnClick", function() hub:DeleteSelected() end)
+    frame.deleteImport:Hide()
     local backup = CreateButton(frame, "Backup", 95)
     backup:SetPoint("BOTTOMRIGHT", -24, 26)
     backup:SetScript("OnClick", function() addon.roadmap:OpenBackupWindow() end)

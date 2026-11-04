@@ -418,7 +418,8 @@ function addon.RemoveGuide(guideKey)
         addon:LoadGuide(addon.emptyGuide)
     end
 
-    local list = addon.guideList[loadedGuide.group]
+    local listGroup = loadedGuide.lowPrio or loadedGuide.group
+    local list = addon.guideList[listGroup]
 
     for i, name in ipairs(list.names_) do
         if loadedGuide.name == name then
@@ -446,7 +447,8 @@ function addon.RemoveGuide(guideKey)
         end
     end
 
-    if next(list.names_) == nil then addon.guideList[loadedGuide.group] = nil end
+    if next(list.names_) == nil then addon.guideList[listGroup] = nil end
+    if loadedGuide.guideId then addon.guideIds[loadedGuide.guideId] = nil end
 
     addon:ScheduleTask(addon.RXPFrame.GenerateMenuTable)
 
@@ -921,6 +923,9 @@ function addon.LoadCachedGuides()
     end
 
     for key, guideData in pairs(addon.db.profile.guides) do
+        if guideData.customSourceVersion then
+            if addon.customImport then addon.customImport:Restore(key, guideData) end
+        else
         if guideData.key then
             key = guideData.key
         else
@@ -982,6 +987,7 @@ function addon.LoadCachedGuides()
                 addon.comms.PrettyDebug(L('Unable to decode cached guide (%s), removed'), key)
                 addon.db.profile.guides[key] = nil
             end
+        end
         end
     end
 end
