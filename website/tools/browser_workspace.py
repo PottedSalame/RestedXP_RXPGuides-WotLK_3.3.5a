@@ -57,6 +57,23 @@ def run(browser, output, prefix='/', site_root=None):
                 client.call('Input.dispatchKeyEvent',dict(type='keyUp',key='Escape',code='Escape',windowsVirtualKeyCode=27))
                 if evaluate("document.getElementById('"+name+"').open"):raise RuntimeError('Escape did not close menu')
             if width==375:screenshot('write-narrow')
+        evaluate("document.getElementById('workspace-tabs-map').click()")
+        for kind,canvas_id in (('outdoor','terrain'),('dungeons','interior-canvas')):
+            evaluate("(()=>{const s=document.getElementById('map-kind');s.value="+json.dumps(kind)+";s.dispatchEvent(new Event('change',{bubbles:true}));})()")
+            for _ in range(100):
+                if evaluate("document.getElementById("+json.dumps(canvas_id)+").getBoundingClientRect().width>0"):break
+                time.sleep(.1)
+            for width,height in ((2560,900),(1440,720),(900,600),(375,800),(800,400)):
+                client.call('Emulation.setDeviceMetricsOverride',dict(width=width,height=height,deviceScaleFactor=2,mobile=False));time.sleep(.15)
+                result=evaluate("""(()=>{const c=document.getElementById(%s),r=c.getBoundingClientRect(),p=c.parentElement.getBoundingClientRect(),rem=parseFloat(getComputedStyle(document.documentElement).fontSize);
+                    return r.width>0&&Math.abs(r.width-r.height)<=1&&r.height<=Math.max(12*rem,innerHeight-20*rem)+1&&
+                        Math.abs((r.left+r.right)-(p.left+p.right))<=2&&document.documentElement.scrollWidth<=document.documentElement.clientWidth+2&&
+                        Math.abs(c.width-r.width*2)<=2&&Math.abs(c.height-r.height*2)<=2;
+                })()"""%json.dumps(canvas_id))
+                if not result:raise RuntimeError(f'{kind} map is not bounded, square, centred or correctly scaled at {width}x{height}')
+                if width==1440:
+                    evaluate("document.getElementById('workspace-main').scrollIntoView({block:'start'})");screenshot(kind+'-bounded')
+        print('Outdoor/interior map height, centring, square ratio and high-DPI resize passed at five viewport sizes.')
         errors=evaluate('workspaceErrors')
         if errors:raise RuntimeError(errors)
         # Keep the edited document open: its unsaved-work confirmation is valid.

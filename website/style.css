@@ -131,6 +131,15 @@ li { overflow-wrap: anywhere; margin: .25rem 0; }
 .workspace-ready #terrain-panel { padding: .75rem; border: 0; }
 .workspace-ready #terrain-panel > summary { display: none; }
 .workspace-ready .map-layout { display: block; }
+/* Reserve room for tabs and map controls without stretching the square canvas
+   to the full width of a wide monitor. Short screens can still scroll controls. */
+.workspace-ready :is(#terrain, #interior-canvas) {
+  width: min(100%, max(12rem, calc(100vh - 20rem)));
+  width: min(100%, max(12rem, calc(100dvh - 20rem)));
+  height: auto;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
 .workspace-ready .map-controls { align-items: end; }
 .workspace-ready .map-controls label { flex: 1 1 10rem; }
 .workspace-ready .map-controls select { width: 100%; max-width: 100%; }
