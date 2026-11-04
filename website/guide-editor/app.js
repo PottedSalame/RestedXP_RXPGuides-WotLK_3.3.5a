@@ -1,6 +1,7 @@
 import {NEW_GUIDE, FORMS, MAX_BYTES, History, decodeFile, encodeFile, parseDocument, instruction,
   buildInstruction, editGuide, setHeader, moveStep, newline, validate, companion, applyTextarea, reparseEditedGuide,
-  newArguments, waypointMode, instructionHint, DEFAULT_TRAVEL_RADIUS} from './model.js';
+  newArguments, waypointMode, instructionHint, DEFAULT_TRAVEL_RADIUS,
+  DETAILS, PURPOSES, guideDetails, setDetail, contributionPath} from './model.js';
 import {referenceInput, referenceURL, searchURL, createLookup} from './wowhead.js';
 import {createWorkspace} from './workspace.js';
 
@@ -53,6 +54,19 @@ function updateMetadata() {
   const name = $('header-name').value;
   const matches = guide()?.headers.filter(line => new RegExp('^\\s*#' + name + '\\s+').test(line.text)) || [];
   $('header-value').value = matches[0]?.text.replace(new RegExp('^\\s*#' + name + '\\s+'), '') || '';
+  const fields = guideDetails(guide());
+  // Keep nonstandard source values visible without coercing them to a preset.
+  $('detail-purpose').replaceChildren(option('Not specified', ''), ...PURPOSES.map(value => option(value, value)));
+  if (fields.purpose.value && !PURPOSES.includes(fields.purpose.value)) $('detail-purpose').append(option(fields.purpose.value + ' (source)', fields.purpose.value));
+  for (const [key, field] of Object.entries(fields)) {
+    $('detail-' + key).value = field.value;
+    $('detail-' + key).disabled = !guide() || field.repeated;
+  }
+  $('details-status').textContent = Object.values(fields).some(field => field.repeated) ? 'Repeated details: edit Source.' : '';
+  updateContributionPath();
+}
+function updateContributionPath() {
+  $('contribution-path').textContent = contributionPath(guide()) || 'Set server/realm, purpose, zone and a file-safe guide name.';
 }
 function populateForm() {
   const parsed = currentLine() && instruction(currentLine());
@@ -188,7 +202,8 @@ function flushLive() {
     if (kind === 'instruction' && state.drafting) { renderPreview(formLine()); return; }
     if (!guide() || (kind === 'instruction' && !state.formEditable)) return;
     const before = state.history.text;
-    const next = kind === 'header' ? setHeader(before, guide(), $('header-name').value, $('header-value').value)
+    const next = kind.startsWith('detail:') ? setDetail(before, guide(), kind.slice(7), $('detail-' + kind.slice(7)).value)
+      : kind === 'header' ? setHeader(before, guide(), $('header-name').value, $('header-value').value)
       : editGuide(before, guide(), currentLine().start, currentLine().end, formLine());
     if (next === before) return;
     if (encodeFile(next).length > MAX_BYTES) throw new Error('Document exceeds 12 MiB.');
@@ -199,12 +214,13 @@ function flushLive() {
     // Keep focused inputs, caret, list selection and scroll positions intact.
     $('source').value = next;
     if (kind === 'header') $('guides').options[state.guide].textContent = (state.guide + 1) + '. ' + (guide().names.join(' / ') || '(unnamed)');
-    else {
+    else if (kind === 'instruction') {
       $('instructions').options[state.line].textContent = currentLine().text.trim().slice(0, 150) || '(blank)';
       const selectedStep=[...$('steps').options].find(o=>Number(o.value)===state.step);
       if(selectedStep)selectedStep.textContent = (state.step + 1) + '. ' + (step().lines.find(line => /^\s*(>>|\+|\.)/.test(line.text))?.text.trim() || step().text).slice(0, 110);
       $('line-hint').textContent = 'Changes apply as you type.';
     }
+    updateContributionPath();
     renderPreview(); $('undo').disabled = false; $('redo').disabled = true;
     clearTimeout(checkTimer); checkTimer = setTimeout(() => { check(); updateExport(); }, 250);
     scheduleSave(); terrainMap?.sync();
@@ -248,6 +264,12 @@ $('instruction-form').addEventListener('input', event => {
 $('instruction-form').addEventListener('compositionend', event => queueLive('instruction', event.target));
 $('header-value').addEventListener('input', event => { if (!event.isComposing) queueLive('header', event.target); });
 $('header-value').addEventListener('compositionend', event => queueLive('header', event.target));
+for (const key of Object.keys(DETAILS)) {
+  const field = $('detail-' + key);
+  field.addEventListener('input', event => { if (!event.isComposing) queueLive('detail:' + key, field); });
+  field.addEventListener('compositionend', () => queueLive('detail:' + key, field));
+}
+$('guide-details').onsubmit = safely(() => flushLive());
 $('source').addEventListener('input', () => { clearTimeout(sourceTimer); sourceTimer = setTimeout(safely(() => { sourceTimer = null; commit(applyTextarea(state.history.text, $('source').value), false); }), 300); });
 $('source').addEventListener('blur', event => {
   if (!sourceTimer) return;

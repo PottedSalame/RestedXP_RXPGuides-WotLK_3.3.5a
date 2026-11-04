@@ -1,6 +1,51 @@
 // RXPGuides source editor. No Lua evaluation, formatting pass, or game simulation.
 export const MAX_BYTES = 12 * 1024 * 1024;
 export const NEW_GUIDE = '#wotlk\n#ac335\n#version 1\n#group RXPGuides Custom Guides\n#name My Guide\n\nstep\n    >>Write your first instruction here.\n';
+// Matches the custom-guides branch's contribution taxonomy. These comments
+// describe a route; they do not impose runtime server/class/skill restrictions.
+export const PURPOSES = ['Experience', 'Gold', 'Professions', 'Dungeons', 'Reputation', 'Events', 'PvP', 'Achievement'];
+export const DETAILS = {server: 'Server-Realm', purpose: 'Purpose', zone: 'Zone', description: 'Description', requirements: 'Requirements'};
+function detailLines(guide, key) {
+  if (!Object.hasOwn(DETAILS, key)) throw new Error('Unknown guide detail.');
+  const pattern = new RegExp('^[ \\t\\uFEFF]*--[ \\t]*' + DETAILS[key] + ':[ \\t]*(.*)$');
+  return (guide?.headers || []).flatMap(line => {
+    const match = pattern.exec(line.text);
+    return match ? [{line, value: match[1]}] : [];
+  });
+}
+export function guideDetails(guide) {
+  return Object.fromEntries(Object.keys(DETAILS).map(key => {
+    const matches = detailLines(guide, key);
+    return [key, {value: matches[0]?.value || '', repeated: matches.length > 1}];
+  }));
+}
+export function setDetail(text, guide, key, value) {
+  const matches = detailLines(guide, key);
+  if (/[\x00-\x1f\x7f]/.test(value) || value.length > 512) throw new Error('Use one line of up to 512 characters.');
+  if (key === 'purpose' && value && !PURPOSES.includes(value)) throw new Error('Choose a listed purpose, or edit Source.');
+  if (matches.length > 1) throw new Error('Repeated guide details must be edited in Source.');
+  if (matches.length) {
+    const {line, value: old} = matches[0];
+    if (value === old) return text;
+    if (!value) return editGuide(text, guide, line.start, line.next, line.start === 0 && line.text.startsWith('\uFEFF') ? '\uFEFF' : '');
+    const prefix = line.text.match(/^[ \t\uFEFF]*--[ \t]*[^:]+:[ \t]*/)[0];
+    return editGuide(text, guide, line.start, line.end, prefix + value);
+  }
+  if (!value) return text;
+  const at = guide.headerEnd, eol = newline(guide.body);
+  return editGuide(text, guide, at, at, (at && !/[\r\n]$/.test(guide.body.slice(0, at)) ? eol : '')
+    + '-- ' + DETAILS[key] + ': ' + value + eol);
+}
+export function contributionPath(guide) {
+  const details = guideDetails(guide);
+  if (Object.values(details).some(field => field.repeated) || guide?.names.length !== 1) return '';
+  const parts = [details.server.value, details.purpose.value, details.zone.value, guide.names[0]];
+  // This is a suggestion only, never a filesystem operation. Do not silently
+  // rewrite author-provided names to make them look like safe path components.
+  if (!PURPOSES.includes(parts[1]) || parts.some(value => !value || /[<>:"/\\|?*\x00-\x1f\x7f]|[. ]$/.test(value)
+    || /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(value))) return '';
+  return 'CustomGuides/' + parts.join('/') + '.lua';
+}
 export const FORMS = {
   goto: ['Zone / map token', 'X (0–100)', 'Y (0–100)', 'Arrival radius (yards; blank = navigation only)', 'Optional marker (presence enables; usually 0)'],
   accept: ['Quest ID'], turnin: ['Quest ID', 'Reward choice (optional)'],

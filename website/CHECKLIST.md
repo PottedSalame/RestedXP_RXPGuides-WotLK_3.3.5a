@@ -15,6 +15,11 @@ needed. All work remains local until publication is separately authorized.
    waypoint and verify it stays navigation-only until explicitly converted.
    Undo the conversion; the original source must return unchanged. Notes,
    target/mob and item-use helpers alone should warn, not silently gain objectives.
+   In Guide properties, set server/realm, purpose, zone, description and requirements.
+   Check the suggested custom-guides contribution path and exported comments.
+   Undo a detail edit, reopen the file and confirm the fields recover. Changing
+   details must not rename the guide/group, change instructions or add eligibility
+   restrictions. Test the text through Website guide source import as well.
 3. Change a coordinate, text and condition through forms; inspect Source. Edit
    Source and check the form/preview. Typing must update the selected instruction
    immediately without moving the caret. New instruction drafts require Add;

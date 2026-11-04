@@ -42,6 +42,16 @@
         <label>Value <input id="header-value" autocomplete="off"></label>
       </form>
       <p class="hint">Advanced headers: edit Source.</p>
+      <form id="guide-details">
+        <label>Server / realm <input id="detail-server" maxlength="512" autocomplete="off" placeholder="Warmane-Icecrown"></label>
+        <label>Purpose <select id="detail-purpose"><option value="">Not specified</option></select></label>
+        <label>Zone <input id="detail-zone" maxlength="512" autocomplete="off" placeholder="Durotar" list="map-tokens"></label>
+        <label>Description <input id="detail-description" maxlength="512" autocomplete="off" placeholder="Copper mining rotation"></label>
+        <label>Requirements <input id="detail-requirements" maxlength="512" autocomplete="off" placeholder="Mining 1+; Horde; level 1–60"></label>
+      </form>
+      <p class="hint">Saved as source comments, not gameplay restrictions.</p>
+      <p id="details-status" class="hint"></p>
+      <p class="hint">Contribution path: <code id="contribution-path"></code></p>
       </details>
     </section>
     <section id="write-page" aria-labelledby="instruction-title">

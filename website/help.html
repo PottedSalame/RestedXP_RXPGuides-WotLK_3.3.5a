@@ -18,6 +18,8 @@
 <p>Write, Map and Source share the same document. The step outline stays on the left; Instruction, Locations and Lookup appear on the right. On narrow screens, use Steps to reveal the outline. Guide properties contains the guide headers; Conditions contains the selected instruction's condition.</p>
 <p>Browser storage is local to the browser and site address. It may be cleared or denied. One last draft is retained; editing a different document replaces it. Download important work before switching documents, origins or browsers. A previous draft is offered for explicit restoration, not silently opened.</p>
 <h2 id="install">Test a guide in WoW</h2>
+<p>Guide properties includes Server/Realm, Purpose, Zone, Description and Requirements. These are optional source comments, not server detection or eligibility rules. The suggested contribution path follows the custom-guides branch: CustomGuides/Server-Realm/Purpose/Zone/GuideName.lua. Purpose uses that branch's eight categories; changing it does not rename the addon group or change progress identity.</p>
+<p>The branch's older example uses a different group and instruction syntax. New exports keep the current import-compatible RXPGuides Custom Guides group, plain step lines and executable .goto instructions. Descriptive requirements do not add class, level or profession gates; use supported conditions in Source when needed. Imported files are never automatically converted.</p>
 <ol>
 <li>Use a distinct custom group and guide name. “Save as new guide” clones a self-contained selected guide into RXPGuides Custom Guides. Original-file export never silently renames a guide.</li>
 <li>Choose a simple folder suffix in Companion addon export. Download both the .toc and Guide.lua files.</li>
@@ -25,7 +27,7 @@
 <li>Start WoW and enable the companion addon alongside RXPGuides. Test with a disposable character and a backup of your real SavedVariables.</li>
 <li>Select the custom guide in the guide browser. Check quest identity, objective counters, conditions, travel and turn-ins manually. The website never installs files or selects a guide for you.</li>
 </ol>
-<p><strong>Do not paste plain source into the current Import tab.</strong> That tab accepts a different, account-bound encoded format. This editor neither decodes it nor requests account data.</p>
+<p>If your addon has <strong>Import format → Website guide source</strong>, you can skip the companion files: download Save guide text, copy its contents into that import box, confirm saving, then reload when ready. Guide.lua contents also work. Give each guide a distinct name under RXPGuides Custom Guides. This path accepts basic editor instructions, not executable Lua, macros or includes; replacing an import requires confirmation. Older addon builds accept encoded imports only—use companion files with those builds. Keep downloaded source backups.</p>
 <h2>Preservation and safety</h2>
 <p>Lua files are scanned as text, never executed. Supported registrations use a single literal long-string guide argument. Computed arguments and other registration signatures remain source-only. Surrounding guards and helper code are retained in edited-original downloads; isolated companion export is blocked when those dependencies exist.</p>
 <p>The companion wrapper uses the repository's [[...]] format. Source containing ]] cannot be exported in that wrapper; raw saving remains available. Existing licenses and comments are preserved in original-file downloads.</p>

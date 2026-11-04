@@ -76,6 +76,15 @@ for i = 1, 40 do
 end
 local guide = assert(addon.ParseGuide(formSource))
 assert(#guide.steps == 11)
+-- Descriptive branch metadata is inert and accepted by the real website
+-- importer, with the exact same identity and no new header dialect.
+f.load('Guide/CustomImport.lua')
+addon.db.profile = {guides={}}
+local plan = assert(addon.customImport:Analyze(formSource))
+assert(#plan.entries == 1 and plan.entries[1].source == formSource)
+assert(plan.entries[1].key == addon.BuildGuideKey(guide))
+assert(formSource:find('-- Server-Realm: Warmane-Icecrown', 1, true))
+assert(not guide.server and not guide.purpose and not guide.requirements)
 local function element(index) return assert(guide.steps[index].elements[1]) end
 local travel, nav = element(1), element(2)
 assert(travel.tag == 'goto' and travel.radius == 15 and not travel.textOnly and travel.text:find('Go to',1,true))

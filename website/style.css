@@ -47,6 +47,7 @@ input[type="file"] { width: min(100%, 25rem); }
 .file-picker input { width: 15rem; font-size: .85rem; }
 #status { margin-bottom: .15rem; }
 #storage-status { margin-top: 0; }
+#contribution-path { overflow-wrap: anywhere; }
 .editor-grid { display: grid; grid-template-columns: minmax(13rem, 1fr) minmax(22rem, 2fr) minmax(17rem, 1.3fr); gap: 1rem; align-items: start; }
 .wide { grid-column: 1 / -1; }
 .editor-grid section { margin: 0; }

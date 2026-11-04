@@ -15,18 +15,66 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const basic = '#wotlk\n#ac335\n#group RXPGuides Custom Guides\n#name Browser Fixture\nstep\n.goto Durotar,43.33,68.61\n.accept 4641 >>Accept Your Place In The World\n.target Kaltunk::10176\nstep << Warrior\n.complete 788,1 >>Kill boars\nstep\n.turnin 4641\n';
 const parse = text => M.parseDocument(text).guides[0];
 const catalogue = await fetch('../data/catalogue.json').then(r => r.json());
+// Taxonomy/path from custom-guides at 662160a3, not its obsolete DSL syntax.
+const routeDetails = {server:'Warmane-Icecrown', purpose:'Gold', zone:'Durotar',
+  description:'Copper mining rotation for Horde characters.', requirements:'Mining skill 1+; Orc/Troll; level 1–60'};
+function annotate(source) {
+  for (const [key,value] of Object.entries(routeDetails)) source=M.setDetail(source,parse(source),key,value);
+  return source;
+}
 await mapTests(test,assert,equal,rejects,sleep);
 await interiorTests(test,assert,equal,rejects);
 let exported;
 // Feed actual editor-generated forms to the production Lua handler tests.
-const formSource = '#wotlk\n#ac335\n#group RXPGuides Custom Guides\n#name Form semantics\n'
+const formSource = annotate('#wotlk\n#ac335\n#group RXPGuides Custom Guides\n#name Form semantics\n'
   + [M.newWaypoint('Durotar',44.31,68.20), M.newWaypoint('Durotar',45.76,68.27,'navigation'),
     ...[['accept',['4641'],'Accept Your Place In The World'],['turnin',['4641','1'],''],
       ['complete',['788','1','4'],'Kill boars'],['collect',['4865','2'],'Collect pelts'],
       ['use',['6948'],'Use your Hearthstone'],['target',['Kaltunk::10176'],'Talk to Kaltunk'],
       ['mob',['Mottled Boar::3098'],'Kill boars'],['note',[],'Done!'],['objective',[],'Done!']]
       .map(([tag,args,text])=>M.buildInstruction(tag,args,text,''))]
-    .map(line=>'step\n'+line+'\n').join('');
+    .map(line=>'step\n'+line+'\n').join(''));
+
+await test('Contribution details match branch categories without changing runtime identity or instructions', () => {
+  equal(M.PURPOSES, ['Experience','Gold','Professions','Dungeons','Reputation','Events','PvP','Achievement']);
+  const source=annotate(basic),g=parse(source);
+  for(const [key,value] of Object.entries(routeDetails)) equal(M.guideDetails(g)[key],{value,repeated:false});
+  equal(g.names,parse(basic).names);equal(g.groups,parse(basic).groups);
+  equal(g.body.slice(g.headerEnd),basic.slice(parse(basic).headerEnd));
+  equal(M.contributionPath(g),'CustomGuides/Warmane-Icecrown/Gold/Durotar/Browser Fixture.lua');
+  equal(M.setDetail(source,g,'server','Warmane-Icecrown'),source);
+  assert(!M.validate(g,catalogue).some(x=>x.severity==='error'));
+  assert(M.companion(g,catalogue,'Details').lua.includes('-- Requirements: Mining skill 1+'));
+});
+await test('Detail edits preserve BOM, CRLF, unrelated wrappers, comments and other guides', () => {
+  const first=annotate(basic).replace(/\n/g,'\r\n');
+  const text='\uFEFF-- attribution\r\nRXPGuides.RegisterGuide([=['+first+']=])\r\nRXPGuides.RegisterGuide([['+basic+']])';
+  const g=M.parseDocument(text).guides[0];
+  equal(M.setDetail(text,g,'server','Other-Realm'),text.replace('Warmane-Icecrown','Other-Realm'));
+  equal(M.setDetail(text,g,'requirements',''),text.replace('-- Requirements: '+routeDetails.requirements+'\r\n',''));
+  equal(M.parseDocument(text).guides[1].body,basic);
+  equal(M.setDetail(basic,parse(basic),'zone',''),basic);
+  const bom='\uFEFF'+basic.replace(/\n/g,'\r\n');
+  const added=M.setDetail(bom,parse(bom),'server','Realm');
+  equal(added,bom.replace('step\r\n','-- Server-Realm: Realm\r\nstep\r\n'));
+  const firstComment='\uFEFF-- Server-Realm: Realm\r\n'+basic;
+  equal(M.guideDetails(parse(firstComment)).server.value,'Realm');
+  equal(M.setDetail(firstComment,parse(firstComment),'server','New'),firstComment.replace(': Realm',': New'));
+  equal(M.setDetail(firstComment,parse(firstComment),'server',''),'\uFEFF'+basic);
+});
+await test('Ambiguous details, injection and unsafe contribution paths are conservative', () => {
+  const duplicate=annotate(basic).replace('step\n','-- Purpose: Professions\nstep\n');
+  assert(M.guideDetails(parse(duplicate)).purpose.repeated);
+  rejects(()=>M.setDetail(duplicate,parse(duplicate),'purpose','Gold'),/Repeated/);
+  equal(M.contributionPath(parse(duplicate)),'');
+  for(const value of ['bad\n.accept 1','bad\rline','bad\0line','x'.repeat(513)]) rejects(()=>M.setDetail(basic,parse(basic),'description',value),/one line/);
+  rejects(()=>M.setDetail(basic,parse(basic),'purpose','Other'),/listed purpose/);
+  for(const value of ['../Realm','a/b','a\\b','NUL','COM1.txt','trailing.']) {
+    const source=annotate(basic);equal(M.contributionPath(parse(M.setDetail(source,parse(source),'server',value))),'');
+  }
+  const unsafe=M.setDetail(basic,parse(basic),'description',']]');
+  rejects(()=>M.companion(parse(unsafe),catalogue,'Safe'),/delimiter/);
+});
 
 await test('UTF-8 BOM, Unicode and mixed endings round trip', () => {
   const original = '\uFEFF#group Custom\r\n#name Café\rstep\n>>你好\r\n';
@@ -226,6 +274,28 @@ try {
     const control = get('header-value'); control.focus(); input('header-value', 'Visual Test'); await sleep(0);
     assert(get('source').value.includes('#name Visual Test')); assert(get('guides').selectedOptions[0].textContent.includes('Visual Test'));
     assert(get('header-value') === control && d.activeElement === control);
+  });
+  await test('Route details update live, retain focus, undo and restore from source', async () => {
+    const original=get('source').value, controls=Object.keys(routeDetails).map(key=>get('detail-'+key));
+    for(const [key,value] of Object.entries(routeDetails)) { input('detail-'+key,value);await sleep(0); }
+    const changed=get('source').value;
+    assert(changed.includes('-- Server-Realm: Warmane-Icecrown'));
+    equal(get('contribution-path').textContent,'CustomGuides/Warmane-Icecrown/Gold/Durotar/Visual Test.lua');
+    equal(get('header-value').value,'Visual Test');
+    assert(Object.keys(routeDetails).every((key,i)=>get('detail-'+key)===controls[i]));
+    const control=get('detail-description');control.focus();input('detail-description','A');await sleep(0);input('detail-description','A route');await sleep(0);
+    assert(d.activeElement===control);get('undo').click();equal(get('source').value,changed);
+    get('redo').click();equal(get('detail-description').value,'A route');
+    input('source',changed.replace('Warmane-Icecrown','Another-Realm'));await sleep(400);
+    equal(get('detail-server').value,'Another-Realm');assert(get('contribution-path').textContent.includes('Another-Realm'));
+    input('source',original);await sleep(400);equal(get('detail-server').value,'');
+  });
+  await test('Repeated and unknown source details remain visible without initialization edits', async () => {
+    const text=basic.replace('step\n','-- Purpose: Custom category\n-- Zone: Durotar\n-- Zone: Elwynn Forest\nstep\n');
+    input('source',text);await sleep(400);equal(get('source').value,text);
+    equal(get('detail-purpose').value,'Custom category');assert(get('detail-zone').disabled);
+    assert(get('details-status').textContent.includes('Repeated'));
+    input('source',basic);await sleep(400);assert(!get('detail-zone').disabled);
   });
   await test('Source edits synchronize with forms', async () => {
     input('source', basic); await sleep(400); equal(get('steps').options.length, 3);
