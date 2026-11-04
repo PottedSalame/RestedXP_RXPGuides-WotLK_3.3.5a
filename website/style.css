@@ -1,6 +1,8 @@
 :root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; color: #233747; background: #edf2f6; }
 * { box-sizing: border-box; }
-body { margin: 0; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+body > header, body > footer { flex-shrink: 0; }
+body > main { flex: 1 0 auto; width: 100%; }
 header, footer { padding: .8rem 1.3rem; border-bottom: 1px solid #476a83; background: #213c50; color: #e4f0f8; }
 header { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 footer { border-top: 1px solid #476a83; border-bottom: 0; margin-top: 1.5rem; font-size: .85rem; }

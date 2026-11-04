@@ -59,6 +59,27 @@ def run(browser, output, prefix='/', site_root=None):
             if width==375:screenshot('write-narrow')
         errors=evaluate('workspaceErrors')
         if errors:raise RuntimeError(errors)
+        # Keep the edited document open: its unsaved-work confirmation is valid.
+        # Use a fresh browser tab for page-layout checks instead of bypassing it.
+        target=client.call('Target.createTarget',dict(url='about:blank'))['targetId']
+        pages=json.load(urllib.request.urlopen(f'http://127.0.0.1:{port}/json/list'))
+        client.socket.close()
+        client=DevTools(next(p['webSocketDebuggerUrl'] for p in pages if p['id']==target))
+        client.call('Page.enable')
+        for page in ('','help.html','credits.html','guide-editor/'):
+            client.call('Page.navigate',dict(url=f'http://127.0.0.1:{httpd.server_port}{prefix}{page}'))
+            for _ in range(100):
+                if evaluate("location.pathname==="+json.dumps(prefix+page)+"&&document.readyState==='complete'"):break
+                time.sleep(.1)
+            for width,height in ((1440,1400),(375,900)):
+                client.call('Emulation.setDeviceMetricsOverride',dict(width=width,height=height,deviceScaleFactor=1,mobile=False));time.sleep(.1)
+                result=evaluate("""(()=>{const footers=document.querySelectorAll('body > footer'),main=document.querySelector('body > main');
+                    if(footers.length!==1||!main)return false;
+                    const f=footers[0].getBoundingClientRect(),m=main.getBoundingClientRect();
+                    return f.top>=m.bottom-1&&f.bottom+scrollY>=innerHeight-1&&Math.abs(f.bottom+scrollY-document.documentElement.scrollHeight)<=2;
+                })()""")
+                if not result:raise RuntimeError(f'Footer overlaps content or does not end page: {page} at {width}')
+        print('Single non-overlapping footer ends each page at desktop and narrow widths.')
         print('Workspace native typing, menus at 1440/900/700/375 widths, Escape and screenshots passed.')
         success=True
     finally:
