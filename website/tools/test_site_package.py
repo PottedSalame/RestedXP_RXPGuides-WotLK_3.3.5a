@@ -31,7 +31,7 @@ class SitePackage(unittest.TestCase):
         assets=root/'assets';assets.mkdir()
         write(assets/'manifest.json',dict(schema=1,tiles={str(k):{} for k in (0,1,530,571)}))
         write(assets/'receipt.json',dict(schema=1,files={'manifest.json':sha((assets/'manifest.json').read_bytes())}))
-        write(assets/'overlays/manifest.json',dict(schema=1,files={},chunks={},overviews={}))
+        write(assets/'overlays/manifest.json',dict(schema=2,files={},chunks={},overviews={},events=[]))
         (assets/'overlays/LICENSE-AzerothCore.txt').write_text('Fixture license')
         files={};icons={}
         for role in MEMBERS:
@@ -66,7 +66,7 @@ class SitePackage(unittest.TestCase):
             for path in ('../secret','/absolute','C:/private','tiles/../../private','tiles\\escape'):
                 with self.assertRaises(ValueError):checked(assets,path)
             manifest=assets/'overlays/manifest.json'
-            write(manifest,dict(schema=1,files={},chunks={'1/1_1':'1/1_1.json'},overviews={}))
+            write(manifest,dict(schema=2,files={},chunks={'1/1_1':'1/1_1.json'},overviews={},events=[]))
             with self.assertRaisesRegex(ValueError,'Unreceipted overlay'):package(assets,root/'out')
 
 if __name__=='__main__':unittest.main()

@@ -75,3 +75,14 @@ and in-game outcomes remain separate from automated results.
 
 No in-game testing, endorsement or grant of artwork redistribution rights is
 implied by passing the offline/browser checks. Deployment is a separate action.
+## Event filters
+
+1. Open Map → Calendar events. Enable Winter Veil or Hallow's End; check
+   markers with Quest starters/turn-ins and Objects enabled. Turn the event
+   off and verify its markers disappear at both zone and continent zoom.
+2. Check Noblegarden with Objects enabled; its pooled egg locations should
+   follow the event toggle. Critters and training dummies must remain under
+   Creatures. Other world events have separate switches.
+3. Toggle events with a location popup open: old quest-action buttons must
+   disappear. Collapse/reopen the map: choices remain, guide source and Undo
+   history are unchanged. Reloading the page restores filter defaults.

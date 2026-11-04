@@ -40,7 +40,7 @@ def package(assets,output,root=ROOT):
     terrain=json.loads((assets/'receipt.json').read_text())
     overlay=json.loads((assets/'overlays/manifest.json').read_text())
     icons=json.loads((assets/'icons/manifest.json').read_text())
-    if terrain['schema']!=1 or overlay['schema']!=1 or icons['schema']!=1:raise ValueError('Unsupported asset schema')
+    if terrain['schema']!=1 or overlay['schema']!=2 or icons['schema']!=1:raise ValueError('Unsupported asset schema')
     if set(icons['icons'])!={'start','end','vendor','trainer','repair'}:raise ValueError('Missing client icons')
     payload={name:checked(root,name).read_bytes() for name in STATIC}
     payload['LICENSE-RXPGuides.txt']=(REPO/'LICENSE').read_bytes()

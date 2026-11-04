@@ -6,6 +6,29 @@ export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Ka
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Event gates preserve ordinary spawns, OR positive events and exclude active negative events',()=>{
+    const enabled=new Set([2]);
+    assert(P.eventVisible([],enabled));assert(P.eventVisible([2,12],enabled));
+    assert(!P.eventVisible([12],enabled));assert(P.eventVisible([-12],enabled));
+    assert(!P.eventVisible([-2],enabled));assert(!P.eventVisible([2,-2],enabled));
+    assert(P.calendarEvent({holiday:141,name:'Winter Veil'}));
+    assert(P.calendarEvent({holiday:0,name:"New Year's Eve"}));
+    assert(!P.calendarEvent({holiday:0,name:'Pyrewood Village'}));
+  });
+  await test('Event filters agree for detailed and overview markers, including multi-role and permanent quest givers',()=>{
+    const records=[{roles:['creature','vendor'],events:[2],starts:[]},
+      {roles:['creature'],eventRoles:[[12,['start']]],eventStarts:[[12,8356]],starts:[]},
+      {roles:['creature'],events:[-72],starts:[]}];
+    const overview={combinations:records.map(r=>[r.roles,1,r.events||[],r.eventRoles||[]])};
+    for(const enabled of [new Set(),new Set([2]),new Set([12]),new Set([72]),new Set([2,12,72])])
+      for(const layers of [new Set(['start']),new Set(['vendor']),new Set(['creature','vendor','start'])]){
+        const detailed=records.map(r=>P.filterOverlay(r,layers,enabled)).filter(Boolean);
+        equal(P.filterOverlay(overview,layers,enabled)?.count||0,detailed.length);
+      }
+    equal(P.filterOverlay(records[1],new Set(['start']),new Set([12])).starts,[8356]);
+    equal(records[1].starts,[]);equal(records[1].roles,['creature']);
+    equal(P.filterOverlay(records[1],new Set(['start']),new Set()),null);
+  });
   await test('Creature and object nodes are coloured circles with gold outlines',()=>{
     for(const [role,colour] of [['creature',[67,185,92]],['object',[154,96,208]]]){
       const canvas=document.createElement('canvas');canvas.width=20;canvas.height=20;
@@ -115,7 +138,8 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       requests++;
       if(missing)return new w.Response('Missing',{status:404});
       if(delayed&&String(url).endsWith('/overlays/manifest.json'))return new Promise(resolve=>{resolveOverlay=resolve;});
-      if(String(url).endsWith('/overlays/manifest.json'))return new w.Response(JSON.stringify({schema:1,chunks:{},overviews:{}}));
+      if(String(url).endsWith('/overlays/manifest.json'))return new w.Response(JSON.stringify({schema:2,chunks:{},overviews:{},events:[
+        {id:2,holiday:141,name:'Winter Veil'},{id:25,holiday:0,name:'Pyrewood Village'}]}));
       return new w.Response(JSON.stringify(fixture));
     }return fetch(url,opts);
   };
@@ -133,6 +157,19 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
     await test('Map remains unloaded while collapsed; opens from a repository-relative URL',async()=>{
       equal(requests,0);get('terrain-panel').open=true;await sleep(700);assert(!get('map-content').hidden,get('map-status').textContent);equal(requests,3);
       equal(get('map-zone').value,'4');
+    });
+    await test('Event controls keep calendar events opt-in, preserve ordinary world events and clear stale popups',async()=>{
+      const winter=d.querySelector('[data-event="2"]'),world=d.querySelector('[data-event="25"]');
+      assert(winter&&!winter.checked);assert(world&&world.checked);
+      const before=get('source').value,count=requests;
+      get('map-popup').textContent='Old event quest action';winter.click();
+      assert(winter.checked);equal(get('map-popup').textContent,'');assert(get('map-details').disabled);
+      get('terrain-panel').open=false;await sleep(50);world.click();await sleep(50);equal(requests,count);
+      get('terrain-panel').open=true;await sleep(100);assert(winter.checked&&!world.checked);
+      equal(get('source').value,before);equal(requests,count);
+      const section=winter.closest('details');
+      section.querySelector('[aria-label="Hide all calendar events"]').click();assert(!winter.checked);
+      section.querySelector('[aria-label="Show all calendar events"]').click();assert(winter.checked);
     });
     await test('Map add / replace / selection use the real source and Undo controls',async()=>{
       input('source',basic);await sleep(400);

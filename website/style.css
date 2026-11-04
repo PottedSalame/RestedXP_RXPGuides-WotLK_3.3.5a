@@ -79,6 +79,11 @@ li { overflow-wrap: anywhere; margin: .25rem 0; }
 #map-legend { margin: .5rem 0; }
 #map-legend label { display: inline-flex; align-items: center; gap: .25rem; margin: 0; }
 #map-legend input { width: auto; }
+#map-events { margin: .5rem 0; border-top: 1px solid #b6c8d4; }
+#map-events details { padding: .3rem 0; }
+.map-event-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .2rem .7rem; max-height: 15rem; overflow: auto; }
+.map-event-options label { display: flex; align-items: start; gap: .35rem; font-size: .9rem; margin: 0; }
+.map-event-options input { width: auto; flex-shrink: 0; }
 .map-sidebar { min-width: 0; }
 .map-sidebar select { width: 100%; }
 #map-popup { overflow-wrap: anywhere; max-height: 18rem; overflow: auto; font-size: .9rem; }

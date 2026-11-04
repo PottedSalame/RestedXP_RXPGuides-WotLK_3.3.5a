@@ -1,4 +1,4 @@
-import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE} from './map-model.js';
+import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay} from './map-model.js';
 import {drawNode,NODE_FILLS} from './map-markers.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects'};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS};
@@ -14,6 +14,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   let documentText=null,documentGuide=null,display=1,view={u:0,v:0,scale:1},width=1,height=1,hit=[],proposal=null,locations=[],locationsKey='';
   const layers=new Set(['guide','start','end','repair','vendor','trainer']);
+  const enabledEvents=new Set();
   const status=text=>{$('map-status').textContent=text;};
   const url=path=>{
     if(!/^[a-zA-Z0-9_.,/\-]+$/.test(path)||path.includes('..')||path.startsWith('/'))throw new Error('Invalid map asset path');
@@ -74,12 +75,37 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       motion=null;width=w;height=h;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
     }request();}
   const observer=new ResizeObserver(()=>{if(open)size();});
+  function filtersChanged(){
+    $('map-popup').replaceChildren();locations=[];locationsKey='';
+    $('map-locations').replaceChildren();$('map-details').disabled=true;hit=[];request();
+  }
+  function eventControls(){
+    const container=$('map-events');container.replaceChildren();
+    for(const [title,calendar] of [['Calendar events',true],['Other world events',false]]){
+      const events=(overlay?.events||[]).filter(e=>calendarEvent(e)===calendar).sort((a,b)=>a.name.localeCompare(b.name)||a.id-b.id);
+      if(!events.length)continue;
+      const section=el('details'),summary=el('summary',title),list=el('div');list.className='map-event-options';
+      section.append(summary);const actions=el('div');actions.className='toolbar';section.append(actions,list);
+      for(const e of events){
+        const input=el('input');input.type='checkbox';input.dataset.event=String(e.id);input.checked=!calendar;
+        if(input.checked)enabledEvents.add(e.id);
+        const label=el('label');label.append(input,document.createTextNode(e.name));list.append(label);
+        input.onchange=()=>{if(input.checked)enabledEvents.add(e.id);else enabledEvents.delete(e.id);filtersChanged();};
+      }
+      for(const [label,on] of [['Show all',true],['Hide all',false]]){
+        const button=el('button',label);button.type='button';button.setAttribute('aria-label',label+' '+title.toLowerCase());
+        button.onclick=()=>{for(const input of list.querySelectorAll('input')){input.checked=on;if(on)enabledEvents.add(+input.dataset.event);else enabledEvents.delete(+input.dataset.event);}filtersChanged();};actions.append(button);
+      }
+      container.append(section);
+    }
+    container.hidden=!container.children.length;
+  }
   for(const [key,label] of Object.entries(labels)){
     const input=el('input');input.type='checkbox';input.checked=layers.has(key);input.dataset.layer=key;
     const wrap=el('label');wrap.append(input);
     if(symbols[key]){const badge=el('canvas');badge.width=20;badge.height=20;badge.className='map-legend-icon';badge.setAttribute('aria-hidden','true');wrap.append(badge);legendIcons.set(key,badge);}
     wrap.append(document.createTextNode(label));$('map-legend').append(wrap);
-    input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);request();};
+    input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);filtersChanged();};
   }
   $('map-continent').onchange=()=>{display=+$('map-continent').value;choices();fit();};
   $('map-zone').onchange=()=>{proposal=null;gesture=null;$('map-x').value='';$('map-y').value='';$('map-popup').replaceChildren();fit();};
@@ -105,6 +131,8 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       if(m.kind==='cluster'){const b=el('button',m.count+' snapshot locations — zoom in');b.onclick=()=>{motion=null;view.u=m.u;view.v=m.v;zoom(2);};box.append(b);continue;}
       const row=el('div');row.append(el('strong',m.name+' ['+m.id+']'),el('p',m.roles.map(r=>labels[r]).join(', ')),
         el('p','Physical map '+m.physical+'; X '+m.x+', Y '+m.y),el('p',m.notes.join('; ')||'Snapshot home position'));
+      const eventNames=(m.events||[]).map(id=>(id<0?'Absent during: ':'')+(overlay?.events?.find(e=>e.id===Math.abs(id))?.name||('Event '+Math.abs(id))));
+      if(eventNames.length)row.append(el('p',eventNames.join('; ')));
       const coords=zone()?.physical===m.physical?toPercent(manifest,zone(),m.u,m.v):null;
       if(coords){row.append(el('p',zone().token+': '+coords.x.toFixed(2)+', '+coords.y.toFixed(2)));const b=el('button','Use coordinates');b.onclick=()=>setProposal(coords.x,coords.y);row.append(b);}
       if(m.kind==='npcs'){const b=el('button','Add target');b.onclick=()=>action(()=>adapter.add('    .target '+m.id));row.append(b);}
@@ -168,8 +196,11 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       }
     }
     resources.end();
-    const visible=records.filter(m=>inside([m.u,m.v],[min[0],min[1],max[0],max[1]])&&m.roles.some(r=>layers.has(r)))
-      .map(m=>m.combinations?{...m,count:m.combinations.reduce((n,[roles,count])=>n+(roles.some(r=>layers.has(r))?count:0),0)}:m);
+    const visible=[];
+    for(const m of records){
+      if(!inside([m.u,m.v],[min[0],min[1],max[0],max[1]]))continue;
+      const filtered=filterOverlay(m,layers,enabledEvents);if(filtered)visible.push(filtered);
+    }
     ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
     const clusters=cluster(visible,screen,24,[view.u*view.scale-width/2,view.v*view.scale-height/2]);
     if(!motion&&!gesture?.moved){
@@ -267,7 +298,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
         try{nextIcons=await json('icons/manifest.json',local.signal);}catch(error){if(error.name==='AbortError')throw error;}
         if(!open||controller!==local)return;
         iconManifest=nextIcons?.schema===1?nextIcons:null;
-        manifest=data;overlay=nextOverlay;
+        manifest=data;overlay=nextOverlay?.schema===2?nextOverlay:null;eventControls();
         $('map-continent').replaceChildren(...manifest.continents.map(c=>option(c.name,c.id)));$('map-continent').value=display;
         const preferred=manifest.zones.find(z=>z.token==='Durotar');choices(preferred);
         $('map-content').hidden=false;size();fit();

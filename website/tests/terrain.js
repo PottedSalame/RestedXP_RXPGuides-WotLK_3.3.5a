@@ -59,6 +59,23 @@ try{
   await sleep(300);for(let i=0;i<60&&(active||decoding);i++)await sleep(100);await sleep(100);
   context.fill=fill;
   if(!nodePaints.has('#43b95c')||!nodePaints.has('#9a60d0'))issues.push('Generic map markers did not use both gold-bordered node styles');
+  // Real snapshot controls: seasonal markers affect the current renderer and
+  // location list, not just a synthetic predicate. Terrain remains cached.
+  const winter=d.querySelector('[data-event="2"]'),events=winter?.closest('details');
+  if(!winter||winter.checked)issues.push('Winter Veil should be individually selectable and initially hidden');
+  if(events){
+    const snapshot=d.getElementById('source').value;
+    const beforeLocations=d.getElementById('map-locations').textContent;
+    const fetches=requests;
+    d.getElementById('map-popup').textContent='Stale event action';
+    events.querySelector('[aria-label="Show all calendar events"]').click();await sleep(250);
+    if(d.getElementById('map-popup').textContent)issues.push('Event change retained stale popup actions');
+    if(d.getElementById('map-locations').textContent===beforeLocations)issues.push('Calendar events did not change visible snapshot locations');
+    events.querySelector('[aria-label="Hide all calendar events"]').click();await sleep(250);
+    if(d.getElementById('map-locations').textContent!==beforeLocations)issues.push('Calendar hide did not restore location list');
+    if(d.getElementById('source').value!==snapshot)issues.push('Calendar filters changed guide source');
+    if(requests!==fetches)issues.push('Calendar filters refetched unchanged terrain/chunks');
+  }
   // Exercise the production controls beyond the former 2x ceiling. Native
   // 256px tiles should paint at 2048px, not request invented higher levels.
   const drawImage=context.drawImage.bind(context);let largestTile=0;

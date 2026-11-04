@@ -107,6 +107,10 @@ class Maps(unittest.TestCase):
         self.assertAlmostEqual((-4253.52-left)/(right-left)*100,43.33,delta=.1)
         self.assertAlmostEqual((-610.073-top)/(bottom-top)*100,68.61,delta=.1)
         overlay=json.loads((ARGS.assets/'overlays/manifest.json').read_text())
+        self.assertEqual(overlay['schema'],2)
+        self.assertGreater(sum(r['count'] for r in overlay['exclusions']),0)
+        events={e['id'] for e in overlay['events']}
+        self.assertIn(2,events);self.assertIn(9,events);self.assertIn(12,events)
         self.assertEqual(set(overlay['overviews']),{'0','1','530','571'})
         for name,expected in overlay['files'].items():self.assertEqual(m.sha((ARGS.assets/'overlays'/name).read_bytes()),expected,name)
         records=[]
@@ -115,7 +119,16 @@ class Maps(unittest.TestCase):
         self.assertTrue(any('alternate entry' in r['notes'] for r in records))
         self.assertTrue(any('pooled' in r['notes'] for r in records))
         for r in records:
+            self.assertTrue(all(abs(e) in events for e in r.get('events',[])))
+            self.assertTrue(all(e in events for e,_ in r.get('eventRoles',[])))
+            self.assertTrue(all(e in events for e,_ in r.get('eventStarts',[])))
             _,u,v=m.project(r['physical'],r['x'],r['y']);self.assertAlmostEqual(r['u'],u,places=3);self.assertAlmostEqual(r['v'],v,places=3)
+        from map_overlays import overview_records
+        by_map={key:[] for key in overlay['overviews']}
+        for key,name in overlay['chunks'].items():by_map[key.split('/')[0]].extend(json.loads((ARGS.assets/'overlays'/name).read_text(encoding='utf-8')))
+        for key,items in by_map.items():
+            actual=json.loads((ARGS.assets/'overlays'/overlay['overviews'][key]).read_text(encoding='utf-8'))
+            self.assertEqual(actual,overview_records(items))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)

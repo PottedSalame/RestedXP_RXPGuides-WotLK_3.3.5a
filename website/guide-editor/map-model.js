@@ -121,3 +121,41 @@ export class Resources {
     this.pending.clear();this.queue=[];this.wanted=null;
   }
 }
+// Preview event selections, not the live server calendar. Negative links mean
+// a location is absent during that event; any positive link can enable it.
+export function eventVisible(events,enabled){
+  let positive=false,active=false;
+  for(const id of events||[]){
+    if(id<0&&enabled.has(-id))return false;
+    if(id>0){positive=true;if(enabled.has(id))active=true;}
+  }
+  return !positive||active;
+}
+export function calendarEvent(event){
+  return event.holiday>0||/New Year's Eve|Brew of the Month|Fishing Extravaganza|Fishing Derby/.test(event.name);
+}
+function eventRoles(roles,dynamic,enabled){
+  if(!dynamic?.length)return roles;
+  const result=new Set(roles);
+  for(const [id,add] of dynamic)if(enabled.has(id))for(const role of add)result.add(role);
+  return [...result];
+}
+export function filterOverlay(record,layers,enabled){
+  if(record.combinations){
+    let count=0;const roles=new Set();
+    for(const [base,n,events,dynamic] of record.combinations){
+      if(!eventVisible(events,enabled))continue;
+      const visible=eventRoles(base,dynamic,enabled);
+      if(!visible.some(r=>layers.has(r)))continue;
+      count+=n;for(const role of visible)roles.add(role);
+    }
+    return count?{...record,count,roles:[...roles]}:null;
+  }
+  if(!eventVisible(record.events,enabled))return null;
+  const roles=eventRoles(record.roles,record.eventRoles,enabled);
+  if(!roles.some(r=>layers.has(r)))return null;
+  if(!record.eventRoles&&!record.eventStarts)return record;
+  const starts=new Set(record.starts);
+  for(const [id,quest] of record.eventStarts||[])if(enabled.has(id))starts.add(quest);
+  return {...record,roles,starts:[...starts].sort((a,b)=>a-b)};
+}
