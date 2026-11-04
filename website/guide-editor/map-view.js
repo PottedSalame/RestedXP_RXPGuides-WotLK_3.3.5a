@@ -1,6 +1,7 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE} from './map-model.js';
+import {drawNode,NODE_FILLS} from './map-markers.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects'};
-const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',creature:'#ded3c1',object:'#dbb0e7'};
+const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS};
 const symbols={start:'!',end:'?',repair:'R',vendor:'$',trainer:'T',creature:'•',object:'□'};
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 const option=(name,value)=>{const n=el('option',name);n.value=value;return n;};
@@ -139,7 +140,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       legendPainted.set(role,icons[role]);
       const context=badge.getContext('2d');context.clearRect(0,0,20,20);
       if(icons[role])context.drawImage(icons[role],0,0,20,20);
-      else{context.fillStyle=colors[role];context.font='bold 16px system-ui';context.textAlign='center';context.fillText(symbols[role],10,16);}
+      else if(!drawNode(context,role,10,10)){context.fillStyle=colors[role];context.font='bold 16px system-ui';context.textAlign='center';context.fillText(symbols[role],10,16);}
     }
     ctx.clearRect(0,0,width,height);ctx.fillStyle='#24333d';ctx.fillRect(0,0,width,height);hit=[];
     const min=world(0,0),max=world(width,height);
@@ -182,10 +183,13 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     }
     for(const c of clusters){
       const roles=c.members.flatMap(m=>m.roles),role=Object.keys(colors).find(r=>layers.has(r)&&roles.includes(r));
-      const count=c.members.reduce((n,m)=>n+(m.count||1),0);ctx.fillStyle=colors[role]||'#fff';ctx.strokeStyle='#172530';ctx.lineWidth=2;
-      ctx.beginPath();ctx.arc(c.x,c.y,count>1?11:8,0,2*Math.PI);ctx.fill();ctx.stroke();ctx.fillStyle='#172530';
+      const count=c.members.reduce((n,m)=>n+(m.count||1),0),radius=count>1?11:8;
+      const node=drawNode(ctx,role,c.x,c.y,radius);
+      if(!node){ctx.fillStyle=colors[role]||'#fff';ctx.strokeStyle='#172530';ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(c.x,c.y,radius,0,2*Math.PI);ctx.fill();ctx.stroke();}
+      ctx.fillStyle=node?'#fff4d6':'#172530';
       if(count===1&&icons[role])ctx.drawImage(icons[role],c.x-10,c.y-10,20,20);
-      else ctx.fillText(count>1?String(count):symbols[role],c.x,c.y);
+      else if(count>1||!node)ctx.fillText(count>1?String(count):symbols[role],c.x,c.y);
       hit.push({...c,kind:'overlay'});
     }
     if(layers.has('guide')){

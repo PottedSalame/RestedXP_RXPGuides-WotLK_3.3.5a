@@ -14,6 +14,9 @@ python website/tools/serve.py
 
 Open the printed loopback URL. No server database, WoW client or external build
 dependencies are required to use the committed site and artwork.
+The default address is `http://127.0.0.1:8765/`. Keep the terminal open while
+testing; press Ctrl+C to stop. See the [performance review](website/PERFORMANCE.md)
+for existing safeguards and remaining measurement work.
 
 ## Prepare GitHub Pages files
 

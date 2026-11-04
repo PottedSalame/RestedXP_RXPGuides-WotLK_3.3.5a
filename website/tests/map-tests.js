@@ -1,10 +1,23 @@
 import * as P from '../guide-editor/map-model.js';
 import * as M from '../guide-editor/model.js';
+import {drawNode,NODE_FILLS,NODE_OUTLINE} from '../guide-editor/map-markers.js';
 export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Kalimdor'},{id:0,name:'Eastern Kingdoms'},{id:530,name:'Outland'},{id:571,name:'Northrend'}],
   zones:[{id:4,physical:1,display:1,token:'Durotar',aliases:['Durotar'],bounds:[-1962.4998779296875,1808.333251953125,-7249.99951171875,-1716.6666259765625]}],
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Creature and object nodes are coloured circles with gold outlines',()=>{
+    for(const [role,colour] of [['creature',[67,185,92]],['object',[154,96,208]]]){
+      const canvas=document.createElement('canvas');canvas.width=20;canvas.height=20;
+      const context=canvas.getContext('2d');assert(drawNode(context,role,10,10));
+      equal([...context.getImageData(10,10,1,1).data],[...colour,255]);
+      equal(context.fillStyle,NODE_FILLS[role]);equal(context.strokeStyle,NODE_OUTLINE);
+      equal(context.getImageData(0,0,1,1).data[3],0);
+      const pixels=context.getImageData(0,0,20,20).data;let gold=0;
+      for(let i=0;i<pixels.length;i+=4)if(pixels[i]===216&&pixels[i+1]===178&&pixels[i+2]===74&&pixels[i+3]===255)gold++;
+      assert(gold>8,'Missing gold border');assert(!drawNode(context,'start',10,10));
+    }
+  });
   await test('Wheel deltas are proportional and finite zoom preserves the pointer anchor',()=>{
     assert(P.wheelFactor(-1)<P.wheelFactor(-100));
     equal(P.wheelFactor(3,1),P.wheelFactor(48));

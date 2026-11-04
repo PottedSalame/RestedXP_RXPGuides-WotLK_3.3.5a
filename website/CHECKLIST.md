@@ -66,6 +66,8 @@ and in-game outcomes remain separate from automated results.
    existing progress. This remains user acceptance, not automated certification.
 
 8. Check the client quest/vendor/trainer/repair icons in both legend and map.
+   Creatures use green circles with gold borders; objects use purple circles
+   with gold borders. Enable these normally hidden layers to inspect them.
    Disable Repairs and confirm repair-only NPCs disappear; ordinary vendors
    must not gain a repair role. Missing icons must retain readable symbols.
 9. Build the static-site payload and test it under a repository-style URL.

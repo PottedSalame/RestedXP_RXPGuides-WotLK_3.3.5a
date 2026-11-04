@@ -8,7 +8,7 @@ from map_extract import REPO, sha, write
 ROOT=REPO/'website'
 STATIC=['index.html','help.html','credits.html','style.css','guide-editor/index.html',
         'guide-editor/app.js','guide-editor/model.js','guide-editor/wowhead.js',
-        'guide-editor/map-model.js','guide-editor/map-view.js','data/catalogue.json',
+        'guide-editor/map-model.js','guide-editor/map-view.js','guide-editor/map-markers.js','data/catalogue.json',
         'data/LICENSE-AzerothCore.txt','data/NOTICE.txt']
 NOTICE='World of Warcraft client artwork: Blizzard Entertainment. Extracted and converted; not relicensed by RXPGuides. Terrain is not a traversability map.'
 

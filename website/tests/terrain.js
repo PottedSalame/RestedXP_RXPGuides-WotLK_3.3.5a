@@ -49,6 +49,16 @@ try{
   const colours=badge=>{const pixels=badge.getContext('2d').getImageData(0,0,20,20).data,set=new Set();for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]>200)set.add([pixels[i],pixels[i+1],pixels[i+2]].join(','));return set.size;};
   if(badges.filter(b=>colours(b)>5).length<5)issues.push('Five client legend icons did not render');
   if(!d.querySelector('[data-layer="repair"]'))issues.push('Repair layer missing');
+  for(const [role,expected] of [['creature',[67,185,92,255]],['object',[154,96,208,255]]]){
+    const badge=d.querySelector('[data-layer="'+role+'"]').parentNode.querySelector('canvas');
+    if(JSON.stringify([...badge.getContext('2d').getImageData(10,10,1,1).data])!==JSON.stringify(expected))issues.push('Incorrect '+role+' legend node');
+  }
+  const fill=context.fill.bind(context),nodePaints=new Set();
+  context.fill=(...args)=>{if(context.strokeStyle==='#d8b24a')nodePaints.add(context.fillStyle);return fill(...args);};
+  for(const role of ['creature','object'])d.querySelector('[data-layer="'+role+'"]').click();
+  await sleep(300);for(let i=0;i<60&&(active||decoding);i++)await sleep(100);await sleep(100);
+  context.fill=fill;
+  if(!nodePaints.has('#43b95c')||!nodePaints.has('#9a60d0'))issues.push('Generic map markers did not use both gold-bordered node styles');
   // Exercise the production controls beyond the former 2x ceiling. Native
   // 256px tiles should paint at 2048px, not request invented higher levels.
   const drawImage=context.drawImage.bind(context);let largestTile=0;
