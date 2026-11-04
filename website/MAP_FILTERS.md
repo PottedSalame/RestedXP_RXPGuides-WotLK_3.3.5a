@@ -1,8 +1,8 @@
 # Map filters
 
 The legend controls roles. **Calendar events** controls individual festivals,
-their preparation stages, and fishing events. Calendar events start hidden;
-**Other world events** start visible. Choices last for this page session only.
+their preparation stages, and fishing events. Calendar events and
+**Other world events** both start hidden. Choices last for this page session only.
 These are snapshot previews, not today's calendar or live server availability.
 The role and event filters apply together to map markers, cluster counts,
 the visible-location list and quest actions. They never change authored waypoints.

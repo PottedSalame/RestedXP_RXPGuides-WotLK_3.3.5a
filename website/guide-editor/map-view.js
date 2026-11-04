@@ -87,7 +87,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       const section=el('details'),summary=el('summary',title),list=el('div');list.className='map-event-options';
       section.append(summary);const actions=el('div');actions.className='toolbar';section.append(actions,list);
       for(const e of events){
-        const input=el('input');input.type='checkbox';input.dataset.event=String(e.id);input.checked=!calendar;
+        const input=el('input');input.type='checkbox';input.dataset.event=String(e.id);input.checked=false;
         if(input.checked)enabledEvents.add(e.id);
         const label=el('label');label.append(input,document.createTextNode(e.name));list.append(label);
         input.onchange=()=>{if(input.checked)enabledEvents.add(e.id);else enabledEvents.delete(e.id);filtersChanged();};

@@ -158,14 +158,14 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       equal(requests,0);get('terrain-panel').open=true;await sleep(700);assert(!get('map-content').hidden,get('map-status').textContent);equal(requests,3);
       equal(get('map-zone').value,'4');
     });
-    await test('Event controls keep calendar events opt-in, preserve ordinary world events and clear stale popups',async()=>{
+    await test('All event controls start off, retain explicit choices and clear stale popups',async()=>{
       const winter=d.querySelector('[data-event="2"]'),world=d.querySelector('[data-event="25"]');
-      assert(winter&&!winter.checked);assert(world&&world.checked);
+      assert(winter&&!winter.checked);assert(world&&!world.checked);
       const before=get('source').value,count=requests;
       get('map-popup').textContent='Old event quest action';winter.click();
       assert(winter.checked);equal(get('map-popup').textContent,'');assert(get('map-details').disabled);
       get('terrain-panel').open=false;await sleep(50);world.click();await sleep(50);equal(requests,count);
-      get('terrain-panel').open=true;await sleep(100);assert(winter.checked&&!world.checked);
+      get('terrain-panel').open=true;await sleep(100);assert(winter.checked&&world.checked);
       equal(get('source').value,before);equal(requests,count);
       const section=winter.closest('details');
       section.querySelector('[aria-label="Hide all calendar events"]').click();assert(!winter.checked);
