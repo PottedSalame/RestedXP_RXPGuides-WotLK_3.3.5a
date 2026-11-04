@@ -76,6 +76,19 @@ try{
     if(d.getElementById('source').value!==snapshot)issues.push('Calendar filters changed guide source');
     if(requests!==fetches)issues.push('Calendar filters refetched unchanged terrain/chunks');
   }
+  const professionControls=[...d.querySelectorAll('#map-profession-options input')];
+  if(professionControls.length!==14||professionControls.some(c=>c.checked))issues.push('Fourteen profession layers must start disabled');
+  d.getElementById('map-professions').open=true;await sleep(250);
+  for(let i=0;i<60&&(active||decoding);i++)await sleep(100);await sleep(100);
+  for(const control of professionControls){
+    if(colours(control.parentNode.querySelector('canvas'))<5)issues.push('Client profession icon missing: '+control.dataset.layer);
+  }
+  let professionPaints=0;const professionDraw=context.drawImage.bind(context);
+  context.drawImage=(...args)=>{if(args[0].width===64&&args[0].height===64)professionPaints++;return professionDraw(...args);};
+  for(const control of professionControls)control.click();await sleep(300);
+  context.drawImage=professionDraw;
+  if(!professionPaints)issues.push('Selected professions did not paint client icons on actual terrain');
+  for(const control of professionControls)control.click();d.getElementById('map-professions').open=false;
   // Exercise the production controls beyond the former 2x ceiling. Native
   // 256px tiles should paint at 2048px, not request invented higher levels.
   const drawImage=context.drawImage.bind(context);let largestTile=0;

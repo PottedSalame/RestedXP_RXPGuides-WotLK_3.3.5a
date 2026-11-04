@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import re
 from map_extract import REPO, sha, write
+from map_professions import PROFESSIONS
 
 ROOT=REPO/'website'
 STATIC=['index.html','help.html','credits.html','style.css','guide-editor/index.html',
@@ -41,14 +42,19 @@ def package(assets,output,root=ROOT):
     overlay=json.loads((assets/'overlays/manifest.json').read_text())
     icons=json.loads((assets/'icons/manifest.json').read_text())
     if terrain['schema']!=1 or overlay['schema']!=2 or icons['schema']!=1:raise ValueError('Unsupported asset schema')
-    if set(icons['icons'])!={'start','end','vendor','trainer','repair'}:raise ValueError('Missing client icons')
+    icon_names={'start','end','vendor','trainer','repair'}|{'profession-'+key for _,key,_,_ in PROFESSIONS}
+    if set(icons['icons'])!=icon_names:raise ValueError('Missing client icons')
+    facts=(assets/'icons/profession-facts.json').read_bytes()
+    if sha(facts)!=icons.get('factsHash') or sha(facts)!=overlay.get('inputs',{}).get('profession-facts.json'):
+        raise ValueError('Changed or mismatched profession facts')
     payload={name:checked(root,name).read_bytes() for name in STATIC}
     payload['LICENSE-RXPGuides.txt']=(REPO/'LICENSE').read_bytes()
+    payload['map-assets/icons/profession-facts.json']=facts
     for prefix,source,receipt,ext in [('',assets,terrain,('.webp','.json')),
         ('overlays/',assets/'overlays',overlay,('.json',)),('icons/',assets/'icons',icons,('.webp',))]:
         patterns={'':r'(?:manifest\.json|tiles/blank\.webp|tiles/base/[0-9a-f]{32}\.webp|tiles/(?:0|1|530|571)/[0-6]/\d+_\d+\.webp)',
                   'overlays/':r'(?:(?:0|1|530|571)/-?\d+_-?\d+|overview/(?:0|1|530|571))\.json',
-                  'icons/':r'(?:start|end|vendor|trainer|repair)\.webp'}
+                  'icons/':r'(?:'+'|'.join(sorted(icon_names))+r')\.webp'}
         for name,data in verified(source,receipt,ext).items():
             if not re.fullmatch(patterns[prefix],name):raise ValueError('Unexpected payload path: '+name)
             payload['map-assets/'+prefix+name]=data

@@ -3,11 +3,13 @@ import argparse
 from collections import defaultdict
 import importlib.util
 import math
+import json
 import re
 from pathlib import Path
 import subprocess
 from map_extract import REPO, project, sha, write
 from project_paths import require_addon
+from map_professions import trainer_professions,gathering_professions
 
 def npc_roles(flags):
     return [role for bit,role in ((128,'vendor'),(16,'trainer'),(4096,'repair')) if flags & bit]
@@ -54,7 +56,7 @@ def overview_records(items):
             roles=sorted({role for r in group for role in r['roles']})))
     return records
 
-def extract(source, output):
+def extract(source, output, profession_facts):
     source, output = source.resolve(), output.resolve()
     if output.exists() and any(output.iterdir()):
         raise ValueError('Output must be new or empty')
@@ -62,6 +64,9 @@ def extract(source, output):
     spec = importlib.util.spec_from_file_location('sql', addon/'tools/extract_hardcore_quest_facts335.py')
     reader = importlib.util.module_from_spec(spec); spec.loader.exec_module(reader)
     inputs = {}
+    facts=json.loads(profession_facts.read_text(encoding='utf-8'))
+    if facts['schema']!=1:raise ValueError('Unsupported profession facts')
+    inputs['profession-facts.json']=sha(profession_facts.read_bytes())
     def rows(table):
         path = source/'data/sql/base/db_world'/(table+'.sql')
         inputs[table+'.sql']=sha(path.read_bytes())
@@ -73,6 +78,8 @@ def extract(source, output):
     events={r['eventEntry']:dict(id=r['eventEntry'],name=r['description'],holiday=r['holiday']) for r in rows('game_event')}
     pool_events=pool_event_map(rows('game_event_pool'),rows('pool_pool'))
     used_events=set()
+    assignments=rows('creature_default_trainer')
+    professions=trainer_professions(rows('trainer'),rows('trainer_spell'),assignments)
     for kind, table in [('npcs','creature'),('objects','gameobject')]:
         templates={r['entry']:r for r in rows(table+'_template')}
         starts, ends = defaultdict(list),defaultdict(list)
@@ -89,7 +96,7 @@ def extract(source, output):
         vendors, trainers=set(),set()
         if kind=='npcs':
             vendors={r['entry'] for r in rows('npc_vendor')}
-            trainers={r['ID'] for r in rows('npc_trainer')} | {r['CreatureId'] for r in rows('creature_default_trainer')}
+            trainers={r['ID'] for r in rows('npc_trainer')} | {r['CreatureId'] for r in assignments}
         count=0
         for r in rows(table):
             if r['map'] not in (0,1,530,571): continue
@@ -107,8 +114,11 @@ def extract(source, output):
                 if kind=='npcs':
                     flags=r['npcflag'] or t['npcflag']
                     roles.extend(npc_roles(flags))
+                    if 'trainer' in roles:roles.extend(professions.get(entry,[]))
                     roles.append('creature')
-                else: roles.append('object')
+                else:
+                    roles.extend(gathering_professions(t,facts))
+                    roles.append('object')
                 notes=[]
                 spawn_events=sorted(event[r['guid']] | set(pool_events.get(pools.get(r['guid']),[])))
                 if spawn_events: notes.append('event-dependent')
@@ -131,6 +141,8 @@ def extract(source, output):
                 if spawn_events:record['events']=spawn_events
                 dynamic=defaultdict(set)
                 for e,rs in event_flags[r['guid']]:dynamic[e].update(rs)
+                for rs in dynamic.values():
+                    if 'trainer' in rs:rs.update(professions.get(entry,[]))
                 for e,q in event_starts[entry]:dynamic[e].add('start')
                 if event_starts[entry]:record['eventStarts']=sorted(event_starts[entry])
                 if dynamic:record['eventRoles']=[[e,sorted(rs)] for e,rs in sorted(dynamic.items()) if rs]
@@ -159,13 +171,15 @@ def extract(source, output):
     if used_events-set(events):raise ValueError('Missing event definitions: '+str(sorted(used_events-set(events))))
     write(output/'manifest.json',dict(schema=2,chunkSize=512,chunks=index,overviews=overviews,counts=counts,sourceRevision=revision,
         events=[events[e] for e in sorted(used_events)],
+        professions=facts['professions'],
         exclusions=[dict(kind=k,id=i,name=n,reason=r,count=c) for (k,i,n,r),c in sorted(excluded.items())],
-        inputs=inputs,files=files,notice=notice,generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_extract.py'),addon/'tools/extract_hardcore_quest_facts335.py')}))
+        inputs=inputs,files=files,notice=notice,generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_extract.py'),Path(__file__).with_name('map_professions.py'),addon/'tools/extract_hardcore_quest_facts335.py')}))
     print(counts,'chunks:',len(chunks))
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--acore-source',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--profession-facts',type=Path,default=Path(__file__).resolve().parents[1]/'map-assets-local/icons/profession-facts.json')
     args=parser.parse_args()
-    extract(args.acore_source,args.output)
+    extract(args.acore_source,args.output,args.profession_facts)

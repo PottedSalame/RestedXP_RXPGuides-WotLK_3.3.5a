@@ -1,5 +1,5 @@
 // Reuse the terrain reader's read-only MPQ lookup without broadening its
-// historical allowlist. This executable accepts only the five UI textures.
+// historical allowlist. Only reviewed UI textures and two metadata tables.
 #define main terrain_reader_main
 #include "map_archive.cpp"
 #undef main
@@ -9,7 +9,22 @@ static bool iconAllowed(std::string name) {
         name == "interface\\gossipframe\\activequesticon.blp" ||
         name == "interface\\gossipframe\\vendorgossipicon.blp" ||
         name == "interface\\gossipframe\\trainergossipicon.blp" ||
-        name == "interface\\minimap\\tracking\\repair.blp";
+        name == "interface\\minimap\\tracking\\repair.blp" ||
+        name == "dbfilesclient\\skillline.dbc" || name == "dbfilesclient\\lock.dbc" ||
+        name == "interface\\icons\\trade_alchemy.blp" ||
+        name == "interface\\icons\\trade_blacksmithing.blp" ||
+        name == "interface\\icons\\trade_engraving.blp" ||
+        name == "interface\\icons\\trade_engineering.blp" ||
+        name == "interface\\icons\\trade_herbalism.blp" ||
+        name == "interface\\icons\\inv_inscription_tradeskill01.blp" ||
+        name == "interface\\icons\\inv_misc_gem_01.blp" ||
+        name == "interface\\icons\\trade_leatherworking.blp" ||
+        name == "interface\\icons\\inv_pick_02.blp" ||
+        name == "interface\\icons\\inv_misc_pelt_wolf_01.blp" ||
+        name == "interface\\icons\\trade_tailoring.blp" ||
+        name == "interface\\icons\\inv_misc_food_15.blp" ||
+        name == "interface\\icons\\spell_holy_sealofsacrifice.blp" ||
+        name == "interface\\icons\\trade_fishing.blp";
 }
 int main(int argc, char** argv) {
     if (argc < 2) return 2;

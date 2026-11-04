@@ -1,8 +1,34 @@
 """Conservative exclusions and event-aware overlay generation. No network/SQL writes."""
 import unittest
+import struct
 from map_overlays import exclusion,pool_event_map,overview_records
+from map_professions import PROFESSIONS,client_facts,trainer_professions,gathering_professions
 
 class Overlays(unittest.TestCase):
+    def test_professions_require_curriculum_and_tradeskill_trainer(self):
+        trainers=[dict(Id=1,Type=2),dict(Id=2,Type=0)]
+        spells=[dict(TrainerId=1,ReqSkillLine=171),dict(TrainerId=1,ReqSkillLine=333),
+                dict(TrainerId=1,ReqSkillLine=0),dict(TrainerId=2,ReqSkillLine=171)]
+        assignments=[dict(CreatureId=100,TrainerId=1),dict(CreatureId=101,TrainerId=2),dict(CreatureId=102,TrainerId=999)]
+        self.assertEqual(trainer_professions(trainers,spells,assignments),{100:['profession-alchemy','profession-enchanting']})
+
+    def test_client_skill_and_lock_facts_do_not_classify_by_name(self):
+        def dbc(rows,strings=b'\0'):
+            return b'WDBC'+struct.pack('<4I',len(rows),len(rows[0]),4*len(rows[0]),len(strings))+b''.join(struct.pack('<'+'I'*len(row),*row) for row in rows)+strings
+        names=b'\0';skills=[]
+        for id,_,name,_ in PROFESSIONS:
+            row=[0]*56;row[0]=id;row[3]=len(names);names+=name.encode()+b'\0';skills.append(row)
+        herb=[0]*33;herb[0]=1;herb[1]=2;herb[9]=2
+        mine=[0]*33;mine[0]=2;mine[1]=2;mine[9]=3
+        item=[0]*33;item[0]=3;item[1]=1;item[9]=2
+        class Reader:
+            def get(self,name):return dbc(skills,names) if name.endswith('SkillLine.dbc') else dbc([herb,mine,item])
+        facts=client_facts(Reader());self.assertEqual(facts['gatheringLocks'],{'1':[182],'2':[186]})
+        self.assertEqual(len(facts['professions']),14)
+        for type,lock,expected in [(3,1,['profession-herbalism']),(3,2,['profession-mining']),
+                (3,3,[]),(25,0,['profession-fishing']),(10,1,[]),(3,999,[])]:
+            self.assertEqual(gathering_professions(dict(type=type,Data0=lock),facts),expected)
+
     def test_only_verified_placeholder_or_helper_evidence(self):
         for name in ('Rabbit','Bunny','Squirrel','Training Dummy','Scourge Test Subject','Lucid Test Subject','Greatfather Winter','Invisible Stalker'):
             self.assertIsNone(exclusion('npcs',dict(entry=1,name=name,flags_extra=0)),name)

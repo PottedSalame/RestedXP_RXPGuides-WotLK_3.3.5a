@@ -1,10 +1,11 @@
-"""Extract five stock client UI icons, read-only. Does not grant an artwork license."""
+"""Extract stock client map/profession icons, read-only. Does not grant an artwork license."""
 import argparse
 from pathlib import Path
 import struct
 import subprocess
 import tempfile
 from map_extract import Reader, stock_archives, sha, write
+from map_professions import PROFESSIONS,client_facts
 
 MEMBERS = {
     'start': r'Interface\GossipFrame\AvailableQuestIcon.blp',
@@ -13,6 +14,7 @@ MEMBERS = {
     'trainer': r'Interface\GossipFrame\TrainerGossipIcon.blp',
     'repair': r'Interface\Minimap\Tracking\Repair.blp',
 }
+MEMBERS.update({'profession-'+key:'Interface\\Icons\\'+icon+'.blp' for _,key,_,icon in PROFESSIONS})
 
 def decode(data):
     if len(data)<148 or data[:4]!=b'BLP2' or struct.unpack_from('<I',data,4)[0]!=1:
@@ -44,6 +46,7 @@ def extract(client,helper,converter,output):
     output.mkdir(parents=True,exist_ok=True)
     archives,excluded=stock_archives(client);reader=Reader(helper,archives);icons={};files={}
     try:
+        facts=client_facts(reader)
         for role,member in MEMBERS.items():
             w,h,fmt,raw=decode(reader.get(member))
             with tempfile.TemporaryDirectory(prefix='icon-',dir=output) as scratch:
@@ -55,8 +58,10 @@ def extract(client,helper,converter,output):
             name=role+'.webp';(output/name).write_bytes(converted);files[name]=sha(converted)
             icons[role]={'path':name,'width':w,'height':h}
     finally:reader.close()
+    write(output/'profession-facts.json',facts)
     write(output/'manifest.json',dict(schema=1,icons=icons,files=files,members=reader.sources,excluded=excluded,
-        generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('icon_archive.cpp'),Path(__file__).with_name('map_archive.cpp'))},
+        factsHash=sha((output/'profession-facts.json').read_bytes()),
+        generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_professions.py'),Path(__file__).with_name('icon_archive.cpp'),Path(__file__).with_name('map_archive.cpp'))},
         notice='World of Warcraft client artwork: Blizzard Entertainment. Extracted and converted; not relicensed by RXPGuides.'))
     print('Extracted',len(icons),'stock UI icons')
 

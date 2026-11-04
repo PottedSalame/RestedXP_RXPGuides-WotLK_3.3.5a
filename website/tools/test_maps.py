@@ -118,6 +118,13 @@ class Maps(unittest.TestCase):
         self.assertTrue(any(len(r['roles'])>=3 for r in records))
         self.assertTrue(any('alternate entry' in r['notes'] for r in records))
         self.assertTrue(any('pooled' in r['notes'] for r in records))
+        profession_keys={p['key'] for p in overlay['professions']}
+        self.assertEqual(len(profession_keys),14)
+        self.assertEqual({role for r in records if r['kind']=='npcs' for role in r['roles'] if role.startswith('profession-')},profession_keys)
+        self.assertEqual({role for r in records if r['kind']=='objects' for role in r['roles'] if role.startswith('profession-')},
+            {'profession-herbalism','profession-mining','profession-fishing'})
+        facts=ARGS.assets/'icons/profession-facts.json'
+        self.assertEqual(m.sha(facts.read_bytes()),overlay['inputs']['profession-facts.json'])
         for r in records:
             self.assertTrue(all(abs(e) in events for e in r.get('events',[])))
             self.assertTrue(all(e in events for e,_ in r.get('eventRoles',[])))

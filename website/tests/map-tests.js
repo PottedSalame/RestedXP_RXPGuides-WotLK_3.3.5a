@@ -1,6 +1,6 @@
 import * as P from '../guide-editor/map-model.js';
 import * as M from '../guide-editor/model.js';
-import {drawNode,drawOverlayMarker,NODE_FILLS,NODE_OUTLINE} from '../guide-editor/map-markers.js';
+import {drawNode,drawOverlayMarker,NODE_FILLS,NODE_OUTLINE,PROFESSION_LABELS,markerRole} from '../guide-editor/map-markers.js';
 export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Kalimdor'},{id:0,name:'Eastern Kingdoms'},{id:530,name:'Outland'},{id:571,name:'Northrend'}],
   zones:[{id:4,physical:1,display:1,token:'Durotar',aliases:['Durotar'],bounds:[-1962.4998779296875,1808.333251953125,-7249.99951171875,-1716.6666259765625]}],
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
@@ -11,7 +11,7 @@ export async function mapTests(test,assert,equal,rejects,sleep){
     const ink=icon.getContext('2d');ink.fillStyle='#ffd700';ink.fillRect(9,4,2,12);
     const canvas=document.createElement('canvas');canvas.width=40;canvas.height=40;
     const context=canvas.getContext('2d');
-    for(const role of ['start','end','repair','vendor','trainer']){
+    for(const role of ['start','end','repair','vendor','trainer',...Object.keys(PROFESSION_LABELS)]){
       context.clearRect(0,0,40,40);drawOverlayMarker(context,role,20,20,1,icon,'#ff0000','!');
       equal([...context.getImageData(10,10,20,20).data],[...ink.getImageData(0,0,20,20).data]);
     }
@@ -23,6 +23,15 @@ export async function mapTests(test,assert,equal,rejects,sleep){
       context.clearRect(0,0,40,40);drawOverlayMarker(context,role,20,20,1,null,null,null);
       equal(context.strokeStyle,NODE_OUTLINE);equal(context.getImageData(20,20,1,1).data[3],255);
     }
+  });
+  await test('Profession layers are independent, retain event gates and prefer selected profession icons',()=>{
+    equal(Object.keys(PROFESSION_LABELS).length,14);
+    const r={roles:['object','profession-mining'],events:[2]};
+    equal(P.filterOverlay(r,new Set(['profession-herbalism']),new Set([2])),null);
+    equal(P.filterOverlay(r,new Set(['profession-mining']),new Set()),null);
+    assert(P.filterOverlay(r,new Set(['profession-mining']),new Set([2]))===r);
+    equal(markerRole(['vendor','trainer','profession-alchemy'],new Set(['vendor','trainer','profession-alchemy']),['vendor','trainer']),'profession-alchemy');
+    equal(markerRole(['vendor','trainer','profession-alchemy'],new Set(['trainer']),['vendor','trainer']),'trainer');
   });
   await test('Event gates preserve ordinary spawns, OR positive events and exclude active negative events',()=>{
     const enabled=new Set([2]);
@@ -188,6 +197,17 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       const section=winter.closest('details');
       section.querySelector('[aria-label="Hide all calendar events"]').click();assert(!winter.checked);
       section.querySelector('[aria-label="Show all calendar events"]').click();assert(winter.checked);
+    });
+    await test('Fourteen profession switches start off and changing them does not edit the guide',async()=>{
+      const controls=[...d.querySelectorAll('#map-profession-options input')];equal(controls.length,14);
+      assert(controls.every(c=>!c.checked));
+      const before=get('source').value,count=requests;
+      get('map-professions').open=true;
+      for(const control of controls)control.click();await sleep(50);
+      assert(controls.every(c=>c.checked));equal(get('source').value,before);equal(requests,count);
+      get('terrain-panel').open=false;await sleep(50);get('terrain-panel').open=true;await sleep(100);
+      assert(controls.every(c=>c.checked));
+      for(const control of controls)control.click();get('map-professions').open=false;
     });
     await test('Map add / replace / selection use the real source and Undo controls',async()=>{
       input('source',basic);await sleep(400);

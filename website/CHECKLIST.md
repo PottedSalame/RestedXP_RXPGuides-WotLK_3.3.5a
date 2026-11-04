@@ -86,3 +86,13 @@ implied by passing the offline/browser checks. Deployment is a separate action.
 3. Toggle events with a location popup open: old quest-action buttons must
    disappear. Collapse/reopen the map: choices remain, guide source and Undo
    history are unchanged. Reloading the page restores filter defaults.
+
+## Profession filters
+
+1. Open Map → Professions. All 14 switches should be off, with client icons.
+2. Enable Mining, Herbalism and Fishing separately. Check ore, herbs and
+   pools, then enable a crafting profession and find its trainers in a town.
+3. Disable generic Trainers/Objects/Creatures to isolate profession markers.
+   Toggle a calendar event with Fishing enabled; seasonal pools must still
+   obey the event filter. Check continent-level counts as well as close zoom.
+4. Verify source text, selected guide and Undo history remain unchanged.

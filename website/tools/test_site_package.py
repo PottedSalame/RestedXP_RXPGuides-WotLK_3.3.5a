@@ -31,13 +31,15 @@ class SitePackage(unittest.TestCase):
         assets=root/'assets';assets.mkdir()
         write(assets/'manifest.json',dict(schema=1,tiles={str(k):{} for k in (0,1,530,571)}))
         write(assets/'receipt.json',dict(schema=1,files={'manifest.json':sha((assets/'manifest.json').read_bytes())}))
-        write(assets/'overlays/manifest.json',dict(schema=2,files={},chunks={},overviews={},events=[]))
+        write(assets/'icons/profession-facts.json',dict(schema=1))
+        facts_hash=sha((assets/'icons/profession-facts.json').read_bytes())
+        write(assets/'overlays/manifest.json',dict(schema=2,files={},chunks={},overviews={},events=[],inputs={'profession-facts.json':facts_hash}))
         (assets/'overlays/LICENSE-AzerothCore.txt').write_text('Fixture license')
         files={};icons={}
         for role in MEMBERS:
             name=role+'.webp';path=assets/'icons'/name;path.parent.mkdir(exist_ok=True);path.write_bytes(b'fixture')
             files[name]=sha(b'fixture');icons[role]={'path':name}
-        write(assets/'icons/manifest.json',dict(schema=1,files=files,icons=icons,members={},notice='Client artwork'))
+        write(assets/'icons/manifest.json',dict(schema=1,files=files,icons=icons,members={},factsHash=facts_hash,notice='Client artwork'))
         return assets
 
     def test_deterministic_allowlist_and_no_client_requirement(self):
@@ -60,13 +62,23 @@ class SitePackage(unittest.TestCase):
             self.assertFalse((root/'out').exists());icon.unlink()
             with self.assertRaises(FileNotFoundError):package(assets,root/'out')
 
+    def test_profession_facts_and_icons_are_required(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);assets=self.fixtures(root)
+            facts=assets/'icons/profession-facts.json';original=facts.read_bytes();facts.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'profession facts'):package(assets,root/'out')
+            facts.write_bytes(original)
+            manifest=json.loads((assets/'icons/manifest.json').read_text());del manifest['icons']['profession-mining']
+            write(assets/'icons/manifest.json',manifest)
+            with self.assertRaisesRegex(ValueError,'Missing client icons'):package(assets,root/'out')
+
     def test_unsafe_manifest_paths_and_unreceipted_references(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);assets=self.fixtures(root)
             for path in ('../secret','/absolute','C:/private','tiles/../../private','tiles\\escape'):
                 with self.assertRaises(ValueError):checked(assets,path)
             manifest=assets/'overlays/manifest.json'
-            write(manifest,dict(schema=2,files={},chunks={'1/1_1':'1/1_1.json'},overviews={},events=[]))
+            write(manifest,dict(schema=2,files={},chunks={'1/1_1':'1/1_1.json'},overviews={},events=[],inputs={'profession-facts.json':sha((assets/'icons/profession-facts.json').read_bytes())}))
             with self.assertRaisesRegex(ValueError,'Unreceipted overlay'):package(assets,root/'out')
 
 if __name__=='__main__':unittest.main()

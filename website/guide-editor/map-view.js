@@ -1,8 +1,9 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay} from './map-model.js';
-import {drawNode,drawOverlayMarker,NODE_FILLS} from './map-markers.js';
-const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects'};
-const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS};
-const symbols={start:'!',end:'?',repair:'R',vendor:'$',trainer:'T',creature:'•',object:'□'};
+import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,markerRole} from './map-markers.js';
+const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects',...PROFESSION_LABELS};
+const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS,...Object.fromEntries(Object.keys(PROFESSION_LABELS).map(key=>[key,'#d4c597']))};
+const ordinaryRoles=Object.keys(colors);
+const symbols={start:'!',end:'?',repair:'R',vendor:'$',trainer:'T',creature:'•',object:'□',...Object.fromEntries(Object.entries(PROFESSION_LABELS).map(([key,name])=>[key,name[0]]))};
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
 const option=(name,value)=>{const n=el('option',name);n.value=value;return n;};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -27,7 +28,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const blob=await r.blob();if(blob.size>2*1024*1024)throw new Error('Oversized map tile.');
     const image=await createImageBitmap(blob);
     const icon=key.startsWith('icons/');
-    if(image.width!==image.height||!(icon?[16,32].includes(image.width):image.width===256)){image.close();throw new Error('Invalid map image dimensions.');}
+    if(image.width!==image.height||!(icon?[16,32,64].includes(image.width):image.width===256)){image.close();throw new Error('Invalid map image dimensions.');}
     return image;
   },error=>{if(error)status(error.message+' Manual editing remains available.');request();},{limit:192,concurrency:4});
   resources.cancel();
@@ -104,9 +105,10 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const input=el('input');input.type='checkbox';input.checked=layers.has(key);input.dataset.layer=key;
     const wrap=el('label');wrap.append(input);
     if(symbols[key]){const badge=el('canvas');badge.width=20;badge.height=20;badge.className='map-legend-icon';badge.setAttribute('aria-hidden','true');wrap.append(badge);legendIcons.set(key,badge);}
-    wrap.append(document.createTextNode(label));$('map-legend').append(wrap);
+    wrap.append(document.createTextNode(label));$(Object.hasOwn(PROFESSION_LABELS,key)?'map-profession-options':'map-legend').append(wrap);
     input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);filtersChanged();};
   }
+  $('map-professions').ontoggle=()=>request();
   $('map-continent').onchange=()=>{display=+$('map-continent').value;choices();fit();};
   $('map-zone').onchange=()=>{proposal=null;gesture=null;$('map-x').value='';$('map-y').value='';$('map-popup').replaceChildren();fit();};
   $('map-in').onclick=()=>zoom(2);$('map-out').onclick=()=>zoom(.5);$('map-reset').onclick=fit;
@@ -163,7 +165,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     resources.begin();
     const icons={};
     for(const [role,badge] of legendIcons){
-      if(iconManifest?.icons?.[role]?.path===role+'.webp')icons[role]=resources.get('icons/'+role+'.webp');
+      if(iconManifest?.icons?.[role]?.path===role+'.webp'&&(!Object.hasOwn(PROFESSION_LABELS,role)||layers.has(role)||$('map-professions').open))icons[role]=resources.get('icons/'+role+'.webp');
       if(legendPainted.has(role)&&legendPainted.get(role)===icons[role])continue;
       legendPainted.set(role,icons[role]);
       const context=badge.getContext('2d');context.clearRect(0,0,20,20);
@@ -213,7 +215,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     }
     }
     for(const c of clusters){
-      const roles=c.members.flatMap(m=>m.roles),role=Object.keys(colors).find(r=>layers.has(r)&&roles.includes(r));
+      const roles=c.members.flatMap(m=>m.roles),role=markerRole(roles,layers,ordinaryRoles);
       const count=c.members.reduce((n,m)=>n+(m.count||1),0);
       drawOverlayMarker(ctx,role,c.x,c.y,count,icons[role],colors[role],symbols[role]);
       hit.push({...c,kind:'overlay'});
