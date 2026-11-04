@@ -1,0 +1,13 @@
+* text=auto
+*.webp binary
+*.png binary
+*.json text eol=lf
+*.js text eol=lf
+*.py text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+# Preserve generated payloads and source-hash provenance across checkouts.
+/website/data/** -text
+/website/map-assets-local/** -text
+/website/tools/** -text

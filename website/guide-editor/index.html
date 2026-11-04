@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'self' https://nether.wowhead.com">
+  <title>Guide Editor — RXPGuides Tools</title>
+  <link rel="stylesheet" href="../style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+<header><nav><a href="../">RXPGuides Tools</a> / Guide Editor</nav><a href="../help.html">Help and installation</a></header>
+<main>
+  <h1>Guide Editor</h1>
+  <div class="document-toolbar">
+    <fieldset><legend>File</legend><div class="toolbar">
+      <button id="new">New</button>
+      <label class="file-picker">Open <input id="open" type="file" accept=".txt,.lua,text/plain"></label>
+      <button id="save" title="Download the entire file, preserving its original format">Save file</button>
+      <button id="raw" title="Download only the selected guide's source">Save guide text</button>
+    </div></fieldset>
+    <fieldset><legend>Edit</legend><div class="toolbar">
+      <button id="undo">Undo</button><button id="redo">Redo</button>
+      <button id="clone">Save as new guide</button>
+      <button id="restore" disabled>Restore draft</button>
+    </div></fieldset>
+  </div>
+  <p id="status" class="status" role="status" aria-live="polite">Loading editor…</p>
+  <p id="storage-status" class="hint" role="status"></p>
+  <div class="editor-grid">
+    <section aria-labelledby="steps-title">
+      <h2 id="steps-title">Guide and steps</h2>
+      <label>Guide in this file <select id="guides"></select></label>
+      <label>Step <select id="steps" size="12"></select></label>
+      <div class="toolbar"><button id="add-step">Add step</button><button id="duplicate-step">Duplicate</button><button id="delete-step">Delete</button></div>
+      <div class="toolbar"><button id="up">Move up</button><button id="down">Move down</button></div>
+      <h2>Metadata</h2>
+      <form id="metadata">
+        <label>Header <select id="header-name"><option value="name">Name</option><option value="group">Group</option><option value="subgroup">Subgroup</option><option value="version">Version</option></select></label>
+        <label>Value <input id="header-value" autocomplete="off"></label>
+      </form>
+      <p class="hint">Advanced headers: edit Source.</p>
+    </section>
+    <section aria-labelledby="instruction-title">
+      <h2 id="instruction-title">Instructions</h2>
+      <label>Instruction in selected step <select id="instructions" size="6"></select></label>
+      <div class="toolbar"><button id="new-line">New instruction</button><button id="delete-line">Delete instruction</button></div>
+      <form id="instruction-form">
+        <label>Action <select id="action"></select></label>
+        <div id="arguments" class="field-grid"></div>
+        <label>Instruction text <input id="display-text" autocomplete="off"></label>
+        <label>Condition after &lt;&lt; (optional) <input id="condition" autocomplete="off" placeholder="For example: Warrior"></label>
+        <div class="toolbar"><button type="button" id="append-line" hidden>Add instruction</button><button type="button" id="cancel-line" hidden>Cancel</button></div>
+      </form>
+      <p id="line-hint" class="hint"></p>
+      <h2>Instruction preview</h2><ol id="preview"></ol>
+    </section>
+    <section class="reference-panel" aria-labelledby="reference-title">
+      <h2 id="reference-title">Wowhead · WotLK</h2>
+      <label>Type <select id="reference-type"><option value="quests">Quests</option><option value="npcs">NPCs / creatures</option><option value="items">Items</option><option value="objects">Game objects</option></select></label>
+      <form id="reference-form"><label>Title, ID or WotLK link <input id="query" type="search" autocomplete="off" placeholder="e.g. cutting, 788, or a WotLK link"></label>
+      <div class="toolbar"><button id="lookup">Search</button><a id="search-wowhead" href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Open Wowhead ↗</a></div></form>
+      <p id="reference-status" class="hint" role="status"></p>
+      <ul id="results" class="results"></ul>
+      <div id="reference-details"></div>
+      <button id="use-reference" disabled>Use in instruction</button>
+      <p class="hint">Partial titles search Wowhead in a new tab. IDs and links load here.</p>
+    </section>
+    <details id="terrain-panel" class="wide map-panel">
+      <summary>Map</summary>
+      <p id="map-status" class="hint" role="status">Open to load local terrain.</p>
+      <div id="map-content" hidden>
+        <div class="toolbar map-controls">
+          <label>Continent <select id="map-continent"></select></label>
+          <label>Zone <select id="map-zone"></select></label>
+          <button id="map-out" type="button" title="Zoom out">−</button><button id="map-in" type="button" title="Zoom in">+</button>
+          <button id="map-reset" type="button">Reset view</button>
+        </div>
+        <div id="map-legend" class="toolbar" aria-label="Map layers"></div>
+        <div class="map-layout">
+          <canvas id="terrain" tabindex="0" aria-label="Terrain map. Arrow keys pan; plus and minus zoom; Escape cancels a drag. Use coordinate inputs as an alternative."></canvas>
+          <div class="map-sidebar">
+            <label>Guide waypoints <select id="map-waypoints" size="7"></select></label>
+            <p id="map-source-warning" class="hint"></p>
+            <p id="map-selection" class="hint"></p>
+            <label>X <input id="map-x" type="number" min="0" max="100" step="0.01"></label>
+            <label>Y <input id="map-y" type="number" min="0" max="100" step="0.01"></label>
+            <div class="toolbar"><button id="map-add" type="button">Add waypoint</button><button id="map-replace" type="button">Replace coordinates</button></div>
+            <label>Visible locations (first 200) <select id="map-locations" size="4"></select></label>
+            <button id="map-details" type="button">Location details</button>
+            <div id="map-popup" aria-live="polite"></div>
+          </div>
+        </div>
+        <p id="map-coordinates" class="hint" role="status">Select a zone to enter coordinates.</p>
+        <p class="hint">AzerothCore snapshot spawn/home locations, not live positions. Lines show instruction order, not safe paths.</p>
+      </div>
+    </details>
+    <section class="wide" aria-labelledby="validation-title">
+      <div class="toolbar"><h2 id="validation-title">Validation</h2><button id="validate">Check source</button></div>
+      <ul id="diagnostics"></ul>
+    </section>
+    <section class="wide" aria-labelledby="source-title">
+      <h2 id="source-title">Source — entire file</h2>
+      <label for="source">Edit source</label>
+      <textarea id="source" spellcheck="false" wrap="off"></textarea>
+    </section>
+    <section class="wide" aria-labelledby="export-title">
+      <h2 id="export-title">Companion addon export</h2>
+      <label>File/folder suffix <input id="slug" value="MyGuide" pattern="[A-Za-z][A-Za-z0-9_]{0,47}" maxlength="48"></label>
+      <div class="toolbar"><button id="toc">Download .toc</button><button id="lua">Download Guide.lua</button></div>
+      <p id="export-status" class="installation"></p>
+      <p class="hint"><a href="../help.html#install">Installation instructions</a></p>
+    </section>
+  </div>
+</main>
+<footer><a href="../">All tools</a> · <a href="../help.html">Help</a></footer>
+<footer><a href="../credits.html">Credits</a></footer>
+</body>
+</html>

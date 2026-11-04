@@ -1,0 +1,90 @@
+:root { color-scheme: light; font: 16px/1.5 system-ui, sans-serif; color: #233747; background: #edf2f6; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+header, footer { padding: .8rem 1.3rem; border-bottom: 1px solid #476a83; background: #213c50; color: #e4f0f8; }
+header { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+footer { border-top: 1px solid #476a83; border-bottom: 0; margin-top: 1.5rem; font-size: .85rem; }
+a { color: #225c86; text-decoration: underline; }
+a:visited { color: #405b78; }
+header a, header a:visited, footer a, footer a:visited { color: #d3ecfa; }
+header :focus-visible, footer :focus-visible { outline-color: #b0ddf6; }
+h1 { font-size: 1.65rem; margin: 0 0 .5rem; }
+h2 { font-size: 1.15rem; margin: 0 0 .65rem; }
+h3 { font-size: 1rem; }
+main { padding: 1.2rem; }
+.home { max-width: 56rem; margin: 1rem auto; }
+section, fieldset { border: 1px solid #9aafbe; background: #fafdff; padding: 1rem; margin: 0 0 1rem; min-width: 0; }
+/* Neighbouring ice-blue and steel-blue hues, kept low saturation.
+   Labels still identify every section; colour is only a supporting cue. */
+.home section { border-top: 4px solid #527f9e; }
+.editor-grid > section { --section-accent: #527f9e; --section-tint: #e0ecf4; border-top: 4px solid var(--section-accent); }
+.editor-grid > section > h2:first-child,
+.editor-grid > section > .toolbar:first-child { background: var(--section-tint); padding: .35rem .5rem; }
+.editor-grid > section[aria-labelledby="steps-title"] { --section-accent: #52728f; --section-tint: #e1e9f2; }
+.editor-grid > section[aria-labelledby="instruction-title"] { --section-accent: #4384a5; --section-tint: #dceef6; }
+.editor-grid > section[aria-labelledby="reference-title"] { --section-accent: #587f99; --section-tint: #e2edf4; }
+.editor-grid > section[aria-labelledby="source-title"] { --section-accent: #607991; --section-tint: #e5ebf2; }
+.editor-grid > section[aria-labelledby="export-title"] { --section-accent: #4a809c; --section-tint: #dfeef4; }
+button, input, select, textarea { font: inherit; }
+button { background: #e0eaf2; color: #233747; border: 1px solid #7f9aad; border-radius: 2px; padding: .3rem .65rem; cursor: pointer; }
+button:hover:not(:disabled) { background: #c6dfed; }
+button:disabled { color: #657785; cursor: default; }
+:focus-visible { outline: 2px solid #24668e; outline-offset: 2px; }
+input, select, textarea { color: #233747; background: #fff; border: 1px solid #8ba4b6; max-width: 100%; padding: .3rem; accent-color: #396e93; }
+::selection { color: #233747; background: #c5e3f4; }
+label { display: block; margin: .5rem 0; }
+label > input, label > select { display: block; width: 100%; }
+textarea { width: 100%; resize: vertical; font: 14px/1.5 ui-monospace, Consolas, monospace; tab-size: 4; }
+input[type="file"] { width: min(100%, 25rem); }
+.toolbar { display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; margin: .65rem 0; }
+.toolbar > label { min-width: 0; max-width: 100%; }
+.document-toolbar { display: flex; flex-wrap: wrap; gap: .7rem; }
+.document-toolbar fieldset { margin: 0; padding: .2rem .65rem; }
+.document-toolbar .toolbar { margin: .2rem 0; }
+.file-picker { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: 0; }
+.file-picker input { width: 15rem; font-size: .85rem; }
+#status { margin-bottom: .15rem; }
+#storage-status { margin-top: 0; }
+.editor-grid { display: grid; grid-template-columns: minmax(13rem, 1fr) minmax(22rem, 2fr) minmax(17rem, 1.3fr); gap: 1rem; align-items: start; }
+.wide { grid-column: 1 / -1; }
+.editor-grid section { margin: 0; }
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem .75rem; }
+.hint, small { color: #4e6575; font-size: .88rem; }
+.notice { border-left: 3px solid #607991; padding-left: .7rem; }
+.status { min-height: 1.5em; overflow-wrap: anywhere; }
+.error { color: #922626; }
+.warning { color: #725411; }
+select[size] { width: 100%; font-size: .9rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; }
+li { overflow-wrap: anywhere; margin: .25rem 0; }
+.results { max-height: 17rem; overflow: auto; padding-left: 1.4rem; }
+.results button { text-align: left; padding: .2rem .35rem; font-size: .9rem; }
+#reference-details { max-height: 24rem; overflow: auto; }
+#diagnostics { max-height: 17rem; overflow: auto; }
+#preview { min-height: 3rem; max-height: 26rem; overflow: auto; padding-left: 1.3rem; }
+#source { min-height: 24rem; }
+.installation { border: 1px solid #7f9aad; padding: .8rem; overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
+@media (max-width: 1050px) { .editor-grid { grid-template-columns: minmax(13rem, 1fr) minmax(22rem, 2fr); } .reference-panel { grid-column: 1 / -1; } }
+@media (max-width: 650px) { main { padding: .7rem; } .editor-grid { display: flex; flex-direction: column; } .editor-grid > * { width: 100%; } .field-grid { grid-template-columns: 1fr; } section { padding: .75rem; } }
+/* Optional terrain workspace: no external controls, fonts, or artwork. */
+.map-panel { background: #f4f8fb; border: 1px solid #7e99ad; padding: .75rem; min-width: 0; }
+.map-panel summary { cursor: pointer; font-weight: bold; color: #213c50; }
+.map-controls label { margin: 0; }
+.map-controls select { max-width: 20rem; }
+.map-layout { display: grid; grid-template-columns: minmax(0, min(100%, 52rem)) minmax(14rem, 18rem); gap: .75rem; justify-content: center; align-items: start; }
+#terrain { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; background: #24333d; touch-action: none; cursor: crosshair; border: 1px solid #56748a; }
+#terrain:focus { outline: 2px solid #245d86; outline-offset: 2px; }
+.map-legend-icon { width: 20px; height: 20px; vertical-align: middle; margin-right: .2rem; }
+#map-legend { margin: .5rem 0; }
+#map-legend label { display: inline-flex; align-items: center; gap: .25rem; margin: 0; }
+#map-legend input { width: auto; }
+.map-sidebar { min-width: 0; }
+.map-sidebar select { width: 100%; }
+#map-popup { overflow-wrap: anywhere; max-height: 18rem; overflow: auto; font-size: .9rem; }
+#map-popup button { margin: .2rem; }
+@media (max-width: 760px) {
+  .map-layout { grid-template-columns: 1fr; }
+  #terrain { height: auto; }
+  .map-controls select { max-width: 100%; }
+}

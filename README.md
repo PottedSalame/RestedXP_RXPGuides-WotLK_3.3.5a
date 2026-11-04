@@ -1,0 +1,46 @@
+# RXPGuides Tools website
+
+This independent `website` branch contains the tools hub, guide editor, static
+terrain and client icons. It has no parent commits or addon source history.
+The addon remains on `main`.
+
+## Local preview
+
+From this checkout, using an installed Python 3.12 or newer:
+
+```text
+python website/tools/serve.py
+```
+
+Open the printed loopback URL. No server database, WoW client or external build
+dependencies are required to use the committed site and artwork.
+
+## Prepare GitHub Pages files
+
+```text
+python website/tools/package_site.py --assets website/map-assets-local --output build/pages
+python website/tools/serve.py --site-root build/pages --prefix /RXPGuides/
+```
+
+Publish the **contents of `build/pages`**, not this entire branch. The packager
+includes terrain and icons while excluding developer tools, tests and historical
+provenance. These commands do not configure Pages or upload anything.
+
+## Development and regeneration
+
+See [website documentation](website/README.md) and the
+[acceptance checklist](website/CHECKLIST.md). Browser checks use an already
+installed Chrome or Edge; no dependencies are downloaded.
+
+Checks against the real addon parser and regeneration from addon definitions
+require a separate addon checkout. Set `RXP_ADDON_ROOT` to that checkout's path
+in your shell before running them. No machine-specific path is committed.
+Do not copy the addon onto this branch. Generated data retains its original
+provenance; the three original generator sources are kept under
+`website/tools/baseline/` for checking those historical hashes.
+
+The extracted client artwork belongs to Blizzard Entertainment and is not
+relicensed under the project's software license. See [credits](website/credits.html).
+
+A normal Git clone may fetch both branches. To fetch only the addon, use
+`git clone --single-branch --branch main <repository-url>`.

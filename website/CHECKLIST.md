@@ -1,0 +1,75 @@
+# Local editor acceptance
+
+Automated checks establish source preservation and structural compatibility, not
+quest availability or gameplay correctness. No deliberate character deaths are
+needed. All work remains local until publication is separately authorized.
+
+1. Start the loopback server from the README. Open the tools hub, follow Guide
+   Editor and Help, and return to the hub. Repeat at the repository-prefix URL.
+2. Create a custom Horde Durotar guide. Add travel, accept 4641, a note and its
+   turn-in. Look up quest 4641 and NPC 10176, then use them in instructions.
+   Search a name on Wowhead and paste a WotLK result link back. Verify failed
+   lookups leave editing available and .complete indices remain author-entered.
+3. Change a coordinate, text and condition through forms; inspect Source. Edit
+   Source and check the form/preview. Typing must update the selected instruction
+   immediately without moving the caret. New instruction drafts require Add;
+   Cancel leaves source unchanged. Duplicate/reorder/delete steps, then Undo/Redo.
+   Test keyboard focus, grouped toolbar controls and a narrow window.
+4. Import a real multiguide file. Select a chapter, edit one line and download the
+   original file. Check that other chapters, conditions, comments and outer Lua
+   are intact. Guards must block isolated companion export, not disappear.
+5. Import/export an unchanged CRLF/BOM file. Compare bytes. Try malformed source,
+   an encoded import string, advanced instructions and delimiter collisions;
+   errors must be explained and source saving must remain available.
+6. Save a draft, reload and explicitly restore it. Download a backup. Try denied
+   browser storage; the editor must explain the failure without losing the open
+   document. Local drafts are not shared between browser origins.
+7. For a self-contained custom guide, download both companion files. Close WoW,
+   place them in the exact displayed folder, restart and enable the companion.
+   Use a disposable Orc Warrior; do not overwrite bundled guide files. Check
+   acceptance, objectives, turn-in, conditions, travel and reload restoration.
+8. Check that your normal guide identities and existing progress are unchanged.
+   If testing with Questie, use its tracking without its quest automation.
+9. Try a large existing guide file and rapid reference searches. Source edits,
+   selection and scrolling should remain usable. Missing data must not prevent
+   manual authoring. Do not interpret a static preview as a gameplay simulation.
+
+Record browser/version, tested files and any failed case. Real GitHub deployment
+and in-game outcomes remain separate from automated results.
+
+## Local map acceptance
+
+1. Expand Map. Check Durotar, Elwynn Forest, Hellfire Peninsula and a Northrend
+   zone, then Eversong Woods and Azuremyst Isle. Pan, zoom and resize. Coastlines
+   and markers must move together; expansion starters belong to EK/Kalimdor.
+   Confirm the viewport stays square on wide and narrow screens. Try slow wheel
+   input and rapid direction changes: zoom should stay under the pointer without
+   abrupt jumps. With reduced motion enabled, zoom should respond immediately.
+2. In Durotar, inspect Kaltunk (10176), Gornek (3143) and Hana'zua (3287).
+   Compare snapshot coordinates with an authored waypoint and the game. Zoom in
+   for exact markers rather than low-zoom cluster centroids. Check zone edges.
+3. Toggle every legend layer. Open a crowded cluster, then a specific location.
+   Check multi-role NPCs and conditional-spawn notes. Use the Visible locations
+   list and Location details with the keyboard. No Wowhead request should happen
+   until its explicit details action is chosen.
+4. Select a waypoint, drag it, Undo and Redo. Drag again and press Escape: source
+   must not change. Try manual X/Y entry and Add/Replace. Conditions, radius,
+   optional arguments and other guides in an imported file must remain intact.
+5. Edit the same waypoint through its form and Source. Verify the marker follows.
+   Switch continents/documents rapidly, collapse while loading, and reopen. Old
+   markers must not reappear. Check a narrow display and keyboard pan/zoom.
+6. With no local imagery available in a separate source-only checkout, editing,
+   drafts, downloads and companion exports must still work. Do not delete your
+   generated artwork to test this; automated tests cover the missing-file case.
+7. Export a small custom Durotar route and test it on a disposable Orc Warrior.
+   Compare its in-game waypoint with the editor, then check normal guides and
+   existing progress. This remains user acceptance, not automated certification.
+
+8. Check the client quest/vendor/trainer/repair icons in both legend and map.
+   Disable Repairs and confirm repair-only NPCs disappear; ordinary vendors
+   must not gain a repair role. Missing icons must retain readable symbols.
+9. Build the static-site payload and test it under a repository-style URL.
+   Terrain and icons must appear without access to the client or source checkout.
+
+No in-game testing, endorsement or grant of artwork redistribution rights is
+implied by passing the offline/browser checks. Deployment is a separate action.

@@ -1,0 +1,9 @@
+RXPGuides Tools reference data
+
+Offline AzerothCore base snapshot; SQL updates and custom modules are not applied.
+Template presence is not proof that a quest is offered. Objective slots are not verified client leaderboard indices.
+Names, IDs and selected quest facts derived from AzerothCore contributors' world SQL.
+Source: https://github.com/azerothcore/azerothcore-wotlk/tree/591f79586bbf04e5cdbb2a81bd98c5fd3b7192bd/data/sql/base/db_world
+Source license notice: GNU General Public License version 2; see LICENSE-AzerothCore.txt.
+Directive/map aliases derived from this RXPGuides repository; project license GPL version 3.
+No player data, credentials, source-machine paths or full dialogue are included.

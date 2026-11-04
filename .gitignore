@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+build/
+dist/
+.local/
+.env
+.env.*
+*.exe
+*.obj
+*.pdb
