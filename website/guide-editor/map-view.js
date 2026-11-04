@@ -1,5 +1,5 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay} from './map-model.js';
-import {drawNode,NODE_FILLS} from './map-markers.js';
+import {drawNode,drawOverlayMarker,NODE_FILLS} from './map-markers.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects'};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS};
 const symbols={start:'!',end:'?',repair:'R',vendor:'$',trainer:'T',creature:'•',object:'□'};
@@ -214,13 +214,8 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     }
     for(const c of clusters){
       const roles=c.members.flatMap(m=>m.roles),role=Object.keys(colors).find(r=>layers.has(r)&&roles.includes(r));
-      const count=c.members.reduce((n,m)=>n+(m.count||1),0),radius=count>1?11:8;
-      const node=drawNode(ctx,role,c.x,c.y,radius);
-      if(!node){ctx.fillStyle=colors[role]||'#fff';ctx.strokeStyle='#172530';ctx.lineWidth=2;
-        ctx.beginPath();ctx.arc(c.x,c.y,radius,0,2*Math.PI);ctx.fill();ctx.stroke();}
-      ctx.fillStyle=node?'#fff4d6':'#172530';
-      if(count===1&&icons[role])ctx.drawImage(icons[role],c.x-10,c.y-10,20,20);
-      else if(count>1||!node)ctx.fillText(count>1?String(count):symbols[role],c.x,c.y);
+      const count=c.members.reduce((n,m)=>n+(m.count||1),0);
+      drawOverlayMarker(ctx,role,c.x,c.y,count,icons[role],colors[role],symbols[role]);
       hit.push({...c,kind:'overlay'});
     }
     if(layers.has('guide')){

@@ -1,11 +1,29 @@
 import * as P from '../guide-editor/map-model.js';
 import * as M from '../guide-editor/model.js';
-import {drawNode,NODE_FILLS,NODE_OUTLINE} from '../guide-editor/map-markers.js';
+import {drawNode,drawOverlayMarker,NODE_FILLS,NODE_OUTLINE} from '../guide-editor/map-markers.js';
 export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Kalimdor'},{id:0,name:'Eastern Kingdoms'},{id:530,name:'Outland'},{id:571,name:'Northrend'}],
   zones:[{id:4,physical:1,display:1,token:'Durotar',aliases:['Durotar'],bounds:[-1962.4998779296875,1808.333251953125,-7249.99951171875,-1716.6666259765625]}],
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Client map icons preserve transparency without a background circle; clusters and fallbacks remain',()=>{
+    const icon=document.createElement('canvas');icon.width=20;icon.height=20;
+    const ink=icon.getContext('2d');ink.fillStyle='#ffd700';ink.fillRect(9,4,2,12);
+    const canvas=document.createElement('canvas');canvas.width=40;canvas.height=40;
+    const context=canvas.getContext('2d');
+    for(const role of ['start','end','repair','vendor','trainer']){
+      context.clearRect(0,0,40,40);drawOverlayMarker(context,role,20,20,1,icon,'#ff0000','!');
+      equal([...context.getImageData(10,10,20,20).data],[...ink.getImageData(0,0,20,20).data]);
+    }
+    context.clearRect(0,0,40,40);drawOverlayMarker(context,'start',20,20,2,icon,'#ff0000','!');
+    equal([...context.getImageData(14,20,1,1).data],[255,0,0,255]);
+    context.clearRect(0,0,40,40);drawOverlayMarker(context,'start',20,20,1,null,'#ff0000','!');
+    equal([...context.getImageData(14,20,1,1).data],[255,0,0,255]);
+    for(const role of ['creature','object']){
+      context.clearRect(0,0,40,40);drawOverlayMarker(context,role,20,20,1,null,null,null);
+      equal(context.strokeStyle,NODE_OUTLINE);equal(context.getImageData(20,20,1,1).data[3],255);
+    }
+  });
   await test('Event gates preserve ordinary spawns, OR positive events and exclude active negative events',()=>{
     const enabled=new Set([2]);
     assert(P.eventVisible([],enabled));assert(P.eventVisible([2,12],enabled));
