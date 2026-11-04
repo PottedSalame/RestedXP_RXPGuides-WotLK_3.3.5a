@@ -87,6 +87,9 @@ separate domains. WotLK `WorldMapArea.dbc` supplies outdoor zone bounds; canonic
 tokens come from this repository. Ambiguous/floor forms and `StormwindClassic` /
 `EPLClassic` remain source-only instead of being plotted as Wrath percentages.
 
+The [Ghostlands edge cleanup](TERRAIN_CLEANUP.md) hides reviewed placeholder
+pixels with a separate derived layer, without changing terrain coordinates.
+
 Generated artwork and overlay payloads are committed under `map-assets-local/`
 on this standalone website branch. The directory name is retained for compatibility.
 The site packager explicitly includes the verified terrain and icon files in its

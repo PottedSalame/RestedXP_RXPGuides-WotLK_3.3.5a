@@ -1,4 +1,4 @@
-import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay} from './map-model.js';
+import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay,terrainLayers} from './map-model.js';
 import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,CLASS_LABELS,markerAppearance,locationDescription,markerHit} from './map-markers.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects',...PROFESSION_LABELS};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS,...Object.fromEntries(Object.keys(PROFESSION_LABELS).map(key=>[key,'#d4c597']))};
@@ -11,6 +11,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function createMap(adapter,{base=new URL('../map-assets-local/',import.meta.url),fetcher=fetch}={}) {
   const $=id=>document.getElementById(id),canvas=$('terrain'),ctx=canvas.getContext('2d');
   let open=false,manifest=null,overlay=null,iconManifest=null,controller=null,frame=0,markers=[],selected=null,gesture=null,motion=null;
+  let terrain=null;
   const legendIcons=new Map(),legendPainted=new Map();
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   let documentText=null,documentGuide=null,display=1,view={u:0,v:0,scale:1},width=1,height=1,hit=[],proposal=null,locations=[],locationsKey='';
@@ -149,8 +150,8 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     }
   }
   $('map-details').onclick=()=>{const c=locations[+$('map-locations').value];if(c)popup(c.members);};
-  function tileImage(physical,level,x,y,sx,sy,pixels){
-    const levels=manifest.tiles[physical],path=levels[level][x+','+y];if(!path)return;
+  function tileImage(levels,level,x,y,sx,sy,pixels){
+    const path=levels[level][x+','+y];if(!path)return;
     const image=resources.get(path);
     if(image){ctx.drawImage(image,sx,sy,pixels+.3,pixels+.3);return;}
     // Reuse a coarser cached tile while the requested resolution decodes.
@@ -187,14 +188,14 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     // than the bounded cache, causing perpetual evict/refetch cycles.
     while(zoomLevel>0&&(Math.ceil(width/view.scale/span)+2)*(Math.ceil(height/view.scale/span)+2)>64){zoomLevel--;span*=2;}
     for(const r of manifest.regions.filter(r=>r.display===display)){
-      const tiles=manifest.tiles[r.physical][zoomLevel];ctx.save();ctx.beginPath();
+      const levels=terrain.get(r),tiles=levels[zoomLevel];ctx.save();ctx.beginPath();
       for(const b of [r.clip,...(r.holes||[])]){const [x,y]=screen(b[0]+r.offset[0],b[1]+r.offset[1]);ctx.rect(x,y,(b[2]-b[0])*view.scale,(b[3]-b[1])*view.scale);}ctx.clip('evenodd');
       const startX=Math.max(0,Math.floor((Math.max(min[0]-r.offset[0],r.clip[0]))/span)),endX=Math.min(2**zoomLevel-1,Math.floor(Math.min(max[0]-r.offset[0],r.clip[2])/span));
       const startY=Math.max(0,Math.floor((Math.max(min[1]-r.offset[1],r.clip[1]))/span)),endY=Math.min(2**zoomLevel-1,Math.floor(Math.min(max[1]-r.offset[1],r.clip[3])/span));
       for(let x=startX;x<=endX;x++)for(let y=startY;y<=endY;y++){
         if((r.holes||[]).some(h=>inside([x*span,y*span],h)&&inside([(x+1)*span,(y+1)*span],h)))continue;
         const path=tiles[x+','+y];if(!path)continue;
-        const [sx,sy]=screen(x*span+r.offset[0],y*span+r.offset[1]);tileImage(r.physical,zoomLevel,x,y,sx,sy,span*view.scale);
+        const [sx,sy]=screen(x*span+r.offset[0],y*span+r.offset[1]);tileImage(levels,zoomLevel,x,y,sx,sy,span*view.scale);
       }ctx.restore();
     }
     const records=[];
@@ -301,6 +302,10 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       try{
         const data=await json('manifest.json',local.signal);if(!open||controller!==local)return;
         if(data.schema!==1||!data.regions||!data.zones||!data.tiles)throw new Error('Unsupported map manifest.');
+        let nextTerrain=terrainLayers(data),cleanupUnavailable=false;
+        try{nextTerrain=terrainLayers(data,await json('terrain-cleanup/manifest.json',local.signal));}
+        catch(error){if(error.name==='AbortError')throw error;cleanupUnavailable=true;}
+        if(!open||controller!==local)return;
         let nextOverlay=null;
         try{nextOverlay=await json('overlays/manifest.json',local.signal);}catch(error){if(error.name==='AbortError')throw error;}
         if(!open||controller!==local)return;
@@ -308,11 +313,11 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
         try{nextIcons=await json('icons/manifest.json',local.signal);}catch(error){if(error.name==='AbortError')throw error;}
         if(!open||controller!==local)return;
         iconManifest=nextIcons?.schema===1?nextIcons:null;
-        manifest=data;overlay=nextOverlay?.schema===2?nextOverlay:null;eventControls();
+        manifest=data;terrain=nextTerrain;overlay=nextOverlay?.schema===2?nextOverlay:null;eventControls();
         $('map-continent').replaceChildren(...manifest.continents.map(c=>option(c.name,c.id)));$('map-continent').value=display;
         const preferred=manifest.zones.find(z=>z.token==='Durotar');choices(preferred);
         $('map-content').hidden=false;size();fit();
-        status(overlay?'Local terrain · snapshot overlays':'Local terrain · overlays unavailable');
+        status((overlay?'Local terrain · snapshot overlays':'Local terrain · overlays unavailable')+(cleanupUnavailable?' · original terrain borders':''));
       }catch(error){if(error.name!=='AbortError')status('Map unavailable. Generate local map assets; manual editing still works.');return;}
     }
     $('map-content').hidden=false;size();observer.observe(canvas);sync();

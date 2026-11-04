@@ -1,6 +1,28 @@
 // Projection and source edits, independent of the canvas and browser fetches.
 import {editGuide} from './model.js';
 export const ORIGIN = 17066.666666666668, UNIT = 256 / (533.3333333333334);
+// Resolve presentation-only tile replacements once, not during every paint.
+// Projection helpers continue to use the untouched source manifest.
+export function terrainLayers(manifest, cleanup=null) {
+  const layers=new Map(manifest.regions.map(r=>[r,manifest.tiles[r.physical]]));
+  if(!cleanup)return layers;
+  const same=(a,b)=>Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>v===b[i]);
+  const target=cleanup.region;
+  const region=manifest.regions.find(r=>r.physical===530&&r.display===0&&target?.physical===530&&target.display===0&&same(r.clip,target.clip)&&same(r.offset,target.offset));
+  if(cleanup.schema!==1||!region||!cleanup.tiles||!cleanup.originalTiles)throw new Error('Terrain cleanup does not match the map.');
+  const original=manifest.tiles[region.physical],levels={};
+  for(let level=0;level<=6;level++){
+    const changes=cleanup.tiles[level],sources=cleanup.originalTiles[level];
+    if(!changes||!sources||Object.keys(changes).length!==Object.keys(sources).length)throw new Error('Incomplete terrain cleanup.');
+    levels[level]={...original[level]};
+    for(const [key,path] of Object.entries(changes)){
+      if(!/^\d+,\d+$/.test(key)||path!==level+'/'+key.replace(',','_')+'.webp'||!original[level][key]||sources[key]!==original[level][key])throw new Error('Stale terrain cleanup.');
+      levels[level][key]='terrain-cleanup/'+path;
+    }
+  }
+  layers.set(region,levels);
+  return layers;
+}
 export function regionAt(manifest, physical, x, y) {
   const u = (ORIGIN-y)*UNIT, v=(ORIGIN-x)*UNIT;
   return manifest.regions.find(r => r.physical===physical && inside([u,v],r.clip) && !(r.holes||[]).some(h=>inside([u,v],h)));

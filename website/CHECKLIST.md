@@ -102,3 +102,11 @@ implied by passing the offline/browser checks. Deployment is a separate action.
 6. With generic Trainers/Creatures/Objects disabled, select Mining and toggle
    Include trainers / Include gathering locations separately. Check both close
    zoom and continent counts. Unknown trainers must not acquire a guessed badge.
+
+## Ghostlands edge cleanup
+
+1. Open Eastern Kingdoms and inspect the Ghostlands / Eastern Plaguelands border.
+2. Zoom out and back in, pan away and return. The white strip and large navy
+   placeholder blocks should stay absent; a thin original terrain seam can remain.
+3. Select a Ghostlands waypoint, move it, then Undo. Marker coordinates and source
+   edits should behave as before. Check Outland and Azuremyst remain unchanged.

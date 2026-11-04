@@ -62,6 +62,18 @@ class SitePackage(unittest.TestCase):
             self.assertFalse((root/'out').exists());icon.unlink()
             with self.assertRaises(FileNotFoundError):package(assets,root/'out')
 
+    def test_relocated_ghostlands_requires_verified_cleanup(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);assets=self.fixtures(root)
+            manifest=json.loads((assets/'manifest.json').read_text())
+            manifest['regions']=[{'physical':530,'display':0}]
+            write(assets/'manifest.json',manifest)
+            write(assets/'receipt.json',dict(schema=1,files={'manifest.json':sha((assets/'manifest.json').read_bytes())}))
+            with self.assertRaises(FileNotFoundError):package(assets,root/'out')
+            write(assets/'terrain-cleanup/manifest.json',{})
+            with self.assertRaisesRegex(ValueError,'Stale terrain cleanup'):package(assets,root/'out')
+            self.assertFalse((root/'out').exists())
+
     def test_profession_facts_and_icons_are_required(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);assets=self.fixtures(root)

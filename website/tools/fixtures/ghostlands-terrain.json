@@ -1,0 +1,217 @@
+{
+  "schema": 1,
+  "sourceManifest": "25c17cd50472e7b2bef03b84d2b7da7e0a8f3e1c738d5f230ddecd893cbe1da8",
+  "region": {
+    "clip": [
+      9472.001600000001,
+      512.0000000000006,
+      13055.983999999999,
+      5888.0
+    ],
+    "display": 0,
+    "offset": [
+      -1278.144,
+      1152.0
+    ],
+    "physical": 530
+  },
+  "reason": "Visually reviewed stock Ghostlands southern/eastern blank borders. White strip and navy-only bottom tiles include non-geographic edge padding; partial tiles remove only edge-connected exact navy palette pixels. Original images and projections remain unchanged.",
+  "tiles": [
+    {
+      "key": "40,22",
+      "source": "tiles/base/a23b009bea893a64be16292a1af386c4.webp",
+      "sha256": "857885db35f6f5f37f479f44f6d5462f77a3a3cb77afcebac362effe306cedfd",
+      "mode": "edge-navy",
+      "removedPixels": 3056
+    },
+    {
+      "key": "41,21",
+      "source": "tiles/base/2330b63fa114d72a57568dcee497fd7a.webp",
+      "sha256": "60a0cb3b794b4b470eb145a61a1d0d38081e28f73fb3e2087684e22f60b60af1",
+      "mode": "edge-navy",
+      "removedPixels": 52381
+    },
+    {
+      "key": "41,22",
+      "source": "tiles/base/2d3433a02b7702ca9bc8e9b7148dad9e.webp",
+      "sha256": "ebb0588690fa1a4430e07fbe4bb1bb1d9e8b5e2e8d4fc223c3ae0b130ff47ed9",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "42,21",
+      "source": "tiles/base/94e4a41182124a20ba7ccadbbbdb7b5f.webp",
+      "sha256": "54a5b76474731d99d51a554e1fdb202416c95c9c463fcc6caadfca3abd1cce1c",
+      "mode": "edge-navy",
+      "removedPixels": 50517
+    },
+    {
+      "key": "42,22",
+      "source": "tiles/base/e6dac49a4697aa74cef88f2ee78a9d17.webp",
+      "sha256": "7d989aa5555e41f4a99fa85f1ce4d75b2e2babdb7c2990fdcf8725991e70602b",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "43,21",
+      "source": "tiles/base/72fb4a00f19f5c223748ebba9868257b.webp",
+      "sha256": "9870f4f9c7a6858b9746eec8b0bc0a83237b4d75e808bea9e255d2a34d0bf09a",
+      "mode": "edge-navy",
+      "removedPixels": 56832
+    },
+    {
+      "key": "43,22",
+      "source": "tiles/base/8292e8420a8a75862e0d609f15ec492c.webp",
+      "sha256": "7fbbb9e02b8d6cc3592ee73e26483a71a9f06a5d74cb659717df0849d0d55c44",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "44,21",
+      "source": "tiles/base/67ae788a66ed3c8f880986167eb33e17.webp",
+      "sha256": "93182b5ed6b679a99f3276d2f12f1c09088abeb5b68386799ecf60bd0cce02a4",
+      "mode": "edge-navy",
+      "removedPixels": 58752
+    },
+    {
+      "key": "44,22",
+      "source": "tiles/base/176b743029970ff500cde853ca95d416.webp",
+      "sha256": "898c86ff2d0d41a9da7709e9c2eff8665b2707cfb96de7696fa5dcf7aec6c096",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "45,21",
+      "source": "tiles/base/0d1f2a6c1b3118bb8b83c7bc5ff9e397.webp",
+      "sha256": "6d6f9499f085f366513aacbe887b578de2660d1118943a3f4f9079ed51056228",
+      "mode": "edge-navy",
+      "removedPixels": 60496
+    },
+    {
+      "key": "45,22",
+      "source": "tiles/base/8292e8420a8a75862e0d609f15ec492c.webp",
+      "sha256": "7fbbb9e02b8d6cc3592ee73e26483a71a9f06a5d74cb659717df0849d0d55c44",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "46,20",
+      "source": "tiles/base/4fcc870c37ae7e07b13c56b5c748d35b.webp",
+      "sha256": "6231f909dd4744afcb97da524be944d882908cee4a6fb23d8da504b349b711d6",
+      "mode": "edge-navy",
+      "removedPixels": 10993
+    },
+    {
+      "key": "46,21",
+      "source": "tiles/base/e6e2a750821309a68b0446e0814521b9.webp",
+      "sha256": "9de3caa64fe9556858b252a81d7a03cea963e74dae8391a948981018ba692024",
+      "mode": "edge-navy",
+      "removedPixels": 62102
+    },
+    {
+      "key": "46,22",
+      "source": "tiles/base/176b743029970ff500cde853ca95d416.webp",
+      "sha256": "898c86ff2d0d41a9da7709e9c2eff8665b2707cfb96de7696fa5dcf7aec6c096",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "47,17",
+      "source": "tiles/base/041508a30b2aaa2eca343f893b1d9f8b.webp",
+      "sha256": "fa7abdaadb4dcaa65cd81efec58a452607403b97dc05b22ab50bfec97a12f282",
+      "mode": "edge-navy",
+      "removedPixels": 30341
+    },
+    {
+      "key": "47,18",
+      "source": "tiles/base/f5603a32b688ea087d9c26045ca45111.webp",
+      "sha256": "fc1b6dac47a5adab9e083628339a510ebbf1134080a5b4c2011326048553e867",
+      "mode": "edge-navy",
+      "removedPixels": 28184
+    },
+    {
+      "key": "47,19",
+      "source": "tiles/base/9461fa3080e51c9c6c7f358adf563e45.webp",
+      "sha256": "fbcbd00daa5a070f3fe6def067f5837e2015428d99e76882ee64ea231a77fc21",
+      "mode": "edge-navy",
+      "removedPixels": 19239
+    },
+    {
+      "key": "47,20",
+      "source": "tiles/base/0ff60d4df04010ebab864431eaf598f5.webp",
+      "sha256": "7ebaa962b376829e3594e8f76219d23437283693b46dc7f8f09a5800a5dcc0bd",
+      "mode": "edge-navy",
+      "removedPixels": 45730
+    },
+    {
+      "key": "47,21",
+      "source": "tiles/base/0acd5382560775125a970cbb9a9028a0.webp",
+      "sha256": "7c7ba314ae6a6e568fc95ba43036bc1bb8008bc3f671bd1ae79dac778a6e1e71",
+      "mode": "edge-navy",
+      "removedPixels": 65536
+    },
+    {
+      "key": "47,22",
+      "source": "tiles/base/8292e8420a8a75862e0d609f15ec492c.webp",
+      "sha256": "7fbbb9e02b8d6cc3592ee73e26483a71a9f06a5d74cb659717df0849d0d55c44",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,15",
+      "source": "tiles/base/7123be27198c809662f1b89f6d3aaf62.webp",
+      "sha256": "07f6aa06bedd63597b24884ab1886e8d587088c95d4498048fff925c7d19fd96",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,16",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,17",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,18",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,19",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,20",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,21",
+      "source": "tiles/base/cd6076102e0ab0faf8a740a74dd8b169.webp",
+      "sha256": "bbb4be9addb934cdc2651259ffea2f1cd6283d03e15c8cc4c7fc0539f74d7544",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "48,22",
+      "source": "tiles/base/d97464c3ce76d1ced10d69ae9310864e.webp",
+      "sha256": "55219507e13c638ffe3e7b4f68a31245da73d185fb31ee7385ce5dd7f738e0c4",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    }
+  ]
+}

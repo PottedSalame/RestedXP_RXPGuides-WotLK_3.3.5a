@@ -59,6 +59,14 @@ def package(assets,output,root=ROOT):
             if not re.fullmatch(patterns[prefix],name):raise ValueError('Unexpected payload path: '+name)
             payload['map-assets/'+prefix+name]=data
     manifest=json.loads(payload['map-assets/manifest.json'])
+    if any(r.get('physical')==530 and r.get('display')==0 for r in manifest.get('regions',[])):
+        from map_terrain_cleanup import validate
+        cleanup_bytes=checked(assets,'terrain-cleanup/manifest.json').read_bytes()
+        cleanup=json.loads(cleanup_bytes)
+        validate(assets,cleanup)
+        payload['map-assets/terrain-cleanup/manifest.json']=cleanup_bytes
+        for name,data in verified(assets/'terrain-cleanup',cleanup,('.webp',)).items():
+            payload['map-assets/terrain-cleanup/'+name]=data
     if set(manifest['tiles'])!={'0','1','530','571'}:raise ValueError('Missing terrain continent')
     for levels in manifest['tiles'].values():
         for tiles in levels.values():

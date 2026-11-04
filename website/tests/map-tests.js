@@ -6,6 +6,24 @@ export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Ka
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Terrain cleanup changes only the relocated Ghostlands images, including zoom fallbacks',()=>{
+    const region={physical:530,display:0,clip:[10,20,30,40],offset:[-10,15]},outland={physical:530,display:530,clip:[0,0,64,64],offset:[0,0]};
+    const original=Object.fromEntries(Array.from({length:7},(_,level)=>[level,{'0,0':'tiles/'+level+'.webp','1,1':'tiles/untouched.webp'}]));
+    const manifest={regions:[region,outland],tiles:{530:original}};
+    const cleanup={schema:1,region:structuredClone(region),tiles:{},originalTiles:{}};
+    for(let level=0;level<=6;level++){cleanup.tiles[level]={'0,0':level+'/0_0.webp'};cleanup.originalTiles[level]={'0,0':original[level]['0,0']};}
+    const before=JSON.stringify(manifest),layers=P.terrainLayers(manifest,cleanup);
+    for(let level=0;level<=6;level++){
+      equal(layers.get(region)[level]['0,0'],'terrain-cleanup/'+level+'/0_0.webp');
+      equal(layers.get(region)[level]['1,1'],'tiles/untouched.webp');
+    }
+    assert(layers.get(outland)===original);equal(JSON.stringify(manifest),before);
+    assert(P.terrainLayers(manifest).get(region)===original);
+    for(const change of [c=>c.region.offset[0]++,c=>c.region.display=1,c=>c.originalTiles[5]['0,0']='stale',c=>delete c.tiles[3],c=>c.tiles[6]['0,0']='../private.webp']){
+      const bad=structuredClone(cleanup);change(bad);let rejected=false;
+      try{P.terrainLayers(manifest,bad);}catch{rejected=true;}assert(rejected);
+    }
+  });
   await test('Trainer badges distinguish profession/class teachers from gathering nodes without inventing unknown classes',()=>{
     const ordinary=['start','vendor','trainer','object'];
     equal(markerAppearance(['trainer','profession-mining'],new Set(['profession-mining']),ordinary),{role:'trainer',badge:'profession-mining'});
@@ -222,7 +240,7 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       assert(get('map-content').hidden);delayed=false;requests=0;
     });
     await test('Map remains unloaded while collapsed; opens from a repository-relative URL',async()=>{
-      equal(requests,0);get('terrain-panel').open=true;await sleep(700);assert(!get('map-content').hidden,get('map-status').textContent);equal(requests,3);
+      equal(requests,0);get('terrain-panel').open=true;await sleep(700);assert(!get('map-content').hidden,get('map-status').textContent);equal(requests,4);
       equal(get('map-zone').value,'4');
     });
     await test('All event controls start off, retain explicit choices and clear stale popups',async()=>{
