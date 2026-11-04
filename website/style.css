@@ -99,3 +99,68 @@ li { overflow-wrap: anywhere; margin: .25rem 0; }
   #terrain { height: auto; }
   .map-controls select { max-width: 100%; }
 }
+
+/* Stable, session-only editing workspace. Existing controls are moved, not
+   duplicated; the same source editor, forms and map canvases stay mounted. */
+#document-name { font-size: 1rem; font-weight: normal; margin-left: .6rem; overflow-wrap: anywhere; }
+.document-toolbar { align-items: center; padding: .4rem 0; }
+.workspace-ready .document-toolbar { position: sticky; top: 0; z-index: 10; background: #edf2f6; border-bottom: 1px solid #9aafbe; }
+.command-menu { position: relative; }
+.command-menu > summary { cursor: pointer; padding: .3rem .8rem; border: 1px solid #7f9aad; background: #e0eaf2; }
+.command-content { position: absolute; z-index: 20; top: 100%; left: 0; width: min(26rem, calc(100vw - 3rem)); padding: .8rem; border: 1px solid #7f9aad; background: #fafdff; max-height: 75vh; overflow: auto; }
+.command-content > button { display: block; margin: .4rem 0; }
+#export-menu .command-content { left: auto; right: 0; }
+.command-content section { margin: 0; padding: 0; border: 0; }
+.command-content h2 { margin-top: .4rem; }
+.command-content .file-picker { display: block; }
+.command-content .file-picker input { width: 100%; margin-top: .3rem; }
+.workspace-ready .editor-grid { grid-template-columns: minmax(13rem, 16rem) minmax(20rem, 1fr) minmax(18rem, 21rem); gap: .75rem; }
+.workspace-ready #guide-outline { grid-column: 1; grid-row: 1; }
+.workspace-ready #workspace-main { grid-column: 2; grid-row: 1; padding: 0; }
+.workspace-ready #workspace-inspector { grid-column: 3; grid-row: 1; min-width: 0; background: #fafdff; border: 1px solid #9aafbe; padding: .65rem; }
+.workspace-ready #guide-outline, .workspace-ready #workspace-inspector { position: sticky; top: 3.6rem; max-height: calc(100vh - 4.5rem); overflow: auto; }
+.workspace-tabs { display: flex; gap: .25rem; flex-wrap: wrap; padding: .4rem; background: #e0ecf4; border-bottom: 1px solid #9aafbe; }
+.workspace-tabs [aria-selected="true"] { background: #213c50; color: #fafdff; border-color: #213c50; }
+#workspace-tabs { position: sticky; top: 3.2rem; z-index: 5; }
+.workspace-ready #workspace-pages > section, .workspace-ready #workspace-inspector > section { border: 0; padding: .75rem; }
+.workspace-ready #workspace-pages > #write-page { border-top: 3px solid #4384a5; }
+.workspace-ready #workspace-inspector > #lookup-page { border-top: 3px solid #587f99; }
+.workspace-ready #workspace-inspector > section { padding: .65rem 0 0; }
+.workspace-ready #terrain-panel { padding: .75rem; border: 0; }
+.workspace-ready #terrain-panel > summary { display: none; }
+.workspace-ready .map-layout { display: block; }
+.workspace-ready .map-controls { align-items: end; }
+.workspace-ready .map-controls label { flex: 1 1 10rem; }
+.workspace-ready .map-controls select { width: 100%; max-width: 100%; }
+.workspace-ready .field-grid { grid-template-columns: 1fr; }
+.workspace-ready #source { min-height: 32rem; height: 65vh; }
+.workspace-ready #preview { max-height: none; }
+.selection-context { margin: 0 0 .5rem; padding: .4rem; background: #e2edf4; font-size: .9rem; overflow-wrap: anywhere; }
+#guide-properties, #instruction-advanced, #map-filters { border-top: 1px solid #b6c8d4; margin-top: .7rem; padding-top: .5rem; }
+#guide-properties > summary, #instruction-advanced > summary, #map-filters > summary { cursor: pointer; font-weight: 600; }
+.problems-panel { border: 1px solid #9aafbe; background: #fafdff; padding: .65rem; }
+.problems-panel > summary { cursor: pointer; font-weight: 600; }
+.diagnostic-link { text-align: left; border: 0; padding: .1rem; background: transparent; color: inherit; text-decoration: underline; }
+.field-errors { padding-left: 1.2rem; font-size: .88rem; }
+#outline-toggle { display: none; }
+.workspace-ready :is(input,select,textarea,button,summary) { scroll-margin-top: 4rem; }
+.workspace-ready canvas { scroll-margin-top: 6rem; }
+[aria-invalid="true"] { border-color: #922626; }
+@media (max-width: 1100px) {
+  .workspace-ready .editor-grid { grid-template-columns: minmax(12rem, 14rem) minmax(0, 1fr); }
+  .workspace-ready #workspace-inspector { grid-column: 2; grid-row: 2; position: static; max-height: none; }
+  .workspace-ready #guide-outline { grid-row: 1 / span 2; }
+}
+@media (max-width: 700px) {
+  .workspace-ready .editor-grid { display: flex; flex-direction: column; }
+  #outline-toggle { display: inline-block; }
+  .workspace-ready #guide-outline { display: none; position: static; max-height: none; }
+  .workspace-ready .outline-open #guide-outline { display: block; }
+  .workspace-ready #workspace-inspector { position: static; max-height: none; }
+  .workspace-ready .document-toolbar { position: relative; }
+  .command-menu { position: static; }
+  #workspace-tabs { top: 0; }
+  #document-name { display: block; margin: 0; }
+  #export-menu .command-content, .command-content { left: 0; right: auto; }
+  .command-content { max-width: calc(100vw - 2rem); }
+}

@@ -4,6 +4,10 @@ This independent `website` branch contains the tools hub, guide editor, static
 terrain and client icons. It has no parent commits or addon source history.
 The addon remains on `main`.
 
+The editor has **Write**, **Map** and **Source** views, with a searchable step
+outline and instruction details alongside them. File and Export menus group
+document actions; source problems link directly to the affected line.
+
 The editor also includes [dungeon, raid and underground references](website/INTERIORS.md),
 with searchable instance entities and view-only interior imagery.
 

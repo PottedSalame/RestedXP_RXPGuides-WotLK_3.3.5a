@@ -3,6 +3,7 @@ import argparse
 import functools
 import importlib.util
 import json
+import os
 import shutil
 import subprocess
 import tempfile
@@ -78,7 +79,7 @@ def run(browser, lua_command=None, live_wowhead=False):
                 command = [str(browser), "--headless", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
                     "--disable-background-networking", "--disable-component-update", "--disable-sync", "--disable-extensions",
                     "--metrics-recording-only", "--user-data-dir=" + str(scratch / ("profile-" + str(index))),
-                    "--dump-dom", "--virtual-time-budget=20000", url]
+                    "--dump-dom", "--virtual-time-budget=30000", url]
                 result = subprocess.run(command, capture_output=True, timeout=120)
                 html = result.stdout.decode("utf-8", errors="replace")
                 (scratch / f"browser-{index}.html").write_text(html, encoding="utf-8")
@@ -109,9 +110,15 @@ def run(browser, lua_command=None, live_wowhead=False):
     finally:
         if success:
             # Only our uniquely allocated child, never caller-owned files.
-            if scratch.parent != scratch_root.resolve() or not scratch.name.startswith("browser-") or scratch.is_symlink():
+            if scratch.parent != scratch_root.resolve() or not scratch.name.startswith("browser-") or scratch.is_symlink() or scratch.is_junction():
                 raise RuntimeError("Unsafe cleanup target")
-            shutil.rmtree(scratch)
+            # The verified child can exceed MAX_PATH inside Chrome's profile.
+            # Ignore only files Chrome already removed during shutdown.
+            def disappeared(function,path,error):
+                if not isinstance(error,FileNotFoundError):raise error
+            cleanup=str(scratch)
+            if os.name=='nt':cleanup='\\\\?\\UNC\\'+cleanup[2:] if cleanup.startswith('\\\\') else '\\\\?\\'+cleanup
+            shutil.rmtree(cleanup,onexc=disappeared)
         else:
             print("Failure diagnostics retained in " + scratch.relative_to(REPO).as_posix(), flush=True)
 

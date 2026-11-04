@@ -9,12 +9,13 @@
 <h1>Guide Editor: instructions and limitations</h1>
 <h2>Create or edit</h2>
 <ol>
-<li>Open the Guide Editor. Start with the custom guide or open a UTF-8 plain-text / Lua guide file (up to 12 MiB). Nothing is uploaded.</li>
+<li>Open the Guide Editor. Use File to start a custom guide or open a UTF-8 plain-text / Lua guide file (up to 12 MiB). Nothing is uploaded.</li>
 <li>For a multi-guide file, select the guide, then a step and instruction. Form edits update the selected instruction, preview and source as you type. Undo groups consecutive typing in the same field. Add, duplicate, delete or move steps using the buttons.</li>
 <li>Use Source for conditions, repeated headers, sticky instructions, labels and advanced directives. The source view represents the entire original file, not just the selected guide.</li>
 <li>Choose New instruction to prepare a separate instruction, then Add instruction to insert it. Existing instructions update immediately; drafts are not added until you confirm.</li>
-<li>Check validation messages. Download the original/edited file for a backup. Unchanged imports retain original UTF-8 bytes, including line endings and BOM.</li>
+<li>Choose Check source, then select a problem to visit its source line. Use File to save the complete file, or Export for the selected guide and companion files. Unchanged imports retain original UTF-8 bytes, including line endings and BOM.</li>
 </ol>
+<p>Write, Map and Source share the same document. The step outline stays on the left; Instruction, Locations and Lookup appear on the right. On narrow screens, use Steps to reveal the outline. Guide properties contains the guide headers; Conditions contains the selected instruction's condition.</p>
 <p>Browser storage is local to the browser and site address. It may be cleared or denied. One last draft is retained; editing a different document replaces it. Download important work before switching documents, origins or browsers. A previous draft is offered for explicit restoration, not silently opened.</p>
 <h2 id="install">Test a guide in WoW</h2>
 <ol>
@@ -39,7 +40,7 @@
 <p>Reference text is supplied by and linked to Wowhead; it is not bundled into the website. Directive and map choices come from RXPGuides.</p>
 <h2>Map</h2>
 <p>Regions separates Continents, Dungeons, Raids and Underground locations. Interior views are reference imagery, not calibrated floors. Search the instance-wide entity list and use Entity details to add target, quest or interaction instructions. Shared interiors without verified spawn associations have no entity list. Interior map clicks never create coordinates.</p>
-<p>Expand Map, then choose a continent and zone. Drag to pan, use the wheel or +/− to zoom, and toggle layers in the legend. Arrow keys pan when the canvas is focused. Local terrain must be generated first; missing artwork does not stop guide editing.</p>
+<p>Choose Map, then a continent and zone. Drag to pan, use the wheel or +/− to zoom, and open Layers, professions and events for the legend. Arrow keys pan when the canvas is focused. Missing artwork does not stop guide editing.</p>
 <p>Click terrain to propose coordinates, then Add waypoint or Replace coordinates. Select a numbered waypoint to edit its instruction; dragging it makes one undoable edit. Escape cancels a drag. Numeric X/Y fields provide the same editing actions without dragging.</p>
 <p>Visible locations also have a keyboard-accessible list. Open Location details for names, IDs, quest relations and explicit instruction actions. Wowhead details are fetched only when requested.</p>
 <p>Overlays are AzerothCore base-snapshot spawn/home locations, not live NPC positions or proof of quest availability. Moving, pooled, phased and event-dependent spawns are identified where the snapshot supplies that evidence. Lines show authored order, not traversable or safe routes. Conditions are not simulated.</p>

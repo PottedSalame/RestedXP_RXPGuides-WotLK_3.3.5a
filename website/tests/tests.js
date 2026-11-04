@@ -3,6 +3,7 @@ import * as W from '../guide-editor/wowhead.js';
 import {mapTests,mapUITests,fixture as mapFixture} from './map-tests.js';
 import {waypoints,moveWaypoint} from '../guide-editor/map-model.js';
 import {interiorTests} from './interior-tests.js';
+import {workspaceTests} from './workspace-tests.js';
 
 const output = document.getElementById('test-results');
 const passed = [], failed = [];
@@ -184,6 +185,7 @@ try {
   const input = (id, value) => { get(id).value = value; get(id).dispatchEvent(new w.Event('input', {bubbles: true})); };
   await test('Production UI starts without errors', () => { assert(get('status').textContent.startsWith('Ready')); equal(get('steps').options.length, 1); assert(get('source').value.includes('#group RXPGuides Custom Guides')); });
   await test('Metadata is live without initialization writes or focus replacement', async () => {
+    get('guide-properties').open=true;
     const old = get('source').value; change('header-name', 'name'); equal(get('source').value, old);
     const control = get('header-value'); control.focus(); input('header-value', 'Visual Test'); await sleep(0);
     assert(get('source').value.includes('#name Visual Test')); assert(get('guides').selectedOptions[0].textContent.includes('Visual Test'));
@@ -194,10 +196,11 @@ try {
     equal(get('action').value, 'goto'); equal(get('arg-0').value, 'Durotar');
   });
   await test('Leaving source flushes pending edits before editing a form', async () => {
+    get('workspace-tabs-source').click();
     get('source').focus(); input('source', basic.replace('43.33', '42'));
     get('arg-1').focus(); await sleep(0); equal(get('arg-1').value, '42'); assert(d.activeElement === get('arg-1'));
     input('arg-1', '41'); await sleep(0); assert(get('source').value.includes('Durotar,41,68.61'));
-    input('source', basic); await sleep(400);
+    input('source', basic); await sleep(400);get('workspace-tabs-write').click();
   });
   await test('Visual form edit, undo and redo', async () => {
     const control = get('arg-1'); control.focus(); input('arg-1', '4'); await sleep(0); input('arg-1', '44'); await sleep(0);
@@ -246,7 +249,7 @@ try {
     } finally { w.HTMLAnchorElement.prototype.click = originalClick; }
   });
   await test('Icy blue section accents remain distinct with readable text contrast', () => {
-    const panels = [...d.querySelectorAll('.editor-grid > section')];
+    const panels = [...d.querySelectorAll('#guide-outline, #write-page, #lookup-page')];
     const accents = panels.map(panel => w.getComputedStyle(panel).borderTopColor);
     assert(new Set(accents).size >= 3);
     const rgb = color => color.match(/[\d.]+/g).slice(0, 3).map(Number);
@@ -331,6 +334,7 @@ try {
     assert(d.querySelector('label[for="source"]')); assert(get('up').textContent === 'Move up');
   });
   await mapUITests(test,assert,equal,sleep,w,d,input,basic);
+  await workspaceTests(test,assert,equal,sleep,w,d,input,basic);
   w.onbeforeunload = null;
 } catch (error) { failed.push('Production UI harness: ' + error.message); }
 finally {

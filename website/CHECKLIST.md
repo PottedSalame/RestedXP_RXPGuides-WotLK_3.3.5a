@@ -39,7 +39,19 @@ and in-game outcomes remain separate from automated results.
 
 ## Local map acceptance
 
-1. Expand Map. Check Durotar, Elwynn Forest, Hellfire Peninsula and a Northrend
+Before map testing, try the new workspace:
+
+- Switch Write / Map / Source with an unfinished instruction. It must remain a
+  draft until Add; switching views must not alter source or Undo history.
+- Find a step by text or number; clear the search and verify its position.
+- Use Check source on an invalid coordinate. Select its problem, correct the
+  highlighted line, and verify the form error clears.
+- Try File / Export, Escape, and keyboard tab navigation. At a narrow width,
+  use Steps to open the outline; the inspector should stack below the editor.
+- Check guide headers under Guide properties and instruction conditions under
+  Conditions. Download a full-file backup before closing the page.
+
+1. Choose Map. Check Durotar, Elwynn Forest, Hellfire Peninsula and a Northrend
    zone, then Eversong Woods and Azuremyst Isle. Pan, zoom and resize. Coastlines
    and markers must move together; expansion starters belong to EK/Kalimdor.
    Confirm the viewport stays square on wide and narrow screens. Try slow wheel

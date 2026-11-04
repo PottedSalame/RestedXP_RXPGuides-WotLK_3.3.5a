@@ -1,6 +1,7 @@
 import {NEW_GUIDE, FORMS, MAX_BYTES, History, decodeFile, encodeFile, parseDocument, instruction,
   buildInstruction, editGuide, setHeader, moveStep, newline, validate, companion, applyTextarea, reparseEditedGuide} from './model.js';
 import {referenceInput, referenceURL, searchURL, createLookup} from './wowhead.js';
+import {createWorkspace} from './workspace.js';
 
 const $ = id => document.getElementById(id);
 const state = {history: new History(NEW_GUIDE), filename: 'MyGuide.txt', guide: 0, step: 0, line: 0,
@@ -17,6 +18,7 @@ const option = (label, value) => { const result = node('option', label); result.
 const guide = () => state.document?.guides[state.guide];
 const step = () => guide()?.steps[state.step];
 const currentLine = () => step()?.lines[state.line];
+const workspace = createWorkspace({beforeView: flushSource});
 function status(message, error = false) { $('status').textContent = message; $('status').className = 'status' + (error ? ' error' : ''); }
 function safely(action) { return event => { event?.preventDefault(); try { action(event); } catch (error) { status(error.message, true); } }; }
 function flushSource() {
@@ -32,7 +34,7 @@ function saveDraft() {
   if (!draftDirty) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({version: 1, filename: state.filename, text: state.history.text, guide: state.guide, step: state.step}));
-      $('storage-status').textContent = 'Draft saved locally.';
+      $('storage-status').textContent = 'Draft saved in this browser · not a downloaded backup.';
       $('restore').disabled = false;
       draftDirty = false;
     } catch { $('storage-status').textContent = 'Local draft could not be saved (storage disabled or full). Download your work now.'; }
@@ -59,6 +61,7 @@ function populateForm() {
   state.formEditable = Boolean(supported);
   $('line-hint').textContent = supported ? 'Changes apply as you type.' : 'Edit this line in Source, or add a new instruction.';
   $('append-line').hidden = true; $('cancel-line').hidden = true;
+  $('instruction-advanced').open = Boolean($('condition').value);
 }
 function renderArguments(values = []) {
   $('arguments').replaceChildren();
@@ -66,13 +69,63 @@ function renderArguments(values = []) {
     const label = node('label', title), input = node('input');
     input.id = 'arg-' + index; input.value = values[index] || ''; input.autocomplete = 'off';
     if ($('action').value === 'goto' && index === 0) input.setAttribute('list', 'map-tokens');
-    label.append(input); $('arguments').append(label);
+    const error=node('small');error.id='arg-error-'+index;error.className='error';error.hidden=true;input.setAttribute('aria-describedby',error.id);
+    label.append(input,error); $('arguments').append(label);
   }
+}
+function renderSteps() {
+  const query=$('step-search').value.trim().toLowerCase(),items=guide()?.steps||[];
+  const matched=items.map((item,index)=>({item,index})).filter(({item,index})=>!query||String(index+1)===query||item.lines.some(line=>line.text.toLowerCase().includes(query)));
+  const shown=matched.slice();
+  if(items[state.step]&&!shown.some(({index})=>index===state.step))shown.push({item:items[state.step],index:state.step});
+  shown.sort((a,b)=>a.index-b.index);
+  $('steps').replaceChildren(...shown.map(({item,index})=>option((index+1)+'. '+(item.lines.find(line=>/^\s*(>>|\+|\.)/.test(line.text))?.text.trim()||item.text).slice(0,110),index)));
+  $('steps').value=state.step;
+  $('step-search-status').textContent=query?matched.length+' matching steps'+(shown.length>matched.length?' · selected step retained':''):'';
+}
+function selectionContext() {
+  $('document-name').textContent=guide()?.names.join(' / ')||state.filename;
+  workspace.context(step()?'Editing step '+(state.step+1)+(state.drafting?' · new instruction':' · instruction '+(state.line+1)):'Select or add a step.');
+}
+function openDiagnostic(item,snapshot) {
+  flushSource();
+  if(snapshot!==state.history.text){check();status('Source changed. Select the updated problem.');return;}
+  const active=guide(),line=active?.lines[item.line-1];
+  if(line){
+    const at=active.steps.findIndex(s=>line.start>=s.start&&line.start<s.stop);
+    if(at>=0){state.step=at;state.line=Math.max(0,active.steps[at].lines.findIndex(l=>l.start===line.start));refresh();}
+  }
+  workspace.show('source');
+  const start=line?state.history.text.slice(0,active.start+line.start).replace(/\r\n?/g,'\n').length:0;
+  $('source').focus();$('source').setSelectionRange(start,start+(line?.text.length||0));
+  const preceding=$('source').value.slice(0,start).split('\n').length-1;
+  $('source').scrollTop=Math.max(0,preceding*parseFloat(getComputedStyle($('source')).lineHeight)-60);
 }
 function check() {
   const diagnostics = [...(state.document?.errors || []).map(message => ({severity: 'error', message})), ...(guide() ? validate(guide(), state.catalogue) : [])];
   $('diagnostics').replaceChildren();
-  for (const item of diagnostics) { const li = node('li', (item.line ? 'Line ' + item.line + ': ' : '') + item.message); li.className = item.severity; $('diagnostics').append(li); }
+  const snapshot=state.history.text,currentNumber=guide()?.lines.findIndex(line=>line.start===currentLine()?.start)+1;
+  $('instruction-errors').replaceChildren();
+  for(const input of $('arguments').querySelectorAll('input')){input.removeAttribute('aria-invalid');const help=$(input.getAttribute('aria-describedby'));help.hidden=true;help.textContent='';}
+  const fieldError=(index,message)=>{const input=$('arg-'+index),help=$('arg-error-'+index);if(input&&help){input.setAttribute('aria-invalid','true');help.textContent=message;help.hidden=false;}};
+  for (const item of diagnostics) {
+    const li=node('li'),button=node('button',(item.line?'Line '+item.line+': ':'')+item.message);
+    li.className=item.severity;button.type='button';button.className='diagnostic-link';button.onclick=safely(()=>openDiagnostic(item,snapshot));li.append(button);$('diagnostics').append(li);
+    if(item.line&&item.line===currentNumber){
+      const local=node('li',item.message);local.className=item.severity;$('instruction-errors').append(local);
+      if(item.severity==='error'&&state.formEditable&&!state.drafting){
+        if(/integer ID|Item ID/.test(item.message))fieldError(0,item.message);
+        else if(/client objective index|Quantity/.test(item.message))fieldError(1,item.message);
+        else if(/Radius/.test(item.message))fieldError(3,item.message);
+        else if(/Coordinates must/.test(item.message))for(const index of [1,2]){
+          const value=$('arg-'+index)?.value,world=/^\d+\/\d+$/.test($('arg-0')?.value||'');
+          if(!value||!Number.isFinite(Number(value))||!world&&(Number(value)<0||Number(value)>100))fieldError(index,item.message);
+        }
+      }
+    }
+  }
+  const errors=diagnostics.filter(d=>d.severity==='error').length,warnings=diagnostics.length-errors;
+  $('problems-summary').textContent='Problems · '+errors+' errors · '+warnings+' warnings';
   if (!diagnostics.length) $('diagnostics').append(node('li', 'No source issues found. Test in-game before use.'));
   return diagnostics;
 }
@@ -87,8 +140,7 @@ function refresh(replaceSource = true) {
   $('guides').value = state.guide;
   const active = guide();
   state.step = Math.max(0, Math.min(state.step, (active?.steps.length || 0) - 1));
-  $('steps').replaceChildren(...(active?.steps || []).map((item, index) => option((index + 1) + '. ' + (item.lines.find(line => /^\s*(>>|\+|\.)/.test(line.text))?.text.trim() || item.text).slice(0, 110), index)));
-  $('steps').value = state.step;
+  renderSteps();
   state.line = Math.max(0, Math.min(state.line, (step()?.lines.length || 0) - 1));
   $('instructions').replaceChildren(...(step()?.lines || []).map((item, i) => option(item.text.trim().slice(0, 150) || '(blank)', i)));
   $('instructions').value = state.line;
@@ -102,6 +154,7 @@ function refresh(replaceSource = true) {
   updateMetadata(); populateForm(); check(); updateExport(); terrainMap?.sync();
 }
 function renderPreview(draft) {
+  selectionContext();
   $('preview').replaceChildren();
   for (const line of step()?.lines || []) {
     const parsed = instruction(line);
@@ -138,7 +191,8 @@ function flushLive() {
     if (kind === 'header') $('guides').options[state.guide].textContent = (state.guide + 1) + '. ' + (guide().names.join(' / ') || '(unnamed)');
     else {
       $('instructions').options[state.line].textContent = currentLine().text.trim().slice(0, 150) || '(blank)';
-      $('steps').options[state.step].textContent = (state.step + 1) + '. ' + (step().lines.find(line => /^\s*(>>|\+|\.)/.test(line.text))?.text.trim() || step().text).slice(0, 110);
+      const selectedStep=[...$('steps').options].find(o=>Number(o.value)===state.step);
+      if(selectedStep)selectedStep.textContent = (state.step + 1) + '. ' + (step().lines.find(line => /^\s*(>>|\+|\.)/.test(line.text))?.text.trim() || step().text).slice(0, 110);
       $('line-hint').textContent = 'Changes apply as you type.';
     }
     renderPreview(); $('undo').disabled = false; $('redo').disabled = true;
@@ -163,7 +217,7 @@ function replaceDocument(text, filename) {
   documentSerial++;
   clearTimeout(sourceTimer); sourceTimer = null; clearTimeout(saveTimer);
   state.history = new History(text); state.filename = filename; state.guide = 0; state.step = 0; state.line = 0;
-  state.saved = text; refresh(); scheduleSave();
+  state.saved = text; $('step-search').value=''; refresh(); scheduleSave();
   status(filename + ': ' + state.document.guides.length + ' supported guide(s).');
 }
 function confirmReplace() { flushSource(); return state.history.text === state.saved || confirm('Replace the current document? Download it first if you need a separate backup.'); }
@@ -208,9 +262,10 @@ $('clone').onclick = safely(() => {
 $('undo').onclick = safely(() => { flushSource(); state.history.undo(); refresh(); scheduleSave(); });
 $('redo').onclick = safely(() => { flushSource(); state.history.redo(); refresh(); scheduleSave(); });
 $('restore').onclick = safely(() => { clearTimeout(saveTimer); const draft = readDraft(); if (draft && confirm('Replace this document with the last browser draft?')) { replaceDocument(draft.text, draft.filename); state.guide = Number(draft.guide) || 0; state.step = Number(draft.step) || 0; refresh(); } });
-$('guides').onchange = safely(event => { const selected = Number(event.target.value); flushSource(); state.guide = selected; state.step = 0; state.line = 0; refresh(); });
+$('guides').onchange = safely(event => { const selected = Number(event.target.value); flushSource(); state.guide = selected; state.step = 0; state.line = 0; $('step-search').value=''; refresh(); });
+$('step-search').oninput = safely(()=>{flushSource();renderSteps();});
 $('steps').onchange = safely(event => { const selected = Number(event.target.value); flushSource(); state.step = selected; state.line = 0; refresh(); });
-$('instructions').onchange = safely(event => { const selected = Number(event.target.value); flushSource(); state.line = selected; state.drafting = false; lastInput = null; populateForm(); renderPreview(); $('delete-line').disabled = !currentLine(); terrainMap?.sync(); });
+$('instructions').onchange = safely(event => { const selected = Number(event.target.value); flushSource(); state.line = selected; state.drafting = false; lastInput = null; populateForm(); renderPreview(); check(); workspace.inspect('details'); $('delete-line').disabled = !currentLine(); terrainMap?.sync(); });
 $('header-name').onchange = () => { flushSource(); lastInput = null; updateMetadata(); };
 $('metadata').onsubmit = safely(() => { queueLive('header', $('header-value')); flushLive(); });
 $('add-step').onclick = safely(() => { flushSource(); const active = guide(), eol = newline(active.body); const at = step()?.stop ?? active.body.length; state.step = step() ? state.step + 1 : 0; state.line = 0; commit(editGuide(state.history.text, active, at, at, (at && !/[\r\n]$/.test(active.body.slice(0, at)) ? eol : '') + 'step' + eol + '    >>New instruction' + eol)); });
@@ -222,12 +277,12 @@ $('instruction-form').onsubmit = safely(() => { if (state.drafting) $('append-li
 $('new-line').onclick = safely(() => {
   flushSource(); state.drafting = true; lastInput = null; $('action').value = 'note'; renderArguments();
   $('display-text').value = ''; $('condition').value = ''; $('append-line').hidden = false; $('cancel-line').hidden = false;
-  $('delete-line').disabled = true; $('line-hint').textContent = 'New instruction — add when ready.'; $('display-text').focus();
+  $('delete-line').disabled = true; $('line-hint').textContent = 'New instruction — add when ready.'; workspace.inspect('details'); selectionContext(); $('display-text').focus();
 });
 $('cancel-line').onclick = () => { liveQueued = false; state.drafting = false; populateForm(); renderPreview(); $('delete-line').disabled = !currentLine(); };
 $('append-line').onclick = safely(() => { const replacement = formLine(); flushSource(); const active = guide(), at = step().stop, eol = newline(active.body); state.line = step().lines.length; commit(editGuide(state.history.text, active, at, at, (at && !/[\r\n]$/.test(active.body.slice(0, at)) ? eol : '') + replacement + eol)); });
 $('delete-line').onclick = safely(() => { flushSource(); const line = currentLine(); if (line) commit(editGuide(state.history.text, guide(), line.start, line.next, '')); });
-$('validate').onclick = safely(() => { flushSource(); check(); status('Preliminary checks complete. Review warnings and test in-game.'); });
+$('validate').onclick = safely(() => { flushSource(); check(); $('problems-panel').open=true; status('Preliminary checks complete. Review warnings and test in-game.'); });
 $('slug').oninput = updateExport;
 for (const format of ['toc', 'lua']) $(format).onclick = safely(() => {
   flushSource(); const active = guide();
@@ -258,7 +313,7 @@ $('terrain-panel').addEventListener('toggle', async () => {
         state.line = step().lines.length;
         commit(editGuide(state.history.text, active, at, at, (at && !/[\r\n]$/.test(active.body.slice(0, at)) ? eol : '') + instruction + eol));
       },
-      lookup(kind, id) { $('reference-type').value = kind; $('query').value = id; clearTimeout(queryTimer); search(); }
+      lookup(kind, id) { workspace.inspect('lookup'); $('reference-type').value = kind; $('query').value = id; clearTimeout(queryTimer); search(); }
     });
     await terrainMap.show(true);
   } catch (error) { $('map-status').textContent = error.message; }
@@ -318,6 +373,7 @@ $('use-reference').onclick = safely(() => {
   const verb = {accept: 'Accept ', turnin: 'Turn in ', complete: 'Complete ', collect: 'Collect ', use: 'Use ', target: 'Talk to ', mob: 'Kill '}[$('action').value];
   $('display-text').value = verb + name;
   queueLive('instruction', $('use-reference')); flushLive();
+  workspace.inspect('details');
   status(state.drafting ? 'Reference ready. Add the instruction when ready.' : 'Instruction updated.');
 });
 window.addEventListener('beforeunload', event => { flushSource(); saveDraft(); if (state.history.text !== state.saved) { event.preventDefault(); event.returnValue = ''; } });

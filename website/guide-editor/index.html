@@ -11,37 +11,40 @@
 <body>
 <header><nav><a href="../">RXPGuides Tools</a> / Guide Editor</nav><a href="../help.html">Help and installation</a></header>
 <main>
-  <h1>Guide Editor</h1>
+  <h1>Guide Editor <span id="document-name"></span></h1>
   <div class="document-toolbar">
-    <fieldset><legend>File</legend><div class="toolbar">
+    <details id="file-menu" class="command-menu"><summary>File</summary><div class="command-content">
       <button id="new">New</button>
       <label class="file-picker">Open <input id="open" type="file" accept=".txt,.lua,text/plain"></label>
       <button id="save" title="Download the entire file, preserving its original format">Save file</button>
-      <button id="raw" title="Download only the selected guide's source">Save guide text</button>
-    </div></fieldset>
-    <fieldset><legend>Edit</legend><div class="toolbar">
-      <button id="undo">Undo</button><button id="redo">Redo</button>
       <button id="clone">Save as new guide</button>
       <button id="restore" disabled>Restore draft</button>
-    </div></fieldset>
+    </div></details>
+    <button id="undo">Undo</button><button id="redo">Redo</button>
+    <button id="validate">Check source</button>
+    <details id="export-menu" class="command-menu"><summary>Export</summary><div id="export-menu-content" class="command-content"></div></details>
+    <button id="outline-toggle" aria-controls="guide-outline" aria-expanded="false">Steps</button>
   </div>
   <p id="status" class="status" role="status" aria-live="polite">Loading editor…</p>
   <p id="storage-status" class="hint" role="status"></p>
   <div class="editor-grid">
-    <section aria-labelledby="steps-title">
+    <section id="guide-outline" aria-labelledby="steps-title">
       <h2 id="steps-title">Guide and steps</h2>
       <label>Guide in this file <select id="guides"></select></label>
+      <label>Find step <input id="step-search" type="search" autocomplete="off" placeholder="Text or step number"></label>
       <label>Step <select id="steps" size="12"></select></label>
+      <p id="step-search-status" class="hint"></p>
       <div class="toolbar"><button id="add-step">Add step</button><button id="duplicate-step">Duplicate</button><button id="delete-step">Delete</button></div>
       <div class="toolbar"><button id="up">Move up</button><button id="down">Move down</button></div>
-      <h2>Metadata</h2>
+      <details id="guide-properties"><summary>Guide properties</summary>
       <form id="metadata">
         <label>Header <select id="header-name"><option value="name">Name</option><option value="group">Group</option><option value="subgroup">Subgroup</option><option value="version">Version</option></select></label>
         <label>Value <input id="header-value" autocomplete="off"></label>
       </form>
       <p class="hint">Advanced headers: edit Source.</p>
+      </details>
     </section>
-    <section aria-labelledby="instruction-title">
+    <section id="write-page" aria-labelledby="instruction-title">
       <h2 id="instruction-title">Instructions</h2>
       <label>Instruction in selected step <select id="instructions" size="6"></select></label>
       <div class="toolbar"><button id="new-line">New instruction</button><button id="delete-line">Delete instruction</button></div>
@@ -49,13 +52,14 @@
         <label>Action <select id="action"></select></label>
         <div id="arguments" class="field-grid"></div>
         <label>Instruction text <input id="display-text" autocomplete="off"></label>
-        <label>Condition after &lt;&lt; (optional) <input id="condition" autocomplete="off" placeholder="For example: Warrior"></label>
+        <details id="instruction-advanced"><summary>Conditions</summary><label>Condition after &lt;&lt; (optional) <input id="condition" autocomplete="off" placeholder="For example: Warrior"></label></details>
         <div class="toolbar"><button type="button" id="append-line" hidden>Add instruction</button><button type="button" id="cancel-line" hidden>Cancel</button></div>
       </form>
       <p id="line-hint" class="hint"></p>
+      <ul id="instruction-errors" class="field-errors" aria-live="polite"></ul>
       <h2>Instruction preview</h2><ol id="preview"></ol>
     </section>
-    <section class="reference-panel" aria-labelledby="reference-title">
+    <section id="lookup-page" class="reference-panel" aria-labelledby="reference-title">
       <h2 id="reference-title">Wowhead · WotLK</h2>
       <label>Type <select id="reference-type"><option value="quests">Quests</option><option value="npcs">NPCs / creatures</option><option value="items">Items</option><option value="objects">Game objects</option></select></label>
       <form id="reference-form"><label>Title, ID or WotLK link <input id="query" type="search" autocomplete="off" placeholder="e.g. cutting, 788, or a WotLK link"></label>
@@ -126,17 +130,18 @@
         <p class="hint">AzerothCore snapshot spawn/home locations, not live positions. Lines show instruction order, not safe paths.</p>
       </div>
     </details>
-    <section class="wide" aria-labelledby="validation-title">
-      <div class="toolbar"><h2 id="validation-title">Validation</h2><button id="validate">Check source</button></div>
+    <details id="problems-panel" class="wide problems-panel">
+      <summary id="problems-summary">Problems</summary>
       <ul id="diagnostics"></ul>
-    </section>
-    <section class="wide" aria-labelledby="source-title">
+    </details>
+    <section id="source-page" class="wide" aria-labelledby="source-title">
       <h2 id="source-title">Source — entire file</h2>
       <label for="source">Edit source</label>
       <textarea id="source" spellcheck="false" wrap="off"></textarea>
     </section>
-    <section class="wide" aria-labelledby="export-title">
+    <section id="export-page" class="wide" aria-labelledby="export-title">
       <h2 id="export-title">Companion addon export</h2>
+      <button id="raw" title="Download only the selected guide's source">Save guide text</button>
       <label>File/folder suffix <input id="slug" value="MyGuide" pattern="[A-Za-z][A-Za-z0-9_]{0,47}" maxlength="48"></label>
       <div class="toolbar"><button id="toc">Download .toc</button><button id="lua">Download Guide.lua</button></div>
       <p id="export-status" class="installation"></p>

@@ -52,6 +52,7 @@ class SitePackage(unittest.TestCase):
             self.assertNotIn('map-assets/private.txt',a['files'])
             self.assertFalse(any(n.startswith(('tools/','tests/')) for n in a['files']))
             self.assertTrue((root/'a/map-assets/icons/repair.webp').exists())
+            self.assertTrue((root/'a/guide-editor/workspace.js').exists())
             self.assertIn('../map-assets/',(root/'a/guide-editor/map-view.js').read_text())
             self.assertNotIn('../map-assets-local/',(root/'a/guide-editor/map-view.js').read_text())
             with self.assertRaisesRegex(ValueError,'empty'):package(assets,root/'a')
