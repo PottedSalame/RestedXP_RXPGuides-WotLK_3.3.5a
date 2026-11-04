@@ -68,7 +68,31 @@
     </section>
     <details id="terrain-panel" class="wide map-panel">
       <summary>Map</summary>
+      <label>Regions <select id="map-kind"><option value="outdoor">Continents</option><option value="dungeons">Dungeons</option><option value="raids">Raids</option><option value="underground">Underground locations</option></select></label>
       <p id="map-status" class="hint" role="status">Open to load local terrain.</p>
+      <div id="interior-content" hidden>
+        <div class="toolbar map-controls">
+          <label>Find region <input id="interior-search" type="search" autocomplete="off"></label>
+          <label>Region <select id="interior-region"></select></label>
+          <label>View / section <select id="interior-view"></select></label>
+          <button id="interior-out" type="button" title="Zoom out">−</button><button id="interior-in" type="button" title="Zoom in">+</button><button id="interior-reset" type="button">Reset view</button>
+        </div>
+        <p id="interior-status" class="hint" role="status"></p>
+        <p class="hint">View-only imagery: sections are not verified floors. Use the entity list to add instructions; map clicks do not create coordinates.</p>
+        <div class="map-layout">
+          <canvas id="interior-canvas" tabindex="0" aria-label="Interior reference image. Drag or arrow keys to pan; plus and minus to zoom; Escape cancels a drag. No mapped entity positions."></canvas>
+          <div class="map-sidebar">
+            <p id="interior-scope" class="hint"></p>
+            <label>Find entity <input id="interior-query" type="search" placeholder="Name or ID" autocomplete="off"></label>
+            <label>Type <select id="interior-type"><option value="all">All entities</option><option value="quests">Quest NPCs / objects</option><option value="npcs">NPCs / creatures</option><option value="objects">Game objects</option><option value="services">Vendors / trainers / repairs</option></select></label>
+            <label>Entities <select id="interior-entities" size="9"></select></label>
+            <button id="interior-entity-details" type="button">Entity details</button>
+            <p id="interior-count" class="hint"></p>
+            <div id="interior-details" aria-live="polite"></div>
+            <details><summary>Event-dependent entities</summary><div id="interior-events" class="map-event-options"></div></details>
+          </div>
+        </div>
+      </div>
       <div id="map-content" hidden>
         <div class="toolbar map-controls">
           <label>Continent <select id="map-continent"></select></label>

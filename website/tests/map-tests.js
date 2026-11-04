@@ -216,10 +216,13 @@ export async function mapTests(test,assert,equal,rejects,sleep){
   });
 }
 
+import {interiorResponse,interiorUITests} from './interior-tests.js';
+
 export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
   const get=id=>d.getElementById(id),fetch=w.fetch;let requests=0,missing=true,delayed=false,resolveOverlay;
   w.fetch=async(url,opts)=>{
     if(String(url).includes('/map-assets-local/')){
+      if(String(url).includes('/interiors/'))return interiorResponse(w,String(url));
       requests++;
       if(missing)return new w.Response('Missing',{status:404});
       if(delayed&&String(url).endsWith('/overlays/manifest.json'))return new Promise(resolve=>{resolveOverlay=resolve;});
@@ -298,5 +301,6 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       get('terrain-panel').open=false;await sleep(50);const count=requests;await sleep(100);equal(requests,count);
       get('terrain-panel').open=true;await sleep(100);equal(requests,count);
     });
+    await interiorUITests(test,assert,equal,sleep,w,d,input,basic);
   }finally{get('terrain-panel').open=false;w.fetch=fetch;}
 }

@@ -9,7 +9,7 @@ from map_professions import PROFESSIONS,CLASSES
 ROOT=REPO/'website'
 STATIC=['index.html','help.html','credits.html','style.css','guide-editor/index.html',
         'guide-editor/app.js','guide-editor/model.js','guide-editor/wowhead.js',
-        'guide-editor/map-model.js','guide-editor/map-view.js','guide-editor/map-markers.js','data/catalogue.json',
+        'guide-editor/map-model.js','guide-editor/map-view.js','guide-editor/map-markers.js','guide-editor/interior-view.js','data/catalogue.json',
         'data/LICENSE-AzerothCore.txt','data/NOTICE.txt']
 NOTICE='World of Warcraft client artwork: Blizzard Entertainment. Extracted and converted; not relicensed by RXPGuides. Terrain is not a traversability map.'
 
@@ -50,6 +50,9 @@ def package(assets,output,root=ROOT):
     payload={name:checked(root,name).read_bytes() for name in STATIC}
     payload['LICENSE-RXPGuides.txt']=(REPO/'LICENSE').read_bytes()
     payload['map-assets/icons/profession-facts.json']=facts
+    from validate_interiors import validate as validate_interiors
+    for name,data in validate_interiors(assets/'interiors').items():
+        payload['map-assets/interiors/'+name]=data
     for prefix,source,receipt,ext in [('',assets,terrain,('.webp','.json')),
         ('overlays/',assets/'overlays',overlay,('.json',)),('icons/',assets/'icons',icons,('.webp',))]:
         patterns={'':r'(?:manifest\.json|tiles/blank\.webp|tiles/base/[0-9a-f]{32}\.webp|tiles/(?:0|1|530|571)/[0-6]/\d+_\d+\.webp)',
@@ -91,7 +94,7 @@ def package(assets,output,root=ROOT):
     for name,data in sorted(payload.items()):
         path=output/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
     receipt={'schema':1,'files':{name:sha(data) for name,data in sorted(payload.items())},
-             'bytes':sum(map(len,payload.values())),'sourceReceipts':{name:sha((assets/name).read_bytes()) for name in ('receipt.json','overlays/manifest.json','icons/manifest.json')},
+             'bytes':sum(map(len,payload.values())),'sourceReceipts':{name:sha((assets/name).read_bytes()) for name in ('receipt.json','overlays/manifest.json','icons/manifest.json','interiors/receipt.json')},
              'notice':NOTICE}
     write(output/'site-receipt.json',receipt)
     print(len(payload),'static files;',receipt['bytes'],'bytes; client terrain and icons included; not deployed')

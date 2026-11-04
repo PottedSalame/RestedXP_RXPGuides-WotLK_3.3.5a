@@ -110,3 +110,18 @@ implied by passing the offline/browser checks. Deployment is a separate action.
    placeholder blocks should stay absent; a thin original terrain seam can remain.
 3. Select a Ghostlands waypoint, move it, then Undo. Marker coordinates and source
    edits should behave as before. Check Outland and Azuremyst remain unchanged.
+
+## Interior references
+
+1. Open Map → Regions → Dungeons. Select Wailing Caverns, then change the
+   view/section. Pan, zoom and use the keyboard; no guide instructions should change.
+2. Search the entity list, select an NPC and click Entity details → Add target.
+   Check the new instruction, then Undo and Redo. Try a quest or interaction note.
+3. Check Blackrock Depths, Icecrown Citadel and Deeprun Tram. Lists describe the
+   entire instance, not the displayed room. No NPCs should appear as mapped pins.
+4. Select a shared cave/crypt under Underground locations. Without a verified
+   spawn association, its entity list must stay empty. Reference lookup still works.
+5. Toggle an event, switch regions quickly, then collapse/reopen the panel.
+   Stale entity actions must not edit a different guide. Check a narrow window too.
+6. Return to Continents. Existing outdoor waypoint creation, drag/Undo, legends
+   and coordinate readouts should behave as before. Download and reopen the guide.

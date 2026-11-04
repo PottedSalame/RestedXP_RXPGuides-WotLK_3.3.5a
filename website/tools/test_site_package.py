@@ -40,6 +40,8 @@ class SitePackage(unittest.TestCase):
             name=role+'.webp';path=assets/'icons'/name;path.parent.mkdir(exist_ok=True);path.write_bytes(b'fixture')
             files[name]=sha(b'fixture');icons[role]={'path':name}
         write(assets/'icons/manifest.json',dict(schema=1,files=files,icons=icons,members={},factsHash=facts_hash,notice='Client artwork'))
+        from test_interiors import fixture
+        fixture(assets/'interiors')
         return assets
 
     def test_deterministic_allowlist_and_no_client_requirement(self):

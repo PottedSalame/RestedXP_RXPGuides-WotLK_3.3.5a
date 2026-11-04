@@ -1,5 +1,6 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay,terrainLayers} from './map-model.js';
 import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,CLASS_LABELS,markerAppearance,locationDescription,markerHit} from './map-markers.js';
+import {createInteriorView} from './interior-view.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects',...PROFESSION_LABELS};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS,...Object.fromEntries(Object.keys(PROFESSION_LABELS).map(key=>[key,'#d4c597']))};
 const ordinaryRoles=Object.keys(colors);
@@ -10,6 +11,8 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 export function createMap(adapter,{base=new URL('../map-assets-local/',import.meta.url),fetcher=fetch}={}) {
   const $=id=>document.getElementById(id),canvas=$('terrain'),ctx=canvas.getContext('2d');
+  const interiors=createInteriorView(adapter,{base,fetcher});
+  $('map-kind').onchange=()=>{show(false);show($('terrain-panel').open);};
   let open=false,manifest=null,overlay=null,iconManifest=null,controller=null,frame=0,markers=[],selected=null,gesture=null,motion=null;
   let terrain=null;
   const legendIcons=new Map(),legendPainted=new Map();
@@ -279,6 +282,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     else{motion=null;view.u+=({'ArrowLeft':-80,'ArrowRight':80}[event.key]||0)/view.scale;view.v+=({'ArrowUp':-80,'ArrowDown':80}[event.key]||0)/view.scale;request();}
   };
   function sync(){
+    if($('map-kind').value!=='outdoor'){interiors.sync();return;}
     if(!manifest||!open)return;
     const current=adapter.read();
     if(current.text!==documentText||current.guide!==documentGuide){motion=null;gesture=null;documentText=current.text;documentGuide=current.guide;invalidate();markers=waypoints(current.guide,manifest);$('map-waypoints').replaceChildren(...markers.map(m=>option(m.number+'. Step '+(m.step+1)+' — '+m.zone.token,m.number)));
@@ -293,8 +297,14 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     request();
   }
   async function show(value){
+    interiors.show(false);
     open=value;
     if(!open){controller?.abort();resources.cancel();observer.disconnect();if(frame)cancelAnimationFrame(frame);frame=0;gesture=null;motion=null;return;}
+    if($('map-kind').value!=='outdoor'){
+      open=false;controller?.abort();resources.cancel();observer.disconnect();if(frame)cancelAnimationFrame(frame);frame=0;
+      $('map-content').hidden=true;$('map-status').hidden=true;interiors.show(true,$('map-kind').value);return;
+    }
+    $('map-status').hidden=false;
     resources.active=true;
     if(!manifest){
       controller=new AbortController();const local=controller;

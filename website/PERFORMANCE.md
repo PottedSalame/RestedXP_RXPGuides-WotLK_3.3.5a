@@ -2,8 +2,14 @@
 
 The site has bounded, event-driven rendering, but it is not certified as
 optimal on all devices. The approximately 190 MiB terrain bundle is an installed
-payload, not an initial page download: only visible terrain and spatial overlay
+outdoor payload, not an initial page download: only visible terrain and spatial overlay
 chunks are requested when the Map panel opens.
+
+Interior references add about 87 MiB on disk, loaded separately on demand.
+Their canvas uses a 128-entry cache with four concurrent requests, native-size
+edge textures and reduced overviews for sheets larger than 64 tiles. Region
+changes cancel obsolete requests; only the selected entity list is searched.
+At most 200 entity options are rendered, with a count and search for the rest.
 
 ## Existing safeguards
 

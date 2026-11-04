@@ -75,6 +75,12 @@ li { overflow-wrap: anywhere; margin: .25rem 0; }
 .map-layout { display: grid; grid-template-columns: minmax(0, min(100%, 52rem)) minmax(14rem, 18rem); gap: .75rem; justify-content: center; align-items: start; }
 #terrain { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; background: #24333d; touch-action: none; cursor: crosshair; border: 1px solid #56748a; }
 #terrain:focus { outline: 2px solid #245d86; outline-offset: 2px; }
+#interior-canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; background: #24333d; touch-action: none; cursor: grab; border: 1px solid #56748a; }
+#interior-canvas:focus { outline: 2px solid #245d86; outline-offset: 2px; }
+#interior-details { overflow-wrap: anywhere; max-height: 18rem; overflow: auto; font-size: .9rem; }
+#interior-details button { margin: .2rem; }
+#interior-events { max-height: 14rem; display: block; }
+#interior-region, #interior-view { max-width: 26rem; }
 .map-legend-icon { width: 20px; height: 20px; vertical-align: middle; margin-right: .2rem; }
 #map-legend { margin: .5rem 0; }
 #map-legend label { display: inline-flex; align-items: center; gap: .25rem; margin: 0; }

@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import shutil
 
-def build(source, acore_build, vcvars, output, icons=False):
+def build(source, acore_build, vcvars, output, icons=False, interiors=False):
     source, acore_build, vcvars, output = (Path(p).resolve() for p in (source, acore_build, vcvars, output))
     output.mkdir(parents=True, exist_ok=True)
     # Environment setup only: no credentials printed, no filesystem operations
@@ -23,7 +23,8 @@ def build(source, acore_build, vcvars, output, icons=False):
     for path in libraries:
         if not path.is_file():
             raise ValueError('Required prebuilt library missing: ' + path.name)
-    stem = 'icon_archive' if icons else 'map_archive'
+    if icons and interiors:raise ValueError('Choose one helper')
+    stem = 'interior_archive' if interiors else 'icon_archive' if icons else 'map_archive'
     helper = Path(__file__).with_name(stem+'.cpp').resolve()
     compiler = shutil.which('cl.exe', path=env.get('PATH'))
     if not compiler:
@@ -39,5 +40,6 @@ if __name__ == '__main__':
     for name in ('acore-source', 'acore-build', 'vcvars', 'output'):
         parser.add_argument('--' + name, required=True)
     parser.add_argument('--icons', action='store_true')
+    parser.add_argument('--interiors', action='store_true')
     args = parser.parse_args()
-    build(args.acore_source, args.acore_build, args.vcvars, args.output, args.icons)
+    build(args.acore_source, args.acore_build, args.vcvars, args.output, args.icons, args.interiors)

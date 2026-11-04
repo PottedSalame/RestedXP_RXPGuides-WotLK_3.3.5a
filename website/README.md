@@ -4,6 +4,9 @@ Dependency-free HTML, CSS and JavaScript. No build step, npm packages, remote
 assets, uploads, hosting registration or automatic publication. Optional live
 reference lookups contact Wowhead's WotLK detail endpoint.
 
+See [Interior references](INTERIORS.md) for dungeon/raid imagery, entity actions,
+coverage limits and reproducible generation.
+
 ## Preview
 
 From the repository root, with Python 3.12 or newer:

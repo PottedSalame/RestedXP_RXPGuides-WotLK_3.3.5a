@@ -30,5 +30,28 @@ for _, fixture in ipairs({{'WARRIOR','Orc','Horde'}, {'MAGE','Troll','Horde'}, {
     end
     assert(actions.accept == 1 and actions.turnin == 1 and actions.goto == 1)
     assert((actions.complete == 1) == (fixture[1] == 'WARRIOR'))
+    -- Exact ID-only forms emitted by the interior reference actions. Parse
+    -- through the production parser with inert handlers; no quest action or
+    -- uploaded Lua is run.
+    local interior = assert(addon.ParseGuide([[#wotlk
+#ac335
+#group RXPGuides Custom Guides
+#name Interior reference fixture
+step
+    .target 42
+    .accept 101
+    .turnin 102
+    >>Interact with Chest (object 43).
+]]))
+    local found = {}
+    for _, step in ipairs(interior.steps) do
+        for _, element in ipairs(step.elements) do
+            assert(element.tag ~= 'goto', 'Interior reference invented coordinates')
+            if element.tag == 'target' then assert(tonumber(element.first) == 42); found.target = true end
+            if element.tag == 'accept' then assert(tonumber(element.first) == 101); found.accept = true end
+            if element.tag == 'turnin' then assert(tonumber(element.first) == 102); found.turnin = true end
+        end
+    end
+    assert(found.target and found.accept and found.turnin)
 end
 print('Website companion production parser: three class/race/faction profiles passed; handlers inert.')

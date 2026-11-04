@@ -4,6 +4,9 @@ This independent `website` branch contains the tools hub, guide editor, static
 terrain and client icons. It has no parent commits or addon source history.
 The addon remains on `main`.
 
+The editor also includes [dungeon, raid and underground references](website/INTERIORS.md),
+with searchable instance entities and view-only interior imagery.
+
 ## Local preview
 
 From this checkout, using an installed Python 3.12 or newer:

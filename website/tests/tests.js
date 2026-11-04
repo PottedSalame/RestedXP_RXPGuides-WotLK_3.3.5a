@@ -2,6 +2,7 @@ import * as M from '../guide-editor/model.js';
 import * as W from '../guide-editor/wowhead.js';
 import {mapTests,mapUITests,fixture as mapFixture} from './map-tests.js';
 import {waypoints,moveWaypoint} from '../guide-editor/map-model.js';
+import {interiorTests} from './interior-tests.js';
 
 const output = document.getElementById('test-results');
 const passed = [], failed = [];
@@ -14,6 +15,7 @@ const basic = '#wotlk\n#ac335\n#group RXPGuides Custom Guides\n#name Browser Fix
 const parse = text => M.parseDocument(text).guides[0];
 const catalogue = await fetch('../data/catalogue.json').then(r => r.json());
 await mapTests(test,assert,equal,rejects,sleep);
+await interiorTests(test,assert,equal,rejects);
 let exported;
 
 await test('UTF-8 BOM, Unicode and mixed endings round trip', () => {
