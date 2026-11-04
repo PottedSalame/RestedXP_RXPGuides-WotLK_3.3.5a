@@ -139,7 +139,16 @@ def run(browser,output,zone=None,prefix='/',scale=1,site_root=None):
         if success:
             if profile.resolve().parent!=output or profile.is_symlink() or profile.is_junction():
                 raise RuntimeError('Refusing unsafe test-profile cleanup')
-            shutil.rmtree(profile)
+            def already_removed(function,path,error):
+                # Chrome may remove its own cache entries during shutdown.
+                # Ignore only disappearance, never permissions or other errors.
+                if not isinstance(error,FileNotFoundError):raise error
+            # Deep worktree paths can exceed Win32 MAX_PATH inside Chrome's
+            # profile. Use extended syntax only after validating the exact root.
+            cleanup=str(profile)
+            if os.name=='nt':
+                cleanup='\\\\?\\UNC\\'+cleanup[2:] if cleanup.startswith('\\\\') else '\\\\?\\'+cleanup
+            shutil.rmtree(cleanup,onexc=already_removed)
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)

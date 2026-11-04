@@ -78,7 +78,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const wrap=el('label');wrap.append(input);
     if(symbols[key]){const badge=el('canvas');badge.width=20;badge.height=20;badge.className='map-legend-icon';badge.setAttribute('aria-hidden','true');wrap.append(badge);legendIcons.set(key,badge);}
     wrap.append(document.createTextNode(label));$('map-legend').append(wrap);
-    input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);invalidate();};
+    input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);request();};
   }
   $('map-continent').onchange=()=>{display=+$('map-continent').value;choices();fit();};
   $('map-zone').onchange=()=>{proposal=null;gesture=null;$('map-x').value='';$('map-y').value='';$('map-popup').replaceChildren();fit();};

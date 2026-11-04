@@ -130,6 +130,16 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       equal(get('steps').value,'0');get('map-x').value='40';get('map-y').value='60';get('map-replace').click();
       assert(get('source').value.includes('.goto Durotar,40.00,60.00'));get('undo').click();assert(get('source').value.includes('.goto Durotar,43.33,68.61'));
     });
+    await test('Selecting steps retains the unchanged map waypoint list; source edits rebuild it',async()=>{
+      input('source',basic+'\nstep\n    .goto Durotar,44,66\n');await sleep(400);
+      const list=get('map-waypoints'),original=list.firstElementChild,source=get('source').value;
+      assert(original);get('steps').value='1';get('steps').dispatchEvent(new w.Event('change'));
+      equal(get('source').value,source);assert(list.firstElementChild===original,'Step selection rebuilt waypoints');
+      get('steps').value='0';get('steps').dispatchEvent(new w.Event('change'));
+      assert(list.firstElementChild===original,'Returning to a step rebuilt waypoints');
+      input('source',source.replace('44,66','45,67'));await sleep(400);
+      assert(list.firstElementChild!==original,'Source edits must invalidate waypoint spans');
+    });
     await test('Keyboard pan/zoom and pointer cancellation do not edit source',async()=>{
       const before=get('source').value,c=get('terrain');
       for(const key of ['ArrowRight','ArrowDown','+','-','Escape'])c.dispatchEvent(new w.KeyboardEvent('keydown',{key,bubbles:true,cancelable:true}));

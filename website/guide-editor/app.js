@@ -9,6 +9,7 @@ let sourceTimer, saveTimer, queryTimer, checkTimer, searchSerial = 0, documentSe
 let liveGroup = 0, lastInput = null, lastInputTime = 0, liveQueued = false, liveAction = null;
 let lookupController;
 let terrainMap, terrainModule;
+let parsedText = null, parsedFilename = null;
 const lookup = createLookup();
 const DRAFT_KEY = 'rxp-guide-editor-draft-v1';
 const node = (tag, text) => { const result = document.createElement(tag); if (text !== undefined) result.textContent = text; return result; };
@@ -77,7 +78,10 @@ function check() {
 }
 function refresh(replaceSource = true) {
   clearTimeout(checkTimer); state.drafting = false; lastInput = null;
-  state.document = parseDocument(state.history.text, state.filename);
+  if (parsedText !== state.history.text || parsedFilename !== state.filename) {
+    state.document = parseDocument(state.history.text, state.filename);
+    parsedText = state.history.text; parsedFilename = state.filename;
+  }
   state.guide = Math.max(0, Math.min(state.guide, state.document.guides.length - 1));
   $('guides').replaceChildren(...state.document.guides.map((item, i) => option((i + 1) + '. ' + (item.names.join(' / ') || '(unnamed)'), i)));
   $('guides').value = state.guide;
@@ -126,6 +130,7 @@ function flushLive() {
     if (next === before) return;
     if (encodeFile(next).length > MAX_BYTES) throw new Error('Document exceeds 12 MiB.');
     state.document = reparseEditedGuide(state.document, before, next, state.guide, state.filename);
+    parsedText = next; parsedFilename = state.filename;
     state.history.set(next, liveGroup); documentSerial++;
     if (!guide() || state.document.errors.length) { refresh(); scheduleSave(); return; }
     // Keep focused inputs, caret, list selection and scroll positions intact.
