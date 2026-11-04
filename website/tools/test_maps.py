@@ -120,6 +120,9 @@ class Maps(unittest.TestCase):
         self.assertTrue(any('pooled' in r['notes'] for r in records))
         profession_keys={p['key'] for p in overlay['professions']}
         self.assertEqual(len(profession_keys),14)
+        classes={role for r in records for role in r['roles'] if role.startswith('class-')}
+        self.assertIn('class-warrior',classes);self.assertIn('class-mage',classes)
+        self.assertTrue(all('trainer' in r['roles'] for r in records if any(role.startswith('class-') for role in r['roles'])))
         self.assertEqual({role for r in records if r['kind']=='npcs' for role in r['roles'] if role.startswith('profession-')},profession_keys)
         self.assertEqual({role for r in records if r['kind']=='objects' for role in r['roles'] if role.startswith('profession-')},
             {'profession-herbalism','profession-mining','profession-fishing'})

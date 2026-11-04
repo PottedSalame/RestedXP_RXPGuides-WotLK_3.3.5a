@@ -5,7 +5,8 @@ import struct
 import subprocess
 import tempfile
 from map_extract import Reader, stock_archives, sha, write
-from map_professions import PROFESSIONS,client_facts
+from map_professions import PROFESSIONS,CLASSES,client_facts
+from project_paths import require_addon
 
 MEMBERS = {
     'start': r'Interface\GossipFrame\AvailableQuestIcon.blp',
@@ -15,6 +16,7 @@ MEMBERS = {
     'repair': r'Interface\Minimap\Tracking\Repair.blp',
 }
 MEMBERS.update({'profession-'+key:'Interface\\Icons\\'+icon+'.blp' for _,key,_,icon in PROFESSIONS})
+MEMBERS.update({'class-'+key:'Textures/'+key.upper()+'.blp' for _,key,_ in CLASSES})
 
 def decode(data):
     if len(data)<148 or data[:4]!=b'BLP2' or struct.unpack_from('<I',data,4)[0]!=1:
@@ -44,11 +46,14 @@ def decode(data):
 def extract(client,helper,converter,output):
     if output.exists() and any(output.iterdir()):raise ValueError('Output must be new or empty')
     output.mkdir(parents=True,exist_ok=True)
-    archives,excluded=stock_archives(client);reader=Reader(helper,archives);icons={};files={}
+    archives,excluded=stock_archives(client);reader=Reader(helper,archives);icons={};files={};project_sources={}
     try:
         facts=client_facts(reader)
         for role,member in MEMBERS.items():
-            w,h,fmt,raw=decode(reader.get(member))
+            if role.startswith('class-'):
+                data=(require_addon()/member).read_bytes();project_sources[member]=sha(data)
+            else:data=reader.get(member)
+            w,h,fmt,raw=decode(data)
             with tempfile.TemporaryDirectory(prefix='icon-',dir=output) as scratch:
                 path=Path(scratch)/('input.'+fmt);path.write_bytes(raw)
                 command=[str(converter),'-v','error','-threads','1']
@@ -60,9 +65,9 @@ def extract(client,helper,converter,output):
     finally:reader.close()
     write(output/'profession-facts.json',facts)
     write(output/'manifest.json',dict(schema=1,icons=icons,files=files,members=reader.sources,excluded=excluded,
-        factsHash=sha((output/'profession-facts.json').read_bytes()),
+        factsHash=sha((output/'profession-facts.json').read_bytes()),projectSources=project_sources,
         generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_professions.py'),Path(__file__).with_name('icon_archive.cpp'),Path(__file__).with_name('map_archive.cpp'))},
-        notice='World of Warcraft client artwork: Blizzard Entertainment. Extracted and converted; not relicensed by RXPGuides.'))
+        notice='World of Warcraft client artwork: Blizzard Entertainment. Extracted and converted; not relicensed by RXPGuides. Class badges reuse the RXPGuides project Textures, under its existing license and attribution.'))
     print('Extracted',len(icons),'stock UI icons')
 
 if __name__=='__main__':

@@ -20,6 +20,15 @@ PROFESSIONS=[
     (129,'first-aid','First Aid','Spell_Holy_SealOfSacrifice'),
     (356,'fishing','Fishing','Trade_Fishing')]
 
+CLASSES=[(1,'warrior','Warrior'),(2,'paladin','Paladin'),(3,'hunter','Hunter'),
+    (4,'rogue','Rogue'),(5,'priest','Priest'),(6,'deathknight','Death Knight'),
+    (7,'shaman','Shaman'),(8,'mage','Mage'),(9,'warlock','Warlock'),(11,'druid','Druid')]
+
+def trainer_classes(trainers,assignments):
+    classes={id:'class-'+key for id,key,_ in CLASSES}
+    verified={r['Id']:classes[r['Requirement']] for r in trainers if r['Type']==0 and r['Requirement'] in classes}
+    return {r['CreatureId']:verified[r['TrainerId']] for r in assignments if r['TrainerId'] in verified}
+
 def client_facts(reader):
     inputs={}
     def table(name):

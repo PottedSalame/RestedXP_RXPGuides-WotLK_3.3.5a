@@ -1,5 +1,5 @@
 import {Resources,waypoints,fromPercent,toPercent,cluster,inside,wheelFactor,zoomAt,zoomFrame,MIN_SCALE,MAX_SCALE,calendarEvent,filterOverlay} from './map-model.js';
-import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,markerRole} from './map-markers.js';
+import {drawNode,drawOverlayMarker,NODE_FILLS,PROFESSION_LABELS,CLASS_LABELS,markerAppearance,locationDescription,markerHit} from './map-markers.js';
 const labels={guide:'Guide waypoints',start:'Quest starters',end:'Quest turn-ins',repair:'Repairs',vendor:'Vendors',trainer:'Trainers',creature:'Creatures',object:'Objects',...PROFESSION_LABELS};
 const colors={start:'#f6d24f',end:'#e2e2db',repair:'#e5bb85',vendor:'#91dab0',trainer:'#8fcfff',...NODE_FILLS,...Object.fromEntries(Object.keys(PROFESSION_LABELS).map(key=>[key,'#d4c597']))};
 const ordinaryRoles=Object.keys(colors);
@@ -16,6 +16,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   let documentText=null,documentGuide=null,display=1,view={u:0,v:0,scale:1},width=1,height=1,hit=[],proposal=null,locations=[],locationsKey='';
   const layers=new Set(['guide','start','end','repair','vendor','trainer']);
   const enabledEvents=new Set();
+  const professionTypes={trainers:true,gathering:true};
   const status=text=>{$('map-status').textContent=text;};
   const url=path=>{
     if(!/^[a-zA-Z0-9_.,/\-]+$/.test(path)||path.includes('..')||path.startsWith('/'))throw new Error('Invalid map asset path');
@@ -109,6 +110,9 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     input.onchange=()=>{if(input.checked)layers.add(key);else layers.delete(key);filtersChanged();};
   }
   $('map-professions').ontoggle=()=>request();
+  for(const type of ['trainers','gathering'])$('map-profession-'+type).onchange=()=>{
+    professionTypes[type]=$('map-profession-'+type).checked;filtersChanged();
+  };
   $('map-continent').onchange=()=>{display=+$('map-continent').value;choices();fit();};
   $('map-zone').onchange=()=>{proposal=null;gesture=null;$('map-x').value='';$('map-y').value='';$('map-popup').replaceChildren();fit();};
   $('map-in').onclick=()=>zoom(2);$('map-out').onclick=()=>zoom(.5);$('map-reset').onclick=fit;
@@ -131,7 +135,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     if(members.length>1){box.append(el('p',members.length+' overlapping markers (first 50 listed).'));const b=el('button','Zoom here');b.onclick=()=>{motion=null;view.u=members[0].u;view.v=members[0].v;zoom(2);};box.append(b);}
     for(const m of members.slice(0,50)){
       if(m.kind==='cluster'){const b=el('button',m.count+' snapshot locations — zoom in');b.onclick=()=>{motion=null;view.u=m.u;view.v=m.v;zoom(2);};box.append(b);continue;}
-      const row=el('div');row.append(el('strong',m.name+' ['+m.id+']'),el('p',m.roles.map(r=>labels[r]).join(', ')),
+      const row=el('div');row.append(el('strong',m.name+' ['+m.id+']'),el('p',locationDescription(m.roles)),el('p',m.roles.map(r=>labels[r]||CLASS_LABELS[r]||r).join(', ')),
         el('p','Physical map '+m.physical+'; X '+m.x+', Y '+m.y),el('p',m.notes.join('; ')||'Snapshot home position'));
       const eventNames=(m.events||[]).map(id=>(id<0?'Absent during: ':'')+(overlay?.events?.find(e=>e.id===Math.abs(id))?.name||('Event '+Math.abs(id))));
       if(eventNames.length)row.append(el('p',eventNames.join('; ')));
@@ -164,8 +168,12 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     if(!open||!manifest)return;
     resources.begin();
     const icons={};
+    const iconFor=role=>{
+      if(role&&iconManifest?.icons?.[role]?.path===role+'.webp')return icons[role]||(icons[role]=resources.get('icons/'+role+'.webp'));
+      return null;
+    };
     for(const [role,badge] of legendIcons){
-      if(iconManifest?.icons?.[role]?.path===role+'.webp'&&(!Object.hasOwn(PROFESSION_LABELS,role)||layers.has(role)||$('map-professions').open))icons[role]=resources.get('icons/'+role+'.webp');
+      if(!Object.hasOwn(PROFESSION_LABELS,role)||layers.has(role)||$('map-professions').open)iconFor(role);
       if(legendPainted.has(role)&&legendPainted.get(role)===icons[role])continue;
       legendPainted.set(role,icons[role]);
       const context=badge.getContext('2d');context.clearRect(0,0,20,20);
@@ -197,28 +205,33 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
         const path=overlay.chunks[display+'/'+x+'_'+y];if(path)records.push(...(resources.get('overlays/'+path)||[]));
       }
     }
-    resources.end();
     const visible=[];
     for(const m of records){
       if(!inside([m.u,m.v],[min[0],min[1],max[0],max[1]]))continue;
-      const filtered=filterOverlay(m,layers,enabledEvents);if(filtered)visible.push(filtered);
+      const filtered=filterOverlay(m,layers,enabledEvents,professionTypes);if(filtered)visible.push(filtered);
     }
     ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
     const clusters=cluster(visible,screen,24,[view.u*view.scale-width/2,view.v*view.scale-height/2]);
+    for(const c of clusters){
+      c.count=c.members.reduce((n,m)=>n+(m.count||1),0);
+      c.appearance=markerAppearance(c.members.flatMap(m=>m.roles),layers,ordinaryRoles);
+      // Mixed clusters retain numbered badges; never borrow one NPC's class.
+      if(c.count===1){iconFor(c.appearance.role);iconFor(c.appearance.badge);}
+    }
+    resources.end();
     if(!motion&&!gesture?.moved){
     locations=clusters.slice(0,200);
     const nextKey=locations.map(c=>c.members.map(m=>m.key||[m.u,m.v,m.count].join(':')).join(',')).join(';');
     if(nextKey!==locationsKey){
       locationsKey=nextKey;const previous=$('map-locations').value;
-      $('map-locations').replaceChildren(...locations.map((c,i)=>option(c.members.length===1&&c.members[0].name?c.members[0].name+' ['+c.members[0].id+']':c.members.reduce((n,m)=>n+(m.count||1),0)+' snapshot locations',i)));
+      $('map-locations').replaceChildren(...locations.map((c,i)=>option(c.members.length===1&&c.members[0].name?c.members[0].name+' ['+c.members[0].id+']'+(locationDescription(c.members[0].roles)?' — '+locationDescription(c.members[0].roles):''):c.count+' snapshot locations',i)));
       $('map-locations').value=locations[+previous]?previous:locations.length?'0':'';$('map-details').disabled=!locations.length;
     }
     }
     for(const c of clusters){
-      const roles=c.members.flatMap(m=>m.roles),role=markerRole(roles,layers,ordinaryRoles);
-      const count=c.members.reduce((n,m)=>n+(m.count||1),0);
-      drawOverlayMarker(ctx,role,c.x,c.y,count,icons[role],colors[role],symbols[role]);
-      hit.push({...c,kind:'overlay'});
+      const {role,badge}=c.appearance;
+      drawOverlayMarker(ctx,role,c.x,c.y,c.count,icons[role],colors[role],symbols[role],icons[badge]);
+      hit.push({...c,kind:'overlay',badged:c.count===1&&!!badge});
     }
     if(layers.has('guide')){
       let previous=null;ctx.strokeStyle='#84d8ff';ctx.lineWidth=2;
@@ -236,7 +249,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   const point=event=>{const r=canvas.getBoundingClientRect();return [event.clientX-r.left,event.clientY-r.top];};
   canvas.onwheel=event=>{if(!open)return;event.preventDefault();if(event.deltaY)zoom(wheelFactor(event.deltaY,event.deltaMode,height),...point(event));};
   canvas.onpointerdown=event=>{
-    if(event.button!==0||!manifest)return;motion=null;canvas.focus();const [x,y]=point(event),found=[...hit].reverse().find(h=>Math.hypot(x-h.x,y-h.y)<14);
+    if(event.button!==0||!manifest)return;motion=null;canvas.focus();const [x,y]=point(event),found=[...hit].reverse().find(h=>markerHit(h,x,y));
     if(found?.kind==='guide')choose(found.marker);
     gesture={id:event.pointerId,x,y,view:{...view},hit:found,marker:found?.marker,text:adapter.read().text,moved:false};canvas.setPointerCapture(event.pointerId);
   };

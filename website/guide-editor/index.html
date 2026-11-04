@@ -78,7 +78,8 @@
         </div>
         <div id="map-legend" class="toolbar" aria-label="Map layers"></div>
         <details id="map-professions"><summary>Professions</summary>
-          <p class="hint">Trainers for each profession, plus herbs, ore and fishing pools. Other enabled layers may also show the same location.</p>
+          <div class="toolbar"><label><input id="map-profession-trainers" type="checkbox" checked> Include trainers</label><label><input id="map-profession-gathering" type="checkbox" checked> Include gathering locations</label></div>
+          <p class="hint">Trainer symbol + badge: teacher. Plain profession icon: gathering location. Other enabled layers may still show the same NPC/object.</p>
           <div id="map-profession-options" class="map-event-options"></div>
         </details>
         <div id="map-events" hidden aria-label="Event filters"></div>

@@ -9,7 +9,7 @@ from pathlib import Path
 import subprocess
 from map_extract import REPO, project, sha, write
 from project_paths import require_addon
-from map_professions import trainer_professions,gathering_professions
+from map_professions import trainer_professions,trainer_classes,gathering_professions
 
 def npc_roles(flags):
     return [role for bit,role in ((128,'vendor'),(16,'trainer'),(4096,'repair')) if flags & bit]
@@ -78,8 +78,11 @@ def extract(source, output, profession_facts):
     events={r['eventEntry']:dict(id=r['eventEntry'],name=r['description'],holiday=r['holiday']) for r in rows('game_event')}
     pool_events=pool_event_map(rows('game_event_pool'),rows('pool_pool'))
     used_events=set()
-    assignments=rows('creature_default_trainer')
-    professions=trainer_professions(rows('trainer'),rows('trainer_spell'),assignments)
+    # The SQL reader yields once; these small tables have multiple consumers.
+    assignments=list(rows('creature_default_trainer'))
+    trainer_rows=list(rows('trainer'))
+    professions=trainer_professions(trainer_rows,rows('trainer_spell'),assignments)
+    classes=trainer_classes(trainer_rows,assignments)
     for kind, table in [('npcs','creature'),('objects','gameobject')]:
         templates={r['entry']:r for r in rows(table+'_template')}
         starts, ends = defaultdict(list),defaultdict(list)
@@ -114,7 +117,9 @@ def extract(source, output, profession_facts):
                 if kind=='npcs':
                     flags=r['npcflag'] or t['npcflag']
                     roles.extend(npc_roles(flags))
-                    if 'trainer' in roles:roles.extend(professions.get(entry,[]))
+                    if 'trainer' in roles:
+                        roles.extend(professions.get(entry,[]))
+                        if entry in classes:roles.append(classes[entry])
                     roles.append('creature')
                 else:
                     roles.extend(gathering_professions(t,facts))
@@ -142,7 +147,9 @@ def extract(source, output, profession_facts):
                 dynamic=defaultdict(set)
                 for e,rs in event_flags[r['guid']]:dynamic[e].update(rs)
                 for rs in dynamic.values():
-                    if 'trainer' in rs:rs.update(professions.get(entry,[]))
+                    if 'trainer' in rs:
+                        rs.update(professions.get(entry,[]))
+                        if entry in classes:rs.add(classes[entry])
                 for e,q in event_starts[entry]:dynamic[e].add('start')
                 if event_starts[entry]:record['eventStarts']=sorted(event_starts[entry])
                 if dynamic:record['eventRoles']=[[e,sorted(rs)] for e,rs in sorted(dynamic.items()) if rs]

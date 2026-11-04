@@ -1,11 +1,51 @@
 import * as P from '../guide-editor/map-model.js';
 import * as M from '../guide-editor/model.js';
-import {drawNode,drawOverlayMarker,NODE_FILLS,NODE_OUTLINE,PROFESSION_LABELS,markerRole} from '../guide-editor/map-markers.js';
+import {drawNode,drawOverlayMarker,NODE_FILLS,NODE_OUTLINE,PROFESSION_LABELS,markerRole,markerAppearance,locationDescription,markerHit} from '../guide-editor/map-markers.js';
 export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Kalimdor'},{id:0,name:'Eastern Kingdoms'},{id:530,name:'Outland'},{id:571,name:'Northrend'}],
   zones:[{id:4,physical:1,display:1,token:'Durotar',aliases:['Durotar'],bounds:[-1962.4998779296875,1808.333251953125,-7249.99951171875,-1716.6666259765625]}],
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Trainer badges distinguish profession/class teachers from gathering nodes without inventing unknown classes',()=>{
+    const ordinary=['start','vendor','trainer','object'];
+    equal(markerAppearance(['trainer','profession-mining'],new Set(['profession-mining']),ordinary),{role:'trainer',badge:'profession-mining'});
+    equal(markerAppearance(['object','profession-mining'],new Set(['profession-mining']),ordinary),{role:'profession-mining'});
+    equal(markerAppearance(['trainer','class-mage'],new Set(['trainer']),ordinary),{role:'trainer',badge:'class-mage'});
+    equal(markerAppearance(['trainer'],new Set(['trainer']),ordinary),{role:'trainer'});
+    equal(markerAppearance(['vendor','trainer','class-mage'],new Set(['vendor']),ordinary),{role:'vendor'});
+    equal(locationDescription(['trainer','profession-mining']),'Mining trainer');
+    equal(locationDescription(['object','profession-mining']),'Ore deposit');
+    equal(locationDescription(['trainer','class-mage']),'Mage trainer');
+    const canvas=document.createElement('canvas');canvas.width=40;canvas.height=40;
+    const icon=document.createElement('canvas');icon.width=20;icon.height=20;
+    icon.getContext('2d').fillStyle='#ff0000';icon.getContext('2d').fillRect(0,0,20,20);
+    const badge=document.createElement('canvas');badge.width=20;badge.height=20;
+    badge.getContext('2d').fillStyle='#0000ff';badge.getContext('2d').fillRect(0,0,20,20);
+    const context=canvas.getContext('2d');
+    drawOverlayMarker(context,'trainer',20,20,1,icon,null,'T',badge);
+    equal([...context.getImageData(16,16,1,1).data],[255,0,0,255]);
+    equal([...context.getImageData(26,26,1,1).data],[0,0,255,255]);
+    equal(context.getImageData(5,5,1,1).data[3],0);
+    context.clearRect(0,0,40,40);drawOverlayMarker(context,'profession-mining',20,20,1,badge,null,'M',icon);
+    equal([...context.getImageData(16,16,1,1).data],[0,0,255,255]);
+    equal(context.getImageData(33,33,1,1).data[3],0);
+    assert(markerHit({x:20,y:20,badged:true},33,33));
+    assert(!markerHit({x:20,y:20,badged:true},36,36));
+    assert(!markerHit({x:20,y:20},33,33));
+  });
+  await test('Profession trainer/gathering switches agree at all zooms and retain other independently selected roles',()=>{
+    const records=[{roles:['trainer','creature','profession-mining'],starts:[]},
+      {roles:['object','profession-mining'],events:[2],starts:[]}];
+    const overview={combinations:records.map(r=>[r.roles,1,r.events||[],[]])};
+    for(const trainers of [false,true])for(const gathering of [false,true])for(const events of [new Set(),new Set([2])]){
+      const layers=new Set(['profession-mining']),types={trainers,gathering};
+      const actual=records.map(r=>P.filterOverlay(r,layers,events,types)).filter(Boolean);
+      equal(actual.length,(trainers?1:0)+(gathering&&events.has(2)?1:0));
+      equal(P.filterOverlay(overview,layers,events,types)?.count||0,actual.length);
+    }
+    assert(P.filterOverlay(records[0],new Set(['trainer']),new Set(),{trainers:false,gathering:false}));
+    equal(records[0].roles,['trainer','creature','profession-mining']);
+  });
   await test('Client map icons preserve transparency without a background circle; clusters and fallbacks remain',()=>{
     const icon=document.createElement('canvas');icon.width=20;icon.height=20;
     const ink=icon.getContext('2d');ink.fillStyle='#ffd700';ink.fillRect(9,4,2,12);
@@ -208,6 +248,11 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       get('terrain-panel').open=false;await sleep(50);get('terrain-panel').open=true;await sleep(100);
       assert(controls.every(c=>c.checked));
       for(const control of controls)control.click();get('map-professions').open=false;
+      for(const id of ['map-profession-trainers','map-profession-gathering']){
+        assert(get(id).checked);get('map-popup').textContent='Stale action';get(id).click();
+        assert(!get(id).checked);equal(get('map-popup').textContent,'');equal(get('source').value,before);
+        get(id).click();assert(get(id).checked);
+      }
     });
     await test('Map add / replace / selection use the real source and Undo controls',async()=>{
       input('source',basic);await sleep(400);

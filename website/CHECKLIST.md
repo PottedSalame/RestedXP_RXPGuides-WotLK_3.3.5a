@@ -96,3 +96,9 @@ implied by passing the offline/browser checks. Deployment is a separate action.
    Toggle a calendar event with Fishing enabled; seasonal pools must still
    obey the event filter. Check continent-level counts as well as close zoom.
 4. Verify source text, selected guide and Undo history remain unchanged.
+5. Compare a profession trainer (trainer symbol + profession badge), a class
+   trainer (trainer symbol + class badge), and a gathering node (plain icon).
+   Check their type descriptions in Location details and the location list.
+6. With generic Trainers/Creatures/Objects disabled, select Mining and toggle
+   Include trainers / Include gathering locations separately. Check both close
+   zoom and continent counts. Unknown trainers must not acquire a guessed badge.

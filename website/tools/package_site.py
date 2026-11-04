@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import re
 from map_extract import REPO, sha, write
-from map_professions import PROFESSIONS
+from map_professions import PROFESSIONS,CLASSES
 
 ROOT=REPO/'website'
 STATIC=['index.html','help.html','credits.html','style.css','guide-editor/index.html',
@@ -42,7 +42,7 @@ def package(assets,output,root=ROOT):
     overlay=json.loads((assets/'overlays/manifest.json').read_text())
     icons=json.loads((assets/'icons/manifest.json').read_text())
     if terrain['schema']!=1 or overlay['schema']!=2 or icons['schema']!=1:raise ValueError('Unsupported asset schema')
-    icon_names={'start','end','vendor','trainer','repair'}|{'profession-'+key for _,key,_,_ in PROFESSIONS}
+    icon_names={'start','end','vendor','trainer','repair'}|{'profession-'+key for _,key,_,_ in PROFESSIONS}|{'class-'+key for _,key,_ in CLASSES}
     if set(icons['icons'])!=icon_names:raise ValueError('Missing client icons')
     facts=(assets/'icons/profession-facts.json').read_bytes()
     if sha(facts)!=icons.get('factsHash') or sha(facts)!=overlay.get('inputs',{}).get('profession-facts.json'):

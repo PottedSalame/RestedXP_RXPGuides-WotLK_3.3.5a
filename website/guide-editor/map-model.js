@@ -140,21 +140,27 @@ function eventRoles(roles,dynamic,enabled){
   for(const [id,add] of dynamic)if(enabled.has(id))for(const role of add)result.add(role);
   return [...result];
 }
-export function filterOverlay(record,layers,enabled){
+function professionRoles(roles,types){
+  if(!types||types.trainers&&types.gathering)return roles;
+  if((roles.includes('trainer')&&!types.trainers||roles.includes('object')&&!types.gathering)&&roles.some(role=>role.startsWith('profession-')))
+    return roles.filter(role=>!role.startsWith('profession-'));
+  return roles;
+}
+export function filterOverlay(record,layers,enabled,types){
   if(record.combinations){
     let count=0;const roles=new Set();
     for(const [base,n,events,dynamic] of record.combinations){
       if(!eventVisible(events,enabled))continue;
-      const visible=eventRoles(base,dynamic,enabled);
+      const visible=professionRoles(eventRoles(base,dynamic,enabled),types);
       if(!visible.some(r=>layers.has(r)))continue;
       count+=n;for(const role of visible)roles.add(role);
     }
     return count?{...record,count,roles:[...roles]}:null;
   }
   if(!eventVisible(record.events,enabled))return null;
-  const roles=eventRoles(record.roles,record.eventRoles,enabled);
+  const roles=professionRoles(eventRoles(record.roles,record.eventRoles,enabled),types);
   if(!roles.some(r=>layers.has(r)))return null;
-  if(!record.eventRoles&&!record.eventStarts)return record;
+  if(roles===record.roles&&!record.eventRoles&&!record.eventStarts)return record;
   const starts=new Set(record.starts);
   for(const [id,quest] of record.eventStarts||[])if(enabled.has(id))starts.add(quest);
   return {...record,roles,starts:[...starts].sort((a,b)=>a-b)};

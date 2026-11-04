@@ -2,9 +2,14 @@
 import unittest
 import struct
 from map_overlays import exclusion,pool_event_map,overview_records
-from map_professions import PROFESSIONS,client_facts,trainer_professions,gathering_professions
+from map_professions import PROFESSIONS,client_facts,trainer_professions,trainer_classes,gathering_professions
 
 class Overlays(unittest.TestCase):
+    def test_class_badges_require_class_trainer_and_known_class_id(self):
+        rows=[dict(Id=1,Type=0,Requirement=8),dict(Id=2,Type=2,Requirement=8),
+              dict(Id=3,Type=3,Requirement=3),dict(Id=4,Type=0,Requirement=10),dict(Id=5,Type=0,Requirement=6)]
+        assignments=[dict(CreatureId=n+100,TrainerId=n) for n in range(1,7)]
+        self.assertEqual(trainer_classes(rows,assignments),{101:'class-mage',105:'class-deathknight'})
     def test_professions_require_curriculum_and_tradeskill_trainer(self):
         trainers=[dict(Id=1,Type=2),dict(Id=2,Type=0)]
         spells=[dict(TrainerId=1,ReqSkillLine=171),dict(TrainerId=1,ReqSkillLine=333),
