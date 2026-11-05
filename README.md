@@ -34,7 +34,18 @@ python website/tools/serve.py --site-root build/pages --prefix /RXPGuides/
 
 Publish the **contents of `build/pages`**, not this entire branch. The packager
 includes terrain and icons while excluding developer tools, tests and historical
-provenance. These commands do not configure Pages or upload anything.
+provenance. These local commands do not upload anything.
+
+## Automatic deployment
+
+In GitHub **Settings → Pages**, select **GitHub Actions**. The
+`Deploy website to GitHub Pages` workflow tests, packages and publishes each push
+to `website`; it does not modify `main`. No client files, database or addon
+checkout are needed by the deployment workflow.
+
+The `github-pages` environment must allow deployments from `website`. Check
+workflow results under **Actions** and the published URL under **Settings → Pages**.
+Re-run a failed workflow after resolving any permissions or environment rules.
 
 ## Development and regeneration
 
