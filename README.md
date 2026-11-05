@@ -1,61 +1,32 @@
-# RXPGuides Custom Guides Repository
+# RXPGuides Custom Guides
 
-Community-contributed custom guide routes for RXPGuides on WoW 3.3.5a clients.
+Community routes for WoW 3.3.5a. These guides are imported separately, not bundled with the addon.
 
-## What is this?
+## Create or edit
 
-This branch hosts user-created guides that extend RXPGuides with custom routes for farming, leveling, professions, dungeons, and more. Guides here are **not** included in the main addon download — you import them individually via the in-game `/rxp import` command.
+Use the [Guide Editor on the website branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/website#local-preview) to write a guide or edit existing source. Its Write, Map and Source views share the same document.
 
-## How to Import a Guide
+In **Guide properties**, enter the server/realm, purpose, zone, description and requirements. The editor saves these as comments and suggests the contribution path. They describe the route; they do not enforce server or character restrictions.
 
-1. Browse the folders to find a guide you want
-2. Open the `.lua` file and **copy its entire content**
-3. In-game, type `/rxp import`
-4. **Paste** the guide text into the import box
-5. The guide appears under the **CustomGuides** category in your Guide Hub
+See [Guide authoring](GUIDE_AUTHORING.md) for syntax and examples.
 
-## Directory Structure
+## Import into the addon
 
-Guides are organized by server realm, activity type, zone, and guide name:
+1. Use an addon build with **Import format → Website guide source**.
+2. Open the Guide Library's **Import** tab and select that format.
+3. Paste exported guide text or a supported `Guide.lua`, confirm saving, then choose **Reload guides and UI** when ready.
+4. In **Guides**, select **Type → Custom guides** and choose your route.
 
+Keep a source backup. To remove a saved import, select **Delete import**; switch to another guide first if it is active. Older builds can use the editor's companion-addon export instead.
+
+## Contribute
+
+Save the plain guide source as a `.lua` file under:
+
+```text
+CustomGuides/<Server-Realm>/<Purpose>/<Zone>/<GuideName>.lua
 ```
-CustomGuides/
-  <Server-Realm>/         e.g. Warmane-Icecrown, AzerothCore-WoWCircle
-    <Type>/               e.g. Experience, Gold, Professions, Dungeons, Reputation, Events, PvP, Achievement
-      <Zone>/             e.g. Durotar, Elwynn Forest, Tanaris
-        <GuideName>.lua   e.g. Durotar Copper Mining Rotation.lua
-```
 
-### Valid Types
+Purposes: **Experience, Gold, Professions, Dungeons, Reputation, Events, PvP, Achievement**.
 
-| Type | Use For |
-|------|---------|
-| `Experience` | Leveling routes, XP grinding spots |
-| `Gold` | Gold farming, material gathering |
-| `Professions` | Mining, Herbalism, Skinning, Fishing routes |
-| `Dungeons` | Dungeon guide routes, boss strategies |
-| `Reputation` | Reputation grinding guides |
-| `Events` | Holiday events, world events |
-| `PvP` | Battlegrounds, world PvP routes |
-| `Achievement` | Achievement hunting guides |
-
-## How to Contribute a Guide
-
-1. **Fork** this repository
-2. Create your guide `.lua` file following the [GUIDE_AUTHORING.md](GUIDE_AUTHORING.md) DSL specification
-3. Place it in the correct directory: `CustomGuides/<Server-Realm>/<Type>/<Zone>/<GuideName>.lua`
-4. Open a **Pull Request** targeting the `custom-guides` branch
-5. A maintainer will review and merge
-
-### PR Checklist
-
-- Guide uses `#group CustomGuides` header
-- Guide includes a brief description (first few lines)
-- File placed in the correct directory structure
-- All quest, item, NPC IDs are verified on Wowhead Classic
-- Guide tested in-game and imports correctly via `/rxp import`
-
-## Requirements
-
-- RXPGuides v4.8.25-335 or newer installed
-- WoW 3.3.5a (Wrath of the Lich King) client
+Use a distinct name under `#group RXPGuides Custom Guides`. Check IDs with the editor's WotLK lookup, test the route on its intended server, and open a pull request targeting **custom-guides**. Include the tested character and any known limitations.
