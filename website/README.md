@@ -39,8 +39,8 @@ The browser runner uses an existing Chromium browser, an isolated temporary
 profile and Python's standard library. It never downloads a browser or driver.
 It runs the model and production-UI tests at root and repository-prefix URLs.
 Successful scratch outputs are removed; failure evidence stays under `build/`.
-It also writes a generated companion in scratch space and checks it with the
-existing Lua 5.1 fixture harness when `--lua-command` is supplied.
+It also checks downloaded guide source with the production importer and Lua 5.1
+parser fixtures when `--lua-command` is supplied. Exported text is never executed.
 
 For manual browser tests, open `tests/` on the local server. Use the numbered
 [acceptance checklist](CHECKLIST.md) before treating the interface as accepted.
@@ -161,7 +161,7 @@ Source-only browser tests use synthetic metadata, so CI need not ship client art
 ## Format and architecture
 
 - `guide-editor/model.js`: lossless spans, restricted Lua container scanner,
-  basic validation, text operations and companion exports. No Lua execution.
+  basic validation, text operations and guide-source exports. No Lua execution.
 - `guide-editor/app.js`: reactive native DOM controls, preview and local drafts.
   Field edits reparse only the selected guide and update affected views without
   recreating inputs or changing caret/focus. Validation and storage are debounced;
@@ -173,8 +173,8 @@ Source-only browser tests use synthetic metadata, so CI need not ship client art
 - `tools/`: offline data extraction, safe loopback preview and verification.
 
 Source text is the interchange format. Local draft metadata is only browser
-state, not a replacement guide format. Companion export never changes the main
-addon's Import tab. Advanced/dynamic registration formats are source-only;
+state, not a replacement guide format. Downloaded guide text is imported through
+the addon's Website guide source format. Advanced/dynamic registrations are source-only;
 unrecognized directives remain intact.
 
 This orphan branch is separate from the addon on `main`. Prepare a Pages

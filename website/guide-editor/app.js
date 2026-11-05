@@ -1,5 +1,5 @@
 import {NEW_GUIDE, FORMS, MAX_BYTES, History, decodeFile, encodeFile, parseDocument, instruction,
-  buildInstruction, editGuide, setHeader, moveStep, newline, validate, companion, applyTextarea, reparseEditedGuide,
+  buildInstruction, editGuide, setHeader, moveStep, newline, validate, guideSource, applyTextarea, reparseEditedGuide,
   newArguments, waypointMode, instructionHint, DEFAULT_TRAVEL_RADIUS,
   DETAILS, PURPOSES, guideDetails, setDetail, contributionPath} from './model.js';
 import {referenceInput, referenceURL, searchURL, createLookup} from './wowhead.js';
@@ -228,11 +228,10 @@ function flushLive() {
 }
 function updateExport() {
   try {
-    if (!guide()) throw new Error('Select a valid guide first.');
-    const output = companion(guide(), state.catalogue, $('slug').value);
-    $('toc').disabled = false; $('lua').disabled = false;
-    $('export-status').textContent = 'Folder: Interface/AddOns/' + output.folder + '/ — save both files here, then restart WoW.';
-  } catch (error) { $('toc').disabled = true; $('lua').disabled = true; $('export-status').textContent = error.message; }
+    guideSource(guide());
+    $('raw').disabled = false;
+    $('export-status').textContent = 'Paste the downloaded text into RXPGuides → Import → Website guide source.';
+  } catch (error) { $('raw').disabled = true; $('export-status').textContent = error.message; }
 }
 function download(filename, text) {
   const url = URL.createObjectURL(new Blob([encodeFile(text)], {type: 'text/plain;charset=utf-8'}));
@@ -292,7 +291,7 @@ $('open').onchange = async () => {
   catch (error) { status(error.message, true); } finally { $('open').value = ''; }
 };
 $('save').onclick = safely(() => { flushSource(); download(state.filename, state.history.text); state.saved = state.history.text; status('Download requested. Keep it as a backup.'); });
-$('raw').onclick = safely(() => { flushSource(); download('guide-source.txt', guide().body); });
+$('raw').onclick = safely(() => { flushSource(); download('guide-source.txt', guideSource(guide())); });
 $('clone').onclick = safely(() => {
   flushSource(); const active = guide();
   if (active.external) throw new Error('This guide has external Lua dependencies. Edit/save the original container; isolated cloning is blocked.');
@@ -325,12 +324,6 @@ $('cancel-line').onclick = () => { liveQueued = false; state.drafting = false; p
 $('append-line').onclick = safely(() => { const replacement = formLine(); flushSource(); const active = guide(), at = step().stop, eol = newline(active.body); state.line = step().lines.length; commit(editGuide(state.history.text, active, at, at, (at && !/[\r\n]$/.test(active.body.slice(0, at)) ? eol : '') + replacement + eol)); });
 $('delete-line').onclick = safely(() => { flushSource(); const line = currentLine(); if (line) commit(editGuide(state.history.text, guide(), line.start, line.next, '')); });
 $('validate').onclick = safely(() => { flushSource(); check(); $('problems-panel').open=true; status('Preliminary checks complete. Review warnings and test in-game.'); });
-$('slug').oninput = updateExport;
-for (const format of ['toc', 'lua']) $(format).onclick = safely(() => {
-  flushSource(); const active = guide();
-  if (validate(active, state.catalogue).some(item => /security review|bundled guide/.test(item.message)) && !confirm('Review the advanced instructions and guide identity before installing. Export anyway?')) return;
-  const result = companion(active, state.catalogue, $('slug').value); download(format === 'toc' ? result.folder + '.toc' : 'Guide.lua', result[format]);
-});
 
 async function json(path) { const response = await fetch(path); if (!response.ok) throw new Error('Reference file unavailable: ' + path); return response.json(); }
 $('terrain-panel').addEventListener('toggle', async () => {

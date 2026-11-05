@@ -298,7 +298,7 @@ export function validate(guide, catalogue = {}) {
   if (!guide.names.length || guide.names.some(value => !value)) add('error', 'Missing or empty #name header.');
   if (!guide.steps.length) add('error', 'No steps.');
   if (!/^\s*#(?:wotlk|ac335)(?:\s|$)/m.test(guide.body)) add('warning', 'No WotLK/3.3.5 header. Verify game eligibility.');
-  if (guide.external) add('warning', 'Surrounding Lua may contain guards or dependencies. Companion export is blocked; edited-original export preserves the container.');
+  if (guide.external) add('warning', 'Surrounding Lua may contain guards or dependencies. Use Save file to preserve them; selected-guide export is blocked.');
   if (guide.groups.some(group => /^(RestedXP|Original Guides|RXP Speedrun)/.test(group))) add('warning', 'This looks like a bundled guide group. Use Save as new guide to avoid replacing existing routes.');
   let stepCondition = '';
   for (const [index, line] of guide.lines.entries()) {
@@ -348,16 +348,12 @@ export function validate(guide, catalogue = {}) {
   return found;
 }
 
-export function companion(guide, catalogue, slug) {
-  if (!/^[A-Za-z][A-Za-z0-9_]{0,47}$/.test(slug)) throw new Error('Use an ASCII folder name beginning with a letter (up to 48 characters).');
-  if (guide.external) throw new Error('External Lua guards/dependencies prevent isolated companion export. Download the edited original file instead.');
-  if (guide.body.includes(']]')) throw new Error('The source contains ]]. Save raw source; this wrapper format cannot contain that delimiter.');
-  if (validate(guide, catalogue).some(item => item.severity === 'error')) throw new Error('Resolve the source errors before exporting a companion.');
-  const folder = 'RXPGuides_Custom_' + slug;
-  const body = guide.body.replace(/^\uFEFF/, '');
-  const provenance = (guide.provenance || '').replace(/^\uFEFF/, '');
-  return {folder, toc: '## Interface: 30300\n## Title: RXPGuides Custom - ' + slug + '\n## Dependencies: RXPGuides\n## Notes: Locally authored guide; gameplay verification required.\nGuide.lua\n',
-    lua: '-- Custom guide source. Review and test before use.\n' + provenance + '\nRXPGuides.RegisterGuide([[\n' + body + (/[\r\n]$/.test(body) ? '' : '\n') + ']])\n'};
+export function guideSource(guide) {
+  if (!guide) throw new Error('Select a guide first.');
+  if (guide.external) throw new Error('External Lua dependencies: use Save file to preserve the original. Review it before importing.');
+  // Plain downloads need no Lua wrapper. Preserve original bytes and any
+  // outer attribution when extracting a guide from a static registration.
+  return (guide.provenance || '') + guide.body;
 }
 
 export class History {

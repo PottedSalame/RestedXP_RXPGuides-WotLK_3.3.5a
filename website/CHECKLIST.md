@@ -27,16 +27,16 @@ needed. All work remains local until publication is separately authorized.
    Test keyboard focus, grouped toolbar controls and a narrow window.
 4. Import a real multiguide file. Select a chapter, edit one line and download the
    original file. Check that other chapters, conditions, comments and outer Lua
-   are intact. Guards must block isolated companion export, not disappear.
+   are intact. External guards must block selected-guide export, not disappear.
 5. Import/export an unchanged CRLF/BOM file. Compare bytes. Try malformed source,
    an encoded import string, advanced instructions and delimiter collisions;
    errors must be explained and source saving must remain available.
 6. Save a draft, reload and explicitly restore it. Download a backup. Try denied
    browser storage; the editor must explain the failure without losing the open
    document. Local drafts are not shared between browser origins.
-7. For a self-contained custom guide, download both companion files. Close WoW,
-   place them in the exact displayed folder, restart and enable the companion.
-   Use a disposable Orc Warrior; do not overwrite bundled guide files. Check
+7. Download the selected guide text. In RXPGuides, choose Import → Website guide
+   source, paste the text, confirm saving and reload when ready. Use a disposable
+   Orc Warrior; do not overwrite bundled guide files. Check
    acceptance, objectives, turn-in, conditions, travel and reload restoration.
 8. Check that your normal guide identities and existing progress are unchanged.
    If testing with Questie, use its tracking without its quest automation.
@@ -81,7 +81,7 @@ Before map testing, try the new workspace:
    Switch continents/documents rapidly, collapse while loading, and reopen. Old
    markers must not reappear. Check a narrow display and keyboard pan/zoom.
 6. With no local imagery available in a separate source-only checkout, editing,
-   drafts, downloads and companion exports must still work. Do not delete your
+   drafts and guide-source downloads must still work. Do not delete your
    generated artwork to test this; automated tests cover the missing-file case.
 7. Export a small custom Durotar route and test it on a disposable Orc Warrior.
    Compare its in-game waypoint with the editor, then check normal guides and

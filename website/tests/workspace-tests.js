@@ -49,7 +49,7 @@ export async function workspaceTests(test,assert,equal,sleep,w,d,input,basic){
   });
   await test('File and Export are separate, Escape closes menus and narrow outline is explicit',async()=>{
     const before=$('source').value;$('file-menu').open=true;await sleep(30);$('export-menu').open=true;await sleep(30);
-    assert(!$('file-menu').open&&$('export-menu').open);assert($('export-menu').contains($('raw'))&&$('export-menu').contains($('toc')));
+    assert(!$('file-menu').open&&$('export-menu').open);assert($('export-menu').contains($('raw'))&&!$('toc'));
     assert($('file-menu').contains($('save'))&&!$('file-menu').contains($('raw')));
     d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert(!$('export-menu').open);
     $('outline-toggle').click();equal($('outline-toggle').getAttribute('aria-expanded'),'true');assert(w.getComputedStyle($('guide-outline')).display!=='none');

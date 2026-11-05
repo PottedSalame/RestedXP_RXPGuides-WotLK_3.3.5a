@@ -44,7 +44,7 @@ await test('Contribution details match branch categories without changing runtim
   equal(M.contributionPath(g),'CustomGuides/Warmane-Icecrown/Gold/Durotar/Browser Fixture.lua');
   equal(M.setDetail(source,g,'server','Warmane-Icecrown'),source);
   assert(!M.validate(g,catalogue).some(x=>x.severity==='error'));
-  assert(M.companion(g,catalogue,'Details').lua.includes('-- Requirements: Mining skill 1+'));
+  assert(M.guideSource(g).includes('-- Requirements: Mining skill 1+'));
 });
 await test('Detail edits preserve BOM, CRLF, unrelated wrappers, comments and other guides', () => {
   const first=annotate(basic).replace(/\n/g,'\r\n');
@@ -73,7 +73,7 @@ await test('Ambiguous details, injection and unsafe contribution paths are conse
     const source=annotate(basic);equal(M.contributionPath(parse(M.setDetail(source,parse(source),'server',value))),'');
   }
   const unsafe=M.setDetail(basic,parse(basic),'description',']]');
-  rejects(()=>M.companion(parse(unsafe),catalogue,'Safe'),/delimiter/);
+  equal(M.guideSource(parse(unsafe)),unsafe);
 });
 
 await test('UTF-8 BOM, Unicode and mixed endings round trip', () => {
@@ -106,7 +106,7 @@ await test('Dynamic, concatenated, overloaded and malformed wrappers rejected', 
 await test('Encoded imports are explicitly unsupported', () => assert(M.parseDocument('1|123:YWJj|30300').errors[0].includes('account-bound')));
 await test('External guards retained and isolated export blocked', () => {
   const text = 'if UnitFactionGroup("player") == "Alliance" then return end\nRXPGuides.RegisterGuide([[' + basic + ']])';
-  const g = M.parseDocument(text, 'x.lua').guides[0]; assert(g.external); equal(M.editGuide(text, g, 0, 0, ''), text); rejects(() => M.companion(g, catalogue, 'Test'), /External/);
+  const g = M.parseDocument(text, 'x.lua').guides[0]; assert(g.external); equal(M.editGuide(text, g, 0, 0, ''), text); rejects(() => M.guideSource(g), /External/);
 });
 await test('Conditional duplicate headers preserved, forms refuse flattening', () => {
   const text = basic.replace('#name Browser Fixture', '#name Horde << Horde\n#name Alliance << Alliance');
@@ -212,22 +212,24 @@ await test('Validation distinguishes errors, unknown directives and labels', () 
   assert(d.some(i => i.message.includes('missing'))); assert(d.some(i => i.message.includes('Repeated label')));
 });
 await test('Advanced instructions flagged, not executed', () => assert(M.validate(parse(basic + '.setquestdb arbitrary()\n.macro 1 >>/run example\n'), catalogue).filter(i => i.message.includes('security review')).length === 2));
-await test('Companion format, custom identity and delimiter rejection', () => {
+await test('Guide source export preserves identity and accepts literal closing brackets', () => {
   const moved = moveWaypoint(basic,parse(basic),waypoints(parse(basic),mapFixture)[0],44,67);
-  exported = M.companion(parse(moved), catalogue, 'BrowserTest');
-  assert(exported.toc.includes('## Dependencies: RXPGuides')); assert(exported.toc.includes('30300'));
-  equal(M.parseDocument(exported.lua, 'Guide.lua').guides[0].body.trim(), moved.trim());
-  rejects(() => M.companion(parse(basic + '>>]]\n'), catalogue, 'Test'), /contains/);
-  rejects(() => M.companion(parse(basic), catalogue, '../Test'), /ASCII/);
+  exported = M.guideSource(parse(moved));
+  equal(exported,moved);
+  equal(M.guideSource(parse(basic + '>>]]\n')),basic + '>>]]\n');
+  rejects(() => M.guideSource(null), /Select a guide/);
 });
-await test('Companion keeps outer attribution and removes only a payload BOM', () => {
+await test('Guide source keeps outer attribution and plain BOM/line endings', () => {
   const source = '-- GPL attribution retained\nRXPGuides.RegisterGuide([[' + basic + ']])\n';
-  const result = M.companion(M.parseDocument(source, 'x.lua').guides[0], catalogue, 'Test');
-  assert(result.lua.includes('-- GPL attribution retained'));
-  const bom = M.companion(parse('\uFEFF' + basic), catalogue, 'Test'); assert(!bom.lua.includes('\uFEFF'));
+  const result = M.guideSource(M.parseDocument(source, 'x.lua').guides[0]);
+  assert(result.includes('-- GPL attribution retained'));assert(!result.includes('RXPGuides.RegisterGuide'));
+  equal(parse(result).names,parse(basic).names);
+  const bom='\uFEFF'+basic.replace(/\n/g,'\r\n');equal(M.guideSource(parse(bom)),bom);
 });
-await test('Empty headers and invalid reward index cannot pass companion checks', () => {
-  rejects(() => M.companion(parse(basic.replace('#name Browser Fixture', '#name ')), catalogue, 'Test'), /errors/);
+await test('Invalid source remains downloadable for repair but retains diagnostics', () => {
+  const invalid=basic.replace('#name Browser Fixture', '#name ');
+  equal(M.guideSource(parse(invalid)),invalid);
+  assert(M.validate(parse(invalid),catalogue).some(item=>item.severity==='error'));
   assert(M.validate(parse(basic.replace('.turnin 4641', '.turnin 4641,wrong')), catalogue).some(item => item.severity === 'error'));
 });
 await test('Large multi-guide source parses without losing content', () => {
@@ -432,11 +434,26 @@ try {
     try { get('save').click(); equal([...new Uint8Array(await blob.arrayBuffer())], [...M.encodeFile(text)]); }
     finally { w.URL.createObjectURL = originalURL; w.HTMLAnchorElement.prototype.click = originalClick; }
   });
-  await test('Production companion downloads match filenames and content', async () => {
+  await test('Production guide download exports text only; obsolete export controls are absent', async () => {
+    const text='-- attribution\r\nRXPGuides.RegisterGuide([['+basic.replace(/\n/g,'\r\n')+']])\r\n';
+    const file=new w.File([M.encodeFile(text)],'wrapped.lua'),transfer=new w.DataTransfer();
+    transfer.items.add(file);get('open').files=transfer.files;await get('open').onchange();
     const blobs = [], names = []; const originalURL = w.URL.createObjectURL, originalClick = w.HTMLAnchorElement.prototype.click;
     w.URL.createObjectURL = value => { blobs.push(value); return 'blob:test'; }; w.HTMLAnchorElement.prototype.click = function() { names.push(this.download); };
-    try { get('toc').click(); get('lua').click(); equal(names, ['RXPGuides_Custom_MyGuide.toc', 'Guide.lua']); assert((await blobs[0].text()).includes('30300')); assert((await blobs[1].text()).includes('RegisterGuide')); }
+    try {
+      assert(!get('toc')&&!get('lua')&&!get('slug'));
+      assert(get('export-status').textContent.includes('Website guide source'));
+      const expected=M.guideSource(parse(text));
+      get('raw').click();equal(names,['guide-source.txt']);equal([...new Uint8Array(await blobs[0].arrayBuffer())],[...M.encodeFile(expected)]);
+    }
     finally { w.URL.createObjectURL = originalURL; w.HTMLAnchorElement.prototype.click = originalClick; }
+  });
+  await test('Guarded source cannot lose its external dependencies through selected-guide export', async () => {
+    const source='if true then\nRXPGuides.RegisterGuide([['+basic+']])\nend';
+    input('source',source);await sleep(400);
+    assert(get('raw').disabled);assert(!get('save').disabled);
+    assert(get('export-status').textContent.includes('Save file'));equal(get('source').value,source);
+    input('source',basic);await sleep(400);assert(!get('raw').disabled);
   });
   await test('Stale file read cannot overwrite a newer document', async () => {
     const file = new w.File([basic], 'late.txt'), transfer = new w.DataTransfer();
@@ -481,4 +498,4 @@ if (new URLSearchParams(location.search).has('corpus')) await test('Actual repos
   }
 });
 output.dataset.status = failed.length ? 'failed' : 'passed';
-output.textContent = JSON.stringify({passed, failed, companion: exported, formSource}, null, 2);
+output.textContent = JSON.stringify({passed, failed, guideSource: exported, formSource}, null, 2);
