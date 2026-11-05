@@ -6,50 +6,59 @@
 </head><body>
 <header><a href="./">RXPGuides Tools</a><a href="guide-editor/">Guide Editor</a></header>
 <main class="home">
-<h1>Guide Editor: instructions and limitations</h1>
-<h2>Create or edit</h2>
+<h1>Guide Editor help</h1>
+<h2>Create and save</h2>
 <ol>
-<li>Open the Guide Editor. Use File to start a custom guide or open a UTF-8 plain-text / Lua guide file (up to 12 MiB). Nothing is uploaded.</li>
-<li>For a multi-guide file, select the guide, then a step and instruction. Form edits update the selected instruction, preview and source as you type. Undo groups consecutive typing in the same field. Add, duplicate, delete or move steps using the buttons.</li>
-<li>Use Source for conditions, repeated headers, sticky instructions, labels and advanced directives. The source view represents the entire original file, not just the selected guide.</li>
-<li>Choose New instruction to prepare a separate instruction, then Add instruction to insert it. Existing instructions update immediately; drafts are not added until you confirm.</li>
-<li>Choose Check source, then select a problem to visit its source line. Use File to save the complete file, or Export for the selected guide and companion files. Unchanged imports retain original UTF-8 bytes, including line endings and BOM.</li>
+<li>Use <strong>File → New</strong> or <strong>Open</strong> a UTF-8 text/Lua file (up to 12 MiB). Select a guide, step and instruction.</li>
+<li>Edit in Write, Map or Source. Existing instructions update as you type; new ones require <strong>Add instruction</strong>. Undo/Redo reverses edits.</li>
+<li>Use <strong>Check source</strong>; click a problem to find its line.</li>
+<li><strong>Save file</strong> downloads the entire document. <strong>Save guide text</strong> exports the selected guide.</li>
 </ol>
-<p>Write, Map and Source share the same document. The step outline stays on the left; Instruction, Locations and Lookup appear on the right. On narrow screens, use Steps to reveal the outline. Guide properties contains the guide headers; Conditions contains the selected instruction's condition.</p>
-<p>Browser storage is local to the browser and site address. It may be cleared or denied. One last draft is retained; editing a different document replaces it. Download important work before switching documents, origins or browsers. A previous draft is offered for explicit restoration, not silently opened.</p>
-<h2 id="install">Test a guide in WoW</h2>
-<p>Guide properties includes Server/Realm, Purpose, Zone, Description and Requirements. These are optional source comments, not server detection or eligibility rules. The suggested contribution path follows the custom-guides branch: CustomGuides/Server-Realm/Purpose/Zone/GuideName.lua. Purpose uses that branch's eight categories; changing it does not rename the addon group or change progress identity.</p>
-<p>The branch's older example uses a different group and instruction syntax. New exports keep the current import-compatible RXPGuides Custom Guides group, plain step lines and executable .goto instructions. Descriptive requirements do not add class, level or profession gates; use supported conditions in Source when needed. Imported files are never automatically converted.</p>
+<p>Source shows the entire file, including advanced instructions. On small screens, use Steps to open the outline.</p>
+<p>One draft is saved in this browser. Restore it through File. Browser storage can be cleared or unavailable; download a backup before switching documents.</p>
+
+<h2>Guide properties</h2>
+<p>Set the name, group and version. Server/realm, purpose, zone, description and requirements are source comments—not gameplay restrictions. The editor suggests a custom-guides contribution path.</p>
+<p>Use a distinct name under <code>RXPGuides Custom Guides</code>. Save as new guide creates an independent copy; imports are not automatically renamed or converted.</p>
+
+<h2 id="install">Use in WoW</h2>
 <ol>
-<li>Use a distinct custom group and guide name. “Save as new guide” clones a self-contained selected guide into RXPGuides Custom Guides. Original-file export never silently renames a guide.</li>
-<li>Choose a simple folder suffix in Companion addon export. Download both the .toc and Guide.lua files.</li>
-<li>With WoW closed, create the displayed RXPGuides_Custom_… folder inside Interface/AddOns. Put the .toc and Guide.lua directly inside it. The .toc basename must exactly match its containing folder.</li>
-<li>Start WoW and enable the companion addon alongside RXPGuides. Test with a disposable character and a backup of your real SavedVariables.</li>
-<li>Select the custom guide in the guide browser. Check quest identity, objective counters, conditions, travel and turn-ins manually. The website never installs files or selects a guide for you.</li>
+<li>Export <strong>Save guide text</strong>.</li>
+<li>In the addon's Import tab, choose <strong>Website guide source</strong>, paste the text and confirm saving. Exported <code>Guide.lua</code> also works.</li>
+<li>Reload when ready, then select <strong>Type → Custom guides</strong> in the library.</li>
 </ol>
-<p>If your addon has <strong>Import format → Website guide source</strong>, you can skip the companion files: download Save guide text, copy its contents into that import box, confirm saving, then reload when ready. Guide.lua contents also work. Give each guide a distinct name under RXPGuides Custom Guides. This path accepts basic editor instructions, not executable Lua, macros or includes; replacing an import requires confirmation. Older addon builds accept encoded imports only—use companion files with those builds. Keep downloaded source backups.</p>
-<h2>Preservation and safety</h2>
-<p>Lua files are scanned as text, never executed. Supported registrations use a single literal long-string guide argument. Computed arguments and other registration signatures remain source-only. Surrounding guards and helper code are retained in edited-original downloads; isolated companion export is blocked when those dependencies exist.</p>
-<p>The companion wrapper uses the repository's [[...]] format. Source containing ]] cannot be exported in that wrapper; raw saving remains available. Existing licenses and comments are preserved in original-file downloads.</p>
-<p>Advanced instructions, including macros and parse-time database expressions, require manual review. Browser safety is not a guarantee that a guide is safe to install. Imported markup is displayed as text; it never becomes arbitrary HTML or triggers texture downloads.</p>
-<p>Conditions and routing are not simulated here. Names, source-line positions and source signatures can affect the addon's progress restoration. Editing or reordering a guide is not guaranteed to preserve every checkpoint.</p>
-<h2>Reference data</h2>
-<p>Lookups use <a href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Wowhead WotLK</a>. Enter an ID (choose its type first) or paste a WotLK quest, item, NPC or object link. Details load here after a short pause. For a partial title, such as cutting, press Search or Enter. Matching results open on Wowhead in a new tab: copy the result link back into the editor. No regex syntax is needed.</p>
-<p>Use in instruction updates the selected instruction, or fills your new-instruction draft. Object references stay source-only. Objective indices are never inferred from tooltip order; check the actual game quest log.</p>
-<p>Only the requested entity type and ID are sent to Wowhead for embedded lookup. Name queries are sent when you open Search Wowhead. Guide source and drafts stay local. No Wowhead scripts, images or tracking code are embedded. Responses are displayed as plain text and up to 32 are cached in memory for this session. Offline or failed lookups do not prevent manual editing.</p>
-<p>Wowhead is a reference, not a live check of your private server. Its public detail endpoint may change or become unavailable; use the linked page when needed. The old AzerothCore snapshot is retained as an offline development fixture only and is not queried by the editor.</p>
-<p>Loot routing and uncertain objective indices remain author-entered.</p>
-<p>Reference text is supplied by and linked to Wowhead; it is not bundled into the website. Directive and map choices come from RXPGuides.</p>
-<h2>Map</h2>
-<p>For a walking route, use one step per destination. New travel objectives use a 15-yard arrival radius; adjust it in Write. Choose Navigation marker only when another instruction, such as accepting a quest, completes the step. Existing waypoints are never converted automatically, and Replace coordinates preserves their radius.</p>
-<p>Notes, target/mob helpers and item-use buttons do not track completion by themselves. Pair them with a quest or collection objective, or use Manual objective (+) for a player-checked action. Source checks warn about simple steps containing only helpers.</p>
-<p>Regions separates Continents, Dungeons, Raids and Underground locations. Interior views are reference imagery, not calibrated floors. Search the instance-wide entity list and use Entity details to add target, quest or interaction instructions. Shared interiors without verified spawn associations have no entity list. Interior map clicks never create coordinates.</p>
-<p>Choose Map, then a continent and zone. Drag to pan, use the wheel or +/− to zoom, and open Layers, professions and events for the legend. Arrow keys pan when the canvas is focused. Missing artwork does not stop guide editing.</p>
-<p>Click terrain to propose coordinates, then Add waypoint or Replace coordinates. Select a numbered waypoint to edit its instruction; dragging it makes one undoable edit. Escape cancels a drag. Numeric X/Y fields provide the same editing actions without dragging.</p>
-<p>Visible locations also have a keyboard-accessible list. Open Location details for names, IDs, quest relations and explicit instruction actions. Wowhead details are fetched only when requested.</p>
-<p>Overlays are AzerothCore base-snapshot spawn/home locations, not live NPC positions or proof of quest availability. Moving, pooled, phased and event-dependent spawns are identified where the snapshot supplies that evidence. Lines show authored order, not traversable or safe routes. Conditions are not simulated.</p>
-<p>Unmapped zones, dungeon floors, world-coordinate forms and Classic-coordinate aliases requiring conversion remain source-only. The static-site package includes terrain and client icons; see <a href="credits.html">credits</a>. Map view and layer choices last only for this page session.</p>
-<h2>Validation</h2>
-<p>Source checks report definite syntax problems separately from unknown references and branch-dependent labels. Passing browser checks does not replace the production parser, repository validation or gameplay tests. External links in documentation are not fetched automatically.</p>
+<p>This import accepts basic editor instructions, not executable Lua, macros or includes. Replacing a saved import requires confirmation.</p>
+<details><summary>Companion addon — alternative for older builds</summary>
+<ol>
+<li>Choose a folder suffix in Export and download both the <code>.toc</code> and <code>Guide.lua</code>.</li>
+<li>Close WoW. Put both files in the displayed <code>Interface/AddOns/RXPGuides_Custom_…/</code> folder. The .toc filename must match the folder name.</li>
+<li>Restart WoW, enable the companion alongside RXPGuides and select the guide.</li>
+</ol>
+</details>
+<p>Test on a disposable character and back up SavedVariables. Check travel, quest IDs, counters, rewards and reload restoration. Editing names or step order can affect saved progress.</p>
+
+<h2>Instructions and maps</h2>
+<p>For walking routes, use one step per destination. New travel objectives use a 15-yard arrival radius. Navigation-only waypoints, notes, target/mob helpers and item buttons need another completion objective; use a quest, collection or Manual objective (+).</p>
+<ul>
+<li>Choose a continent and zone. Drag to pan; use the wheel or +/− to zoom. Arrow keys pan a focused map.</li>
+<li>Click terrain, then Add waypoint or Replace coordinates. Drag a waypoint to move it; Escape cancels. Numeric X/Y entry also works.</li>
+<li>Use Layers, professions and events to filter locations. Location details offers entity IDs and instruction actions.</li>
+</ul>
+<p>Existing waypoint radii are preserved. Map view and filters last for this session only.</p>
+<p>Markers are AzerothCore snapshot spawn/home locations, not live positions or guaranteed quest availability. Event filters are not a server calendar. Lines show instruction order, not safe paths.</p>
+<p>Dungeon and underground images are view-only, not mapped floors. Use their instance-wide entity lists where available; clicking interior images cannot create coordinates. Unsupported map forms remain source-only.</p>
+
+<h2>Lookup</h2>
+<p>Enter an ID or link for <a href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Wowhead WotLK</a> details. Partial titles open search results in a new tab; paste a result link back. Use in instruction applies the selected result.</p>
+<p>Verify availability on your server. Quest objective indices come from the client quest log, not database slots or tooltip order. Object lookups require source editing.</p>
+
+<h2>Privacy and limits</h2>
+<ul>
+<li>Guides and drafts stay local. Lookups send the requested ID/type to Wowhead; title searches send the search text. No Wowhead scripts or trackers are embedded.</li>
+<li>Imported Lua is read as text, never executed by the website. Original-file downloads preserve comments and surrounding code; unchanged imports retain their bytes.</li>
+<li>External Lua dependencies or <code>]]</code> inside a guide block companion export, not raw saving. Review advanced source before installing it.</li>
+<li>Checks do not simulate conditions or certify gameplay. Missing maps or lookup data do not prevent manual editing.</li>
+</ul>
+<p>See <a href="credits.html">credits</a> for artwork and data attribution.</p>
 </main><footer><a href="./">Back to tools</a></footer>
 </body></html>

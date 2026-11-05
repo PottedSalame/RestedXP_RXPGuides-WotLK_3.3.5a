@@ -30,7 +30,7 @@ class Links(HTMLParser):
     def handle_starttag(self, tag, attrs):
         for key, value in attrs:
             if key in ("href", "src") and value and not value.startswith("#"):
-                self.links.append(value)
+                self.links.append((tag, key, value))
             if key == "id":
                 self.ids.append(value)
             if key.startswith("on"):
@@ -69,8 +69,11 @@ class WebsiteChecks(unittest.TestCase):
             parser = Links()
             parser.feed(path.read_text(encoding="utf-8"))
             self.assertEqual(len(parser.ids), len(set(parser.ids)), path.name)
-            for link in parser.links:
+            for tag, attribute, link in parser.links:
                 if link.startswith("https://"):
+                    self.assertEqual((tag, attribute), ("a", "href"), "External resources are not allowed")
+                    if link == "https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a":
+                        continue
                     self.assertEqual(urlsplit(link).netloc, "www.wowhead.com")
                     self.assertTrue(urlsplit(link).path.startswith("/wotlk"))
                     continue
@@ -91,6 +94,14 @@ class WebsiteChecks(unittest.TestCase):
         # This orphan branch contains no addon release machinery. The static
         # payload allowlist/rejection checks live in test_site_package.py.
         self.assertFalse((REPO / 'RXPGuides.toc').exists())
+
+    def test_hub_lists_addon_before_editor(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        headings = re.findall(r'<h2><a href="([^"]+)">([^<]+)</a></h2>', html)
+        self.assertEqual(headings, [
+            ("https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a", "RXPGuides Addon"),
+            ("guide-editor/", "Guide Editor"),
+        ])
 
     def test_data_excludes_private_fields(self):
         for path in (ROOT / "data").rglob("*.json"):

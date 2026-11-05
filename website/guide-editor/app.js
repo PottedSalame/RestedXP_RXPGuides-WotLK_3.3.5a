@@ -36,10 +36,10 @@ function saveDraft() {
   if (!draftDirty) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({version: 1, filename: state.filename, text: state.history.text, guide: state.guide, step: state.step}));
-      $('storage-status').textContent = 'Draft saved in this browser · not a downloaded backup.';
+      $('storage-status').textContent = 'Draft saved locally. Download a backup.';
       $('restore').disabled = false;
       draftDirty = false;
-    } catch { $('storage-status').textContent = 'Local draft could not be saved (storage disabled or full). Download your work now.'; }
+    } catch { $('storage-status').textContent = 'Draft could not be saved. Download a backup now.'; }
 }
 function scheduleSave() {
   draftDirty = true;
@@ -286,12 +286,12 @@ $('open').onchange = async () => {
     if (!confirmReplace()) return;
     if (file.size > MAX_BYTES) throw new Error('File exceeds 12 MiB.');
     const serial = ++documentSerial, bytes = await file.arrayBuffer();
-    if (serial !== documentSerial || sourceTimer) { status('File open cancelled because the document changed while reading.'); return; }
+    if (serial !== documentSerial || sourceTimer) { status('Open cancelled: the document changed.'); return; }
     replaceDocument(decodeFile(bytes), file.name);
   }
   catch (error) { status(error.message, true); } finally { $('open').value = ''; }
 };
-$('save').onclick = safely(() => { flushSource(); download(state.filename, state.history.text); state.saved = state.history.text; status('Download requested. Keep this file as your backup.'); });
+$('save').onclick = safely(() => { flushSource(); download(state.filename, state.history.text); state.saved = state.history.text; status('Download requested. Keep it as a backup.'); });
 $('raw').onclick = safely(() => { flushSource(); download('guide-source.txt', guide().body); });
 $('clone').onclick = safely(() => {
   flushSource(); const active = guide();
@@ -416,7 +416,7 @@ $('use-reference').onclick = safely(() => {
   $('display-text').value = verb + name;
   queueLive('instruction', $('use-reference')); flushLive();
   workspace.inspect('details');
-  status(state.drafting ? 'Reference ready. Add the instruction when ready.' : 'Instruction updated.');
+  status(state.drafting ? 'Reference ready. Choose Add instruction.' : 'Instruction updated.');
 });
 window.addEventListener('beforeunload', event => { flushSource(); saveDraft(); if (state.history.text !== state.saved) { event.preventDefault(); event.returnValue = ''; } });
 window.addEventListener('pagehide', () => { flushSource(); saveDraft(); });
