@@ -21,11 +21,12 @@ def mask_pixels(raw, mode):
         raise ValueError('Expected one native RGBA tile')
     if mode == 'empty-border':
         return bytes(len(raw)), 65536
-    if mode != 'edge-navy':
+    if mode not in ('edge-navy','edge-padding'):
         raise ValueError('Unknown cleanup rule')
     # Remove only the two reviewed flat-background colours connected to an
     # outer edge. Identically coloured isolated terrain pixels are retained.
-    eligible = bytearray(tuple(raw[i:i+4]) in NAVY for i in range(0, len(raw), 4))
+    colours = NAVY | {(0,29,41,255)} if mode=='edge-padding' else NAVY
+    eligible = bytearray(tuple(raw[i:i+4]) in colours for i in range(0, len(raw), 4))
     pending = deque()
     for i in range(65536):
         if eligible[i] and (i < 256 or i >= 65280 or i % 256 in (0, 255)):

@@ -28,13 +28,26 @@ class Cleanup(unittest.TestCase):
     def test_review_scope_is_only_ghostlands_border(self):
         plan=json.loads(c.RECIPE.read_text())
         self.assertEqual((plan['region']['physical'],plan['region']['display']),(530,0))
-        self.assertEqual(len(plan['tiles']),28)
+        self.assertEqual(len(plan['tiles']),33)
         for e in plan['tiles']:
             x,y=map(int,e['key'].split(','))
             self.assertTrue(40<=x<=48 and 15<=y<=22)
-            self.assertIn(e['mode'],('edge-navy','empty-border'))
-            if e['mode']=='empty-border':self.assertTrue(x==48 or y==22)
+            self.assertIn(e['mode'],('edge-navy','edge-padding','empty-border'))
+            if e['mode']=='edge-padding':self.assertEqual(e['key'],'42,21')
+            if e['mode']=='empty-border':self.assertTrue(x==48 or y==22 or (x in (40,41) and 19<=y<=21))
             self.assertGreater(e['removedPixels'],0)
+
+    def test_western_padding_no_longer_covers_tirisfal(self):
+        entries={e['key']:e for e in json.loads(c.RECIPE.read_text())['tiles']}
+        for x in (40,41):
+            for y in range(19,23):
+                self.assertEqual(entries[f'{x},{y}']['mode'],'empty-border')
+                self.assertEqual(entries[f'{x},{y}']['removedPixels'],65536)
+
+    def test_ocean_colour_is_only_removed_by_explicit_rule(self):
+        raw=bytes((0,29,41,255))*65536
+        self.assertEqual(c.mask_pixels(raw,'edge-navy'),(raw,0))
+        self.assertEqual(c.mask_pixels(raw,'edge-padding'),(bytes(len(raw)),65536))
 
     def test_changed_manifest_fails_before_writing(self):
         with tempfile.TemporaryDirectory() as folder:

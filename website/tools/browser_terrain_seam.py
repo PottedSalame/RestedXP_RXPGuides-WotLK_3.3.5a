@@ -13,7 +13,7 @@ import serve
 from browser_maps import DevTools
 
 
-def run(browser, output, prefix='/', site_root=None):
+def run(browser, output, prefix='/', site_root=None, area='ghostlands'):
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     if site_root:serve.ROOT=site_root.resolve()
     httpd=serve.server(0,prefix)
@@ -55,7 +55,7 @@ def run(browser, output, prefix='/', site_root=None):
                     script=client.call('Page.addScriptToEvaluateOnNewDocument',dict(source=hook))['identifier']
                     client.call('Page.navigate',dict(url=f'http://127.0.0.1:{httpd.server_port}{prefix}guide-editor/'))
                     time.sleep(.3)
-                    evaluate(r'''(async()=>{
+                    setup=r'''(async()=>{
                       const sleep=ms=>new Promise(r=>setTimeout(r,ms));
                       for(let i=0;i<100&&!document.getElementById('source');i++)await sleep(50);
                       const source=document.getElementById('source');
@@ -69,23 +69,45 @@ def run(browser, output, prefix='/', site_root=None):
                       for(const input of document.querySelectorAll('[data-layer]'))if(input.checked&&input.dataset.layer!=='guide')input.click();
                       document.getElementById('map-out').click();
                       window.seamSource=source.value;
-                    })()''')
+                    })()'''
+                    if area=='scarlet':
+                        setup=setup.replace('Ghostlands,50,100','Tirisfal Glades,100,30').replace("select('map-zone',463)","select('map-zone',20)")
+                    evaluate(setup)
+                    if area=='scarlet':
+                        evaluate(r'''(async()=>{
+                          await new Promise(r=>setTimeout(r,600));
+                          for(let i=0;i<100&&(seam.active||seam.decoding);i++)await new Promise(r=>setTimeout(r,100));
+                          const {fromPercent}=await import('./map-model.js');
+                          const m=await fetch('../map-assets-local/manifest.json').then(r=>r.json());
+                          const z=m.zones.find(z=>z.id===20),a=fromPercent(m,z,0,0),b=fromPercent(m,z,100,100),center=fromPercent(m,z,100,30);
+                          const r=document.getElementById('terrain').getBoundingClientRect();
+                          window.seamProbe={center,scale:Math.min((r.width-30)/(b.u-a.u),(r.height-30)/(b.v-a.v))/1.5};
+                        })()'''.replace('../map-assets-local/','../map-assets/' if site_root else '../map-assets-local/'))
                     results[mode]=[]
                     for level in range(3):
                         if level:evaluate("document.getElementById('map-in').click()")
+                        evaluate('window.seamZoom='+str(level))
                         sample=evaluate(r'''(async()=>{
                           const sleep=ms=>new Promise(r=>setTimeout(r,ms));await sleep(600);
                           for(let i=0;i<100&&(seam.active||seam.decoding);i++)await sleep(100);await sleep(200);
                           const canvas=document.getElementById('terrain');canvas.scrollIntoView({block:'center'});
                           const p=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
-                          let navy=0,white=0;
+                          let navy=0,white=0,ocean=0;
                           for(let i=0;i<p.length;i+=4){
                             if((p[i]===33&&p[i+1]===36&&p[i+2]===58)||(p[i]===29&&p[i+1]===34&&p[i+2]===53))navy++;
                             if(p[i]===247&&(p[i+1]===245||p[i+1]===247)&&p[i+2]===247)white++;
+                            if(p[i]===0&&p[i+1]===29&&p[i+2]===41)ocean++;
                           }
                           if(document.getElementById('source').value!==seamSource)throw new Error('View changed source');
                           const r=canvas.getBoundingClientRect();
-                          return {navy,white,peak:seam.peak,cleaned:seam.cleaned,clip:{x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}};
+                          let probe=null;
+                          if(window.seamProbe){
+                            const s=seamProbe.scale*1.5**seamZoom;
+                            const x=Math.round(r.width/2+(40.5*256-1278.144-seamProbe.center.u)*s);
+                            const y=Math.round(r.height/2+(22.5*256+1152-seamProbe.center.v)*s);
+                            probe=[...canvas.getContext('2d').getImageData(x,y,1,1).data];
+                          }
+                          return {navy,white,ocean,probe,peak:seam.peak,cleaned:seam.cleaned,clip:{x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height,scale:1}};
                         })()''')
                         image=client.call('Page.captureScreenshot',dict(format='png',clip=sample.pop('clip'),captureBeyondViewport=True))['data']
                         (output/f'{mode}-{level}.png').write_bytes(base64.b64decode(image))
@@ -93,10 +115,14 @@ def run(browser, output, prefix='/', site_root=None):
                     client.call('Page.removeScriptToEvaluateOnNewDocument',dict(identifier=script))
                 for before,after in zip(results['original'],results['cleaned']):
                     if not after['cleaned'] or after['peak']>4:raise RuntimeError('Cleanup not painted or unbounded requests')
-                    if before['navy']+before['white']<1000:raise RuntimeError('Control did not reproduce blank border')
-                    if after['navy']+after['white']>(before['navy']+before['white'])*.1:raise RuntimeError('Blank border remains')
+                    if area=='scarlet':
+                        if before['probe']!=[0,29,41,255]:raise RuntimeError('Control did not reproduce western padding')
+                        if after['probe'] in ([0,29,41,255],[36,51,61,255]):raise RuntimeError('Western padding still covers native terrain')
+                    else:
+                        if before['navy']+before['white']<1000:raise RuntimeError('Control did not reproduce blank border')
+                        if after['navy']+after['white']>(before['navy']+before['white'])*.1:raise RuntimeError('Blank border remains')
                 (output/'result.json').write_text(json.dumps(results,indent=2)+'\n')
-                print('Ghostlands seam: three zoom levels passed; source unchanged; request peak <=4.')
+                print(area+': three zoom levels passed; source unchanged; request peak <=4.')
             finally:
                 if client:client.socket.close()
                 process.terminate();process.wait(timeout=15)
@@ -108,4 +134,5 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('browser','output'):parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--prefix',default='/');parser.add_argument('--site-root',type=Path)
-    args=parser.parse_args();run(args.browser,args.output,args.prefix,args.site_root)
+    parser.add_argument('--area',choices=('ghostlands','scarlet'),default='ghostlands')
+    args=parser.parse_args();run(args.browser,args.output,args.prefix,args.site_root,args.area)

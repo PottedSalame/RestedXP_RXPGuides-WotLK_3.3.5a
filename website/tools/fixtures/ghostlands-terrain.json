@@ -15,21 +15,56 @@
     ],
     "physical": 530
   },
-  "reason": "Visually reviewed stock Ghostlands southern/eastern blank borders. White strip and navy-only bottom tiles include non-geographic edge padding; partial tiles remove only edge-connected exact navy palette pixels. Original images and projections remain unchanged.",
+  "reason": "Visually reviewed stock Ghostlands southern/eastern blank borders and western ocean padding covering the Tirisfal/Scarlet Monastery surroundings. The exact western tiles at x40-41/y19-22 contain only flat ocean, navy padding and edge artifacts, not land. White strip and navy-only bottom tiles include non-geographic edge padding; partial tiles remove only edge-connected exact navy palette pixels. Original images and projections remain unchanged.",
   "tiles": [
+    {
+      "key": "40,19",
+      "source": "tiles/base/67ba43d493e62a8fad5de319e6d4cb05.webp",
+      "sha256": "0ea2aff02ab1bfacf204d234bd83faf8dbfac6b12e8039eaf82964e0acae0d6f",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "40,20",
+      "source": "tiles/base/67ba43d493e62a8fad5de319e6d4cb05.webp",
+      "sha256": "0ea2aff02ab1bfacf204d234bd83faf8dbfac6b12e8039eaf82964e0acae0d6f",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "40,21",
+      "source": "tiles/base/5abc0760ea79d1e65f5b23140a95f712.webp",
+      "sha256": "c1a8ea12131c2af41f2b33397eed47e0cde76de43c52cf70bfc27cae542b255f",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
     {
       "key": "40,22",
       "source": "tiles/base/a23b009bea893a64be16292a1af386c4.webp",
       "sha256": "857885db35f6f5f37f479f44f6d5462f77a3a3cb77afcebac362effe306cedfd",
-      "mode": "edge-navy",
-      "removedPixels": 3056
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "41,19",
+      "source": "tiles/base/67ba43d493e62a8fad5de319e6d4cb05.webp",
+      "sha256": "0ea2aff02ab1bfacf204d234bd83faf8dbfac6b12e8039eaf82964e0acae0d6f",
+      "mode": "empty-border",
+      "removedPixels": 65536
+    },
+    {
+      "key": "41,20",
+      "source": "tiles/base/67ba43d493e62a8fad5de319e6d4cb05.webp",
+      "sha256": "0ea2aff02ab1bfacf204d234bd83faf8dbfac6b12e8039eaf82964e0acae0d6f",
+      "mode": "empty-border",
+      "removedPixels": 65536
     },
     {
       "key": "41,21",
       "source": "tiles/base/2330b63fa114d72a57568dcee497fd7a.webp",
       "sha256": "60a0cb3b794b4b470eb145a61a1d0d38081e28f73fb3e2087684e22f60b60af1",
-      "mode": "edge-navy",
-      "removedPixels": 52381
+      "mode": "empty-border",
+      "removedPixels": 65536
     },
     {
       "key": "41,22",
@@ -42,8 +77,8 @@
       "key": "42,21",
       "source": "tiles/base/94e4a41182124a20ba7ccadbbbdb7b5f.webp",
       "sha256": "54a5b76474731d99d51a554e1fdb202416c95c9c463fcc6caadfca3abd1cce1c",
-      "mode": "edge-navy",
-      "removedPixels": 50517
+      "mode": "edge-padding",
+      "removedPixels": 57557
     },
     {
       "key": "42,22",
