@@ -156,10 +156,17 @@ export function eventVisible(events,enabled){
 export function calendarEvent(event){
   return event.holiday>0||/New Year's Eve|Brew of the Month|Fishing Extravaganza|Fishing Derby/.test(event.name);
 }
-function eventRoles(roles,dynamic,enabled){
-  if(!dynamic?.length)return roles;
-  const result=new Set(roles);
-  for(const [id,add] of dynamic)if(enabled.has(id))for(const role of add)result.add(role);
+export function factionVisible(side,enabled=3){
+  // Zero/unspecified is shared. A role mask of 3 represents separate faction
+  // quests, so it needs at least one faction enabled. Not a hostility test.
+  return !side||!!(side&enabled);
+}
+function eventRoles(roles,dynamic,enabled,gates={},factions=3){
+  const base=gates.roleFactions?roles.filter(r=>factionVisible(gates.roleFactions[r],factions)):roles;
+  if(!dynamic?.length)return base;
+  const result=new Set(base);
+  for(const [id,add] of dynamic)if(enabled.has(id))for(const role of add)
+    if(factionVisible(gates.eventRoleFactions?.[id]?.[role],factions))result.add(role);
   return [...result];
 }
 function professionRoles(roles,types){
@@ -168,22 +175,23 @@ function professionRoles(roles,types){
     return roles.filter(role=>!role.startsWith('profession-'));
   return roles;
 }
-export function filterOverlay(record,layers,enabled,types){
+export function filterOverlay(record,layers,enabled,types,factions=3,questFactions={}){
   if(record.combinations){
     let count=0;const roles=new Set();
-    for(const [base,n,events,dynamic] of record.combinations){
-      if(!eventVisible(events,enabled))continue;
-      const visible=professionRoles(eventRoles(base,dynamic,enabled),types);
+    for(const [base,n,events,dynamic,gates={}] of record.combinations){
+      if(!factionVisible(gates.faction,factions)||!eventVisible(events,enabled))continue;
+      const visible=professionRoles(eventRoles(base,dynamic,enabled,gates,factions),types);
       if(!visible.some(r=>layers.has(r)))continue;
       count+=n;for(const role of visible)roles.add(role);
     }
     return count?{...record,count,roles:[...roles]}:null;
   }
-  if(!eventVisible(record.events,enabled))return null;
-  const roles=professionRoles(eventRoles(record.roles,record.eventRoles,enabled),types);
+  if(!factionVisible(record.faction,factions)||!eventVisible(record.events,enabled))return null;
+  const roles=professionRoles(eventRoles(record.roles,record.eventRoles,enabled,record,factions),types);
   if(!roles.some(r=>layers.has(r)))return null;
-  if(roles===record.roles&&!record.eventRoles&&!record.eventStarts)return record;
-  const starts=new Set(record.starts);
-  for(const [id,quest] of record.eventStarts||[])if(enabled.has(id))starts.add(quest);
-  return {...record,roles,starts:[...starts].sort((a,b)=>a-b)};
+  if(factions===3&&roles===record.roles&&!record.eventRoles&&!record.eventStarts)return record;
+  const permitted=q=>factionVisible(questFactions[q],factions);
+  const starts=new Set((record.starts||[]).filter(permitted));
+  for(const [id,quest] of record.eventStarts||[])if(enabled.has(id)&&permitted(quest))starts.add(quest);
+  return {...record,roles,starts:[...starts].sort((a,b)=>a-b),ends:(record.ends||[]).filter(permitted)};
 }

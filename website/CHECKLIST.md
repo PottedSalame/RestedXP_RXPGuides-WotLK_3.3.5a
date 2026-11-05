@@ -74,6 +74,12 @@ Before map testing, try the new workspace:
    Check multi-role NPCs and conditional-spawn notes. Use the Visible locations
    list and Location details with the keyboard. No Wowhead request should happen
    until its explicit details action is chosen.
+   Toggle Alliance and Horde separately, then together. Shared NPCs, gathering
+   nodes and authored waypoints stay visible. Disabling Horde hides its Durotar
+   services; disabling Alliance hides its Elwynn services. Quest actions on shared
+   NPCs follow the selected faction. Re-enable both to restore the original list.
+   Confirm filters remain selected after collapsing/reopening the map, with no
+   source changes or new terrain downloads.
 4. Select a waypoint, drag it, Undo and Redo. Drag again and press Escape: source
    must not change. Try manual X/Y entry and Add/Replace. Conditions, radius,
    optional arguments and other guides in an imported file must remain intact.

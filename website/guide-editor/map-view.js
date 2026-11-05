@@ -22,6 +22,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   const layers=new Set(['guide','start','end','repair','vendor','trainer']);
   const enabledEvents=new Set();
   const professionTypes={trainers:true,gathering:true};
+  let factions=3;
   const status=text=>{$('map-status').textContent=text;};
   const url=path=>{
     if(!/^[a-zA-Z0-9_.,/\-]+$/.test(path)||path.includes('..')||path.startsWith('/'))throw new Error('Invalid map asset path');
@@ -86,6 +87,12 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     $('map-popup').replaceChildren();locations=[];locationsKey='';
     $('map-locations').replaceChildren();$('map-details').disabled=true;hit=[];request();
   }
+  for(const [id,bit] of [['map-alliance',1],['map-horde',2]]){
+    $(id).disabled=true;
+    $(id).onclick=()=>{
+      factions^=bit;$(id).setAttribute('aria-pressed',String(!!(factions&bit)));filtersChanged();
+    };
+  }
   function eventControls(){
     const container=$('map-events');container.replaceChildren();
     for(const [title,calendar] of [['Calendar events',true],['Other world events',false]]){
@@ -143,6 +150,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       const row=el('div');row.append(el('strong',m.name+' ['+m.id+']'),el('p',locationDescription(m.roles)),el('p',m.roles.map(r=>labels[r]||CLASS_LABELS[r]||r).join(', ')),
         el('p','Physical map '+m.physical+'; X '+m.x+', Y '+m.y),el('p',m.notes.join('; ')||'Snapshot home position'));
       const eventNames=(m.events||[]).map(id=>(id<0?'Absent during: ':'')+(overlay?.events?.find(e=>e.id===Math.abs(id))?.name||('Event '+Math.abs(id))));
+      if(m.faction)row.append(el('p',m.faction===1?'Alliance affiliation':'Horde affiliation'));
       if(eventNames.length)row.append(el('p',eventNames.join('; ')));
       const coords=zone()?.physical===m.physical?toPercent(manifest,zone(),m.u,m.v):null;
       if(coords){row.append(el('p',zone().token+': '+coords.x.toFixed(2)+', '+coords.y.toFixed(2)));const b=el('button','Use coordinates');b.onclick=()=>setProposal(coords.x,coords.y);row.append(b);}
@@ -213,7 +221,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const visible=[];
     for(const m of records){
       if(!inside([m.u,m.v],[min[0],min[1],max[0],max[1]]))continue;
-      const filtered=filterOverlay(m,layers,enabledEvents,professionTypes);if(filtered)visible.push(filtered);
+      const filtered=filterOverlay(m,layers,enabledEvents,professionTypes,factions,overlay?.questFactions);if(filtered)visible.push(filtered);
     }
     ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
     const clusters=cluster(visible,screen,24,[view.u*view.scale-width/2,view.v*view.scale-height/2]);
@@ -325,6 +333,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
         if(!open||controller!==local)return;
         iconManifest=nextIcons?.schema===1?nextIcons:null;
         manifest=data;terrain=nextTerrain;overlay=nextOverlay?.schema===2?nextOverlay:null;eventControls();
+        for(const id of ['map-alliance','map-horde'])$(id).disabled=overlay?.factionSchema!==1;
         $('map-continent').replaceChildren(...manifest.continents.map(c=>option(c.name,c.id)));$('map-continent').value=display;
         const preferred=manifest.zones.find(z=>z.token==='Durotar');choices(preferred);
         $('map-content').hidden=false;size();fit();

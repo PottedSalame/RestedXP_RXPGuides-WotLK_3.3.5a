@@ -117,6 +117,12 @@
           <button id="map-reset" type="button">Reset view</button>
         </div>
         <div id="map-legend" class="toolbar" aria-label="Map layers"></div>
+        <div id="map-factions" class="toolbar" role="group" aria-label="Faction filters">
+          <span>Factions</span>
+          <button id="map-alliance" type="button" aria-pressed="true" title="Show or hide Alliance-affiliated locations">Alliance</button>
+          <button id="map-horde" type="button" aria-pressed="true" title="Show or hide Horde-affiliated locations">Horde</button>
+          <span class="hint">Shared locations stay visible.</span>
+        </div>
         <details id="map-professions"><summary>Professions</summary>
           <div class="toolbar"><label><input id="map-profession-trainers" type="checkbox" checked> Include trainers</label><label><input id="map-profession-gathering" type="checkbox" checked> Include gathering locations</label></div>
           <p class="hint">Badge = trainer; plain icon = gathering. Other layers may also show these entities.</p>

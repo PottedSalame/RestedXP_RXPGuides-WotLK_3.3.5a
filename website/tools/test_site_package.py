@@ -8,6 +8,7 @@ from map_extract import sha,write
 from map_icons import decode,MEMBERS
 from map_overlays import npc_roles
 from package_site import package,ROOT,checked
+from map_factions import FACTS
 
 class SitePackage(unittest.TestCase):
     def test_icon_palette_and_bounds(self):
@@ -33,7 +34,9 @@ class SitePackage(unittest.TestCase):
         write(assets/'receipt.json',dict(schema=1,files={'manifest.json':sha((assets/'manifest.json').read_bytes())}))
         write(assets/'icons/profession-facts.json',dict(schema=1))
         facts_hash=sha((assets/'icons/profession-facts.json').read_bytes())
-        write(assets/'overlays/manifest.json',dict(schema=2,files={},chunks={},overviews={},events=[],inputs={'profession-facts.json':facts_hash}))
+        write(assets/'overlays/manifest.json',dict(schema=2,files={},chunks={},overviews={},events=[],inputs={'profession-facts.json':facts_hash},
+            factionSchema=1,factionFactsHash=sha(FACTS.read_bytes()),questFactions=json.loads(FACTS.read_text())['questFactions'],
+            generators={name:sha((ROOT/'tools'/name).read_bytes()) for name in ('map_factions.py','map_overlays.py')}))
         (assets/'overlays/LICENSE-AzerothCore.txt').write_text('Fixture license')
         files={};icons={}
         for role in MEMBERS:
@@ -93,7 +96,16 @@ class SitePackage(unittest.TestCase):
             for path in ('../secret','/absolute','C:/private','tiles/../../private','tiles\\escape'):
                 with self.assertRaises(ValueError):checked(assets,path)
             manifest=assets/'overlays/manifest.json'
-            write(manifest,dict(schema=2,files={},chunks={'1/1_1':'1/1_1.json'},overviews={},events=[],inputs={'profession-facts.json':sha((assets/'icons/profession-facts.json').read_bytes())}))
+            data=json.loads(manifest.read_text());data['chunks']={'1/1_1':'1/1_1.json'};write(manifest,data)
             with self.assertRaisesRegex(ValueError,'Unreceipted overlay'):package(assets,root/'out')
+
+    def test_stale_faction_evidence_blocks_packaging(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);assets=self.fixtures(root)
+            path=assets/'overlays/manifest.json';original=json.loads(path.read_text())
+            for field,value in [('factionSchema',None),('factionFactsHash','0'*64),('questFactions',{}),('generators',{})]:
+                data=dict(original);data[field]=value;write(path,data)
+                with self.assertRaisesRegex(ValueError,'faction'):package(assets,root/'out')
+                self.assertFalse((root/'out').exists())
 
 if __name__=='__main__':unittest.main()

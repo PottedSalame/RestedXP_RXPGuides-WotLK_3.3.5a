@@ -6,6 +6,39 @@ export const fixture={schema:1,tileSize:256,maxZoom:6,continents:[{id:1,name:'Ka
   regions:[{physical:1,display:1,clip:[0,0,16384,16384],offset:[0,0]}],
   tiles:{1:Object.fromEntries(Array.from({length:7},(_,i)=>[i,{}]))}};
 export async function mapTests(test,assert,equal,rejects,sleep){
+  await test('Faction filters preserve shared locations, quest audiences, event gates and exact overview counts',()=>{
+    const records=[
+      {faction:1,roles:['vendor','creature'],starts:[],ends:[]},
+      {faction:2,roles:['trainer','profession-mining','creature'],starts:[],ends:[]},
+      {roles:['object','profession-mining'],starts:[],ends:[]},
+      {roles:['vendor','start','end'],starts:[10],ends:[20],roleFactions:{start:1,end:2},
+        eventStarts:[[2,20]],eventRoles:[[2,['start']]],eventRoleFactions:{2:{start:2}}},
+      {roles:['start'],starts:[10,20],ends:[],roleFactions:{start:3}},
+      {faction:2,roles:['start'],starts:[20],ends:[],events:[2]},
+      {roles:['start'],starts:[99],ends:[],events:[-2]}
+    ];
+    const before=JSON.stringify(records),quests={10:1,20:2};
+    const overview={combinations:records.map(r=>[r.roles,1,r.events||[],r.eventRoles||[],
+      {faction:r.faction,roleFactions:r.roleFactions,eventRoleFactions:r.eventRoleFactions}])};
+    for(const factions of [0,1,2,3])for(const events of [new Set(),new Set([2])])
+      for(const chosen of [['vendor'],['start'],['end'],['trainer'],['profession-mining'],['vendor','start','end','object','trainer']]){
+        const layers=new Set(chosen);
+        for(const types of [{trainers:true,gathering:true},{trainers:false,gathering:true},{trainers:true,gathering:false}]){
+          const visible=records.map(r=>P.filterOverlay(r,layers,events,types,factions,quests)).filter(Boolean);
+          equal(P.filterOverlay(overview,layers,events,types,factions,quests)?.count||0,visible.length);
+        }
+      }
+    equal(JSON.stringify(records),before);
+    assert(P.filterOverlay(records[0],new Set(['vendor']),new Set(),null,2)===null);
+    assert(P.filterOverlay(records[2],new Set(['object']),new Set(),null,0));
+    const mixed=records[3],layer=new Set(['vendor','start','end']);
+    equal(P.filterOverlay(mixed,layer,new Set([2]),null,1,quests).starts,[10]);
+    equal(P.filterOverlay(mixed,layer,new Set([2]),null,1,quests).ends,[]);
+    equal(P.filterOverlay(mixed,layer,new Set(),null,2,quests).roles,['vendor','end']);
+    equal(P.filterOverlay(mixed,layer,new Set([2]),null,2,quests).starts,[20]);
+    equal(P.filterOverlay(mixed,layer,new Set([2]),null,0,quests).roles,['vendor']);
+    assert(P.filterOverlay(records[4],new Set(['start']),new Set(),null,0,quests)===null);
+  });
   await test('Terrain cleanup changes only the relocated Ghostlands images, including zoom fallbacks',()=>{
     const region={physical:530,display:0,clip:[10,20,30,40],offset:[-10,15]},outland={physical:530,display:530,clip:[0,0,64,64],offset:[0,0]};
     const original=Object.fromEntries(Array.from({length:7},(_,level)=>[level,{'0,0':'tiles/'+level+'.webp','1,1':'tiles/untouched.webp'}]));
@@ -226,7 +259,7 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       requests++;
       if(missing)return new w.Response('Missing',{status:404});
       if(delayed&&String(url).endsWith('/overlays/manifest.json'))return new Promise(resolve=>{resolveOverlay=resolve;});
-      if(String(url).endsWith('/overlays/manifest.json'))return new w.Response(JSON.stringify({schema:2,chunks:{},overviews:{},events:[
+      if(String(url).endsWith('/overlays/manifest.json'))return new w.Response(JSON.stringify({schema:2,factionSchema:1,questFactions:{},chunks:{},overviews:{},events:[
         {id:2,holiday:141,name:'Winter Veil'},{id:25,holiday:0,name:'Pyrewood Village'}]}));
       return new w.Response(JSON.stringify(fixture));
     }return fetch(url,opts);
@@ -258,6 +291,17 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       const section=winter.closest('details');
       section.querySelector('[aria-label="Hide all calendar events"]').click();assert(!winter.checked);
       section.querySelector('[aria-label="Show all calendar events"]').click();assert(winter.checked);
+    });
+    await test('Faction buttons retain session choices, clear stale actions and do not fetch or edit source',async()=>{
+      const a=get('map-alliance'),h=get('map-horde'),before=get('source').value,count=requests;
+      for(const b of [a,h]){assert(!b.disabled);equal(b.getAttribute('aria-pressed'),'true');}
+      get('map-popup').textContent='Stale Alliance quest';a.click();await sleep(50);
+      equal(a.getAttribute('aria-pressed'),'false');equal(h.getAttribute('aria-pressed'),'true');
+      equal(get('map-popup').textContent,'');assert(get('map-details').disabled);
+      get('terrain-panel').open=false;await sleep(50);h.click();await sleep(50);equal(requests,count);
+      get('terrain-panel').open=true;await sleep(100);
+      equal(a.getAttribute('aria-pressed'),'false');equal(h.getAttribute('aria-pressed'),'false');
+      a.click();h.click();await sleep(50);equal(requests,count);equal(get('source').value,before);
     });
     await test('Fourteen profession switches start off and changing them does not edit the guide',async()=>{
       const controls=[...d.querySelectorAll('#map-profession-options input')];equal(controls.length,14);

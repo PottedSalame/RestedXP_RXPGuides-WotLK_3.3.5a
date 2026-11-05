@@ -93,6 +93,23 @@ tokens come from this repository. Ambiguous/floor forms and `StormwindClassic` /
 The [Ghostlands edge cleanup](TERRAIN_CLEANUP.md) hides reviewed placeholder
 pixels with a separate derived layer, without changing terrain coordinates.
 
+Alliance and Horde legend buttons filter affiliated locations and quest actions.
+Both start enabled; shared/unknown locations and guide waypoints remain visible.
+These are snapshot affiliations, not live reputation or quest eligibility.
+Faction filtering runs before clustering and does not refetch terrain or chunks.
+
+`tools/fixtures/overlay-factions.json` pins WotLK faction-group and base-SQL
+quest-race facts. Full overlay regeneration consumes this fixture. To refresh
+it against the same base snapshot, write to new outputs first:
+
+```text
+python website/tools/map_factions.py --acore-source <source> --faction-dbc <FactionTemplate.dbc> --overlays website/map-assets-local/overlays --facts-output build/faction-facts-new.json --output build/faction-overlays-new
+```
+
+Review and promote both outputs together. Changed existing SQL inputs are
+rejected; unknown affiliation remains shared rather than guessed from names.
+The packager verifies faction evidence and generator hashes before publication.
+
 Generated artwork and overlay payloads are committed under `map-assets-local/`
 on this standalone website branch. The directory name is retained for compatibility.
 The site packager explicitly includes the verified terrain and icon files in its

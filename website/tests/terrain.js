@@ -89,6 +89,33 @@ try{
   context.drawImage=professionDraw;
   if(!professionPaints)issues.push('Selected professions did not paint client icons on actual terrain');
   for(const control of professionControls)control.click();d.getElementById('map-professions').open=false;
+  // Actual snapshot markers, including filtered popup actions. No data reload
+  // should be needed when only faction selection changes.
+  for(const [continent,zoneId,hiddenSide] of [[1,4,'horde'],[0,30,'alliance']]){
+  select('map-continent',continent);select('map-zone',zoneId);
+  for(const input of d.querySelectorAll('[data-layer]')){
+    const on=['guide','start','end','repair','vendor','trainer'].includes(input.dataset.layer);
+    if(input.checked!==on)input.click();
+  }
+  await sleep(600);for(let i=0;i<100&&(active||decoding);i++)await sleep(100);await sleep(100);
+  const alliance=d.getElementById('map-alliance'),horde=d.getElementById('map-horde');
+  if(alliance.disabled||horde.disabled)issues.push('Faction evidence not available');
+  const allLocations=d.getElementById('map-locations').textContent,factionFetches=requests,factionSource=d.getElementById('source').value;
+  const toggle=hiddenSide==='horde'?horde:alliance;
+  toggle.click();await sleep(250);
+  if(d.getElementById('map-locations').textContent===allLocations)issues.push(hiddenSide+' toggle did not filter actual starter-zone locations');
+  const locationList=d.getElementById('map-locations');
+  for(let i=0;i<Math.min(locationList.options.length,10);i++){
+    select('map-locations',i);d.getElementById('map-details').click();
+    const popup=d.getElementById('map-popup').textContent;
+    if(popup.includes((hiddenSide==='horde'?'Horde':'Alliance')+' affiliation'))issues.push('Hidden faction marker remained actionable');
+  }
+  toggle.click();await sleep(250);
+  if(d.getElementById('map-locations').textContent!==allLocations)issues.push('Both factions did not restore the original markers');
+  if(d.getElementById('map-popup').textContent)issues.push('Faction change retained stale popup');
+  if(requests!==factionFetches)issues.push('Faction toggles refetched terrain or overlay data');
+  if(d.getElementById('source').value!==factionSource)issues.push('Faction controls changed guide source');
+  }
   // Exercise the production controls beyond the former 2x ceiling. Native
   // 256px tiles should paint at 2048px, not request invented higher levels.
   const drawImage=context.drawImage.bind(context);let largestTile=0;

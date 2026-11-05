@@ -10,6 +10,7 @@ import subprocess
 from map_extract import REPO, project, sha, write
 from project_paths import require_addon
 from map_professions import trainer_professions,trainer_classes,gathering_professions
+from map_factions import FACTS,annotate,evidence
 
 def npc_roles(flags):
     return [role for bit,role in ((128,'vendor'),(16,'trainer'),(4096,'repair')) if flags & bit]
@@ -48,11 +49,12 @@ def overview_records(items):
         combinations=defaultdict(int)
         for r in group:
             dynamic=tuple((event,tuple(roles)) for event,roles in r.get('eventRoles',[]))
-            combinations[(tuple(r['roles']),tuple(r.get('events',[])),dynamic)]+=1
+            gates=json.dumps(evidence(r),sort_keys=True,separators=(',',':'))
+            combinations[(tuple(r['roles']),tuple(r.get('events',[])),dynamic,gates)]+=1
         records.append(dict(kind='cluster',u=round(sum(r['u'] for r in group)/len(group),4),
             v=round(sum(r['v'] for r in group)/len(group),4),count=len(group),
-            combinations=[[list(roles),count,list(events),[[e,list(rs)] for e,rs in dynamic]]
-                for (roles,events,dynamic),count in sorted(combinations.items())],
+            combinations=[[list(roles),count,list(events),[[e,list(rs)] for e,rs in dynamic]]+([json.loads(gates)] if gates!='{}' else [])
+                for (roles,events,dynamic,gates),count in sorted(combinations.items())],
             roles=sorted({role for r in group for role in r['roles']})))
     return records
 
@@ -65,6 +67,11 @@ def extract(source, output, profession_facts):
     reader = importlib.util.module_from_spec(spec); spec.loader.exec_module(reader)
     inputs = {}
     facts=json.loads(profession_facts.read_text(encoding='utf-8'))
+    faction_facts=json.loads(FACTS.read_text(encoding='utf-8'))
+    if faction_facts.get('schema')!=1:raise ValueError('Unsupported faction facts')
+    for name,digest in faction_facts['inputs'].items():
+        if name.endswith('.sql') and sha((source/'data/sql/base/db_world'/name).read_bytes())!=digest:
+            raise ValueError('Faction facts require regeneration: '+name)
     if facts['schema']!=1:raise ValueError('Unsupported profession facts')
     inputs['profession-facts.json']=sha(profession_facts.read_bytes())
     def rows(table):
@@ -155,7 +162,7 @@ def extract(source, output, profession_facts):
                 if dynamic:record['eventRoles']=[[e,sorted(rs)] for e,rs in sorted(dynamic.items()) if rs]
                 used_events.update(abs(e) for e in spawn_events)
                 used_events.update(dynamic)
-                chunks[key].append(record)
+                chunks[key].append(annotate(record,faction_facts))
                 count+=1
         counts[kind]=count
     files={}
@@ -178,9 +185,9 @@ def extract(source, output, profession_facts):
     if used_events-set(events):raise ValueError('Missing event definitions: '+str(sorted(used_events-set(events))))
     write(output/'manifest.json',dict(schema=2,chunkSize=512,chunks=index,overviews=overviews,counts=counts,sourceRevision=revision,
         events=[events[e] for e in sorted(used_events)],
-        professions=facts['professions'],
+        professions=facts['professions'],factionSchema=1,factionFactsHash=sha(FACTS.read_bytes()),questFactions=faction_facts['questFactions'],
         exclusions=[dict(kind=k,id=i,name=n,reason=r,count=c) for (k,i,n,r),c in sorted(excluded.items())],
-        inputs=inputs,files=files,notice=notice,generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_extract.py'),Path(__file__).with_name('map_professions.py'),addon/'tools/extract_hardcore_quest_facts335.py')}))
+        inputs=inputs,files=files,notice=notice,generators={p.name:sha(p.read_bytes()) for p in (Path(__file__),Path(__file__).with_name('map_extract.py'),Path(__file__).with_name('map_professions.py'),Path(__file__).with_name('map_factions.py'),addon/'tools/extract_hardcore_quest_facts335.py')}))
     print(counts,'chunks:',len(chunks))
 
 if __name__=='__main__':

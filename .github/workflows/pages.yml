@@ -26,7 +26,10 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test package boundaries
-        run: python website/tools/test_site_package.py
+        run: |
+          python website/tools/test_factions.py
+          python website/tools/test_overlays.py
+          python website/tools/test_site_package.py
       - name: Build and verify static site
         run: python website/tools/package_site.py --assets website/map-assets-local --output build/pages
       - name: Upload Pages artifact
