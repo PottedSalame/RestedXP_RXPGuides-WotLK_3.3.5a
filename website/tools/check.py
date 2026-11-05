@@ -103,6 +103,21 @@ class WebsiteChecks(unittest.TestCase):
             ("guide-editor/", "Guide Editor"),
         ])
 
+    def test_descriptive_page_titles_and_headings(self):
+        pages = [
+            ("index.html", "RXPGuides Tools for WoW WotLK 3.3.5a", "RXPGuides Tools for WoW WotLK 3.3.5a"),
+            ("guide-editor/index.html", "RXPGuides Custom Guide Editor for WotLK 3.3.5a", "RXPGuides Custom Guide Editor"),
+        ]
+        for name, title, heading in pages:
+            html = (ROOT / name).read_text(encoding="utf-8")
+            self.assertEqual(re.findall(r"<title>(.*?)</title>", html), [title])
+            headings = re.findall(r"<h1>(.*?)</h1>", html)
+            self.assertEqual(len(headings), 1)
+            self.assertEqual(re.sub(r"<[^>]+>", "", headings[0]).strip(), heading)
+            self.assertNotIn("\u2014", title + headings[0])
+        editor = (ROOT / "guide-editor/index.html").read_text(encoding="utf-8")
+        self.assertIn('<span id="document-name"></span>', editor)
+
     def test_data_excludes_private_fields(self):
         for path in (ROOT / "data").rglob("*.json"):
             value = json.loads(path.read_text(encoding="utf-8"))
