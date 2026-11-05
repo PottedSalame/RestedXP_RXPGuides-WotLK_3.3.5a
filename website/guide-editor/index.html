@@ -119,8 +119,8 @@
         <div id="map-legend" class="toolbar" aria-label="Map layers"></div>
         <div id="map-factions" class="toolbar" role="group" aria-label="Faction filters">
           <span>Factions</span>
-          <button id="map-alliance" type="button" aria-pressed="true" title="Show or hide Alliance-affiliated locations">Alliance</button>
-          <button id="map-horde" type="button" aria-pressed="true" title="Show or hide Horde-affiliated locations">Horde</button>
+          <label title="Show or hide Alliance-affiliated locations"><input id="map-alliance" type="checkbox" checked disabled><canvas id="map-alliance-icon" class="map-legend-icon" width="20" height="20" aria-hidden="true"></canvas>Alliance</label>
+          <label title="Show or hide Horde-affiliated locations"><input id="map-horde" type="checkbox" checked disabled><canvas id="map-horde-icon" class="map-legend-icon" width="20" height="20" aria-hidden="true"></canvas>Horde</label>
           <span class="hint">Shared locations stay visible.</span>
         </div>
         <details id="map-professions"><summary>Professions</summary>

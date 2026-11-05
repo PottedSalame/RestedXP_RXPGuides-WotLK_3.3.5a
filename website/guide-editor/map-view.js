@@ -89,8 +89,9 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
   }
   for(const [id,bit] of [['map-alliance',1],['map-horde',2]]){
     $(id).disabled=true;
-    $(id).onclick=()=>{
-      factions^=bit;$(id).setAttribute('aria-pressed',String(!!(factions&bit)));filtersChanged();
+    legendIcons.set(id.replace('map-','faction-'),$(id+'-icon'));
+    $(id).onchange=()=>{
+      factions=$(id).checked?factions|bit:factions&~bit;filtersChanged();
     };
   }
   function eventControls(){
@@ -191,7 +192,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
       legendPainted.set(role,icons[role]);
       const context=badge.getContext('2d');context.clearRect(0,0,20,20);
       if(icons[role])context.drawImage(icons[role],0,0,20,20);
-      else if(!drawNode(context,role,10,10)){context.fillStyle=colors[role];context.font='bold 16px system-ui';context.textAlign='center';context.fillText(symbols[role],10,16);}
+      else if(!drawNode(context,role,10,10)&&symbols[role]){context.fillStyle=colors[role];context.font='bold 16px system-ui';context.textAlign='center';context.fillText(symbols[role],10,16);}
     }
     ctx.clearRect(0,0,width,height);ctx.fillStyle='#24333d';ctx.fillRect(0,0,width,height);hit=[];
     const min=world(0,0),max=world(width,height);

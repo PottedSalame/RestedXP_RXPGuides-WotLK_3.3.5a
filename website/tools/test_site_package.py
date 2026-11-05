@@ -55,6 +55,8 @@ class SitePackage(unittest.TestCase):
             self.assertNotIn('map-assets/private.txt',a['files'])
             self.assertFalse(any(n.startswith(('tools/','tests/')) for n in a['files']))
             self.assertTrue((root/'a/map-assets/icons/repair.webp').exists())
+            for faction in ('alliance','horde'):
+                self.assertTrue((root/('a/map-assets/icons/faction-'+faction+'.webp')).exists())
             self.assertTrue((root/'a/guide-editor/workspace.js').exists())
             self.assertIn('../map-assets/',(root/'a/guide-editor/map-view.js').read_text())
             self.assertNotIn('../map-assets-local/',(root/'a/guide-editor/map-view.js').read_text())
@@ -106,6 +108,16 @@ class SitePackage(unittest.TestCase):
             for field,value in [('factionSchema',None),('factionFactsHash','0'*64),('questFactions',{}),('generators',{})]:
                 data=dict(original);data[field]=value;write(path,data)
                 with self.assertRaisesRegex(ValueError,'faction'):package(assets,root/'out')
+                self.assertFalse((root/'out').exists())
+
+    def test_faction_icons_are_required(self):
+        for faction in ('alliance','horde'):
+            with tempfile.TemporaryDirectory() as temp:
+                root=Path(temp);assets=self.fixtures(root)
+                manifest=json.loads((assets/'icons/manifest.json').read_text())
+                del manifest['icons']['faction-'+faction]
+                write(assets/'icons/manifest.json',manifest)
+                with self.assertRaisesRegex(ValueError,'Missing client icons'):package(assets,root/'out')
                 self.assertFalse((root/'out').exists())
 
 if __name__=='__main__':unittest.main()

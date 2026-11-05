@@ -44,7 +44,7 @@ def package(assets,output,root=ROOT):
     if terrain['schema']!=1 or overlay['schema']!=2 or icons['schema']!=1:raise ValueError('Unsupported asset schema')
     from map_factions import validate_overlay
     validate_overlay(overlay)
-    icon_names={'start','end','vendor','trainer','repair'}|{'profession-'+key for _,key,_,_ in PROFESSIONS}|{'class-'+key for _,key,_ in CLASSES}
+    icon_names={'start','end','vendor','trainer','repair','faction-alliance','faction-horde'}|{'profession-'+key for _,key,_,_ in PROFESSIONS}|{'class-'+key for _,key,_ in CLASSES}
     if set(icons['icons'])!=icon_names:raise ValueError('Missing client icons')
     facts=(assets/'icons/profession-facts.json').read_bytes()
     if sha(facts)!=icons.get('factsHash') or sha(facts)!=overlay.get('inputs',{}).get('profession-facts.json'):

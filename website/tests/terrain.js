@@ -100,6 +100,10 @@ try{
   await sleep(600);for(let i=0;i<100&&(active||decoding);i++)await sleep(100);await sleep(100);
   const alliance=d.getElementById('map-alliance'),horde=d.getElementById('map-horde');
   if(alliance.disabled||horde.disabled)issues.push('Faction evidence not available');
+  for(const input of [alliance,horde]){
+    if(input.type!=='checkbox'||!input.checked||!input.closest('label'))issues.push('Faction checkbox is not labelled and initially checked');
+    if(colours(d.getElementById(input.id+'-icon'))<5)issues.push('Client faction icon missing: '+input.id);
+  }
   const allLocations=d.getElementById('map-locations').textContent,factionFetches=requests,factionSource=d.getElementById('source').value;
   const toggle=hiddenSide==='horde'?horde:alliance;
   toggle.click();await sleep(250);

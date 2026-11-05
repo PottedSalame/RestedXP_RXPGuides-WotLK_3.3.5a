@@ -31,9 +31,9 @@ button, input, select, textarea { font: inherit; }
 button { background: #e0eaf2; color: #233747; border: 1px solid #7f9aad; border-radius: 2px; padding: .3rem .65rem; cursor: pointer; }
 button:hover:not(:disabled) { background: #c6dfed; }
 button:disabled { color: #657785; cursor: default; }
-#map-factions button[aria-pressed="true"] { background: #31556e; color: #fff; border-color: #203e53; }
-#map-factions button[aria-pressed="false"] { background: #edf2f6; color: #526572; }
-#map-factions button:focus-visible { outline: 2px solid #31556e; outline-offset: 2px; }
+#map-factions label { display: inline-flex; align-items: center; gap: .25rem; }
+#map-factions input { width: auto; flex-shrink: 0; }
+#map-factions canvas { flex-shrink: 0; }
 :focus-visible { outline: 2px solid #24668e; outline-offset: 2px; }
 input, select, textarea { color: #233747; background: #fff; border: 1px solid #8ba4b6; max-width: 100%; padding: .3rem; accent-color: #396e93; }
 ::selection { color: #233747; background: #c5e3f4; }

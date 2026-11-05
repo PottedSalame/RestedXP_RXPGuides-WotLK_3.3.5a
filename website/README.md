@@ -93,7 +93,7 @@ tokens come from this repository. Ambiguous/floor forms and `StormwindClassic` /
 The [Ghostlands edge cleanup](TERRAIN_CLEANUP.md) hides reviewed placeholder
 pixels with a separate derived layer, without changing terrain coordinates.
 
-Alliance and Horde legend buttons filter affiliated locations and quest actions.
+Alliance and Horde checkboxes filter affiliated locations and quest actions.
 Both start enabled; shared/unknown locations and guide waypoints remain visible.
 These are snapshot affiliations, not live reputation or quest eligibility.
 Faction filtering runs before clustering and does not refetch terrain or chunks.

@@ -14,6 +14,8 @@ MEMBERS = {
     'vendor': r'Interface\GossipFrame\VendorGossipIcon.blp',
     'trainer': r'Interface\GossipFrame\TrainerGossipIcon.blp',
     'repair': r'Interface\Minimap\Tracking\Repair.blp',
+    'faction-alliance': r'Interface\PVPFrame\PVP-Currency-Alliance.blp',
+    'faction-horde': r'Interface\PVPFrame\PVP-Currency-Horde.blp',
 }
 MEMBERS.update({'profession-'+key:'Interface\\Icons\\'+icon+'.blp' for _,key,_,icon in PROFESSIONS})
 MEMBERS.update({'class-'+key:'Textures/'+key.upper()+'.blp' for _,key,_ in CLASSES})

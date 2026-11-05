@@ -10,6 +10,8 @@ static bool iconAllowed(std::string name) {
         name == "interface\\gossipframe\\vendorgossipicon.blp" ||
         name == "interface\\gossipframe\\trainergossipicon.blp" ||
         name == "interface\\minimap\\tracking\\repair.blp" ||
+        name == "interface\\pvpframe\\pvp-currency-alliance.blp" ||
+        name == "interface\\pvpframe\\pvp-currency-horde.blp" ||
         name == "dbfilesclient\\skillline.dbc" || name == "dbfilesclient\\lock.dbc" ||
         name == "interface\\icons\\trade_alchemy.blp" ||
         name == "interface\\icons\\trade_blacksmithing.blp" ||

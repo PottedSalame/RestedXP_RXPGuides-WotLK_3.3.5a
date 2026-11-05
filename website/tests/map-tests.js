@@ -292,16 +292,16 @@ export async function mapUITests(test,assert,equal,sleep,w,d,input,basic){
       section.querySelector('[aria-label="Hide all calendar events"]').click();assert(!winter.checked);
       section.querySelector('[aria-label="Show all calendar events"]').click();assert(winter.checked);
     });
-    await test('Faction buttons retain session choices, clear stale actions and do not fetch or edit source',async()=>{
+    await test('Faction checkboxes retain session choices, clear stale actions and do not fetch or edit source',async()=>{
       const a=get('map-alliance'),h=get('map-horde'),before=get('source').value,count=requests;
-      for(const b of [a,h]){assert(!b.disabled);equal(b.getAttribute('aria-pressed'),'true');}
+      for(const b of [a,h]){assert(!b.disabled);equal(b.type,'checkbox');assert(b.checked);assert(b.closest('label'));equal(get(b.id+'-icon').getAttribute('aria-hidden'),'true');}
       get('map-popup').textContent='Stale Alliance quest';a.click();await sleep(50);
-      equal(a.getAttribute('aria-pressed'),'false');equal(h.getAttribute('aria-pressed'),'true');
+      assert(!a.checked);assert(h.checked);
       equal(get('map-popup').textContent,'');assert(get('map-details').disabled);
       get('terrain-panel').open=false;await sleep(50);h.click();await sleep(50);equal(requests,count);
       get('terrain-panel').open=true;await sleep(100);
-      equal(a.getAttribute('aria-pressed'),'false');equal(h.getAttribute('aria-pressed'),'false');
-      a.click();h.click();await sleep(50);equal(requests,count);equal(get('source').value,before);
+      assert(!a.checked);assert(!h.checked);
+      a.closest('label').click();h.closest('label').click();await sleep(50);assert(a.checked&&h.checked);equal(requests,count);equal(get('source').value,before);
     });
     await test('Fourteen profession switches start off and changing them does not edit the guide',async()=>{
       const controls=[...d.querySelectorAll('#map-profession-options input')];equal(controls.length,14);
