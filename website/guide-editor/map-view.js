@@ -147,9 +147,10 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const box=$('map-popup');box.replaceChildren();
     if(members.length>1){box.append(el('p',members.length+' overlapping markers (first 50 listed).'));const b=el('button','Zoom here');b.onclick=()=>{motion=null;view.u=members[0].u;view.v=members[0].v;zoom(2);};box.append(b);}
     for(const m of members.slice(0,50)){
-      if(m.kind==='cluster'){const b=el('button',m.count+' snapshot locations — zoom in');b.onclick=()=>{motion=null;view.u=m.u;view.v=m.v;zoom(2);};box.append(b);continue;}
+      if(m.kind==='cluster'){const b=el('button',m.count+' locations: zoom in');b.onclick=()=>{motion=null;view.u=m.u;view.v=m.v;zoom(2);};box.append(b);continue;}
       const row=el('div');row.append(el('strong',m.name+' ['+m.id+']'),el('p',locationDescription(m.roles)),el('p',m.roles.map(r=>labels[r]||CLASS_LABELS[r]||r).join(', ')),
-        el('p','Physical map '+m.physical+'; X '+m.x+', Y '+m.y),el('p',m.notes.join('; ')||'Snapshot home position'));
+        el('p','Physical map '+m.physical+'; X '+m.x+', Y '+m.y));
+      if(m.notes.length)row.append(el('p',m.notes.join('; ')));
       const eventNames=(m.events||[]).map(id=>(id<0?'Absent during: ':'')+(overlay?.events?.find(e=>e.id===Math.abs(id))?.name||('Event '+Math.abs(id))));
       if(m.faction)row.append(el('p',m.faction===1?'Alliance affiliation':'Horde affiliation'));
       if(eventNames.length)row.append(el('p',eventNames.join('; ')));
@@ -238,7 +239,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     const nextKey=locations.map(c=>c.members.map(m=>m.key||[m.u,m.v,m.count].join(':')).join(',')).join(';');
     if(nextKey!==locationsKey){
       locationsKey=nextKey;const previous=$('map-locations').value;
-      $('map-locations').replaceChildren(...locations.map((c,i)=>option(c.members.length===1&&c.members[0].name?c.members[0].name+' ['+c.members[0].id+']'+(locationDescription(c.members[0].roles)?' — '+locationDescription(c.members[0].roles):''):c.count+' snapshot locations',i)));
+      $('map-locations').replaceChildren(...locations.map((c,i)=>option(c.members.length===1&&c.members[0].name?c.members[0].name+' ['+c.members[0].id+']'+(locationDescription(c.members[0].roles)?' · '+locationDescription(c.members[0].roles):''):c.count+' locations',i)));
       $('map-locations').value=locations[+previous]?previous:locations.length?'0':'';$('map-details').disabled=!locations.length;
     }
     }
@@ -318,7 +319,7 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
     resources.active=true;
     if(!manifest){
       controller=new AbortController();const local=controller;
-      status('Loading local terrain…');
+      status('Loading map…');
       try{
         const data=await json('manifest.json',local.signal);if(!open||controller!==local)return;
         if(data.schema!==1||!data.regions||!data.zones||!data.tiles)throw new Error('Unsupported map manifest.');
@@ -338,8 +339,8 @@ export function createMap(adapter,{base=new URL('../map-assets-local/',import.me
         $('map-continent').replaceChildren(...manifest.continents.map(c=>option(c.name,c.id)));$('map-continent').value=display;
         const preferred=manifest.zones.find(z=>z.token==='Durotar');choices(preferred);
         $('map-content').hidden=false;size();fit();
-        status((overlay?'Local terrain · snapshot overlays':'Local terrain · overlays unavailable')+(cleanupUnavailable?' · original terrain borders':''));
-      }catch(error){if(error.name!=='AbortError')status('Map unavailable. Generate local map assets; manual editing still works.');return;}
+        status([!overlay?'Location data unavailable.':'',cleanupUnavailable?'Original terrain borders.':''].filter(Boolean).join(' '));
+      }catch(error){if(error.name!=='AbortError')status('Map unavailable. Manual editing still works.');return;}
     }
     $('map-content').hidden=false;size();observer.observe(canvas);sync();
   }

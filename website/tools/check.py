@@ -131,6 +131,19 @@ class WebsiteChecks(unittest.TestCase):
                         inspect(child)
             inspect(value)
 
+    def test_concise_help_retains_limits_and_attribution(self):
+        help_text = (ROOT / 'help.html').read_text(encoding='utf-8')
+        for required in ('id="maps"', 'Website guide source', 'SavedVariables',
+                         'not gameplay restrictions', 'not safe paths', 'never executed here',
+                         'Wowhead', 'one draft', 'no mapped floors'):
+            self.assertIn(required, help_text)
+        credits = (ROOT / 'credits.html').read_text(encoding='utf-8')
+        for required in ('Blizzard Entertainment', "not covered by this project's software license",
+                         'AzerothCore contributors', 'data/LICENSE-AzerothCore.txt', 'data/NOTICE.txt'):
+            self.assertIn(required, credits)
+        for name in ('index.html','help.html','credits.html','guide-editor/index.html'):
+            self.assertNotIn('\u2014',(ROOT/name).read_text(encoding='utf-8'))
+
     def test_scoped_loopback_server(self):
         for prefix in ("/", "/RXPGuides/"):
             httpd = serve.server(0, prefix)

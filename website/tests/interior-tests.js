@@ -48,6 +48,9 @@ export async function interiorUITests(test,assert,equal,sleep,w,d,input,basic){
   await test('Interior entity actions use real span edits, Undo and stale-action rejection',async()=>{
     input('source',basic);await sleep(400);const before=get('source').value;
     get('interior-entities').value='0';get('interior-entity-details').click();
+    equal(get('interior-scope').textContent,manifest.regions[0].entityScope);
+    assert(!get('interior-details').textContent.includes(manifest.regions[0].entityScope));
+    assert(get('interior-details').textContent.includes('moving / home spawn'));
     const buttons=[...get('interior-details').querySelectorAll('button')],target=buttons.find(b=>b.textContent==='Add target');
     target.click();assert(get('source').value.includes('.target 42'));
     const changed=get('source').value;target.click();equal(get('source').value,changed);

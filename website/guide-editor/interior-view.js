@@ -78,13 +78,14 @@ export function createInteriorView(adapter,{base,fetcher=fetch}={}){
     const key=[$('interior-query').value,$('interior-type').value,[...events()].join(','),region?.id,rows].map(v=>typeof v==='object'?rows.length:String(v)).join('|');
     if(key===queryKey)return;queryKey=key;
     visible=interiorEntities(rows,$('interior-query').value,$('interior-type').value,events());
-    $('interior-entities').replaceChildren(...visible.slice(0,200).map((r,i)=>option(r.name+' ['+r.id+'] — '+(r.kind==='objects'?'object':'NPC'),i)));
+    $('interior-entities').replaceChildren(...visible.slice(0,200).map((r,i)=>option(r.name+' ['+r.id+'] · '+(r.kind==='objects'?'object':'NPC'),i)));
     $('interior-count').textContent=visible.length+' matches'+(visible.length>200?' (first 200; narrow the search)':'');
   }
   function details(){
     const item=visible[+$('interior-entities').value],box=$('interior-details');box.replaceChildren();if(!item)return;
     const token=serial,original=adapter.read();
-    box.append(el('strong',item.name+' ['+item.id+']'),el('p',region.entityScope),el('p',item.roles.join(', ')),el('p',item.notes.join('; ')||'Snapshot spawn record'));
+    box.append(el('strong',item.name+' ['+item.id+']'),el('p',item.roles.join(', ')));
+    if(item.notes.length)box.append(el('p',item.notes.join('; ')));
     const action=(label,fn)=>{const button=el('button',label);button.type='button';button.onclick=()=>{
       const now=adapter.read();if(!open||token!==serial||now.text!==original.text||now.guide!==original.guide||now.step!==original.step){status('Selection changed; select the entity again.');box.replaceChildren();return;}
       try{fn();}catch(error){status(error.message);}

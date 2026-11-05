@@ -2,56 +2,53 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'self'">
-<title>Guide Editor Help — RXPGuides Tools</title><link rel="stylesheet" href="style.css">
+<title>Guide Editor Help | RXPGuides Tools</title><link rel="stylesheet" href="style.css">
 </head><body>
 <header><a href="./">RXPGuides Tools</a><a href="guide-editor/">Guide Editor</a></header>
 <main class="home">
 <h1>Guide Editor help</h1>
 <h2>Create and save</h2>
 <ol>
-<li>Use <strong>File → New</strong> or <strong>Open</strong> a UTF-8 text/Lua file (up to 12 MiB). Select a guide, step and instruction.</li>
-<li>Edit in Write, Map or Source. Existing instructions update as you type; new ones require <strong>Add instruction</strong>. Undo/Redo reverses edits.</li>
-<li>Use <strong>Check source</strong>; click a problem to find its line.</li>
-<li><strong>Save file</strong> downloads the entire document. <strong>Save guide text</strong> exports the selected guide.</li>
+<li>Choose <strong>File → New</strong> or open a UTF-8 text/Lua file (up to 12 MiB).</li>
+<li>Select a step and instruction. Edits apply as you type; new instructions need <strong>Add instruction</strong>. Use Undo/Redo to reverse edits.</li>
+<li>Use <strong>Check source</strong>. Click a problem to find its line.</li>
+<li><strong>Save file</strong> downloads the whole file; <strong>Save guide text</strong> exports one guide.</li>
 </ol>
-<p>Source shows the entire file, including advanced instructions. On small screens, use Steps to open the outline.</p>
-<p>One draft is saved in this browser. Restore it through File. Browser storage can be cleared or unavailable; download a backup before switching documents.</p>
+<p>Edit advanced instructions in Source. On small screens, <strong>Steps</strong> opens the outline.</p>
+<p>The browser keeps one draft, restored through File. Download backups before switching documents; browser storage can be cleared.</p>
 
 <h2>Guide properties</h2>
-<p>Set the name, group and version. Server/realm, purpose, zone, description and requirements are source comments—not gameplay restrictions. The editor suggests a custom-guides contribution path.</p>
-<p>Use a distinct name under <code>RXPGuides Custom Guides</code>. Save as new guide creates an independent copy; imports are not automatically renamed or converted.</p>
+<p>Use a unique name under <code>RXPGuides Custom Guides</code>, or choose <strong>Save as new guide</strong>. Imported identities stay unchanged.</p>
+<p>Server, purpose, zone, description and requirements are comments, not gameplay restrictions.</p>
 
 <h2 id="install">Use in WoW</h2>
 <ol>
 <li>Export <strong>Save guide text</strong>.</li>
-<li>In the addon's Import tab, choose <strong>Website guide source</strong>, paste the text and confirm saving. Update RXPGuides if this format is missing.</li>
+<li>In RXPGuides, choose <strong>Import → Website guide source</strong>, paste and save. Update the addon if this option is missing.</li>
 <li>Reload when ready, then select <strong>Type → Custom guides</strong> in the library.</li>
 </ol>
-<p>This import accepts basic editor instructions, not executable Lua, macros or includes. Replacing a saved import requires confirmation.</p>
-<p>Test on a disposable character and back up SavedVariables. Check travel, quest IDs, counters, rewards and reload restoration. Editing names or step order can affect saved progress.</p>
+<p>Import supports basic instructions, not executable Lua, macros or includes. Replacements require confirmation. External Lua dependencies block guide export; use <strong>Save file</strong> to retain the original.</p>
+<p>Back up SavedVariables and test on a disposable character. Names and step order can affect saved progress. Source checks do not verify gameplay.</p>
 
-<h2>Instructions and maps</h2>
-<p>For walking routes, use one step per destination. New travel objectives use a 15-yard arrival radius. Navigation-only waypoints, notes, target/mob helpers and item buttons need another completion objective; use a quest, collection or Manual objective (+).</p>
+<h2 id="maps">Instructions and maps</h2>
+<p>Use one step per walking destination. Travel objectives default to a 15-yard arrival radius. Notes, navigation-only markers, target/mob helpers and item buttons need a separate completion objective, such as a quest or Manual objective (+).</p>
 <ul>
-<li>Choose a continent and zone. Drag to pan; use the wheel or +/− to zoom. Arrow keys pan a focused map.</li>
-<li>Click terrain, then Add waypoint or Replace coordinates. Drag a waypoint to move it; Escape cancels. Numeric X/Y entry also works.</li>
-<li>Use layers, factions, professions and events to filter locations. Alliance and Horde start enabled; shared locations remain visible. Location details offers entity IDs and instruction actions.</li>
+<li>Choose a continent and zone. Drag or use arrow keys to pan; wheel or +/− to zoom.</li>
+<li>Click terrain or enter X/Y, then <strong>Add waypoint</strong> or <strong>Replace coordinates</strong>. Drag waypoints to move them; Escape cancels.</li>
+<li>Filter by layer, faction, profession or event. Shared locations stay visible with either faction off. <strong>Location details</strong> offers IDs and instruction actions.</li>
 </ul>
-<p>Existing waypoint radii are preserved. Map view and filters last for this session only.</p>
-<p>Markers are AzerothCore snapshot spawn/home locations, not live positions or guaranteed quest availability. Event filters are not a server calendar. Lines show instruction order, not safe paths.</p>
-<p>Dungeon and underground images are view-only, not mapped floors. Use their instance-wide entity lists where available; clicking interior images cannot create coordinates. Unsupported map forms remain source-only.</p>
+<p>Map filters last for this session. Existing waypoint radii are preserved.</p>
+<p>Locations use an AzerothCore snapshot, not live NPC positions or guaranteed quest availability. Events are not a live calendar; route lines show instruction order, not safe paths.</p>
+<p>Interiors are view-only, with instance-wide entity lists where available. They have no mapped floors or clickable coordinates. Unsupported waypoints stay in Source.</p>
 
 <h2>Lookup</h2>
-<p>Enter an ID or link for <a href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Wowhead WotLK</a> details. Partial titles open search results in a new tab; paste a result link back. Use in instruction applies the selected result.</p>
-<p>Verify availability on your server. Quest objective indices come from the client quest log, not database slots or tooltip order. Object lookups require source editing.</p>
+<p><a href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Wowhead WotLK</a> IDs and links load here. Partial titles open a new tab; paste a result link back, then choose <strong>Use in instruction</strong>. Object IDs require Source editing.</p>
+<p>Verify server availability. Quest objective indices come from the in-game quest log, not database slots or tooltip order.</p>
 
-<h2>Privacy and limits</h2>
+<h2>Privacy</h2>
 <ul>
-<li>Guides and drafts stay local. Lookups send the requested ID/type to Wowhead; title searches send the search text. No Wowhead scripts or trackers are embedded.</li>
-<li>Imported Lua is read as text, never executed by the website. Original-file downloads preserve comments and surrounding code; unchanged imports retain their bytes.</li>
-<li>External Lua dependencies block selected-guide export. Use Save file to preserve the original, then review it before importing.</li>
-<li>Checks do not simulate conditions or certify gameplay. Missing maps or lookup data do not prevent manual editing.</li>
+<li>Guides stay in your browser. Lookups send IDs/types or search text to Wowhead; no Wowhead scripts or trackers are embedded.</li>
+<li>Imported Lua is read as text, never executed here. Review imported code before using it in WoW.</li>
 </ul>
-<p>See <a href="credits.html">credits</a> for artwork and data attribution.</p>
 </main><footer><a href="./">Back to tools</a></footer>
 </body></html>

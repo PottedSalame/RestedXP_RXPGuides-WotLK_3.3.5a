@@ -270,6 +270,12 @@ try {
   const change = (id, value) => { get(id).value = value; get(id).dispatchEvent(new w.Event('change', {bubbles: true})); };
   const input = (id, value) => { get(id).value = value; get(id).dispatchEvent(new w.Event('input', {bubbles: true})); };
   await test('Production UI starts without errors', () => { assert(get('status').textContent.startsWith('Ready')); equal(get('steps').options.length, 1); assert(get('source').value.includes('#group RXPGuides Custom Guides')); });
+  await test('Routine editing omits redundant hints but retains completion guidance', () => {
+    equal(get('line-hint').textContent,'');
+    equal(w.getComputedStyle(get('line-hint')).display,'none');
+    assert(get('action-hint').textContent.includes('Display only'));
+    assert(get('storage-status').textContent.includes('browser'));
+  });
   await test('Metadata is live without initialization writes or focus replacement', async () => {
     get('guide-properties').open=true;
     const old = get('source').value; change('header-name', 'name'); equal(get('source').value, old);

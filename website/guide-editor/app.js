@@ -36,7 +36,7 @@ function saveDraft() {
   if (!draftDirty) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify({version: 1, filename: state.filename, text: state.history.text, guide: state.guide, step: state.step}));
-      $('storage-status').textContent = 'Draft saved locally. Download a backup.';
+      $('storage-status').textContent = 'Draft saved in this browser.';
       $('restore').disabled = false;
       draftDirty = false;
     } catch { $('storage-status').textContent = 'Draft could not be saved. Download a backup now.'; }
@@ -74,7 +74,7 @@ function populateForm() {
   if (supported) { $('action').value = parsed.tag; renderArguments(parsed.args); $('display-text').value = parsed.display; $('condition').value = parsed.condition; }
   else { renderArguments([]); $('display-text').value = ''; $('condition').value = ''; }
   state.formEditable = Boolean(supported);
-  $('line-hint').textContent = supported ? 'Changes apply as you type.' : 'Edit this line in Source, or add a new instruction.';
+  $('line-hint').textContent = supported ? '' : 'Edit this line in Source, or add a new instruction.';
   $('append-line').hidden = true; $('cancel-line').hidden = true;
   $('instruction-advanced').open = Boolean($('condition').value);
 }
@@ -218,7 +218,7 @@ function flushLive() {
       $('instructions').options[state.line].textContent = currentLine().text.trim().slice(0, 150) || '(blank)';
       const selectedStep=[...$('steps').options].find(o=>Number(o.value)===state.step);
       if(selectedStep)selectedStep.textContent = (state.step + 1) + '. ' + (step().lines.find(line => /^\s*(>>|\+|\.)/.test(line.text))?.text.trim() || step().text).slice(0, 110);
-      $('line-hint').textContent = 'Changes apply as you type.';
+      $('line-hint').textContent = '';
     }
     updateContributionPath();
     renderPreview(); $('undo').disabled = false; $('redo').disabled = true;
@@ -290,7 +290,7 @@ $('open').onchange = async () => {
   }
   catch (error) { status(error.message, true); } finally { $('open').value = ''; }
 };
-$('save').onclick = safely(() => { flushSource(); download(state.filename, state.history.text); state.saved = state.history.text; status('Download requested. Keep it as a backup.'); });
+$('save').onclick = safely(() => { flushSource(); download(state.filename, state.history.text); state.saved = state.history.text; status('Download requested.'); });
 $('raw').onclick = safely(() => { flushSource(); download('guide-source.txt', guideSource(guide())); });
 $('clone').onclick = safely(() => {
   flushSource(); const active = guide();
@@ -318,12 +318,12 @@ $('instruction-form').onsubmit = safely(() => { if (state.drafting) $('append-li
 $('new-line').onclick = safely(() => {
   flushSource(); state.drafting = true; lastInput = null; $('action').value = 'note'; renderArguments();
   $('display-text').value = ''; $('condition').value = ''; $('append-line').hidden = false; $('cancel-line').hidden = false;
-  $('delete-line').disabled = true; $('line-hint').textContent = 'New instruction — add when ready.'; workspace.inspect('details'); selectionContext(); $('display-text').focus();
+  $('delete-line').disabled = true; $('line-hint').textContent = ''; workspace.inspect('details'); selectionContext(); $('display-text').focus();
 });
 $('cancel-line').onclick = () => { liveQueued = false; state.drafting = false; populateForm(); renderPreview(); $('delete-line').disabled = !currentLine(); };
 $('append-line').onclick = safely(() => { const replacement = formLine(); flushSource(); const active = guide(), at = step().stop, eol = newline(active.body); state.line = step().lines.length; commit(editGuide(state.history.text, active, at, at, (at && !/[\r\n]$/.test(active.body.slice(0, at)) ? eol : '') + replacement + eol)); });
 $('delete-line').onclick = safely(() => { flushSource(); const line = currentLine(); if (line) commit(editGuide(state.history.text, guide(), line.start, line.next, '')); });
-$('validate').onclick = safely(() => { flushSource(); check(); $('problems-panel').open=true; status('Preliminary checks complete. Review warnings and test in-game.'); });
+$('validate').onclick = safely(() => { flushSource(); check(); $('problems-panel').open=true; status('Source checked. Review Problems, then test in-game.'); });
 
 async function json(path) { const response = await fetch(path); if (!response.ok) throw new Error('Reference file unavailable: ' + path); return response.json(); }
 $('terrain-panel').addEventListener('toggle', async () => {
@@ -362,7 +362,7 @@ async function search() {
   let timeout;
   try {
     const ref = referenceInput(query, $('reference-type').value);
-    if (!ref) { $('reference-status').textContent = 'Press Search or Enter to find matching titles on Wowhead.'; return; }
+    if (!ref) { $('reference-status').textContent = 'Press Enter to search Wowhead titles.'; return; }
     $('reference-type').value = ref.type;
     $('search-wowhead').href = referenceURL(ref);
     $('reference-status').textContent = 'Loading from Wowhead…';
@@ -374,7 +374,7 @@ async function search() {
     const link = node('a', result.name + ' [' + result.id + ']');
     link.href = referenceURL(ref); link.target = '_blank'; link.rel = 'noopener noreferrer';
     $('reference-details').replaceChildren(link, node('pre', result.text));
-    $('reference-status').textContent = ref.type === 'objects' ? 'Object reference: copy its ID into Source where appropriate.' : 'WotLK reference loaded.';
+    $('reference-status').textContent = ref.type === 'objects' ? 'Use this object ID in Source.' : '';
     if (ref.type === 'quests') $('reference-details').append(node('p', 'Verify .complete objective indices in the game.'));
   } catch (error) {
     if (serial === searchSerial) $('reference-status').textContent = (error.name === 'AbortError' ? 'Wowhead lookup timed out.' : error.message) + ' Manual editing is still available.';
@@ -414,7 +414,7 @@ $('use-reference').onclick = safely(() => {
 window.addEventListener('beforeunload', event => { flushSource(); saveDraft(); if (state.history.text !== state.saved) { event.preventDefault(); event.returnValue = ''; } });
 window.addEventListener('pagehide', () => { flushSource(); saveDraft(); });
 const draft = readDraft(); $('restore').disabled = !draft;
-$('storage-status').textContent = draft ? 'Previous draft available — restore it before editing.' : 'Drafts save in this browser.';
+$('storage-status').textContent = draft ? 'Previous draft available. Restore it before editing.' : 'Drafts save in this browser.';
 refresh(); status('Ready.');
 json('../data/catalogue.json').then(catalogue => {
   state.catalogue = catalogue;

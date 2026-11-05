@@ -41,7 +41,6 @@
         <label>Header <select id="header-name"><option value="name">Name</option><option value="group">Group</option><option value="subgroup">Subgroup</option><option value="version">Version</option></select></label>
         <label>Value <input id="header-value" autocomplete="off"></label>
       </form>
-      <p class="hint">Advanced headers: edit Source.</p>
       <form id="guide-details">
         <label>Server / realm <input id="detail-server" maxlength="512" autocomplete="off" placeholder="Warmane-Icecrown"></label>
         <label>Purpose <select id="detail-purpose"><option value="">Not specified</option></select></label>
@@ -56,7 +55,7 @@
     </section>
     <section id="write-page" aria-labelledby="instruction-title">
       <h2 id="instruction-title">Instructions</h2>
-      <label>Selected step's instructions <select id="instructions" size="6"></select></label>
+      <label>Instructions in this step <select id="instructions" size="6"></select></label>
       <div class="toolbar"><button id="new-line">New instruction</button><button id="delete-line">Delete instruction</button></div>
       <form id="instruction-form">
         <label>Action <select id="action"></select></label>
@@ -85,7 +84,7 @@
     <details id="terrain-panel" class="wide map-panel">
       <summary>Map</summary>
       <label>Regions <select id="map-kind"><option value="outdoor">Continents</option><option value="dungeons">Dungeons</option><option value="raids">Raids</option><option value="underground">Underground locations</option></select></label>
-      <p id="map-status" class="hint" role="status">Open to load local terrain.</p>
+      <p id="map-status" class="hint" role="status"></p>
       <div id="interior-content" hidden>
         <div class="toolbar map-controls">
           <label>Find region <input id="interior-search" type="search" autocomplete="off"></label>
@@ -94,7 +93,7 @@
           <button id="interior-out" type="button" title="Zoom out">−</button><button id="interior-in" type="button" title="Zoom in">+</button><button id="interior-reset" type="button">Reset view</button>
         </div>
         <p id="interior-status" class="hint" role="status"></p>
-        <p class="hint">View-only, not mapped floors. Add instructions from the entity list; map clicks cannot set coordinates.</p>
+        <p class="hint">View-only images. Use the entity list to add instructions; image clicks cannot set coordinates.</p>
         <div class="map-layout">
           <canvas id="interior-canvas" tabindex="0" aria-label="Interior reference image. Drag or arrow keys to pan; plus and minus to zoom; Escape cancels a drag. No mapped entity positions."></canvas>
           <div class="map-sidebar">
@@ -125,11 +124,10 @@
         </div>
         <details id="map-professions"><summary>Professions</summary>
           <div class="toolbar"><label><input id="map-profession-trainers" type="checkbox" checked> Include trainers</label><label><input id="map-profession-gathering" type="checkbox" checked> Include gathering locations</label></div>
-          <p class="hint">Badge = trainer; plain icon = gathering. Other layers may also show these entities.</p>
+          <p class="hint">Badge: trainer. Plain icon: gathering. Other layers can also show these locations.</p>
           <div id="map-profession-options" class="map-event-options"></div>
         </details>
         <div id="map-events" hidden aria-label="Event filters"></div>
-        <p class="hint">Snapshot events, not the live server calendar.</p>
         <div class="map-layout">
           <canvas id="terrain" tabindex="0" aria-label="Terrain map. Arrow keys pan; plus and minus zoom; Escape cancels a drag. Use coordinate inputs as an alternative."></canvas>
           <div class="map-sidebar">
@@ -146,7 +144,7 @@
           </div>
         </div>
         <p id="map-coordinates" class="hint" role="status">Select a zone to enter coordinates.</p>
-        <p class="hint">AzerothCore snapshot spawn/home locations, not live positions. Lines show instruction order, not safe paths.</p>
+        <p class="hint">Snapshot locations, not live positions. Route lines are not safe paths. <a href="../help.html#maps">Map help</a></p>
       </div>
     </details>
     <details id="problems-panel" class="wide problems-panel">
@@ -154,7 +152,7 @@
       <ul id="diagnostics"></ul>
     </details>
     <section id="source-page" class="wide" aria-labelledby="source-title">
-      <h2 id="source-title">Source — entire file</h2>
+      <h2 id="source-title">Source (entire file)</h2>
       <label for="source">Edit source</label>
       <textarea id="source" spellcheck="false" wrap="off"></textarea>
     </section>

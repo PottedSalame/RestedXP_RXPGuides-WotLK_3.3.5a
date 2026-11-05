@@ -56,6 +56,7 @@ input[type="file"] { width: min(100%, 25rem); }
 .editor-grid section { margin: 0; }
 .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem .75rem; }
 .hint, small { color: #4e6575; font-size: .88rem; }
+p.hint:empty { display: none; }
 .notice { border-left: 3px solid #607991; padding-left: .7rem; }
 .status { min-height: 1.5em; overflow-wrap: anywhere; }
 .error { color: #922626; }
