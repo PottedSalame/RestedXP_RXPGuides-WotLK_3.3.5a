@@ -1,72 +1,35 @@
-# RXPGuides 3.3.5 localization workflow
+# RXPGuides 3.3.5 localization
 
-English guide source is authoritative. Translations are display data and must
-never change directives, conditions, IDs, targets, coordinates, guide keys, or
-step progression.
+English source controls parsing and automation. Translations change display text only, never quest IDs, targets, conditions, coordinates, guide identities or progress.
 
-## Statuses
+## Display status
 
-- `official`: live names and objectives supplied by the client or verified
-  locale databases.
-- `reviewed`: an aligned upstream or manually approved translation.
-- `machine`: a structurally validated, unreviewed translation. Guide text is
-  marked `[MT]`; compact UI controls disclose this status in their tooltip.
-- `fallback`: unchanged English, displayed with `[EN]` when it contains prose.
+- `official`: names and objectives from the client or verified locale data.
+- `reviewed`: approved translations.
+- `machine`: unreviewed translations, marked `[MT]` in guide text or disclosed in UI tooltips.
+- `fallback`: English prose marked `[EN]`.
 
-Original English mode bypasses all translated display text and status badges.
+Original English mode bypasses translations and these badges.
 
-Localization source catalogs and compiled payloads live on the repository's
-`localizations` branch. `LOCALIZATIONS.lock` on `main` pins the exact commit
-used by validation and release packaging. Each locale keeps a deterministic
-fallback allowlist under `translations/source` on that branch. It records every
-bespoke English sentence still using `[EN]`, its immutable source ID, and
-occurrence count. Validation rejects a missing or stale allowlist, so English
-exceptions cannot grow unnoticed.
+## Optional language packs
 
-## Commands
+Packs are available for deDE, esES, frFR, koKR, ruRU, zhCN and zhTW. Releases package each as a separate `RXPGuides_Locale_<locale>` addon. Missing translations fall back to English.
 
-Development commands require a source checkout. Player release ZIPs omit
-`tools/`, `tests/` and build metadata; optional locale addon ZIPs are unchanged.
+The `localizations` branch contains compiled packs and translation catalogs. Catalog presence alone does not establish that they cover current guides or reproduce the shipped packs.
 
-Check out the `localizations` branch, then run these from its repository root
-with PowerShell 7 or Windows PowerShell:
+## Validation and releases
 
-```powershell
-./tools/Export-TranslationUnits335.ps1 -OutputPath ./translation-units.json
-./tools/New-TranslationDraft335.ps1 -SourceCatalog ./translation-units.json -Locale zhCN -OutputPath ./zhCN-draft.json
-./tools/Import-TranslationMap335.ps1 -SourceCatalog ./translation-units.json -TranslationMap ./translations/source/zhCN-ui-machine.json -OutputPath ./translations/imported/zhCN-ui-machine.json
-./tools/Compile-TranslationPack335.ps1 -SourceCatalog ./translation-units.json -TranslationCatalog @('./translations/imported/zhCN-upstream.json','./translations/imported/zhCN-ui-reviewed.json','./translations/imported/zhCN-ui-machine.json') -OutputPath ./locale/GuidePack.zhCN.lua
-./tools/Get-TranslationCoverage335.ps1 -SourceCatalog ./translation-units.json -TranslationCatalog ./translations/imported/zhCN-upstream.json -RepoRoot . -Locale zhCN
-./tools/Validate-TranslationPacks335.ps1
-```
+- `RUNTIME.lock` on `localizations` pins the addon runtime used by that branch's CI.
+- `LOCALIZATIONS.lock` on `main` pins the localization commit used by addon validation and releases.
+- CI checks compiled-pack loading, UTF-8, record structure, token integrity, locale isolation and ZIP packaging.
+- These checks do not measure current-guide coverage, assess translation quality or prove deterministic regeneration.
 
-The extractor follows the 3.3.5 manifest, strips guide conditions with the
-runtime parser's boundary, deduplicates immutable English, and emits only
-repository-relative context. It never emits player, realm, GUID, or machine
-paths.
+Validate localization changes before publishing their commit. Then update `LOCALIZATIONS.lock` on `main` to that published, full commit ID. Do not use a moving branch name.
 
-## Safety rules
+## Editing translations
 
-Translated messages use named tokens such as `{friendly_a}`, `{texture_b}`,
-and `{format_c}`. Tokens may move, but none may be changed, duplicated, or
-deleted. Compilation rejects stale source, invalid UTF-8, positional format
-tokens in tokenized translations, operational guide syntax, altered markup,
-unknown source entries, conflicting catalogs, and reserved separators.
+Use a separate addon source checkout and explicitly select its revision. Match catalogs to that English inventory before importing translations or compiling packs. Measure coverage and verify fallback allowlists separately from artifact checks.
 
-Runtime packs are locale-gated and compressed with the bundled LibDeflate
-format. CI checks out the commit recorded in `LOCALIZATIONS.lock`, regenerates
-its source catalogs and runtime payloads, then checks that the committed output
-is deterministic. Passing offline validation does not promote machine text to
-reviewed; native corrections must explicitly change the entry status.
+Preserve named tokens, markup and operational fields. Do not relabel machine translations as reviewed without review. Keep player data, credentials and machine paths out of catalogs.
 
-## Rollout
-
-Completed companion packs are available for deDE, esES, frFR, ruRU, koKR,
-zhCN, and zhTW. A tagged release packages each language as an independent
-`RXPGuides_Locale_<locale>` addon. The core addon contains no compiled guide
-prose and safely falls back to English when no matching companion is installed.
-
-To publish localization changes, update and validate the `localizations`
-branch first, push that commit, then replace `LOCALIZATIONS.lock` on `main`
-with its full 40-character commit ID. Never point the lock at an unpushed or
-moving branch name: tagged releases must remain reproducible.
+See `translations/README.md` on the `localizations` branch for the source workflow. Developer tools are not included in player release ZIPs.
