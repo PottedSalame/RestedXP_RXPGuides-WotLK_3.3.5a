@@ -7,6 +7,8 @@ Follow step-by-step Alliance and Horde leveling guides through level 80, with na
 [![Download](https://img.shields.io/badge/Download-Latest_Release-2ea043?style=for-the-badge&labelColor=555555)](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases/latest)
 [![Install](https://img.shields.io/badge/Install-Quickly-8250df?style=for-the-badge&labelColor=555555)](#quick-install-and-updates)
 
+[Online Guide Editor](https://pottedsalame.github.io/RestedXP_RXPGuides-WotLK_3.3.5a/guide-editor/)
+
 ## Main features
 
 - **Leveling guides:** Classic, TBC and WotLK progression, including Death Knight and boosted-character entry routes.
@@ -17,7 +19,9 @@ Follow step-by-step Alliance and Horde leveling guides through level 80, with na
 - **Optional tools:** XP estimates, Attack Timer, leveling splits, Hunter assistance, speedrunning tools and more.
 - **Personalization:** themes, fonts, window sizing, optional translations and separate guide progress for each character.
 
-Enable only the extras you want in **Settings → Feature Tools**. Each tool's page explains its purpose and controls. See [the feature reference](FEATURES_335.md) for more tools and commands.
+Enable only the extras you want in the Guide Library's **Feature Tools** tab. See [the feature reference](FEATURES_335.md) for tools and commands.
+
+Guide data loads on demand, and unused parsed guides are released to reduce memory use without clearing saved progress.
 
 ## Quick install and updates
 
@@ -45,11 +49,13 @@ For example, the German pack belongs in `Interface\AddOns\RXPGuides_Locale_deDE\
 
 ## Getting started
 
-1. Log in and choose a starting guide using the **guide-window cog** or **right-click minimap menu**. A fresh character intentionally begins with no guide selected.
-2. Use `/rxp guides` to search guides, manage favorites and return to recent chapters. Your selection and progress are saved separately for each character.
-3. Open `/rxp` to adjust settings, including quest automation, appearance and optional tools.
+1. Right-click the **minimap icon** or **guide-window cog** to open or close the Guide Library. Fresh characters begin with no guide selected.
+2. Choose a guide in **Guides**, or use `/rxp guides` to search, manage favorites and return to recent chapters. Progress is saved separately for each character.
+3. Use the library's **Feature Tools**, **Settings** and **Import** tabs to configure the addon or add custom guides. `/rxp` opens Settings.
 
-Left-clicking the minimap icon shows or hides enabled addon frames. The game's **Key Bindings** menu includes targeting, guide-item and other addon actions.
+Shift-right-click the icons for the dropdown menu. Left-clicking the minimap icon shows or hides enabled addon frames. Targeting and guide-item shortcuts are available in the game's **Key Bindings**.
+
+**Modern** is the default interface; **Legacy** remains available in Settings. Switching styles requires a reload and preserves guide progress.
 
 Useful commands:
 
@@ -91,9 +97,13 @@ Selecting a Hardcore guide requests confirmation to enable Hardcore mode. Famili
 
 ## Custom guides and support
 
-In the library, choose **Type → Custom guides** to find your routes. Select an imported guide and **Delete import** to remove its saved source after confirmation; switch away first if it is active. Checkpoints are retained. Companion-addon files must be removed separately with the game closed.
+Create or edit routes with the [online Guide Editor](https://pottedsalame.github.io/RestedXP_RXPGuides-WotLK_3.3.5a/guide-editor/), including interactive maps and WotLK reference lookup. Export **Save guide text**, then paste it into the addon's **Import → Website guide source**. Confirm saving, reload when ready and select **Type → Custom guides** in the library.
 
-Additional community routes live on the [custom-guides branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides) and are not bundled with the main download. Website-created guides can be pasted into `/rxp import` using **Website guide source**: confirm saving, reload when ready, then select the guide in the library. Use a distinct name under `RXPGuides Custom Guides`. Basic editor instructions are supported; executable Lua, macros and includes are rejected. Existing encoded imports have a separate format choice. Authors can also use the [custom-guide contribution instructions](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/CustomGuides/README.md).
+Use a distinct name under `RXPGuides Custom Guides`. Basic editor instructions are supported; executable Lua, macros and includes are rejected. Existing encoded imports use a separate format choice.
+
+To remove an imported guide, select **Delete import** and confirm; switch away first if it is active. Checkpoints are retained. Guides installed as separate addon files must be removed separately with the game closed.
+
+Community routes live on the [custom-guides branch](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/custom-guides), separate from the main download. See [guide authoring and contribution instructions](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/blob/custom-guides/GUIDE_AUTHORING.md).
 
 Report bugs or suggest features through [GitHub Issues](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/issues). For bugs, include:
 
