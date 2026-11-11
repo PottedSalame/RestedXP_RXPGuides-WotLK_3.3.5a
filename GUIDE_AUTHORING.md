@@ -1,6 +1,6 @@
 # Custom guide authoring
 
-Use the [website Guide Editor](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/tree/website#local-preview), or edit plain source. This reference covers the editor's basic instructions accepted by **Website guide source** import—not every directive supported by trusted bundled guides.
+Use the [website Guide Editor](https://pottedsalame.github.io/RestedXP_RXPGuides-WotLK_3.3.5a/guide-editor/), or edit plain source. This reference covers the editor's basic instructions accepted by **Website guide source** import, not every directive supported by trusted bundled guides.
 
 ## Working template
 
@@ -87,12 +87,12 @@ For a Horde-only guide, place `<< ac335 Horde` before the headers. Conditions ar
 
 The basic importer accepts only the eight dot-directives listed above. Macros, includes, executable Lua and database expressions are rejected. Other advanced source needs separate compatibility review; opening it in the editor does not make it importable.
 
-Raw source and literal `RXPGuides.RegisterGuide([[...]])` wrappers are supported. The editor generates companion files when needed; do not paste executable setup code into the import box.
+Raw source and literal `RXPGuides.RegisterGuide([[...]])` wrappers are supported. Import guide source through the addon; do not paste executable setup code into the import box.
 
 ## Verify and share
 
 1. Use **Check source**; review errors and warnings. Look up IDs using the editor's Wowhead WotLK lookup; check availability on the intended server.
-2. Export guide text. Follow the [README import steps](README.md#import-into-the-addon), or install the exported companion files as instructed by the editor.
+2. Export guide text. Follow the [README import steps](README.md#import-into-the-addon). No separate companion addon is needed.
 3. Test on a disposable character: travel stops, quest IDs, counters, rewards, conditions and reload restoration. Keep your source and SavedVariables backups.
 4. Submit to **custom-guides** at the suggested path, with test results and limitations.
 
