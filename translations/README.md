@@ -1,35 +1,23 @@
-# 3.3.5 localization catalogs
+# Translation catalogs
 
-English guide files are the only parsing and automation source. Files in this
-directory contain display data only; they must never be used for quest IDs,
-targets, conditions, coordinates, guide keys, or progression.
+These files contain display text only. English addon source remains authoritative for parsing and automation.
 
-`imported/` contains committed reviewed and machine-assisted catalogs. Every
-entry is tied to the immutable English inventory revision and preserves its
-named-token signature. Machine-assisted text remains marked `[MT]` in game;
-documented unresolved prose remains English and is marked `[EN]`.
+- `imported/`: reviewed and machine-assisted translation catalogs.
+- `source/`: source descriptions, translation inputs and fallback allowlists.
+- `../locale/GuidePack.<locale>.lua`: compiled, locale-gated packs.
 
-`source/` contains deterministic import descriptions and the exact fallback
-allowlist for every completed locale. Existing AceLocale strings are treated
-as reviewed. The generated `locale/GuidePack.<locale>.lua` files are compressed
-and locale-gated, so only the active client's pack is decompressed and kept.
+Machine translations remain marked `[MT]`; untranslated English prose uses `[EN]`. Preserve source identities, named tokens and markup when editing.
 
-Completed packs are `deDE`, `esES`, `frFR`, `ruRU`, `koKR`, `zhCN`, and
-`zhTW`. Validation requires every pack to resolve all ordinary UI occurrences,
-resolve at least 99% of bundled guide-text occurrences, and exactly match its
-committed fallback allowlist. This makes each locale independently shippable;
-an edit to one catalog cannot silently alter another locale's display data.
+## Source workflow
 
-The ordinary workflow is:
+Use a separate addon checkout at an explicitly chosen revision. Do not assume this branch's guide copies or existing catalogs match current `main`.
 
-```powershell
-./tools/Export-TranslationUnits335.ps1 -AddonRoot . -OutputPath source.json
-./tools/Get-TranslationCoverage335.ps1 -SourceCatalog source.json -TranslationCatalog <catalogs> -RepoRoot . -Locale <locale>
-./tools/Compile-TranslationPack335.ps1 -AddonRoot . -SourceCatalog source.json -TranslationCatalog <catalogs>
-./tools/Validate-TranslationPacks335.ps1
-```
+1. Extract the English inventory with `Export-TranslationUnits335.ps1`, passing `-AddonRoot` and a separate `-OutputPath`.
+2. Reconcile translation catalogs and fallback allowlists with that inventory. Resolve stale entries rather than changing revision labels alone.
+3. Compile with `Compile-TranslationPack335.ps1`, supplying the matching source catalog, translation catalogs, addon root and output path.
+4. Measure coverage with `Get-TranslationCoverage335.ps1` and review fallback entries. Run source validation separately and compare independent builds before claiming reproducibility.
+5. Run compiled-artifact and packaging checks before publication.
 
-Catalog metadata records translation provenance. Production and validation do
-not use API keys, runtime downloads, personal filesystem paths, or network
-translation. Traditional Chinese machine prose is generated directly for
-`zho_Hant`; it is not copied or mechanically converted from zhCN.
+Current CI checks the compiled artifacts. It does not guarantee 99% guide coverage, complete UI coverage or an up-to-date fallback allowlist.
+
+Keep provenance in catalog metadata. Do not include API keys, player information or personal paths. Runtime packs require no online translation service.

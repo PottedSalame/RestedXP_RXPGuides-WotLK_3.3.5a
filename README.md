@@ -1,47 +1,31 @@
 # RXPGuides Localizations
 
-Translation files and validation tools for RXPGuides multilingual guide packs.
+Optional language packs for RXPGuides 3.3.5: deDE, esES, frFR, koKR, ruRU, zhCN and zhTW.
 
-## Structure
+## Contents
 
-- `locale/` — translation files for all supported locales (deDE, esES, frFR, koKR, ruRU, zhCN, zhTW)
-- `Guides/` — guide content used to extract reference English strings
-- `tools/` — validation and build scripts
-- `tests/` — test fixtures
+- `locale/`: compiled language packs.
+- `translations/`: translation catalogs, source descriptions and fallback allowlists.
+- `Guides/`: guide sources retained on this branch, not automatically synchronized with `main`.
+- `tools/` and `tests/`: generation and validation tools.
 
 ## Workflow
 
-1. Translation updates are committed to this branch
-2. CI validates the compiled artifacts against the addon runtime pinned in `RUNTIME.lock`
-3. When ready, update `LOCALIZATIONS.lock` on the `main` branch to the latest commit
-4. The next release on `main` automatically packages the pinned locale ZIPs
+1. Update translations against an explicitly selected addon source revision.
+2. Validate the resulting packs and review their changes.
+3. Publish the localization commit, then pin it in `LOCALIZATIONS.lock` on `main`.
+4. The next addon release packages the pinned language packs.
 
-## CI scope
+## What CI checks
 
-This branch currently distributes compiled packs without the original
-`translations/source/` and `translations/imported/` catalogs. CI checks all
-seven packs using Lua 5.1, bundled LibDeflate, the real addon loader, UTF-8,
-record structure, source signatures, protected named tokens, locale isolation,
-the reviewed zhCN catalog, and companion ZIP packaging.
+CI validates all seven compiled packs against the addon runtime pinned in `RUNTIME.lock`, including loading, UTF-8, record structure, tokens, locale isolation and companion ZIP packaging.
 
-These artifact checks do **not** prove current-guide coverage, translation
-quality, or deterministic regeneration from source. Those checks require the
-matching source catalogs; the source-validation scripts remain available for
-that workflow. Do not describe an artifact-only pass as 99% coverage approval.
+A passing run does not establish current-guide coverage, translation quality or reproducible source generation. Those require separate checks using matching catalogs and addon sources.
 
-`RUNTIME.lock` pins the addon commit used for this branch's tests. Update it
-deliberately when testing a newer runtime. The addon branch independently checks
-the packs selected by its `LOCALIZATIONS.lock` against its own current runtime.
-No runtime libraries are duplicated into this branch.
+For local artifact validation, run from this branch with Lua 5.1 and a separate addon checkout:
 
-## Supported locale codes
+```text
+lua5.1 tools/validate-locale-artifacts.lua . <addon-checkout>
+```
 
-| Code | Language |
-|------|----------|
-| deDE | German |
-| esES | Spanish (Spain) |
-| frFR | French |
-| koKR | Korean |
-| ruRU | Russian |
-| zhCN | Simplified Chinese |
-| zhTW | Traditional Chinese |
+Use the revision in `RUNTIME.lock` to reproduce this branch's CI. See `translations/README.md` for catalog editing.
