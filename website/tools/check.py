@@ -64,14 +64,22 @@ class WebsiteChecks(unittest.TestCase):
                 self.assertEqual(int(key) // 1000, int(path.stem))
                 self.assertNotIn("clientObjectiveIndex", detail)
 
-    def test_local_links_and_no_external_dependencies(self):
+    def test_local_links_and_allowlisted_external_resources(self):
         for path in ROOT.rglob("*.html"):
             parser = Links()
             parser.feed(path.read_text(encoding="utf-8"))
             self.assertEqual(len(parser.ids), len(set(parser.ids)), path.name)
             for tag, attribute, link in parser.links:
                 if link.startswith("https://"):
+                    if link == "https://static.cloudflareinsights.com/beacon.min.js":
+                        self.assertEqual((tag, attribute), ("script", "src"))
+                        self.assertIn(path.relative_to(ROOT).as_posix(),
+                                      ('index.html', 'help.html', 'credits.html', 'guide-editor/index.html'))
+                        continue
                     self.assertEqual((tag, attribute), ("a", "href"), "External resources are not allowed")
+                    if link == "https://developers.cloudflare.com/speed/observatory/rum-beacon/":
+                        self.assertEqual(path, ROOT / 'help.html')
+                        continue
                     if link == "https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a":
                         continue
                     self.assertEqual(urlsplit(link).netloc, "www.wowhead.com")

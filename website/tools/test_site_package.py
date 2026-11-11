@@ -58,6 +58,13 @@ class SitePackage(unittest.TestCase):
             for faction in ('alliance','horde'):
                 self.assertTrue((root/('a/map-assets/icons/faction-'+faction+'.webp')).exists())
             self.assertTrue((root/'a/guide-editor/workspace.js').exists())
+            from test_analytics import PAGES, BEACON, TOKEN
+            for page in PAGES:
+                html=(root/'a'/page).read_text(encoding='utf-8')
+                self.assertEqual(html.count(BEACON),1)
+                self.assertEqual(html.count(TOKEN),1)
+                self.assertIn("connect-src 'self'",html)
+                self.assertIn('https://cloudflareinsights.com',html)
             self.assertIn('../map-assets/',(root/'a/guide-editor/map-view.js').read_text())
             self.assertNotIn('../map-assets-local/',(root/'a/guide-editor/map-view.js').read_text())
             with self.assertRaisesRegex(ValueError,'empty'):package(assets,root/'a')

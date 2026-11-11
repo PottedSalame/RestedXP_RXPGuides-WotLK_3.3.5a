@@ -27,6 +27,7 @@ jobs:
           python-version: '3.12'
       - name: Test package boundaries
         run: |
+          python website/tools/test_analytics.py
           python website/tools/test_factions.py
           python website/tools/test_overlays.py
           python website/tools/test_site_package.py

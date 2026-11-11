@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; object-src 'none'; base-uri 'none'; connect-src 'self' https://cloudflareinsights.com">
 <title>Guide Editor Help | RXPGuides Tools</title><link rel="stylesheet" href="style.css">
 </head><body>
 <header><a href="./">RXPGuides Tools</a><a href="guide-editor/">Guide Editor</a></header>
@@ -45,10 +45,14 @@
 <p><a href="https://www.wowhead.com/wotlk" target="_blank" rel="noopener noreferrer">Wowhead WotLK</a> IDs and links load here. Partial titles open a new tab; paste a result link back, then choose <strong>Use in instruction</strong>. Object IDs require Source editing.</p>
 <p>Verify server availability. Quest objective indices come from the in-game quest log, not database slots or tooltip order.</p>
 
-<h2>Privacy</h2>
+<h2 id="privacy">Privacy</h2>
 <ul>
 <li>Guides stay in your browser. Lookups send IDs/types or search text to Wowhead; no Wowhead scripts or trackers are embedded.</li>
+<li><a href="https://developers.cloudflare.com/speed/observatory/rum-beacon/">Cloudflare Web Analytics</a> measures visits, referring pages, countries and performance without analytics cookies. We do not send guide text, drafts or form values to analytics.</li>
 <li>Imported Lua is read as text, never executed here. Review imported code before using it in WoW.</li>
 </ul>
 </main><footer><a href="./">Back to tools</a></footer>
+<!-- Cloudflare Web Analytics -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "4f34bc88fefc4a22904c1d24c7c7cb99"}'></script>
+<!-- End Cloudflare Web Analytics -->
 </body></html>
