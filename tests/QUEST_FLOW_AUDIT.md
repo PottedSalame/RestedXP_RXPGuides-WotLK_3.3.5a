@@ -1,8 +1,16 @@
 # Validated-guide quest-flow checks
 
-The Original guide snapshots remain unchanged. Structural validation covers
-the whole 30300 manifest; quest-flow analysis deliberately excludes Original
-snapshots and examines the Validated guides.
+This report records earlier Validated-guide repairs and audit results. Counts,
+findings and timings below describe those runs, not the current release.
+
+The normal quest-flow checker excludes Original snapshots and all three
+Hardcore families. Hardcore quest flow is checked separately; evidence must
+not be shared between families.
+
+For current inventory expectations, see [runtime-surface.json](runtime-surface.json).
+Run [Validate-QuestFlow335.ps1](../tools/Validate-QuestFlow335.ps1) for fresh
+normal-route results and use [hardcore-quest-flow.lua](hardcore-quest-flow.lua)
+for the separate Hardcore checks. Passing offline checks does not certify gameplay.
 
 ## Durotar and initial audit corrections
 
@@ -163,7 +171,8 @@ not changed.
 lua5.1 tests/run.lua .
 ```
 
-Both GitHub workflows run the prerequisite pass again; they no longer pass
+At the time of that validation, both GitHub workflows ran the prerequisite
+pass again; they no longer passed
 `-SkipQuestValidation`. The audit fails for existing internal prerequisite,
 label, and route errors, and for accepted objective quests with neither a
 reward nor an explicit abandonment anywhere in the Validated inventory.
@@ -175,21 +184,23 @@ list. `-FailOnLifecycleWarnings` promotes those findings to errors for focused
 review; `-FailOnEntryWarnings` does the same for cross-guide prerequisites.
 These are **unresolved review items**, not an approved exception allowlist.
 
-The final structural baseline is **50 files, 711 guides, 48,799 steps**.
-Quest-flow validation examines **362 Validated guides**, with **17,485
+The historical structural baseline was **50 files, 711 guides, 48,799 steps**.
+That audit examined **362 Validated guides**, with **17,485
 class/race/XP branch runs** and **1,364 complete next-guide route-matrix runs**.
 The route matrix carries mandatory accepted, objective, rewarded, and
 explicitly abandoned quest state through the selected 1-80 chapters. It is a
 conservative static lifecycle model, not a substitute for live quest-state,
 NPC-dialog, or server-script testing.
 
-After these fixes the report has zero fatal errors, **17 lifecycle review
+The recorded report had zero fatal errors, **17 lifecycle review
 findings** (13 manual/off-route-entry contexts and four optional-pickup
 contexts), and **182 entry-prerequisite notes**. Candidate authored hand-ins
 exist for 129 of those entry notes; 53 have no authored provider in the
 Validated inventory. A candidate provider does not prove a particular
 character's route visited it. No finding is silently suppressed or certified
 as resolved based on this classification.
+
+## Recorded validator optimization
 
 The validator caches parsed guide conditions and lifecycle events, reuses
 class/race route catalogs, and simulates one representative only when every

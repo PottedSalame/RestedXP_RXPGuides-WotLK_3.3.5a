@@ -1,6 +1,15 @@
 # Quest automation audit and Durotar checklist
 
-## Follow-up fixes: manual rewards and headers
+This document preserves the original audit at `7c776a9`, its follow-up repair
+notes and a reusable Durotar checklist. Historical pass counts and outstanding
+findings are not a current release-status report.
+
+Recheck the current revision with [quest-automation-audit.lua](quest-automation-audit.lua)
+and the [Lua regression suite](run.lua). The audit retains QA-04/QA-05 probes;
+only a fresh run establishes whether they reproduce. Record automated and
+in-game results separately.
+
+## Recorded follow-up: manual rewards and headers
 
 The baseline findings below are historical. The tester subsequently reproduced
 manual Cutting Teeth (788) and Sarkoth (804) turn-ins staying incomplete in the
@@ -15,14 +24,15 @@ alternate/expensive confirmation buttons, but does not claim the stock button's
 pre-call barrier for those alternate paths.
 
 Visible headers are no longer expanded by ordinary guide-data reads, and hidden
-rows cannot prove that a quest was removed. The exact in-game header symptom
-still needs a retest; the regression covers concrete interference paths.
+rows cannot prove that a quest was removed. At the time of the follow-up report,
+the exact in-game header symptom still needed a retest; the regression covered
+concrete interference paths.
 
-Related safety changes resolve QA-01/QA-02/QA-03: live controls are rechecked,
-reward-cache retries are bounded, context-checked and cancelled at reset, and
-QUEST_FINISHED alone is not completion evidence. QA-04 and QA-05 remain separate
-outstanding acceptance findings. The standalone audit now passes 84 assertions
-and reproduces only those two findings (strict mode deliberately still fails).
+The follow-up recorded repairs for QA-01/QA-02/QA-03: live controls were
+rechecked, reward-cache retries were bounded and cancelled at reset, and
+QUEST_FINISHED alone no longer established completion. That run reported 84
+passing assertions and reproduced QA-04/QA-05, causing strict mode to fail.
+These are recorded results, not a fresh execution against the current revision.
 
 [Manual reward/header tests](quest-manual-turnin.lua) are included in the normal
 Lua suite. They cover missing modern events, automation off, companion post-hook
@@ -38,7 +48,7 @@ off, then collapse/expand Valley of Trials. Check both turn-in rows BEFORE any
 reload; reload should no longer be necessary for completion. Conversational test
 numbers can differ from the longer checklist below; identify quests by ID.
 
-## Scope and status
+## Original audit scope and results
 
 Original audit baseline: `7c776a9`. This was a preventive audit, not a PR integration or a
 runtime fix. Only this report and the standalone audit harness were added.
@@ -72,11 +82,11 @@ reproduced; this is deliberate, not a clean bill of health. It is not wired into
 CI as a permanently failing test. After fixes are authorized, convert defect
 probes into ordinary required assertions and integrate the relevant tests.
 
-Current result: **72 passing assertions, five distinct defects reproduced in
+Original audit result: **72 passing assertions, five distinct defects reproduced in
 14 variants**. These are coordinator-level reproductions, not fresh in-game
 reproductions. The existing core Lua suite remains a separate validation.
 
-Validation completed for this audit:
+Validation recorded for the original audit:
 
 - Existing Lua 5.1 suite: passed, including source filtering, startup, quest-chain,
   and performance regressions.
@@ -88,10 +98,11 @@ Validation completed for this audit:
 - Privacy validator: passed (529 tracked/candidate files).
 - Audit strict mode: intentionally rejected the reproduced baseline defects.
 - Worktree review: only the new audit test and report; no tracked runtime edits.
-- In-game checklist: **not yet performed**. The running server configuration and
-  actual Questie/client behavior remain to be verified by the tester.
+- In-game checklist: **not yet performed at the time of the original audit**.
+  The running server configuration and actual Questie/client behavior were
+  awaiting verification by the tester.
 
-## Confirmed code-path findings
+## Findings reproduced in the original audit
 
 ### QA-01 - Deferred rewards do not recheck temporary automation controls
 
@@ -191,7 +202,7 @@ Proposed repair: suppress another accept request for the same active pending
 interaction until it confirms, expires, or is cancelled. Couple this with QA-04
 so a failed request cannot permanently suppress a legitimate retry.
 
-## Passing behavior and remaining uncertainty
+## Original passing behavior and limitations
 
 - Direct automation-off, Ctrl, hidden-guide, and practice gates pass for detail,
   progress, reward, and gossip dispatch.
@@ -384,7 +395,10 @@ ID can be missing or ambiguous, especially for same-title quests. Record it as
 evidence, not as proof overriding the quest log and observed handoff. Never share
 account names, passwords, full SavedVariables, or unsanitized logs.
 
-## Repair recommendation (not applied)
+## Original repair recommendation
+
+This was the original repair order, superseded where follow-up fixes are
+documented above.
 
 Address QA-02 and QA-03 first, then QA-01 and the paired acceptance changes
 QA-04/QA-05. Keep changes local to ownership, eligibility, confirmation, and
