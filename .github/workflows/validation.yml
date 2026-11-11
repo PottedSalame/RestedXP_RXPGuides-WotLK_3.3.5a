@@ -64,7 +64,8 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      # The localization branch distributes compiled artifacts, not compiler inputs.
+      # Validate compiled localization artifacts; source regeneration and coverage
+      # are checked separately.
       # Validate with this addon's libraries/loader, not stale tools in that branch.
       - name: Validate pinned locale artifacts against runtime
         if: matrix.suite == 'runtime'
