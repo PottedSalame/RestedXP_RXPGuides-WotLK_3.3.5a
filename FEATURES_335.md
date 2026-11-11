@@ -1,11 +1,27 @@
-# RXPGuides 3.3.5 feature services
+# RXPGuides 3.3.5 features
 
-The WotLK manifest includes a set of stock-UI services designed for standalone
-3.3.5a clients. Existing guide syntax and the legacy guide dropdown remain
-unchanged.
+Tools for standalone WoW 3.3.5a clients. Optional features can be managed through
+the Guide Library's Feature Tools tab.
 
-- `/rxp guides` opens the Guide Hub, checkpoints, favorites, recent guides,
-  filters, restart confirmation, step selection, and catch-up preview.
+## Interface and custom guides
+
+- The Guide Library contains Guides, Feature Tools, Settings and Import.
+  `/rxp guides` opens Guides, with filters, favorites, recents, checkpoints,
+  restart confirmation, step selection and catch-up preview.
+- Right-click the minimap icon or guide-window cog to toggle the library.
+  Shift-right-click opens the existing dropdown menu.
+- Modern is the default interface; Legacy remains available. Changing the
+  complete style requires a reload and preserves guide progress.
+- Create routes with the [online Guide Editor](https://pottedsalame.github.io/RestedXP_RXPGuides-WotLK_3.3.5a/guide-editor/).
+  Import exported text through **Import → Website guide source**, then select
+  **Type → Custom guides**. **Delete import** removes a saved import after
+  confirmation; switch away first if it is active. Checkpoints are retained.
+
+## Gameplay and diagnostic tools
+
+- Attack Timer is optional and off by default. It displays estimated melee/ranged
+  basic-attack countdowns and live character-sheet damage ranges. It does not
+  automate combat or guarantee attack readiness. Enable it through Feature Tools.
 - `/rxp backup` exports or imports sanitized settings and current-character
   progress. Imports validate a checksum and schema; replace requires a second
   confirmation and can be undone until reload.
@@ -35,6 +51,8 @@ unchanged.
   registered automatically.
 - Imported compatibility packs are data-only, limited to 256 KB, and cannot
   execute Lua. The bundled baseline targets AzerothCore 3.3.5a.
+
+## Runtime safeguards
 
 Optional-module initialization is supervised after the addon bootstrap. A
 repeated runtime initialization failure disables only that subsystem on the
