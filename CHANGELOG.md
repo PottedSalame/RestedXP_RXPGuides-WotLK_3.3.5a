@@ -1,6 +1,14 @@
-# RestedXP Guides
+# RXPGuides 3.3.5 changelog
 
-## [v4.8.25](https://github.com/RestedXP/RXPGuides/tree/v4.8.25) (2025-11-08)
+## Backport releases
+
+See [GitHub Releases](https://github.com/PottedSalame/RestedXP_RXPGuides-WotLK_3.3.5a/releases) for this backport's release notes and [Features](FEATURES_335.md) for its current tools.
+
+## Upstream history
+
+The original upstream notes below are retained for reference. They describe that release, not the current behavior of this 3.3.5 backport.
+
+### [v4.8.25](https://github.com/RestedXP/RXPGuides/tree/v4.8.25) (2025-11-08)
 [Full Changelog](https://github.com/RestedXP/RXPGuides/compare/v4.8.24...v4.8.25) [Previous Releases](https://github.com/RestedXP/RXPGuides/releases)
 
 - Remove 'stats' infix for non-weapon tooltips  
@@ -12,4 +20,4 @@
 - Remove ItemUpgrades TRAINER\_SHOW event  
     Obsolete logic, armor types are level calculated now  
 - Update Active Target placeholders  
-- Exclude emergency action flashing when dead  
+- Exclude emergency action flashing when dead
