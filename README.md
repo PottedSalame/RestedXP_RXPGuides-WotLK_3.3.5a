@@ -49,8 +49,7 @@ Re-run a failed workflow after resolving any permissions or environment rules.
 
 ## Development and regeneration
 
-See [website documentation](website/README.md) and the
-[acceptance checklist](website/CHECKLIST.md). Browser checks use an already
+See the [acceptance checklist](website/CHECKLIST.md). Browser checks use an already
 installed Chrome or Edge; no dependencies are downloaded.
 
 Checks against the real addon parser and regeneration from addon definitions
