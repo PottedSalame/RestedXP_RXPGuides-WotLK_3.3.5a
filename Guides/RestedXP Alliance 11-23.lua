@@ -528,7 +528,6 @@ step
     .goto Bloodmyst Isle,63.5,88.8
 .target Vorkhan the Elekk Herder
 >>Talk to |cRXP_FRIENDLY_Vorkhan the Elekk Herder|r
-    .accept 9634 >> Accept Alien Predators
     .goto Bloodmyst Isle,63.1,88.0
     .maxlevel 14
 step
@@ -540,12 +539,6 @@ step
     .complete 9624,1 --Collect Sand Pear (x10)
     .isOnQuest 9624
 step
-    .goto Bloodmyst Isle,59.3,89.1,40,0
-    .goto Bloodmyst Isle,59.2,81.9,40,0
-    .goto Bloodmyst Isle,59.3,89.1
-    .complete 9634,1 --Kill Bloodmyst Hatchling (x10)
-    .isOnQuest 9634
-step
     #requires pears
     >> Return to the ranch
     .goto Bloodmyst Isle,63.4,88.7
@@ -554,13 +547,6 @@ step
     .turnin 9624,3 >> Turn in A Favorite Treat << Warrior/Paladin
     .turnin 9624 >> Turn in A Favorite Treat << !Warrior !Paladin
     .isQuestComplete 9624
-step
-    .goto Bloodmyst Isle,63.1,87.9
-.target Vorkhan the Elekk Herder
->>Talk to |cRXP_FRIENDLY_Vorkhan the Elekk Herder|r
-    .turnin 9634,1 >> Turn in Alien Predators << Paladin
-    .turnin 9634 >> Turn in Alien Predators << !Paladin
-    .isQuestComplete 9634
 step
     #label kesselstart
     >> Talk to Kessel
@@ -1618,7 +1604,7 @@ step
     .goto Darkshore,38.37,43.05
 .target Gershala Nightwhisper
 >>Talk to |cRXP_FRIENDLY_Gershala Nightwhisper|r
-    .accept 1275 >> Accept Researching the Corruption
+    .accept 1275,2,3765 >> Accept Researching the Corruption (only offered after The Corruption Abroad from Argos Nightwhisper in Stormwind)
 step
 #xprate <1.5
     .maxlevel 21
@@ -2203,6 +2189,7 @@ step
 	.goto 1414,44.16,34.85
     >>Enter the temple building that leads to Blackfathom Deeps and kill nagas/satyrs. Loot them for brain stems.
     .complete 1275,1
+    .isOnQuest 1275
 step
     #requires nagas
     .goto Ashenvale,14.790,31.294
@@ -2468,7 +2455,7 @@ step
     .goto Darkshore,38.37,43.05
 .target Gershala Nightwhisper
 >>Talk to |cRXP_FRIENDLY_Gershala Nightwhisper|r
-    .accept 1275 >> Accept Researching the Corruption
+    .accept 1275,2,3765 >> Accept Researching the Corruption (only offered after The Corruption Abroad from Argos Nightwhisper in Stormwind)
 step
     .goto Darkshore,37.4,40.2
 >>Talk to |cRXP_FRIENDLY_Thundris Windweaver|r
@@ -2623,6 +2610,7 @@ step
 	.goto 1414,44.16,34.85
     >>Enter the temple like building into the BFD caves and kill nagas/satyrs
     .complete 1275,1
+    .isOnQuest 1275
 step
     #requires nagas
     .goto Ashenvale,14.790,31.294
