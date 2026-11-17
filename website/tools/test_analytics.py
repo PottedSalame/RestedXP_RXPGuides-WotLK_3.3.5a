@@ -7,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ('index.html', 'guide-editor/index.html', 'help.html', 'credits.html')
 BEACON = 'https://static.cloudflareinsights.com/beacon.min.js'
-TOKEN = '4f34bc88fefc4a22904c1d24c7c7cb99'
+TOKEN = 'c053311c62e14646a6494251df2d83ed'
 
 
 class Tags(HTMLParser):
